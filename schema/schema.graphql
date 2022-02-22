@@ -1,0 +1,404 @@
+
+"""
+An ISO-8601 encoded UTC date string, for example `2022-02-21T10:57:54Z`.
+"""
+scalar DateTime
+
+"""
+Available options for the `orderBy` direction argument.
+"""
+enum OrderDirection {
+    """
+    Specifies an ascending order for a given `orderBy` argument.
+    """
+    ASC
+
+    """
+    Specifies a decending order for a given `orderBy` argument.
+    """
+    DESC
+}
+
+"""
+Chain represents the chain and its networks.
+"""
+type Chain {
+    """
+    Chain ID.
+    """
+    id: ID!
+
+    """
+    Name of the chain, e.g. `Ethereum`.
+    """
+    name: String!
+
+    """
+    Description of the chain.
+    """
+    description: String!
+
+    """
+    Symbol of the chain, e.g. `ETH`.
+    """
+    symbol: String!
+
+    """
+    Network ID, e.g. `mainnet`, `testnet`, `ropsten` etc.
+    """
+    network_id: String!
+
+    """
+    Chain ID.
+    
+    FIXME: Differentiate between this and the `ID` field.
+    """
+    chain_id: String!
+
+    """
+    Collections found on this chain.
+    """
+    collections: [Collection!]
+
+    """
+    Events emitted on this chain.
+    """
+    events: [Event!]
+}
+
+"""
+Collection represents a group of NFTs that share the same smart contract.
+"""
+type Collection {
+    """
+    Collection ID.
+    """
+    id: ID!
+
+    """
+    Collection name, e.g. `CryptoKitties`.
+    """
+    name: String!
+
+    """
+    Description of the collection.
+    """
+    description: String!
+
+    """
+    Symbol for the collection, e.g. `CK`.
+    """
+    symbol: String!
+
+    """
+    Address of the smart-contract.
+    """
+    address: String!
+
+    """
+    Contract ABI.
+    """
+    abi: String!
+
+    """
+    NFT standard, e.g. `ERC-721`, `ERC-1155` or `CUSTOM`.
+    """
+    standard: String!
+
+    """
+    Chain on which collection resides on.
+    """
+    chain: Chain!
+
+    """
+    List of NFTs that are part of this collection.
+    """
+    nfts: [NFT!]
+
+    """
+    List of events relating to this collection.
+    """
+    events: [Event!]
+}
+
+"""
+Ordering options for collections.
+"""
+input CollectionOrder {
+    """
+    Field by which collections should be sorted by.
+    """
+    field: CollectionOrderField!
+
+    """
+    Direction in which collections should be sorted.
+    """
+    direction: OrderDirection!
+}
+
+"""
+Properties by which collections can be ordered.
+"""
+enum CollectionOrderField {
+    """
+    Order by creation time.
+    """
+    CREATION_TIME
+
+    """
+    Order by market cap.
+    """
+    MARKET_CAP
+
+    """
+    Order by total volume.
+    """
+    TOTAL_VOLUME
+
+    """
+    Order by biggest gains.
+    """
+    BIGGEST_GAINS
+
+    """
+    Order by biggest losses.
+    """
+    BIGGEST_LOSSES
+
+    """
+    Order by daily volume.
+    """
+    DAILY_VOLUME
+}
+
+"""
+Event represents an event that occurred on the blockchains network, e.g. a transfer or minting.
+"""
+type Event {
+    """
+    Event ID.
+    """
+    id: ID!
+
+    """
+    Block height at which the event was emitted.
+    """
+    block: Int!
+
+    """
+    ID of the transaction in which the event was emitted.
+    """
+    transaction: String!
+
+    """
+    Event type - `mint`, `transfer`, `sell`, or `burn`.
+    """
+    type: String!
+
+    """
+    Event data in JSON format.
+    """
+    data: String
+
+    """
+    Time at which the event was emitted.
+    """
+    emitted_at: DateTime
+
+    """
+    Chain on which the event was emitted, e.g. `Ethereum`.
+    """
+    chain: Chain!
+
+    """
+    Collection to which this event relates to.
+    """
+    collection: Collection!
+}
+
+"""
+Ordering options for events.
+"""
+input EventOrder {
+    """
+    Field by which events should be sorted by.
+    """
+    field: EventOrderField!
+    
+    """
+    Direction in which events should be sorted.
+    """
+    direction: OrderDirection!
+}
+
+"""
+Properties by which events con be ordered.
+"""
+enum EventOrderField {
+    """
+    Order by event creation time.
+    """
+    CREATION_TIME
+}
+
+type NFT {
+    """
+    NFT ID.
+    """
+    id: ID!
+
+    """
+    Token ID, as found on the blockchain.
+    """
+    token_id: String!
+
+    """
+    Address of the account that owns the NFT.
+    """
+    owner: String!
+
+    """
+    Name of the NFT.
+    """
+    name: String!
+
+    """
+    URI of the NFT, directing to e.g. a JSON file with asset metadata.
+    """
+    uri: String!
+
+    """
+    Rarity score for the NFT.
+    """
+    rarity: Int!
+
+    """
+    NFT data in JSON format.
+    """
+    data: String
+
+    """
+    Collection this NFT is part of.
+    """
+    collection: Collection
+}
+
+"""
+Ordering options for NFTs.
+"""
+input NFTOrder {
+    """
+    Field by which NFTs should be sorted by.
+    """
+    field: NFTOrderField!
+
+    """
+    Direction in which NFTs should be sorted.
+    """
+    direction: OrderDirection!
+}
+
+"""
+Properties by which NFTs could be ordered by.
+"""
+enum NFTOrderField {
+    """
+    Order by creation time.
+    """
+    CREATION_TIME
+
+    """
+    Order by rarity.
+    """
+    RARITY
+
+    """
+    Order by value.
+    """
+    VALUE
+}
+
+"""
+The query root of NFT.com GraphQL interface.
+"""
+type Query {
+    """
+    Get a single NFT.
+    """
+    nft(
+        """
+        ID of the NFT.
+        """
+        id: ID!
+    ): NFT
+
+    """
+    Lookup NFTs based on specified criteria.
+    """
+    nfts(
+        """
+        Owner of the NFT.
+        """
+        owner: String
+        
+        """
+        ID of the collection the NFT is part of.
+        """
+        collection: ID
+
+        """
+        Minimum rarity score.
+        """
+        rarity_min: Int
+        
+        """
+        Ordering options for the returned NFTs.
+        """
+        orderBy: NFTOrder = { field: CREATION_TIME, direction: DESC }
+    ): [NFT!]
+
+    """
+    Get a single collection.
+    """
+    collection(
+        """
+        ID of the collection.
+        """
+        id: ID!
+    ): Collection
+
+    """
+    Lookup collections based on specified criteria.
+    """
+    collections(
+        """
+        ID of the chain that the collection is on.
+        """
+        chain: ID
+        
+        """
+        Ordering options for the returned collections.
+        """
+        orderBy: CollectionOrder = { field: CREATION_TIME, direction: DESC }
+    ): [Collection!]
+
+    """
+    Lookup events based on specified criteria.
+    """
+    events(
+        """
+        ID of the chain where the event occurred.
+        """
+        chain: ID!
+
+        """
+        ID of the collection the event is associated with.
+        """
+        collection: ID!
+
+        """
+        Ordering options for the returned events.
+        """
+        orderBy: EventOrder = { field: CREATION_TIME, direction: DESC }
+    ): [Event!]
+}
