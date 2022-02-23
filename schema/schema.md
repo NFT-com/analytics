@@ -1,6 +1,7 @@
 # Schema Types
 
 <details>
+
   <summary><strong>Table of Contents</strong></summary>
 
   * [Query](#query)
@@ -28,163 +29,132 @@
 </details>
 
 ## Query
+
 The query root of NFT.com GraphQL interface.
 
 <table>
-<thead>
-<tr>
-<th align="left">Field</th>
-<th align="right">Argument</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>nft</strong></td>
-<td valign="top"><a href="#nft">NFT</a></td>
-<td>
-
-Get a single NFT.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">id</td>
-<td valign="top"><a href="#id">ID</a>!</td>
-<td>
-
-ID of the NFT.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>nfts</strong></td>
-<td valign="top">[<a href="#nft">NFT</a>!]</td>
-<td>
-
-Lookup NFTs based on specified criteria.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">owner</td>
-<td valign="top"><a href="#string">String</a></td>
-<td>
-
-Owner of the NFT.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">collection</td>
-<td valign="top"><a href="#id">ID</a></td>
-<td>
-
-ID of the collection the NFT is part of.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">rarity_min</td>
-<td valign="top"><a href="#int">Int</a></td>
-<td>
-
-Minimum rarity score.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">orderBy</td>
-<td valign="top"><a href="#nftorder">NFTOrder</a></td>
-<td>
-
-Ordering options for the returned NFTs.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>collection</strong></td>
-<td valign="top"><a href="#collection">Collection</a></td>
-<td>
-
-Get a single collection.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">id</td>
-<td valign="top"><a href="#id">ID</a>!</td>
-<td>
-
-ID of the collection.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>collections</strong></td>
-<td valign="top">[<a href="#collection">Collection</a>!]</td>
-<td>
-
-Lookup collections based on specified criteria.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">chain</td>
-<td valign="top"><a href="#id">ID</a></td>
-<td>
-
-ID of the chain that the collection is on.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">orderBy</td>
-<td valign="top"><a href="#collectionorder">CollectionOrder</a></td>
-<td>
-
-Ordering options for the returned collections.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>events</strong></td>
-<td valign="top">[<a href="#event">Event</a>!]</td>
-<td>
-
-Lookup events based on specified criteria.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">chain</td>
-<td valign="top"><a href="#id">ID</a>!</td>
-<td>
-
-ID of the chain where the event occurred.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">collection</td>
-<td valign="top"><a href="#id">ID</a>!</td>
-<td>
-
-ID of the collection the event is associated with.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">orderBy</td>
-<td valign="top"><a href="#eventorder">EventOrder</a></td>
-<td>
-
-Ordering options for the returned events.
-
-</td>
-</tr>
-</tbody>
+	<thead>
+		<tr>
+			<th align="left">Field</th>
+			<th align="right">Argument</th>
+			<th align="left">Type</th>
+			<th align="left">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="2" valign="top"><strong>nft</strong></td>
+			<td valign="top"><a href="#nft">NFT</a></td>
+			<td>
+				Get a single NFT.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">id</td>
+			<td valign="top"><a href="#id">ID</a>!</td>
+			<td>
+				ID of the NFT.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>nfts</strong></td>
+			<td valign="top">[<a href="#nft">NFT</a>!]</td>
+			<td>
+				Lookup NFTs based on specified criteria.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">owner</td>
+			<td valign="top"><a href="#string">String</a></td>
+			<td>
+				Owner of the NFT.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">collection</td>
+			<td valign="top"><a href="#id">ID</a></td>
+			<td>
+				ID of the collection the NFT is part of.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">rarity_min</td>
+			<td valign="top"><a href="#int">Int</a></td>
+			<td>
+				Minimum rarity score.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">orderBy</td>
+			<td valign="top"><a href="#nftorder">NFTOrder</a></td>
+			<td>
+				Ordering options for the returned NFTs.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>collection</strong></td>
+			<td valign="top"><a href="#collection">Collection</a></td>
+			<td>
+				Get a single collection.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">id</td>
+			<td valign="top"><a href="#id">ID</a>!</td>
+			<td>
+				ID of the collection.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>collections</strong></td>
+			<td valign="top">[<a href="#collection">Collection</a>!]</td>
+			<td>
+				Lookup collections based on specified criteria.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">chain</td>
+			<td valign="top"><a href="#id">ID</a></td>
+			<td>
+				ID of the chain that the collection is on.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">orderBy</td>
+			<td valign="top"><a href="#collectionorder">CollectionOrder</a></td>
+			<td>
+				Ordering options for the returned collections.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>events</strong></td>
+			<td valign="top">[<a href="#event">Event</a>!]</td>
+			<td>
+				Lookup events based on specified criteria.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">chain</td>
+			<td valign="top"><a href="#id">ID</a>!</td>
+			<td>
+				ID of the chain where the event occurred.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">collection</td>
+			<td valign="top"><a href="#id">ID</a>!</td>
+			<td>
+				ID of the collection the event is associated with.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">orderBy</td>
+			<td valign="top"><a href="#eventorder">EventOrder</a></td>
+			<td>
+				Ordering options for the returned events.
+			</td>
+		</tr>
+	</tbody>
 </table>
 
 ## Objects
@@ -194,90 +164,73 @@ Ordering options for the returned events.
 Chain represents the chain and its networks.
 
 <table>
-<thead>
-<tr>
-<th align="left">Field</th>
-<th align="right">Argument</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>id</strong></td>
-<td valign="top"><a href="#id">ID</a>!</td>
-<td>
-
-Chain ID.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>name</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Name of the chain, e.g. `Ethereum`.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>description</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Description of the chain.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>symbol</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Symbol of the chain, e.g. `ETH`.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>network_id</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Network ID, e.g. `mainnet`, `testnet`, `ropsten` etc.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>chain_id</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Chain ID.
-
-FIXME: Differentiate between this and the `ID` field.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>collections</strong></td>
-<td valign="top">[<a href="#collection">Collection</a>!]</td>
-<td>
-
-Collections found on this chain.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>events</strong></td>
-<td valign="top">[<a href="#event">Event</a>!]</td>
-<td>
-
-Events emitted on this chain.
-
-</td>
-</tr>
-</tbody>
+	<thead>
+		<tr>
+			<th align="left">Field</th>
+			<th align="right">Argument</th>
+			<th align="left">Type</th>
+			<th align="left">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="2" valign="top"><strong>id</strong></td>
+			<td valign="top"><a href="#id">ID</a>!</td>
+			<td>
+				Chain ID.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>name</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>
+				Name of the chain, e.g. `Ethereum`.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>description</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>
+				Description of the chain.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>symbol</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>
+				Symbol of the chain, e.g. `ETH`.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>network_id</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>
+				Network ID, e.g. `mainnet`, `testnet`, `ropsten` etc.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>chain_id</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>
+				Chain ID.
+				FIXME: Differentiate between this and the `ID` field.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>collections</strong></td>
+			<td valign="top">[<a href="#collection">Collection</a>!]</td>
+			<td>
+				Collections found on this chain.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>events</strong></td>
+			<td valign="top">[<a href="#event">Event</a>!]</td>
+			<td>
+				Events emitted on this chain.
+			</td>
+		</tr>
+	</tbody>
 </table>
 
 ### Collection
@@ -285,106 +238,86 @@ Events emitted on this chain.
 Collection represents a group of NFTs that share the same smart contract.
 
 <table>
-<thead>
-<tr>
-<th align="left">Field</th>
-<th align="right">Argument</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>id</strong></td>
-<td valign="top"><a href="#id">ID</a>!</td>
-<td>
-
-Collection ID.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>name</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Collection name, e.g. `CryptoKitties`.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>description</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Description of the collection.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>symbol</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Symbol for the collection, e.g. `CK`.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>address</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Address of the smart-contract.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>abi</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Contract ABI.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>standard</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-NFT standard, e.g. `ERC-721`, `ERC-1155` or `CUSTOM`.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>chain</strong></td>
-<td valign="top"><a href="#chain">Chain</a>!</td>
-<td>
-
-Chain on which collection resides on.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>nfts</strong></td>
-<td valign="top">[<a href="#nft">NFT</a>!]</td>
-<td>
-
-List of NFTs that are part of this collection.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>events</strong></td>
-<td valign="top">[<a href="#event">Event</a>!]</td>
-<td>
-
-List of events relating to this collection.
-
-</td>
-</tr>
-</tbody>
+	<thead>
+		<tr>
+			<th align="left">Field</th>
+			<th align="right">Argument</th>
+			<th align="left">Type</th>
+			<th align="left">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="2" valign="top"><strong>id</strong></td>
+			<td valign="top"><a href="#id">ID</a>!</td>
+			<td>
+				Collection ID.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>name</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>
+				Collection name, e.g. `CryptoKitties`.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>description</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>
+				Description of the collection.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>symbol</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>
+				Symbol for the collection, e.g. `CK`.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>address</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>
+				Address of the smart-contract.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>abi</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>
+				Contract ABI.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>standard</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>
+				NFT standard, e.g. `ERC-721`, `ERC-1155` or `CUSTOM`.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>chain</strong></td>
+			<td valign="top"><a href="#chain">Chain</a>!</td>
+			<td>
+				Chain on which collection resides on.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>nfts</strong></td>
+			<td valign="top">[<a href="#nft">NFT</a>!]</td>
+			<td>
+				List of NFTs that are part of this collection.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>events</strong></td>
+			<td valign="top">[<a href="#event">Event</a>!]</td>
+			<td>
+				List of events relating to this collection.
+			</td>
+		</tr>
+	</tbody>
 </table>
 
 ### Event
@@ -392,175 +325,143 @@ List of events relating to this collection.
 Event represents an event that occurred on the blockchains network, e.g. a transfer or minting.
 
 <table>
-<thead>
-<tr>
-<th align="left">Field</th>
-<th align="right">Argument</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>id</strong></td>
-<td valign="top"><a href="#id">ID</a>!</td>
-<td>
-
-Event ID.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>block</strong></td>
-<td valign="top"><a href="#int">Int</a>!</td>
-<td>
-
-Block height at which the event was emitted.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>transaction</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-ID of the transaction in which the event was emitted.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>type</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Event type - `mint`, `transfer`, `sell`, or `burn`.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>data</strong></td>
-<td valign="top"><a href="#string">String</a></td>
-<td>
-
-Event data in JSON format.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>emitted_at</strong></td>
-<td valign="top"><a href="#datetime">DateTime</a></td>
-<td>
-
-Time at which the event was emitted.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>chain</strong></td>
-<td valign="top"><a href="#chain">Chain</a>!</td>
-<td>
-
-Chain on which the event was emitted, e.g. `Ethereum`.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>collection</strong></td>
-<td valign="top"><a href="#collection">Collection</a>!</td>
-<td>
-
-Collection to which this event relates to.
-
-</td>
-</tr>
-</tbody>
+	<thead>
+		<tr>
+			<th align="left">Field</th>
+			<th align="right">Argument</th>
+			<th align="left">Type</th>
+			<th align="left">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="2" valign="top"><strong>id</strong></td>
+			<td valign="top"><a href="#id">ID</a>!</td>
+			<td>
+				Event ID.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>block</strong></td>
+			<td valign="top"><a href="#int">Int</a>!</td>
+			<td>
+				Block height at which the event was emitted.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>transaction</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>
+				ID of the transaction in which the event was emitted.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>type</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>
+				Event type - `mint`, `transfer`, `sell`, or `burn`.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>data</strong></td>
+			<td valign="top"><a href="#string">String</a></td>
+			<td>
+				Event data in JSON format.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>emitted_at</strong></td>
+			<td valign="top"><a href="#datetime">DateTime</a></td>
+			<td>
+				Time at which the event was emitted.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>chain</strong></td>
+			<td valign="top"><a href="#chain">Chain</a>!</td>
+			<td>
+				Chain on which the event was emitted, e.g. `Ethereum`.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>collection</strong></td>
+			<td valign="top"><a href="#collection">Collection</a>!</td>
+			<td>
+				Collection to which this event relates to.
+			</td>
+		</tr>
+	</tbody>
 </table>
 
 ### NFT
 
 <table>
-<thead>
-<tr>
-<th align="left">Field</th>
-<th align="right">Argument</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>id</strong></td>
-<td valign="top"><a href="#id">ID</a>!</td>
-<td>
-
-NFT ID.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>token_id</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Token ID, as found on the blockchain.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>owner</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Address of the account that owns the NFT.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>name</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Name of the NFT.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>uri</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-URI of the NFT, directing to e.g. a JSON file with asset metadata.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>rarity</strong></td>
-<td valign="top"><a href="#int">Int</a>!</td>
-<td>
-
-Rarity score for the NFT.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>data</strong></td>
-<td valign="top"><a href="#string">String</a></td>
-<td>
-
-NFT data in JSON format.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>collection</strong></td>
-<td valign="top"><a href="#collection">Collection</a></td>
-<td>
-
-Collection this NFT is part of.
-
-</td>
-</tr>
-</tbody>
+	<thead>
+		<tr>
+			<th align="left">Field</th>
+			<th align="right">Argument</th>
+			<th align="left">Type</th>
+			<th align="left">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="2" valign="top"><strong>id</strong></td>
+			<td valign="top"><a href="#id">ID</a>!</td>
+			<td>
+				NFT ID.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>token_id</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>
+				Token ID, as found on the blockchain.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>owner</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>
+				Address of the account that owns the NFT.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>name</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>
+				Name of the NFT.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>uri</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>
+				URI of the NFT, directing to e.g. a JSON file with asset metadata.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>rarity</strong></td>
+			<td valign="top"><a href="#int">Int</a>!</td>
+			<td>
+				Rarity score for the NFT.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>data</strong></td>
+			<td valign="top"><a href="#string">String</a></td>
+			<td>
+				NFT data in JSON format.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>collection</strong></td>
+			<td valign="top"><a href="#collection">Collection</a></td>
+			<td>
+				Collection this NFT is part of.
+			</td>
+		</tr>
+	</tbody>
 </table>
 
 ## Inputs
@@ -570,33 +471,29 @@ Collection this NFT is part of.
 Ordering options for collections.
 
 <table>
-<thead>
-<tr>
-<th colspan="2" align="left">Field</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>field</strong></td>
-<td valign="top"><a href="#collectionorderfield">CollectionOrderField</a>!</td>
-<td>
-
-Field by which collections should be sorted by.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>direction</strong></td>
-<td valign="top"><a href="#orderdirection">OrderDirection</a>!</td>
-<td>
-
-Direction in which collections should be sorted.
-
-</td>
-</tr>
-</tbody>
+	<thead>
+		<tr>
+			<th colspan="2" align="left">Field</th>
+			<th align="left">Type</th>
+			<th align="left">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="2" valign="top"><strong>field</strong></td>
+			<td valign="top"><a href="#collectionorderfield">CollectionOrderField</a>!</td>
+			<td>
+				Field by which collections should be sorted by.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>direction</strong></td>
+			<td valign="top"><a href="#orderdirection">OrderDirection</a>!</td>
+			<td>
+				Direction in which collections should be sorted.
+			</td>
+		</tr>
+	</tbody>
 </table>
 
 ### EventOrder
@@ -604,33 +501,29 @@ Direction in which collections should be sorted.
 Ordering options for events.
 
 <table>
-<thead>
-<tr>
-<th colspan="2" align="left">Field</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>field</strong></td>
-<td valign="top"><a href="#eventorderfield">EventOrderField</a>!</td>
-<td>
-
-Field by which events should be sorted by.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>direction</strong></td>
-<td valign="top"><a href="#orderdirection">OrderDirection</a>!</td>
-<td>
-
-Direction in which events should be sorted.
-
-</td>
-</tr>
-</tbody>
+	<thead>
+		<tr>
+			<th colspan="2" align="left">Field</th>
+			<th align="left">Type</th>
+			<th align="left">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="2" valign="top"><strong>field</strong></td>
+			<td valign="top"><a href="#eventorderfield">EventOrderField</a>!</td>
+			<td>
+				Field by which events should be sorted by.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>direction</strong></td>
+			<td valign="top"><a href="#orderdirection">OrderDirection</a>!</td>
+			<td>
+				Direction in which events should be sorted.
+			</td>
+		</tr>
+	</tbody>
 </table>
 
 ### NFTOrder
@@ -638,33 +531,29 @@ Direction in which events should be sorted.
 Ordering options for NFTs.
 
 <table>
-<thead>
-<tr>
-<th colspan="2" align="left">Field</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>field</strong></td>
-<td valign="top"><a href="#nftorderfield">NFTOrderField</a>!</td>
-<td>
-
-Field by which NFTs should be sorted by.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>direction</strong></td>
-<td valign="top"><a href="#orderdirection">OrderDirection</a>!</td>
-<td>
-
-Direction in which NFTs should be sorted.
-
-</td>
-</tr>
-</tbody>
+	<thead>
+		<tr>
+			<th colspan="2" align="left">Field</th>
+			<th align="left">Type</th>
+			<th align="left">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="2" valign="top"><strong>field</strong></td>
+			<td valign="top"><a href="#nftorderfield">NFTOrderField</a>!</td>
+			<td>
+				Field by which NFTs should be sorted by.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>direction</strong></td>
+			<td valign="top"><a href="#orderdirection">OrderDirection</a>!</td>
+			<td>
+				Direction in which NFTs should be sorted.
+			</td>
+		</tr>
+	</tbody>
 </table>
 
 ## Enums
@@ -674,60 +563,48 @@ Direction in which NFTs should be sorted.
 Properties by which collections can be ordered.
 
 <table>
-<thead>
-<th align="left">Value</th>
-<th align="left">Description</th>
-</thead>
-<tbody>
-<tr>
-<td valign="top"><strong>CREATION_TIME</strong></td>
-<td>
-
-Order by creation time.
-
-</td>
-</tr>
-<tr>
-<td valign="top"><strong>MARKET_CAP</strong></td>
-<td>
-
-Order by market cap.
-
-</td>
-</tr>
-<tr>
-<td valign="top"><strong>TOTAL_VOLUME</strong></td>
-<td>
-
-Order by total volume.
-
-</td>
-</tr>
-<tr>
-<td valign="top"><strong>BIGGEST_GAINS</strong></td>
-<td>
-
-Order by biggest gains.
-
-</td>
-</tr>
-<tr>
-<td valign="top"><strong>BIGGEST_LOSSES</strong></td>
-<td>
-
-Order by biggest losses.
-
-</td>
-</tr>
-<tr>
-<td valign="top"><strong>DAILY_VOLUME</strong></td>
-<td>
-
-Order by daily volume.
-
-</td>
-</tr>
-</tbody>
+	<thead>
+		<th align="left">Value</th>
+		<th align="left">Description</th>
+	</thead>
+	<tbody>
+		<tr>
+			<td valign="top"><strong>CREATION_TIME</strong></td>
+			<td>
+				Order by creation time.
+			</td>
+		</tr>
+		<tr>
+			<td valign="top"><strong>MARKET_CAP</strong></td>
+			<td>
+				Order by market cap.
+			</td>
+		</tr>
+		<tr>
+			<td valign="top"><strong>TOTAL_VOLUME</strong></td>
+			<td>
+				Order by total volume.
+			</td>
+		</tr>
+		<tr>
+			<td valign="top"><strong>BIGGEST_GAINS</strong></td>
+			<td>
+				Order by biggest gains.
+			</td>
+		</tr>
+		<tr>
+			<td valign="top"><strong>BIGGEST_LOSSES</strong></td>
+			<td>
+				Order by biggest losses.
+			</td>
+		</tr>
+		<tr>
+			<td valign="top"><strong>DAILY_VOLUME</strong></td>
+			<td>
+				Order by daily volume.
+			</td>
+		</tr>
+	</tbody>
 </table>
 
 ### EventOrderField
@@ -735,20 +612,18 @@ Order by daily volume.
 Properties by which events con be ordered.
 
 <table>
-<thead>
-<th align="left">Value</th>
-<th align="left">Description</th>
-</thead>
-<tbody>
-<tr>
-<td valign="top"><strong>CREATION_TIME</strong></td>
-<td>
-
-Order by event creation time.
-
-</td>
-</tr>
-</tbody>
+	<thead>
+		<th align="left">Value</th>
+		<th align="left">Description</th>
+	</thead>
+	<tbody>
+		<tr>
+			<td valign="top"><strong>CREATION_TIME</strong></td>
+			<td>
+				Order by event creation time.
+			</td>
+		</tr>
+	</tbody>
 </table>
 
 ### NFTOrderField
@@ -756,36 +631,30 @@ Order by event creation time.
 Properties by which NFTs could be ordered by.
 
 <table>
-<thead>
-<th align="left">Value</th>
-<th align="left">Description</th>
-</thead>
-<tbody>
-<tr>
-<td valign="top"><strong>CREATION_TIME</strong></td>
-<td>
-
-Order by creation time.
-
-</td>
-</tr>
-<tr>
-<td valign="top"><strong>RARITY</strong></td>
-<td>
-
-Order by rarity.
-
-</td>
-</tr>
-<tr>
-<td valign="top"><strong>VALUE</strong></td>
-<td>
-
-Order by value.
-
-</td>
-</tr>
-</tbody>
+	<thead>
+		<th align="left">Value</th>
+		<th align="left">Description</th>
+	</thead>
+	<tbody>
+		<tr>
+			<td valign="top"><strong>CREATION_TIME</strong></td>
+			<td>
+				Order by creation time.
+			</td>
+		</tr>
+		<tr>
+			<td valign="top"><strong>RARITY</strong></td>
+			<td>
+				Order by rarity.
+			</td>
+		</tr>
+		<tr>
+			<td valign="top"><strong>VALUE</strong></td>
+			<td>
+				Order by value.
+			</td>
+		</tr>
+	</tbody>
 </table>
 
 ### OrderDirection
@@ -793,28 +662,24 @@ Order by value.
 Available options for the `orderBy` direction argument.
 
 <table>
-<thead>
-<th align="left">Value</th>
-<th align="left">Description</th>
-</thead>
-<tbody>
-<tr>
-<td valign="top"><strong>ASC</strong></td>
-<td>
-
-Specifies an ascending order for a given `orderBy` argument.
-
-</td>
-</tr>
-<tr>
-<td valign="top"><strong>DESC</strong></td>
-<td>
-
-Specifies a decending order for a given `orderBy` argument.
-
-</td>
-</tr>
-</tbody>
+	<thead>
+		<th align="left">Value</th>
+		<th align="left">Description</th>
+	</thead>
+	<tbody>
+		<tr>
+			<td valign="top"><strong>ASC</strong></td>
+			<td>
+				Specifies an ascending order for a given `orderBy` argument.
+			</td>
+		</tr>
+		<tr>
+			<td valign="top"><strong>DESC</strong></td>
+			<td>
+				Specifies a decending order for a given `orderBy` argument.
+			</td>
+		</tr>
+	</tbody>
 </table>
 
 ## Scalars
