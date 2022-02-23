@@ -126,7 +126,7 @@ Ordering options for collections.
 """
 input CollectionOrder {
     """
-    Field by which collections should be sorted by.
+    Field by which collections should be sorted.
     """
     field: CollectionOrderField!
 
@@ -191,7 +191,7 @@ type Event {
     transaction: String!
 
     """
-    Event type - `mint`, `transfer`, `sell`, or `burn`.
+    Event type — `mint`, `transfer`, `sell`, or `burn`.
     """
     type: String!
 
