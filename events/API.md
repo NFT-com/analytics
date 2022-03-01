@@ -7,10 +7,10 @@ Events API is a REST API serving time series data relating to NFT-related events
 In order to have greater flexibility since different event types can require different filters, event listing is done using multiple endpoints.
 Supported endpoints are:
 
-- `/mint`
-- `/transfer`
-- `/burn`
-- `/sale`
+- `/mints`
+- `/transfers`
+- `/burns`
+- `/sales`
 
 Listing all events for a single NFT is done by issuing requests to individual endpoints and merging the results.
 
