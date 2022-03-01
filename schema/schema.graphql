@@ -113,6 +113,8 @@ type Collection {
     """
     chain: Chain!
 
+    marketplaces: [Marketplace!]
+
     """
     Marketplaces this collection is on.
     """
