@@ -38,6 +38,9 @@ type Chain {
     """
     description: String!
 
+    """
+    Marketplaces on this chain.
+    """
     marketplaces: [Marketplace!]
 
     """
@@ -46,11 +49,33 @@ type Chain {
     collections: [Collection!]
 }
 
+"""
+Marketplace represents a single NFT marketplace (e.g. Opensea, DefiKingdoms).
+"""
 type Marketplace {
+    """
+    Marketplace ID.
+    """
     id: ID!
+
+    """
+    Marketplace name, e.g. `Opensea`.
+    """
     name: String!
+
+    """
+    Description of the marketplace.
+    """
     description: String!
-    chains: [Chain!]
+
+    """
+    Chains the marketplace operates on.
+    """
+    chains: [Chain!]!
+
+    """
+    Collections on this marketplace.
+    """
     collections: [Collection!]
 }
 
@@ -83,6 +108,9 @@ type Collection {
     """
     chain: Chain!
 
+    """
+    Marketplaces this collection is on.
+    """
     marketplaces: [Marketplace!]
 
     """
@@ -139,31 +167,6 @@ enum CollectionOrderField {
     Order by daily volume.
     """
     DAILY_VOLUME
-}
-
-"""
-Ordering options for events.
-"""
-input EventOrder {
-    """
-    Field by which events should be sorted by.
-    """
-    field: EventOrderField!
-    
-    """
-    Direction in which events should be sorted.
-    """
-    direction: OrderDirection!
-}
-
-"""
-Properties by which events con be ordered.
-"""
-enum EventOrderField {
-    """
-    Order by event creation time.
-    """
-    CREATION_TIME
 }
 
 type NFT {
@@ -264,7 +267,7 @@ type Query {
         """
         Minimum rarity score.
         """
-        rarity_min: Int
+        rarity_min: Float
         
         """
         Ordering options for the returned NFTs.
