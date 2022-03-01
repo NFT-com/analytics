@@ -38,32 +38,20 @@ type Chain {
     """
     description: String!
 
-    """
-    Symbol of the chain, e.g. `ETH`.
-    """
-    symbol: String!
-
-    """
-    Network ID, e.g. `mainnet`, `testnet`, `ropsten` etc.
-    """
-    network_id: String!
-
-    """
-    Chain ID.
-    
-    FIXME: Differentiate between this and the `ID` field.
-    """
-    chain_id: String!
+    marketplaces: [Marketplace!]
 
     """
     Collections found on this chain.
     """
     collections: [Collection!]
+}
 
-    """
-    Events emitted on this chain.
-    """
-    events: [Event!]
+type Marketplace {
+    id: ID!
+    name: String!
+    description: String!
+    chains: [Chain!]
+    collections: [Collection!]
 }
 
 """
@@ -86,39 +74,21 @@ type Collection {
     description: String!
 
     """
-    Symbol for the collection, e.g. `CK`.
-    """
-    symbol: String!
-
-    """
     Address of the smart-contract.
     """
     address: String!
-
-    """
-    Contract ABI.
-    """
-    abi: String!
-
-    """
-    NFT standard, e.g. `ERC-721`, `ERC-1155` or `CUSTOM`.
-    """
-    standard: String!
 
     """
     Chain on which collection resides on.
     """
     chain: Chain!
 
+    marketplaces: [Marketplace!]
+
     """
     List of NFTs that are part of this collection.
     """
     nfts: [NFT!]
-
-    """
-    List of events relating to this collection.
-    """
-    events: [Event!]
 }
 
 """
@@ -172,51 +142,6 @@ enum CollectionOrderField {
 }
 
 """
-Event represents an event that occurred on the blockchains network, e.g. a transfer or minting.
-"""
-type Event {
-    """
-    Event ID.
-    """
-    id: ID!
-
-    """
-    Block height at which the event was emitted.
-    """
-    block: Int!
-
-    """
-    ID of the transaction in which the event was emitted.
-    """
-    transaction: String!
-
-    """
-    Event type — `mint`, `transfer`, `sell`, or `burn`.
-    """
-    type: String!
-
-    """
-    Event data in JSON format.
-    """
-    data: String
-
-    """
-    Time at which the event was emitted.
-    """
-    emitted_at: DateTime
-
-    """
-    Chain on which the event was emitted, e.g. `Ethereum`.
-    """
-    chain: Chain!
-
-    """
-    Collection to which this event relates to.
-    """
-    collection: Collection!
-}
-
-"""
 Ordering options for events.
 """
 input EventOrder {
@@ -258,11 +183,6 @@ type NFT {
     owner: String!
 
     """
-    Name of the NFT.
-    """
-    name: String!
-
-    """
     URI of the NFT, directing to e.g. a JSON file with asset metadata.
     """
     uri: String!
@@ -270,17 +190,12 @@ type NFT {
     """
     Rarity score for the NFT.
     """
-    rarity: Int!
-
-    """
-    NFT data in JSON format.
-    """
-    data: String
+    rarity: Float!
 
     """
     Collection this NFT is part of.
     """
-    collection: Collection
+    collection: Collection!
 }
 
 """
@@ -381,24 +296,4 @@ type Query {
         """
         orderBy: CollectionOrder = { field: CREATION_TIME, direction: DESC }
     ): [Collection!]
-
-    """
-    Lookup events based on specified criteria.
-    """
-    events(
-        """
-        ID of the chain where the event occurred.
-        """
-        chain: ID!
-
-        """
-        ID of the collection the event is associated with.
-        """
-        collection: ID!
-
-        """
-        Ordering options for the returned events.
-        """
-        orderBy: EventOrder = { field: CREATION_TIME, direction: DESC }
-    ): [Event!]
 }
