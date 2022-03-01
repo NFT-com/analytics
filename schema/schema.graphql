@@ -5,6 +5,11 @@ An ISO-8601 encoded UTC date string, for example `2022-02-21T10:57:54Z`.
 scalar DateTime
 
 """
+A string representing an address (e.g. an Ethereum address).
+"""
+scalar Address
+
+"""
 Available options for the `orderBy` direction argument.
 """
 enum OrderDirection {
@@ -101,7 +106,7 @@ type Collection {
     """
     Address of the smart-contract.
     """
-    address: String!
+    address: Address!
 
     """
     Chain on which collection resides on.
@@ -178,12 +183,12 @@ type NFT {
     """
     Token ID, as found on the blockchain.
     """
-    token_id: String!
+    token_id: Int!
 
     """
     Address of the account that owns the NFT.
     """
-    owner: String!
+    owner: Address!
 
     """
     URI of the NFT, directing to e.g. a JSON file with asset metadata.
@@ -257,7 +262,7 @@ type Query {
         """
         Owner of the NFT.
         """
-        owner: String
+        owner: Address
         
         """
         ID of the collection the NFT is part of.
