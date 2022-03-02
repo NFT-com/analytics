@@ -5,26 +5,25 @@ package api
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/NFT-com/indexer-api/graph/generated"
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
 func (r *queryServer) Nft(ctx context.Context, id string) (*api.Nft, error) {
-	panic(fmt.Errorf("not implemented"))
+	return r.Server.NFT()
 }
 
 func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *string, rarityMin *float64, orderBy *api.NFTOrder) ([]*api.Nft, error) {
-	panic(fmt.Errorf("not implemented"))
+	return r.Server.Nfts()
 }
 
 func (r *queryServer) Collection(ctx context.Context, id string) (*api.Collection, error) {
-	panic(fmt.Errorf("not implemented"))
+	return r.Server.Collection()
 }
 
 func (r *queryServer) Collections(ctx context.Context, chain *string, orderBy *api.CollectionOrder) ([]*api.Collection, error) {
-	panic(fmt.Errorf("not implemented"))
+	return r.Server.Collections()
 }
 
 // Query returns generated.QueryResolver implementation.

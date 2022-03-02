@@ -57,17 +57,16 @@ func run() int {
 	}
 	log = log.Level(level)
 
-	// FIXME: DB init
-
+	server := api.NewServer()
 	cfg := generated.Config{
-		Resolvers: &api.Server{},
+		Resolvers: server,
 	}
 	schema := generated.NewExecutableSchema(cfg)
-	server := handler.NewDefaultServer(schema)
+	gqlServer := handler.NewDefaultServer(schema)
 
 	// FIXME: Remove this in a final version
 	http.Handle(flagPlayground, playground.Handler("GraphQL playground", "/graphql"))
-	http.Handle("/graphql", server)
+	http.Handle("/graphql", gqlServer)
 
 	playgroundURL := formatPlaygroundURL(flagBind, flagPlayground)
 	log.Info().Str("address", playgroundURL).Msg("GraphQL playground URL")

@@ -1,7 +1,12 @@
 package api
 
-// This file will not be regenerated automatically.
-//
-// It serves as dependency injection for your app, add any dependencies you require here.
+// Server is an API server.
+type Server struct {
+}
 
-type Server struct{}
+// NewServer will create a new API server.
+func NewServer() *Server {
+
+	server := Server{}
+	return &server
+}
