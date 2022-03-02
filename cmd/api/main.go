@@ -14,6 +14,7 @@ import (
 
 	"github.com/NFT-com/indexer-api/api"
 	"github.com/NFT-com/indexer-api/graph/generated"
+	"github.com/NFT-com/indexer-api/storage"
 )
 
 const (
@@ -57,7 +58,8 @@ func run() int {
 	}
 	log = log.Level(level)
 
-	server := api.NewServer()
+	storage := storage.New()
+	server := api.NewServer(storage)
 	cfg := generated.Config{
 		Resolvers: server,
 	}

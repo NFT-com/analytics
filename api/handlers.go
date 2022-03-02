@@ -7,17 +7,41 @@ import (
 )
 
 func (s *Server) NFT() (*api.Nft, error) {
-	return nil, fmt.Errorf("TBD: not implemented")
+
+	nft, err := s.storage.NFT("14")
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve nft: %w", err)
+	}
+
+	return nft, nil
 }
 
 func (s *Server) Nfts() ([]*api.Nft, error) {
-	return nil, fmt.Errorf("TBD: not implemented")
+
+	nfts, err := s.storage.NFTs()
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve nfts: %w", err)
+	}
+
+	return nfts, nil
 }
 
 func (s *Server) Collection() (*api.Collection, error) {
-	return nil, fmt.Errorf("TBD: not implemented")
+
+	collection, err := s.storage.Collection("15")
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve collection: %w", err)
+	}
+
+	return collection, nil
 }
 
 func (s *Server) Collections() ([]*api.Collection, error) {
-	return nil, fmt.Errorf("TBD: not implemented")
+
+	collections, err := s.storage.Collections()
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve collections: %w", err)
+	}
+
+	return collections, nil
 }
