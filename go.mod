@@ -4,6 +4,8 @@ go 1.17
 
 require (
 	github.com/99designs/gqlgen v0.17.0
+	github.com/rs/zerolog v1.26.1
+	github.com/spf13/pflag v1.0.5
 	github.com/vektah/gqlparser/v2 v2.4.0
 )
 
