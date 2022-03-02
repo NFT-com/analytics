@@ -1,6 +1,6 @@
-# Where are all the schema files located? globs are supported eg  src/**/*.graphqls
+# path to the schema for the Graph API
 schema:
-  - graph/*.graphqls
+  - schema/schema.graphql
 
 # Where should the generated server code go?
 exec:
@@ -12,16 +12,18 @@ exec:
 #   filename: graph/generated/federation.go
 #   package: generated
 
-# Where should any generated models go?
+# Path to generated models
 model:
-  filename: graph/model/models_gen.go
-  package: model
+  filename: models/api/model.go
+  package: api
 
 # Where should the resolver implementations go?
 resolver:
   layout: follow-schema
-  dir: graph
-  package: graph
+  dir: ./api
+  package: api
+  type: Server
+  filename: ./api/server.go
 
 # Optional: turn on use ` + "`" + `gqlgen:"fieldName"` + "`" + ` tags in your models
 # struct_tag: json
@@ -34,7 +36,7 @@ resolver:
 
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
-autobind:
+# autobind:
 #  - "github.com/NFT-com/indexer-api/graph/model"
 
 # This section declares type mapping between the GraphQL and go type systems
