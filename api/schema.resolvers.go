@@ -5,12 +5,16 @@ package api
 
 import (
 	"context"
+	"log"
 
 	"github.com/NFT-com/indexer-api/graph/generated"
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
 func (r *queryServer) Nft(ctx context.Context, id string) (*api.Nft, error) {
+	fields := getSelections(ctx)
+	log.Printf("%+#v", fields)
+
 	return r.Server.NFT(id)
 }
 
