@@ -21,18 +21,12 @@ func New(db *gorm.DB) *Storage {
 	return &storage
 }
 
-type flatNFT struct {
-	ID      string
-	TokenID string
-	Owner   string
-	URI     string
-	Rarity  float64
-}
-
 func (s *Storage) NFT(id string) (*api.Nft, error) {
 
-	var flat flatNFT
-	err := s.db.Raw("SELECT * FROM nft WHERE ID = ?", id).Scan(&flat).Error
+	flat := flatNFT{
+		ID: id,
+	}
+	err := s.db.First(&flat).Error
 	if err != nil {
 		// FIXME: err not found is a separate thing
 		return nil, fmt.Errorf("could not retrieve nft: %w", err)
@@ -50,38 +44,30 @@ func (s *Storage) NFT(id string) (*api.Nft, error) {
 }
 
 func (s *Storage) NFTs() ([]*api.Nft, error) {
-
-	var nfts []*api.Nft
-	err := s.db.Debug().Find(&nfts).Error
-	if err != nil {
-		// FIXME: err not found is a separate thing
-		return nil, fmt.Errorf("could not retrieve nfts: %w", err)
-	}
-
-	return nfts, nil
-
+	return nil, fmt.Errorf("TBD: not implemented")
 }
 
 func (s *Storage) Collection(id string) (*api.Collection, error) {
 
-	var collection api.Collection
-	err := s.db.Debug().First(&collection, id).Error
+	flat := flatCollection{
+		ID: id,
+	}
+	err := s.db.First(&flat).Error
 	if err != nil {
 		// FIXME: err not found is a separate thing
 		return nil, fmt.Errorf("could not retrieve collection: %w", err)
+	}
+
+	collection := api.Collection{
+		ID:          flat.ID,
+		Name:        flat.Name,
+		Description: flat.Description,
+		Address:     flat.Address,
 	}
 
 	return &collection, nil
 }
 
 func (s *Storage) Collections() ([]*api.Collection, error) {
-
-	var collections []*api.Collection
-	err := s.db.Debug().Find(&collections).Error
-	if err != nil {
-		// FIXME: err not found is a separate thing
-		return nil, fmt.Errorf("could not retrieve collections: %w", err)
-	}
-
-	return collections, nil
+	return nil, fmt.Errorf("TBD: not implemented")
 }
