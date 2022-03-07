@@ -11,7 +11,7 @@ import (
 )
 
 func (r *queryServer) Nft(ctx context.Context, id string) (*api.Nft, error) {
-	return r.Server.NFT()
+	return r.Server.NFT(id)
 }
 
 func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *string, rarityMin *float64, orderBy *api.NFTOrder) ([]*api.Nft, error) {
@@ -19,7 +19,7 @@ func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *strin
 }
 
 func (r *queryServer) Collection(ctx context.Context, id string) (*api.Collection, error) {
-	return r.Server.Collection()
+	return r.Server.Collection(id)
 }
 
 func (r *queryServer) Collections(ctx context.Context, chain *string, orderBy *api.CollectionOrder) ([]*api.Collection, error) {

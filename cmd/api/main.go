@@ -11,6 +11,9 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/rs/zerolog"
 	"github.com/spf13/pflag"
+	gormzerolog "github.com/wei840222/gorm-zerolog"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 
 	"github.com/NFT-com/indexer-api/api"
 	"github.com/NFT-com/indexer-api/graph/generated"
@@ -19,7 +22,7 @@ import (
 
 const (
 	// FIXME: Specify the default database
-	defaultDatabase       = ""
+	defaultDatabase       = "host=localhost user=nft-user password=nft-test-pass dbname=nft-com port=5432 sslmode=disable"
 	defaultPlaygroundPath = "/"
 )
 
@@ -58,7 +61,17 @@ func run() int {
 	}
 	log = log.Level(level)
 
-	storage := storage.New()
+	// FIXME: Quick choice for Gorm + zerolog, not a definite one.
+	dbCfg := gorm.Config{
+		Logger: gormzerolog.NewWithLogger(log),
+	}
+	db, err := gorm.Open(postgres.Open(flagDatabase), &dbCfg)
+	if err != nil {
+		log.Error().Err(err).Msg("could not connect to database")
+		return failure
+	}
+
+	storage := storage.New(db)
 	server := api.NewServer(storage)
 	cfg := generated.Config{
 		Resolvers: server,

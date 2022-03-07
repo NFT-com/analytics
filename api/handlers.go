@@ -6,9 +6,9 @@ import (
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
-func (s *Server) NFT() (*api.Nft, error) {
+func (s *Server) NFT(id string) (*api.Nft, error) {
 
-	nft, err := s.storage.NFT("14")
+	nft, err := s.storage.NFT(id)
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve nft: %w", err)
 	}
@@ -26,9 +26,9 @@ func (s *Server) Nfts() ([]*api.Nft, error) {
 	return nfts, nil
 }
 
-func (s *Server) Collection() (*api.Collection, error) {
+func (s *Server) Collection(id string) (*api.Collection, error) {
 
-	collection, err := s.storage.Collection("15")
+	collection, err := s.storage.Collection(id)
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve collection: %w", err)
 	}
