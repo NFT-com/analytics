@@ -183,7 +183,7 @@ type NFT {
     """
     Token ID, as found on the blockchain.
     """
-    token_id: String!
+    tokenID: String!
 
     """
     Address of the account that owns the NFT.
@@ -292,7 +292,7 @@ type Query {
         """
         Minimum rarity score.
         """
-        rarity_min: Float
+        rarityMin: Float
         
         """
         Ordering options for the returned NFTs.
