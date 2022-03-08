@@ -183,7 +183,7 @@ type NFT {
     """
     Token ID, as found on the blockchain.
     """
-    token_id: Int!
+    token_id: String!
 
     """
     Address of the account that owns the NFT.
@@ -256,6 +256,26 @@ type Query {
     ): NFT
 
     """
+    Get a single NFT by its blockchain identifier.
+    """
+    nftByTokenID(
+        """
+        Chain ID.
+        """
+        chainID: ID!
+
+        """
+        ID of the smart contract.
+        """
+        contract: Address!
+
+        """
+        Token ID of the NFT.
+        """
+        tokenID: String!
+    ): NFT
+
+    """
     Lookup NFTs based on specified criteria.
     """
     nfts(
@@ -288,6 +308,21 @@ type Query {
         ID of the collection.
         """
         id: ID!
+    ): Collection
+
+    """
+    Get a single collection by address.
+    """
+    collectionByAddress(
+        """
+        Chain ID.
+        """
+        chainID: ID!
+
+        """
+        Address of the smart contract.
+        """
+        contract: Address!
     ): Collection
 
     """
