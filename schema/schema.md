@@ -53,6 +53,26 @@ The query root of NFT.com GraphQL interface.
 			<td>ID of the NFT.</td>
 		</tr>
 		<tr>
+			<td colspan="2" valign="top"><strong>nftByTokenID</strong></td>
+			<td valign="top"><a href="#nft">NFT</a></td>
+			<td>Get a single NFT by its token ID.</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">chainID</td>
+			<td valign="top"><a href="#id">ID</a>!</td>
+			<td>Chain ID.</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">contract</td>
+			<td valign="top"><a href="#address">Address</a>!</td>
+			<td>ID of the smart contract.</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">tokenID</td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>Token ID of the NFT.</td>
+		</tr>
+		<tr>
 			<td colspan="2" valign="top"><strong>nfts</strong></td>
 			<td valign="top">[<a href="#nft">NFT</a>!]</td>
 			<td>Lookup NFTs based on specified criteria.</td>
@@ -68,7 +88,7 @@ The query root of NFT.com GraphQL interface.
 			<td>ID of the collection the NFT is part of.</td>
 		</tr>
 		<tr>
-			<td colspan="2" align="right" valign="top">rarity_min</td>
+			<td colspan="2" align="right" valign="top">rarityMin</td>
 			<td valign="top"><a href="#float">Float</a></td>
 			<td>Minimum rarity score.</td>
 		</tr>
@@ -86,6 +106,21 @@ The query root of NFT.com GraphQL interface.
 			<td colspan="2" align="right" valign="top">id</td>
 			<td valign="top"><a href="#id">ID</a>!</td>
 			<td>ID of the collection.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>collectionByAddress</strong></td>
+			<td valign="top"><a href="#collection">Collection</a></td>
+			<td>Get a single collection by address.</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">chainID</td>
+			<td valign="top"><a href="#id">ID</a>!</td>
+			<td>Chain ID.</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">contract</td>
+			<td valign="top"><a href="#address">Address</a>!</td>
+			<td>Address of the smart contract.</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>collections</strong></td>
@@ -261,8 +296,8 @@ Marketplace represents a single NFT marketplace (e.g. Opensea, DefiKingdoms).
 			<td>NFT ID.</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top"><strong>token_id</strong></td>
-			<td valign="top"><a href="#int">Int</a>!</td>
+			<td colspan="2" valign="top"><strong>tokenID</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
 			<td>Token ID, as found on the blockchain.</td>
 		</tr>
 		<tr>
@@ -448,10 +483,6 @@ The `Float` scalar type represents signed double-precision fractional values as 
 ### ID
 
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
-
-### Int
-
-The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
 
 ### String
 

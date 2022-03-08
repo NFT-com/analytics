@@ -256,7 +256,7 @@ type Query {
     ): NFT
 
     """
-    Get a single NFT by its blockchain identifier.
+    Get a single NFT by its token ID.
     """
     nftByTokenID(
         """
