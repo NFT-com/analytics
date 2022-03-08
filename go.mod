@@ -7,6 +7,7 @@ require (
 	github.com/rs/zerolog v1.26.1
 	github.com/spf13/pflag v1.0.5
 	github.com/vektah/gqlparser/v2 v2.4.0
+	github.com/wei840222/gorm-zerolog v0.0.0-20210303025759-235c42bb33fa
 	gorm.io/driver/postgres v1.3.1
 	gorm.io/gorm v1.23.2
 )
@@ -26,8 +27,6 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/mitchellh/mapstructure v1.2.3 // indirect
-	github.com/mpalmer/gorm-zerolog v0.1.0 // indirect
-	github.com/wei840222/gorm-zerolog v0.0.0-20210303025759-235c42bb33fa // indirect
 	golang.org/x/crypto v0.0.0-20211215165025-cf75a172585e // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
