@@ -77,17 +77,21 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Collection  func(childComplexity int, id string) int
-		Collections func(childComplexity int, chain *string, orderBy *api.CollectionOrder) int
-		Nft         func(childComplexity int, id string) int
-		Nfts        func(childComplexity int, owner *string, collection *string, rarityMin *float64, orderBy *api.NFTOrder) int
+		Collection          func(childComplexity int, id string) int
+		CollectionByAddress func(childComplexity int, chainID string, contract string) int
+		Collections         func(childComplexity int, chain *string, orderBy *api.CollectionOrder) int
+		Nft                 func(childComplexity int, id string) int
+		NftByTokenID        func(childComplexity int, chainID string, contract string, tokenID string) int
+		Nfts                func(childComplexity int, owner *string, collection *string, rarityMin *float64, orderBy *api.NFTOrder) int
 	}
 }
 
 type QueryResolver interface {
 	Nft(ctx context.Context, id string) (*api.Nft, error)
+	NftByTokenID(ctx context.Context, chainID string, contract string, tokenID string) (*api.Nft, error)
 	Nfts(ctx context.Context, owner *string, collection *string, rarityMin *float64, orderBy *api.NFTOrder) ([]*api.Nft, error)
 	Collection(ctx context.Context, id string) (*api.Collection, error)
+	CollectionByAddress(ctx context.Context, chainID string, contract string) (*api.Collection, error)
 	Collections(ctx context.Context, chain *string, orderBy *api.CollectionOrder) ([]*api.Collection, error)
 }
 
@@ -253,7 +257,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.NFT.Rarity(childComplexity), true
 
-	case "NFT.token_id":
+	case "NFT.tokenID":
 		if e.complexity.NFT.TokenID == nil {
 			break
 		}
@@ -279,6 +283,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Collection(childComplexity, args["id"].(string)), true
 
+	case "Query.collectionByAddress":
+		if e.complexity.Query.CollectionByAddress == nil {
+			break
+		}
+
+		args, err := ec.field_Query_collectionByAddress_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.CollectionByAddress(childComplexity, args["chainID"].(string), args["contract"].(string)), true
+
 	case "Query.collections":
 		if e.complexity.Query.Collections == nil {
 			break
@@ -303,6 +319,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Nft(childComplexity, args["id"].(string)), true
 
+	case "Query.nftByTokenID":
+		if e.complexity.Query.NftByTokenID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_nftByTokenID_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.NftByTokenID(childComplexity, args["chainID"].(string), args["contract"].(string), args["tokenID"].(string)), true
+
 	case "Query.nfts":
 		if e.complexity.Query.Nfts == nil {
 			break
@@ -313,7 +341,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Nfts(childComplexity, args["owner"].(*string), args["collection"].(*string), args["rarity_min"].(*float64), args["orderBy"].(*api.NFTOrder)), true
+		return e.complexity.Query.Nfts(childComplexity, args["owner"].(*string), args["collection"].(*string), args["rarityMin"].(*float64), args["orderBy"].(*api.NFTOrder)), true
 
 	}
 	return 0, false
@@ -550,7 +578,7 @@ type NFT {
     """
     Token ID, as found on the blockchain.
     """
-    token_id: String!
+    tokenID: String!
 
     """
     Address of the account that owns the NFT.
@@ -623,6 +651,26 @@ type Query {
     ): NFT
 
     """
+    Get a single NFT by its token ID.
+    """
+    nftByTokenID(
+        """
+        Chain ID.
+        """
+        chainID: ID!
+
+        """
+        ID of the smart contract.
+        """
+        contract: Address!
+
+        """
+        Token ID of the NFT.
+        """
+        tokenID: String!
+    ): NFT
+
+    """
     Lookup NFTs based on specified criteria.
     """
     nfts(
@@ -639,7 +687,7 @@ type Query {
         """
         Minimum rarity score.
         """
-        rarity_min: Float
+        rarityMin: Float
         
         """
         Ordering options for the returned NFTs.
@@ -655,6 +703,21 @@ type Query {
         ID of the collection.
         """
         id: ID!
+    ): Collection
+
+    """
+    Get a single collection by address.
+    """
+    collectionByAddress(
+        """
+        Chain ID.
+        """
+        chainID: ID!
+
+        """
+        Address of the smart contract.
+        """
+        contract: Address!
     ): Collection
 
     """
@@ -692,6 +755,30 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_collectionByAddress_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["chainID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("chainID"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["chainID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["contract"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contract"))
+		arg1, err = ec.unmarshalNAddress2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["contract"] = arg1
 	return args, nil
 }
 
@@ -734,6 +821,39 @@ func (ec *executionContext) field_Query_collections_args(ctx context.Context, ra
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_nftByTokenID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["chainID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("chainID"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["chainID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["contract"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contract"))
+		arg1, err = ec.unmarshalNAddress2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["contract"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["tokenID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenID"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["tokenID"] = arg2
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_nft_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -771,14 +891,14 @@ func (ec *executionContext) field_Query_nfts_args(ctx context.Context, rawArgs m
 	}
 	args["collection"] = arg1
 	var arg2 *float64
-	if tmp, ok := rawArgs["rarity_min"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rarity_min"))
+	if tmp, ok := rawArgs["rarityMin"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rarityMin"))
 		arg2, err = ec.unmarshalOFloat2ᚖfloat64(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["rarity_min"] = arg2
+	args["rarityMin"] = arg2
 	var arg3 *api.NFTOrder
 	if tmp, ok := rawArgs["orderBy"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
@@ -1444,7 +1564,7 @@ func (ec *executionContext) _NFT_id(ctx context.Context, field graphql.Collected
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _NFT_token_id(ctx context.Context, field graphql.CollectedField, obj *api.Nft) (ret graphql.Marshaler) {
+func (ec *executionContext) _NFT_tokenID(ctx context.Context, field graphql.CollectedField, obj *api.Nft) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1658,6 +1778,45 @@ func (ec *executionContext) _Query_nft(ctx context.Context, field graphql.Collec
 	return ec.marshalONFT2ᚖgithubᚗcomᚋNFTᚑcomᚋindexerᚑapiᚋmodelsᚋapiᚐNft(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_nftByTokenID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_nftByTokenID_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().NftByTokenID(rctx, args["chainID"].(string), args["contract"].(string), args["tokenID"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*api.Nft)
+	fc.Result = res
+	return ec.marshalONFT2ᚖgithubᚗcomᚋNFTᚑcomᚋindexerᚑapiᚋmodelsᚋapiᚐNft(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_nfts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1683,7 +1842,7 @@ func (ec *executionContext) _Query_nfts(ctx context.Context, field graphql.Colle
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Nfts(rctx, args["owner"].(*string), args["collection"].(*string), args["rarity_min"].(*float64), args["orderBy"].(*api.NFTOrder))
+		return ec.resolvers.Query().Nfts(rctx, args["owner"].(*string), args["collection"].(*string), args["rarityMin"].(*float64), args["orderBy"].(*api.NFTOrder))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1723,6 +1882,45 @@ func (ec *executionContext) _Query_collection(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().Collection(rctx, args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*api.Collection)
+	fc.Result = res
+	return ec.marshalOCollection2ᚖgithubᚗcomᚋNFTᚑcomᚋindexerᚑapiᚋmodelsᚋapiᚐCollection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_collectionByAddress(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_collectionByAddress_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().CollectionByAddress(rctx, args["chainID"].(string), args["contract"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3340,9 +3538,9 @@ func (ec *executionContext) _NFT(ctx context.Context, sel ast.SelectionSet, obj 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "token_id":
+		case "tokenID":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._NFT_token_id(ctx, field, obj)
+				return ec._NFT_tokenID(ctx, field, obj)
 			}
 
 			out.Values[i] = innerFunc(ctx)
@@ -3440,6 +3638,26 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
+		case "nftByTokenID":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_nftByTokenID(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
 		case "nfts":
 			field := field
 
@@ -3470,6 +3688,26 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_collection(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "collectionByAddress":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_collectionByAddress(ctx, field)
 				return res
 			}
 

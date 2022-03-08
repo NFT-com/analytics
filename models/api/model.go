@@ -66,7 +66,7 @@ type Nft struct {
 	// NFT ID.
 	ID string `json:"id"`
 	// Token ID, as found on the blockchain.
-	TokenID string `json:"token_id"`
+	TokenID string `json:"tokenID"`
 	// Address of the account that owns the NFT.
 	Owner string `json:"owner"`
 	// URI of the NFT, directing to e.g. a JSON file with asset metadata.
