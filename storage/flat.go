@@ -2,11 +2,12 @@ package storage
 
 // FIXME: temporary types for queries
 type flatNFT struct {
-	ID      string
-	TokenID string
-	Owner   string
-	URI     string
-	Rarity  float64
+	ID           string
+	TokenID      string
+	Owner        string
+	URI          string
+	Rarity       float64
+	CollectionID string
 }
 
 func (f flatNFT) TableName() string {

@@ -6,7 +6,7 @@ import (
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
-func (s *Server) NFT(id string) (*api.NFT, error) {
+func (s *Server) GetNFT(id string) (*api.NFT, error) {
 
 	nft, err := s.storage.NFT(id)
 	if err != nil {

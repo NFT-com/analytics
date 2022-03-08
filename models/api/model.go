@@ -30,10 +30,10 @@ type Marketplace struct {
 }
 
 type NFT struct {
-	ID         string      `json:"id"`
-	TokenID    string      `json:"tokenID"`
-	Owner      string      `json:"owner"`
-	URI        string      `json:"uri"`
-	Rarity     float64     `json:"rarity"`
-	Collection *Collection `json:"collection"`
+	ID           string  `json:"id"`
+	TokenID      string  `json:"tokenID"`
+	Owner        string  `json:"owner"`
+	URI          string  `json:"uri"`
+	Rarity       float64 `json:"rarity"`
+	CollectionID string  `json:"-"`
 }

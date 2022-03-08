@@ -33,11 +33,12 @@ func (s *Storage) NFT(id string) (*api.NFT, error) {
 	}
 
 	nft := api.NFT{
-		ID:      flat.ID,
-		TokenID: flat.TokenID,
-		Owner:   flat.Owner,
-		URI:     flat.URI,
-		Rarity:  flat.Rarity,
+		ID:           flat.ID,
+		TokenID:      flat.TokenID,
+		Owner:        flat.Owner,
+		URI:          flat.URI,
+		Rarity:       flat.Rarity,
+		CollectionID: flat.CollectionID,
 	}
 
 	return &nft, nil

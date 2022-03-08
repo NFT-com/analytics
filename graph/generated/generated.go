@@ -8,6 +8,7 @@ import (
 	"errors"
 	"strconv"
 	"sync"
+	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -34,6 +35,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	NFT() NFTResolver
 	Query() QueryResolver
 }
 
@@ -86,6 +88,9 @@ type ComplexityRoot struct {
 	}
 }
 
+type NFTResolver interface {
+	Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error)
+}
 type QueryResolver interface {
 	Nft(ctx context.Context, id string) (*api.NFT, error)
 	NftByTokenID(ctx context.Context, chainID string, contract string, tokenID string) (*api.NFT, error)
@@ -1715,14 +1720,14 @@ func (ec *executionContext) _NFT_collection(ctx context.Context, field graphql.C
 		Object:     "NFT",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Collection, nil
+		return ec.resolvers.NFT().Collection(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3536,7 +3541,7 @@ func (ec *executionContext) _NFT(ctx context.Context, sel ast.SelectionSet, obj 
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "tokenID":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -3546,7 +3551,7 @@ func (ec *executionContext) _NFT(ctx context.Context, sel ast.SelectionSet, obj 
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "owner":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -3556,7 +3561,7 @@ func (ec *executionContext) _NFT(ctx context.Context, sel ast.SelectionSet, obj 
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "uri":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -3566,7 +3571,7 @@ func (ec *executionContext) _NFT(ctx context.Context, sel ast.SelectionSet, obj 
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "rarity":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -3576,18 +3581,28 @@ func (ec *executionContext) _NFT(ctx context.Context, sel ast.SelectionSet, obj 
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "collection":
+			field := field
+
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._NFT_collection(ctx, field, obj)
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._NFT_collection(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
 			}
 
-			out.Values[i] = innerFunc(ctx)
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4268,6 +4283,10 @@ func (ec *executionContext) marshalNChain2ᚖgithubᚗcomᚋNFTᚑcomᚋindexer�
 		return graphql.Null
 	}
 	return ec._Chain(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNCollection2githubᚗcomᚋNFTᚑcomᚋindexerᚑapiᚋmodelsᚋapiᚐCollection(ctx context.Context, sel ast.SelectionSet, v api.Collection) graphql.Marshaler {
+	return ec._Collection(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNCollection2ᚖgithubᚗcomᚋNFTᚑcomᚋindexerᚑapiᚋmodelsᚋapiᚐCollection(ctx context.Context, sel ast.SelectionSet, v *api.Collection) graphql.Marshaler {

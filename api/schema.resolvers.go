@@ -11,12 +11,24 @@ import (
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
+// FIXME: Fix this god-awful name - nFTServer
+
+func (r *nFTServer) Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error) {
+
+	collection, err := r.Server.Collection(obj.CollectionID)
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve collection data: %w", err)
+	}
+
+	return collection, nil
+}
+
 func (r *queryServer) Nft(ctx context.Context, id string) (*api.NFT, error) {
-	return r.Server.NFT(id)
+	return r.Server.GetNFT(id)
 }
 
 func (r *queryServer) NftByTokenID(ctx context.Context, chainID string, contract string, tokenID string) (*api.NFT, error) {
-	panic(fmt.Errorf("not implemented"))
+	return nil, fmt.Errorf("TBD: not implemented")
 }
 
 func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *string, rarityMin *float64, orderBy *api.NFTOrder) ([]*api.NFT, error) {
@@ -28,14 +40,18 @@ func (r *queryServer) Collection(ctx context.Context, id string) (*api.Collectio
 }
 
 func (r *queryServer) CollectionByAddress(ctx context.Context, chainID string, contract string) (*api.Collection, error) {
-	panic(fmt.Errorf("not implemented"))
+	return nil, fmt.Errorf("TBD: not implemented")
 }
 
 func (r *queryServer) Collections(ctx context.Context, chain *string, orderBy *api.CollectionOrder) ([]*api.Collection, error) {
 	return r.Server.Collections()
 }
 
+// NFT returns generated.NFTResolver implementation.
+func (r *Server) NFT() generated.NFTResolver { return &nFTServer{r} }
+
 // Query returns generated.QueryResolver implementation.
 func (r *Server) Query() generated.QueryResolver { return &queryServer{r} }
 
+type nFTServer struct{ *Server }
 type queryServer struct{ *Server }
