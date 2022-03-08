@@ -12,18 +12,18 @@ import (
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
-func (r *queryServer) Nft(ctx context.Context, id string) (*api.Nft, error) {
+func (r *queryServer) Nft(ctx context.Context, id string) (*api.NFT, error) {
 	fields := getSelections(ctx)
 	log.Printf("%+#v", fields)
 
 	return r.Server.NFT(id)
 }
 
-func (r *queryServer) NftByTokenID(ctx context.Context, chainID string, contract string, tokenID string) (*api.Nft, error) {
+func (r *queryServer) NftByTokenID(ctx context.Context, chainID string, contract string, tokenID string) (*api.NFT, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *string, rarityMin *float64, orderBy *api.NFTOrder) ([]*api.Nft, error) {
+func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *string, rarityMin *float64, orderBy *api.NFTOrder) ([]*api.NFT, error) {
 	return r.Server.Nfts()
 }
 

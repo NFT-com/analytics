@@ -5,8 +5,8 @@ import (
 )
 
 type Storage interface {
-	NFT(id string) (*api.Nft, error)
-	NFTs() ([]*api.Nft, error)
+	NFT(id string) (*api.NFT, error)
+	NFTs() ([]*api.NFT, error)
 	Collection(id string) (*api.Collection, error)
 	Collections() ([]*api.Collection, error)
 }

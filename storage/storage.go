@@ -21,7 +21,7 @@ func New(db *gorm.DB) *Storage {
 	return &storage
 }
 
-func (s *Storage) NFT(id string) (*api.Nft, error) {
+func (s *Storage) NFT(id string) (*api.NFT, error) {
 
 	flat := flatNFT{
 		ID: id,
@@ -32,7 +32,7 @@ func (s *Storage) NFT(id string) (*api.Nft, error) {
 		return nil, fmt.Errorf("could not retrieve nft: %w", err)
 	}
 
-	nft := api.Nft{
+	nft := api.NFT{
 		ID:      flat.ID,
 		TokenID: flat.TokenID,
 		Owner:   flat.Owner,
@@ -43,7 +43,7 @@ func (s *Storage) NFT(id string) (*api.Nft, error) {
 	return &nft, nil
 }
 
-func (s *Storage) NFTs() ([]*api.Nft, error) {
+func (s *Storage) NFTs() ([]*api.NFT, error) {
 	return nil, fmt.Errorf("TBD: not implemented")
 }
 
