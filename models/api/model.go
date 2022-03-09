@@ -15,6 +15,7 @@ type Collection struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Address     string `json:"address"`
+	ChainID     string `json:"-"`
 	// FIXME: Add nfts link
 	// FIXME: Add marketplace link
 	// FIXME: Add chain link
@@ -40,12 +41,17 @@ type NFT struct {
 
 // FIXME: think if you need/want another layer to this - storage specific functions below.
 
-// TableName returns the name of the underlying database table for the NFT.
-func (n *NFT) TableName() string {
-	return "nft"
+// TableName returns the name of the underlying database table for the Chain.
+func (c *Chain) TableName() string {
+	return "chain"
 }
 
 // TableName returns the name of the underlying database table for the Collection.
 func (c *Collection) TableName() string {
 	return "collection"
+}
+
+// TableName returns the name of the underlying database table for the NFT.
+func (n *NFT) TableName() string {
+	return "nft"
 }

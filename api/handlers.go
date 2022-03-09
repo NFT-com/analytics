@@ -45,3 +45,35 @@ func (s *Server) Collections() ([]*api.Collection, error) {
 
 	return collections, nil
 }
+
+func (s *Server) GetCollectionNFTs(collectionID string) ([]*api.NFT, error) {
+
+	nfts, err := s.storage.CollectionNFTs(collectionID)
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve collections: %w", err)
+	}
+
+	return nfts, nil
+}
+
+// GetChain retrieves a chain based on its ID.
+func (s *Server) GetChain(id string) (*api.Chain, error) {
+
+	chain, err := s.storage.Chain(id)
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve chain: %w", err)
+	}
+
+	return chain, nil
+}
+
+// CollectionsByChain returns a list of collections on a given chain.
+func (s *Server) CollectionsByChain(chainID string) ([]*api.Collection, error) {
+
+	collections, err := s.storage.CollectionsByChain(chainID)
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve collections: %w", err)
+	}
+
+	return collections, nil
+}

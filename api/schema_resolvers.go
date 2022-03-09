@@ -14,16 +14,16 @@ import (
 // FIXME: queries needed
 //
 // 1. - marketplaces by chain
-// 2. - collections by chain
-// 3. - chain by id
 // 4. - marketplaces by collection
-// 5. - nfts by collection
 // 6. - chains by marketplace
 // 7. - nft by token ID
 // 8. - nfts query
 // 9. - collection by address
 // 10. - collections listing
-//
+// -----------------------------
+// 2. - collections by chain
+// 3. - chain by id
+// 5. - nfts by collection
 //
 
 func (r *chainServer) Marketplaces(ctx context.Context, obj *api.Chain) ([]*api.Marketplace, error) {
@@ -31,11 +31,11 @@ func (r *chainServer) Marketplaces(ctx context.Context, obj *api.Chain) ([]*api.
 }
 
 func (r *chainServer) Collections(ctx context.Context, obj *api.Chain) ([]*api.Collection, error) {
-	return nil, fmt.Errorf("TBD: not implemented")
+	return r.Server.CollectionsByChain(obj.ID)
 }
 
 func (r *collectionServer) Chain(ctx context.Context, obj *api.Collection) (*api.Chain, error) {
-	return nil, fmt.Errorf("TBD: not implemented")
+	return r.Server.GetChain(obj.ChainID)
 }
 
 func (r *collectionServer) Marketplaces(ctx context.Context, obj *api.Collection) ([]*api.Marketplace, error) {
@@ -43,7 +43,7 @@ func (r *collectionServer) Marketplaces(ctx context.Context, obj *api.Collection
 }
 
 func (r *collectionServer) Nfts(ctx context.Context, obj *api.Collection) ([]*api.NFT, error) {
-	return nil, fmt.Errorf("TBD: not implemented")
+	return r.Server.GetCollectionNFTs(obj.ID)
 }
 
 func (r *marketplaceServer) Chains(ctx context.Context, obj *api.Marketplace) ([]*api.Chain, error) {
@@ -55,12 +55,7 @@ func (r *marketplaceServer) Collections(ctx context.Context, obj *api.Marketplac
 }
 
 func (r *nFTServer) Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error) {
-	collection, err := r.Server.GetCollection(obj.CollectionID)
-	if err != nil {
-		return nil, fmt.Errorf("could not retrieve collection data: %w", err)
-	}
-
-	return collection, nil
+	return r.Server.GetCollection(obj.CollectionID)
 }
 
 func (r *queryServer) Nft(ctx context.Context, id string) (*api.NFT, error) {
