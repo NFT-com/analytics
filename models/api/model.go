@@ -37,3 +37,15 @@ type NFT struct {
 	Rarity       float64 `json:"rarity"`
 	CollectionID string  `json:"-"`
 }
+
+// FIXME: think if you need/want another layer to this - storage specific functions below.
+
+// TableName returns the name of the underlying database table for the NFT.
+func (n *NFT) TableName() string {
+	return "nft"
+}
+
+// TableName returns the name of the underlying database table for the Collection.
+func (c *Collection) TableName() string {
+	return "collection"
+}
