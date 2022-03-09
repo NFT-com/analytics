@@ -88,3 +88,14 @@ func (s *Server) CollectionsListings(collectionID string) ([]*api.Marketplace, e
 
 	return marketplaces, nil
 }
+
+// MarketplaceCollections returns a list of collections on a specified marketplace.
+func (s *Server) MarketplaceCollections(marketplaceID string) ([]*api.Collection, error) {
+
+	collections, err := s.storage.MarketplaceCollectionsList(marketplaceID)
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve collections on a marketplace: %w", err)
+	}
+
+	return collections, nil
+}
