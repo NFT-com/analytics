@@ -40,7 +40,6 @@ func (r *marketplaceServer) Collections(ctx context.Context, obj *api.Marketplac
 }
 
 func (r *nFTServer) Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error) {
-
 	collection, err := r.Server.GetCollection(obj.CollectionID)
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve collection data: %w", err)

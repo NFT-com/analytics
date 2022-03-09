@@ -24,6 +24,7 @@ resolver:
   package: api
   type: Server
   filename: ./api/server.go
+  filename_template: '{name}_resolvers.go'
 
 # Optional: turn on use ` + "`" + `gqlgen:"fieldName"` + "`" + ` tags in your models
 # struct_tag: json
