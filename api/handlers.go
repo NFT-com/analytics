@@ -130,3 +130,14 @@ func (s *Server) MarketplacesByChain(chainID string) ([]*api.Marketplace, error)
 
 	return marketplaces, nil
 }
+
+// MarketplaceChains returns a list of chains that collections listed on a marketplace reside on.
+func (s *Server) MarketplaceChains(marketplaceID string) ([]*api.Chain, error) {
+
+	chains, err := s.storage.MarketplaceChains(marketplaceID)
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve chains: %w", err)
+	}
+
+	return chains, nil
+}

@@ -70,3 +70,25 @@ func (s *Storage) MarketplacesByChain(chainID string) ([]*api.Marketplace, error
 
 	return marketplaces, nil
 }
+
+// MarketplaceChains retrieves all chains that the Marketplace supports.
+func (s *Storage) MarketplaceChains(marketplaceID string) ([]*api.Chain, error) {
+
+	var chains []*api.Chain
+
+	selection := s.db.
+		Select("DISTINCT c.chain_id").
+		Table("marketplace_collections mc").
+		Joins("INNER JOIN collection c ON mc.collection_id = c.id").
+		Where("mc.marketplace_id = ?", marketplaceID)
+
+	err := s.db.
+		Where("id IN (?)", selection).
+		Find(&chains).
+		Error
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve chains: %w", err)
+	}
+
+	return chains, nil
+}

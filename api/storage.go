@@ -17,6 +17,7 @@ type Storage interface {
 	CollectionsByChain(chainID string) ([]*api.Collection, error)
 	CollectionNFTs(collectionID string) ([]*api.NFT, error)
 
+	MarketplaceChains(marketplaceID string) ([]*api.Chain, error)
 	MarketplacesByChain(chainID string) ([]*api.Marketplace, error)
 	MarketplacesForCollection(collectionID string) ([]*api.Marketplace, error)
 	MarketplaceCollectionsList(marketplaceID string) ([]*api.Collection, error)

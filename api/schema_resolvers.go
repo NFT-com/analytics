@@ -5,7 +5,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/NFT-com/indexer-api/graph/generated"
 	"github.com/NFT-com/indexer-api/models/api"
@@ -13,9 +12,7 @@ import (
 
 // FIXME: queries needed
 //
-// 6. - chains by marketplace
 // 8. - nfts query
-// 9. - collection by address
 // 10. - collections listing
 // -----------------------------
 // 1. - marketplaces by chain
@@ -23,7 +20,9 @@ import (
 // 3. - chain by id
 // 4. - marketplaces by collection
 // 5. - nfts by collection
+// 6. - chains by marketplace
 // 7. - nft by token ID
+// 9. - collection by address
 //
 
 func (r *chainServer) Marketplaces(ctx context.Context, obj *api.Chain) ([]*api.Marketplace, error) {
@@ -48,7 +47,7 @@ func (r *collectionServer) Nfts(ctx context.Context, obj *api.Collection) ([]*ap
 }
 
 func (r *marketplaceServer) Chains(ctx context.Context, obj *api.Marketplace) ([]*api.Chain, error) {
-	return nil, fmt.Errorf("TBD: not implemented")
+	return r.Server.MarketplaceChains(obj.ID)
 }
 
 func (r *marketplaceServer) Collections(ctx context.Context, obj *api.Marketplace) ([]*api.Collection, error) {
