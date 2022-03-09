@@ -42,3 +42,19 @@ func (s *Storage) CollectionNFTs(collectionID string) ([]*api.NFT, error) {
 	return nfts, nil
 
 }
+
+// Retrieve a list of Cllections on a specified Chain.
+func (s *Storage) CollectionsByChain(chainID string) ([]*api.Collection, error) {
+
+	var collections []*api.Collection
+	err := s.db.Where(api.Collection{
+		ChainID: chainID,
+	}).
+		Find(&collections).
+		Error
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve collections: %W", err)
+	}
+
+	return collections, nil
+}

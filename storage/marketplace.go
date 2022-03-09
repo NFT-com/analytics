@@ -45,3 +45,28 @@ func (s *Storage) MarketplaceCollectionsList(marketplaceID string) ([]*api.Colle
 
 	return collections, nil
 }
+
+// Retrieve a list of Marketplaces on a specified Chain.
+func (s *Storage) MarketplacesByChain(chainID string) ([]*api.Marketplace, error) {
+
+	// FIXME: Does it make a difference to use `Table("marketplace m")` vs `Table("collection c")` ?
+	// If not, make it uniform.
+
+	var marketplaces []*api.Marketplace
+
+	// FIXME: Suspect using IN would be faster here.
+
+	err := s.db.
+		Table("marketplace m").
+		Select("DISTINCT m.*").
+		Joins("INNER JOIN marketplace_collections mc ON m.id = mc.marketplace_id").
+		Joins("INNER JOIN collection c ON mc.collection_id = c.id").
+		Where("c.chain_id = ?", chainID).
+		Find(&marketplaces).
+		Error
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve marketplaces: %w", err)
+	}
+
+	return marketplaces, nil
+}

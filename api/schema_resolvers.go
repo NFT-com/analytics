@@ -13,21 +13,21 @@ import (
 
 // FIXME: queries needed
 //
-// 1. - marketplaces by chain
-// 4. - marketplaces by collection
 // 6. - chains by marketplace
 // 7. - nft by token ID
 // 8. - nfts query
 // 9. - collection by address
 // 10. - collections listing
 // -----------------------------
+// 1. - marketplaces by chain
 // 2. - collections by chain
 // 3. - chain by id
+// 4. - marketplaces by collection
 // 5. - nfts by collection
 //
 
 func (r *chainServer) Marketplaces(ctx context.Context, obj *api.Chain) ([]*api.Marketplace, error) {
-	return nil, fmt.Errorf("TBD: not implemented")
+	return r.Server.MarketplacesByChain(obj.ID)
 }
 
 func (r *chainServer) Collections(ctx context.Context, obj *api.Chain) ([]*api.Collection, error) {
