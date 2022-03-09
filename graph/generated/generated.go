@@ -35,6 +35,9 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Chain() ChainResolver
+	Collection() CollectionResolver
+	Marketplace() MarketplaceResolver
 	NFT() NFTResolver
 	Query() QueryResolver
 }
@@ -88,6 +91,19 @@ type ComplexityRoot struct {
 	}
 }
 
+type ChainResolver interface {
+	Marketplaces(ctx context.Context, obj *api.Chain) ([]*api.Marketplace, error)
+	Collections(ctx context.Context, obj *api.Chain) ([]*api.Collection, error)
+}
+type CollectionResolver interface {
+	Chain(ctx context.Context, obj *api.Collection) (*api.Chain, error)
+	Marketplaces(ctx context.Context, obj *api.Collection) ([]*api.Marketplace, error)
+	Nfts(ctx context.Context, obj *api.Collection) ([]*api.NFT, error)
+}
+type MarketplaceResolver interface {
+	Chains(ctx context.Context, obj *api.Marketplace) ([]*api.Chain, error)
+	Collections(ctx context.Context, obj *api.Marketplace) ([]*api.Collection, error)
+}
 type NFTResolver interface {
 	Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error)
 }
@@ -1070,14 +1086,14 @@ func (ec *executionContext) _Chain_marketplaces(ctx context.Context, field graph
 		Object:     "Chain",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Marketplaces, nil
+		return ec.resolvers.Chain().Marketplaces(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1102,14 +1118,14 @@ func (ec *executionContext) _Chain_collections(ctx context.Context, field graphq
 		Object:     "Chain",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Collections, nil
+		return ec.resolvers.Chain().Collections(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1274,14 +1290,14 @@ func (ec *executionContext) _Collection_chain(ctx context.Context, field graphql
 		Object:     "Collection",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Chain, nil
+		return ec.resolvers.Collection().Chain(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1309,14 +1325,14 @@ func (ec *executionContext) _Collection_marketplaces(ctx context.Context, field 
 		Object:     "Collection",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Marketplaces, nil
+		return ec.resolvers.Collection().Marketplaces(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1341,14 +1357,14 @@ func (ec *executionContext) _Collection_nfts(ctx context.Context, field graphql.
 		Object:     "Collection",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Nfts, nil
+		return ec.resolvers.Collection().Nfts(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1478,14 +1494,14 @@ func (ec *executionContext) _Marketplace_chains(ctx context.Context, field graph
 		Object:     "Marketplace",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Chains, nil
+		return ec.resolvers.Marketplace().Chains(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1513,14 +1529,14 @@ func (ec *executionContext) _Marketplace_collections(ctx context.Context, field 
 		Object:     "Marketplace",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Collections, nil
+		return ec.resolvers.Marketplace().Collections(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3323,7 +3339,7 @@ func (ec *executionContext) _Chain(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -3333,7 +3349,7 @@ func (ec *executionContext) _Chain(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "description":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -3343,22 +3359,42 @@ func (ec *executionContext) _Chain(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "marketplaces":
+			field := field
+
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Chain_marketplaces(ctx, field, obj)
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Chain_marketplaces(ctx, field, obj)
+				return res
 			}
 
-			out.Values[i] = innerFunc(ctx)
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
 
+			})
 		case "collections":
+			field := field
+
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Chain_collections(ctx, field, obj)
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Chain_collections(ctx, field, obj)
+				return res
 			}
 
-			out.Values[i] = innerFunc(ctx)
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
 
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3388,7 +3424,7 @@ func (ec *executionContext) _Collection(ctx context.Context, sel ast.SelectionSe
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -3398,7 +3434,7 @@ func (ec *executionContext) _Collection(ctx context.Context, sel ast.SelectionSe
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "description":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -3408,7 +3444,7 @@ func (ec *executionContext) _Collection(ctx context.Context, sel ast.SelectionSe
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "address":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -3418,32 +3454,62 @@ func (ec *executionContext) _Collection(ctx context.Context, sel ast.SelectionSe
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "chain":
+			field := field
+
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Collection_chain(ctx, field, obj)
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Collection_chain(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
 			}
 
-			out.Values[i] = innerFunc(ctx)
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
+			})
 		case "marketplaces":
+			field := field
+
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Collection_marketplaces(ctx, field, obj)
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Collection_marketplaces(ctx, field, obj)
+				return res
 			}
 
-			out.Values[i] = innerFunc(ctx)
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
 
+			})
 		case "nfts":
+			field := field
+
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Collection_nfts(ctx, field, obj)
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Collection_nfts(ctx, field, obj)
+				return res
 			}
 
-			out.Values[i] = innerFunc(ctx)
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
 
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3473,7 +3539,7 @@ func (ec *executionContext) _Marketplace(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -3483,7 +3549,7 @@ func (ec *executionContext) _Marketplace(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "description":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -3493,25 +3559,45 @@ func (ec *executionContext) _Marketplace(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "chains":
+			field := field
+
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Marketplace_chains(ctx, field, obj)
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Marketplace_chains(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
 			}
 
-			out.Values[i] = innerFunc(ctx)
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
+			})
 		case "collections":
+			field := field
+
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Marketplace_collections(ctx, field, obj)
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Marketplace_collections(ctx, field, obj)
+				return res
 			}
 
-			out.Values[i] = innerFunc(ctx)
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
 
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4229,6 +4315,10 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNChain2githubᚗcomᚋNFTᚑcomᚋindexerᚑapiᚋmodelsᚋapiᚐChain(ctx context.Context, sel ast.SelectionSet, v api.Chain) graphql.Marshaler {
+	return ec._Chain(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNChain2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋindexerᚑapiᚋmodelsᚋapiᚐChainᚄ(ctx context.Context, sel ast.SelectionSet, v []*api.Chain) graphql.Marshaler {

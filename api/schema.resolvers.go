@@ -11,11 +11,37 @@ import (
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
-// FIXME: Fix this god-awful name - nFTServer
+func (r *chainServer) Marketplaces(ctx context.Context, obj *api.Chain) ([]*api.Marketplace, error) {
+	return nil, fmt.Errorf("TBD: not implemented")
+}
+
+func (r *chainServer) Collections(ctx context.Context, obj *api.Chain) ([]*api.Collection, error) {
+	return nil, fmt.Errorf("TBD: not implemented")
+}
+
+func (r *collectionServer) Chain(ctx context.Context, obj *api.Collection) (*api.Chain, error) {
+	return nil, fmt.Errorf("TBD: not implemented")
+}
+
+func (r *collectionServer) Marketplaces(ctx context.Context, obj *api.Collection) ([]*api.Marketplace, error) {
+	return nil, fmt.Errorf("TBD: not implemented")
+}
+
+func (r *collectionServer) Nfts(ctx context.Context, obj *api.Collection) ([]*api.NFT, error) {
+	return nil, fmt.Errorf("TBD: not implemented")
+}
+
+func (r *marketplaceServer) Chains(ctx context.Context, obj *api.Marketplace) ([]*api.Chain, error) {
+	return nil, fmt.Errorf("TBD: not implemented")
+}
+
+func (r *marketplaceServer) Collections(ctx context.Context, obj *api.Marketplace) ([]*api.Collection, error) {
+	return nil, fmt.Errorf("TBD: not implemented")
+}
 
 func (r *nFTServer) Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error) {
 
-	collection, err := r.Server.Collection(obj.CollectionID)
+	collection, err := r.Server.GetCollection(obj.CollectionID)
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve collection data: %w", err)
 	}
@@ -36,7 +62,7 @@ func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *strin
 }
 
 func (r *queryServer) Collection(ctx context.Context, id string) (*api.Collection, error) {
-	return r.Server.Collection(id)
+	return r.Server.GetCollection(id)
 }
 
 func (r *queryServer) CollectionByAddress(ctx context.Context, chainID string, contract string) (*api.Collection, error) {
@@ -47,11 +73,23 @@ func (r *queryServer) Collections(ctx context.Context, chain *string, orderBy *a
 	return r.Server.Collections()
 }
 
+// Chain returns generated.ChainResolver implementation.
+func (r *Server) Chain() generated.ChainResolver { return &chainServer{r} }
+
+// Collection returns generated.CollectionResolver implementation.
+func (r *Server) Collection() generated.CollectionResolver { return &collectionServer{r} }
+
+// Marketplace returns generated.MarketplaceResolver implementation.
+func (r *Server) Marketplace() generated.MarketplaceResolver { return &marketplaceServer{r} }
+
 // NFT returns generated.NFTResolver implementation.
 func (r *Server) NFT() generated.NFTResolver { return &nFTServer{r} }
 
 // Query returns generated.QueryResolver implementation.
 func (r *Server) Query() generated.QueryResolver { return &queryServer{r} }
 
+type chainServer struct{ *Server }
+type collectionServer struct{ *Server }
+type marketplaceServer struct{ *Server }
 type nFTServer struct{ *Server }
 type queryServer struct{ *Server }

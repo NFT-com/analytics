@@ -26,7 +26,7 @@ func (s *Server) Nfts() ([]*api.NFT, error) {
 	return nfts, nil
 }
 
-func (s *Server) Collection(id string) (*api.Collection, error) {
+func (s *Server) GetCollection(id string) (*api.Collection, error) {
 
 	collection, err := s.storage.Collection(id)
 	if err != nil {
