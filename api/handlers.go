@@ -16,6 +16,16 @@ func (s *Server) GetNFT(id string) (*api.NFT, error) {
 	return nft, nil
 }
 
+func (s *Server) GetNFTByTokenID(chainID string, contract string, tokenID string) (*api.NFT, error) {
+
+	nft, err := s.storage.NFTByTokenID(chainID, contract, tokenID)
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve nft: %w", err)
+	}
+
+	return nft, nil
+}
+
 func (s *Server) Nfts() ([]*api.NFT, error) {
 
 	nfts, err := s.storage.NFTs()

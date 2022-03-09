@@ -14,7 +14,6 @@ import (
 // FIXME: queries needed
 //
 // 6. - chains by marketplace
-// 7. - nft by token ID
 // 8. - nfts query
 // 9. - collection by address
 // 10. - collections listing
@@ -24,6 +23,7 @@ import (
 // 3. - chain by id
 // 4. - marketplaces by collection
 // 5. - nfts by collection
+// 7. - nft by token ID
 //
 
 func (r *chainServer) Marketplaces(ctx context.Context, obj *api.Chain) ([]*api.Marketplace, error) {
@@ -64,7 +64,7 @@ func (r *queryServer) Nft(ctx context.Context, id string) (*api.NFT, error) {
 }
 
 func (r *queryServer) NftByTokenID(ctx context.Context, chainID string, contract string, tokenID string) (*api.NFT, error) {
-	return nil, fmt.Errorf("TBD: not implemented")
+	return r.Server.GetNFTByTokenID(chainID, contract, tokenID)
 }
 
 func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *string, rarityMin *float64, orderBy *api.NFTOrder) ([]*api.NFT, error) {
