@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/NFT-com/indexer-api/models/api"
@@ -16,6 +17,28 @@ func (s *Storage) Collection(id string) (*api.Collection, error) {
 	err := s.db.First(&collection).Error
 	if err != nil {
 		// FIXME: err not found is a separate thing
+		return nil, fmt.Errorf("could not retrieve collection: %w", err)
+	}
+
+	return &collection, nil
+}
+
+// CollectionByAddresss returns a single collection based on the chain ID and the contract addresss.
+func (s *Storage) CollectionByAddress(chainID string, contract string) (*api.Collection, error) {
+
+	if chainID == "" || contract == "" {
+		return nil, errors.New("mandatory fields missing")
+	}
+
+	var collection api.Collection
+	err := s.db.
+		Where(api.Collection{
+			ChainID: chainID,
+			Address: contract,
+		}).
+		First(&collection).
+		Error
+	if err != nil {
 		return nil, fmt.Errorf("could not retrieve collection: %w", err)
 	}
 

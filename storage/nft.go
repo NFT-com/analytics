@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/NFT-com/indexer-api/models/api"
@@ -26,7 +27,7 @@ func (s *Storage) NFT(id string) (*api.NFT, error) {
 func (s *Storage) NFTByTokenID(chainID string, contract string, tokenID string) (*api.NFT, error) {
 
 	if chainID == "" || contract == "" || tokenID == "" {
-		return nil, fmt.Errorf("mandatory fields missing")
+		return nil, errors.New("mandatory fields missing")
 	}
 
 	var nft api.NFT

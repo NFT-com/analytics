@@ -46,6 +46,16 @@ func (s *Server) GetCollection(id string) (*api.Collection, error) {
 	return collection, nil
 }
 
+func (s *Server) GetCollectionByAddress(chainID string, contract string) (*api.Collection, error) {
+
+	collection, err := s.storage.CollectionByAddress(chainID, contract)
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve collection: %w", err)
+	}
+
+	return collection, nil
+}
+
 func (s *Server) Collections() ([]*api.Collection, error) {
 
 	collections, err := s.storage.Collections()

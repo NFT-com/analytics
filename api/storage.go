@@ -12,6 +12,7 @@ type Storage interface {
 	NFTs() ([]*api.NFT, error)
 
 	Collection(id string) (*api.Collection, error)
+	CollectionByAddress(chainID string, contract string) (*api.Collection, error)
 	Collections() ([]*api.Collection, error)
 	CollectionsByChain(chainID string) ([]*api.Collection, error)
 	CollectionNFTs(collectionID string) ([]*api.NFT, error)

@@ -76,7 +76,7 @@ func (r *queryServer) Collection(ctx context.Context, id string) (*api.Collectio
 }
 
 func (r *queryServer) CollectionByAddress(ctx context.Context, chainID string, contract string) (*api.Collection, error) {
-	return nil, fmt.Errorf("TBD: not implemented")
+	return r.Server.GetCollectionByAddress(chainID, contract)
 }
 
 func (r *queryServer) Collections(ctx context.Context, chain *string, orderBy *api.CollectionOrder) ([]*api.Collection, error) {
