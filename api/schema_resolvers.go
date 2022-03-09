@@ -39,7 +39,8 @@ func (r *collectionServer) Chain(ctx context.Context, obj *api.Collection) (*api
 }
 
 func (r *collectionServer) Marketplaces(ctx context.Context, obj *api.Collection) ([]*api.Marketplace, error) {
-	return nil, fmt.Errorf("TBD: not implemented")
+	// FIXME: think of better naming
+	return r.Server.CollectionsListings(obj.ID)
 }
 
 func (r *collectionServer) Nfts(ctx context.Context, obj *api.Collection) ([]*api.NFT, error) {
