@@ -75,7 +75,7 @@ func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *strin
 	case api.NFTOrderFieldValue:
 		return nil, errors.New("TBD: sorting mode not supported")
 
-	// supported modes
+	// supported sorting mode(s)
 	case api.NFTOrderFieldCreationTime:
 	case api.NFTOrderFieldRarity:
 	}
@@ -94,7 +94,18 @@ func (r *queryServer) CollectionByAddress(ctx context.Context, chainID string, c
 }
 
 func (r *queryServer) Collections(ctx context.Context, chain *string, orderBy *api.CollectionOrder) ([]*api.Collection, error) {
-	return r.Server.Collections()
+
+	switch orderBy.Field {
+
+	// FIXME: remove when all modes become supported
+	default:
+		return nil, errors.New("TBD: sorting mode not supported")
+
+	// supported sorting mode(s)
+	case api.CollectionOrderFieldCreationTime:
+	}
+
+	return r.Server.Collections(chain, *orderBy)
 }
 
 // Chain returns generated.ChainResolver implementation.

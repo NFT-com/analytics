@@ -56,9 +56,9 @@ func (s *Server) GetCollectionByAddress(chainID string, contract string) (*api.C
 	return collection, nil
 }
 
-func (s *Server) Collections() ([]*api.Collection, error) {
+func (s *Server) Collections(chain *string, orderBy api.CollectionOrder) ([]*api.Collection, error) {
 
-	collections, err := s.storage.Collections()
+	collections, err := s.storage.Collections(chain, orderBy)
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve collections: %w", err)
 	}

@@ -13,7 +13,7 @@ type Storage interface {
 
 	Collection(id string) (*api.Collection, error)
 	CollectionByAddress(chainID string, contract string) (*api.Collection, error)
-	Collections() ([]*api.Collection, error)
+	Collections(chain *string, orderBy api.CollectionOrder) ([]*api.Collection, error)
 	CollectionsByChain(chainID string) ([]*api.Collection, error)
 	CollectionNFTs(collectionID string) ([]*api.NFT, error)
 
