@@ -21,7 +21,6 @@ import (
 )
 
 const (
-	// FIXME: Specify the default database
 	defaultDatabase       = "host=localhost user=nft-user password=nft-test-pass dbname=nft-com port=5432 sslmode=disable"
 	defaultPlaygroundPath = "/"
 )

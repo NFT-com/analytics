@@ -13,7 +13,6 @@ import (
 
 // FIXME: queries needed
 //
-// 10. - collections listing
 // -----------------------------
 // 1. - marketplaces by chain
 // 2. - collections by chain
@@ -24,6 +23,7 @@ import (
 // 7. - nft by token ID
 // 8. - nfts query
 // 9. - collection by address
+// 10. - collections listing
 //
 
 func (r *chainServer) Marketplaces(ctx context.Context, obj *api.Chain) ([]*api.Marketplace, error) {
