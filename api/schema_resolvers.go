@@ -5,6 +5,7 @@ package api
 
 import (
 	"context"
+	"errors"
 
 	"github.com/NFT-com/indexer-api/graph/generated"
 	"github.com/NFT-com/indexer-api/models/api"
@@ -12,7 +13,6 @@ import (
 
 // FIXME: queries needed
 //
-// 8. - nfts query
 // 10. - collections listing
 // -----------------------------
 // 1. - marketplaces by chain
@@ -22,6 +22,7 @@ import (
 // 5. - nfts by collection
 // 6. - chains by marketplace
 // 7. - nft by token ID
+// 8. - nfts query
 // 9. - collection by address
 //
 
@@ -67,7 +68,21 @@ func (r *queryServer) NftByTokenID(ctx context.Context, chainID string, contract
 }
 
 func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *string, rarityMin *float64, orderBy *api.NFTOrder) ([]*api.NFT, error) {
-	return r.Server.Nfts()
+
+	// FIXME: remove when all modes become supported
+	switch orderBy.Field {
+
+	case api.NFTOrderFieldValue:
+		return nil, errors.New("TBD: sorting mode not supported")
+
+	// supported modes
+	case api.NFTOrderFieldCreationTime:
+	case api.NFTOrderFieldRarity:
+	}
+
+	// NOTE: Ordering parameter is a pointer but gets initialized to the default value by the middleware.
+
+	return r.Server.Nfts(owner, collection, rarityMin, *orderBy)
 }
 
 func (r *queryServer) Collection(ctx context.Context, id string) (*api.Collection, error) {

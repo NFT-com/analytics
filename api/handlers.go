@@ -26,9 +26,9 @@ func (s *Server) GetNFTByTokenID(chainID string, contract string, tokenID string
 	return nft, nil
 }
 
-func (s *Server) Nfts() ([]*api.NFT, error) {
+func (s *Server) Nfts(owner *string, collection *string, rarityMin *float64, orderBy api.NFTOrder) ([]*api.NFT, error) {
 
-	nfts, err := s.storage.NFTs()
+	nfts, err := s.storage.NFTs(owner, collection, rarityMin, orderBy)
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve nfts: %w", err)
 	}
