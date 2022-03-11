@@ -11,6 +11,10 @@ import (
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
+func (r *queryServer) Nft(ctx context.Context, id string) (*api.NFT, error) {
+	return r.Server.GetNFT(id)
+}
+
 func (r *chainServer) Marketplaces(ctx context.Context, obj *api.Chain) ([]*api.Marketplace, error) {
 	return r.Server.MarketplacesByChain(obj.ID)
 }
@@ -42,10 +46,6 @@ func (r *marketplaceServer) Collections(ctx context.Context, obj *api.Marketplac
 
 func (r *nFTServer) Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error) {
 	return r.Server.GetCollection(obj.CollectionID)
-}
-
-func (r *queryServer) Nft(ctx context.Context, id string) (*api.NFT, error) {
-	return r.Server.GetNFT(id)
 }
 
 func (r *queryServer) NftByTokenID(ctx context.Context, chainID string, contract string, tokenID string) (*api.NFT, error) {
