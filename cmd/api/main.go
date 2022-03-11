@@ -1,18 +1,23 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
+	"os/signal"
 	"strings"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog"
 	"github.com/spf13/pflag"
 	gormzerolog "github.com/wei840222/gorm-zerolog"
+	"github.com/ziflex/lecho/v2"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
@@ -36,6 +41,10 @@ func main() {
 }
 
 func run() int {
+
+	// Signal catching for clean shutdown.
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt)
 
 	var (
 		flagBind            string
@@ -74,9 +83,9 @@ func run() int {
 	}
 
 	storage := storage.New(db)
-	server := api.NewServer(storage)
+	apiServer := api.NewServer(storage)
 	cfg := generated.Config{
-		Resolvers: server,
+		Resolvers: apiServer,
 	}
 
 	schema := generated.NewExecutableSchema(cfg)
@@ -89,22 +98,75 @@ func run() int {
 		gqlServer.Use(extension.FixedComplexityLimit(flagComplexityLimit))
 	}
 
-	// FIXME: Remove this in a final version
-	http.Handle(flagPlayground, playground.Handler("GraphQL playground", "/graphql"))
-	http.Handle("/graphql", gqlServer)
+	// Create a playground handler.
+	playground := playground.Handler("GraphQL playground", "/graphql")
 
+	// Initialize Echo Web Server.
+	server := echo.New()
+	server.HideBanner = true
+	server.HidePort = true
+
+	// Inject zerolog logger into echo.
+	slog := lecho.From(log)
+	server.Logger = lecho.From(log)
+	server.Use(lecho.Middleware(lecho.Config{Logger: slog}))
+
+	// Initialize server endpoints.
+	server.GET(flagPlayground, echo.WrapHandler(playground))
+	server.POST("/graphql", echoHandler(gqlServer))
+
+	// Log the playground URL.
 	playgroundURL := formatPlaygroundURL(flagBind, flagPlayground)
 	log.Info().Str("address", playgroundURL).Msg("GraphQL playground URL")
 
-	err = http.ListenAndServe(flagBind, nil)
+	// This section launches the main executing components in their own
+	// goroutine, so they can run concurrently. Afterwards, we wait for an
+	// interrupt signal in order to proceed with the next section.
+	done := make(chan struct{})
+	failed := make(chan struct{})
+	go func() {
+		log.Info().Msg("analytics server starting")
+		err := server.Start(flagBind)
+		if err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Warn().Err(err).Msg("analytics server failed")
+			close(failed)
+		} else {
+			close(done)
+		}
+		log.Info().Msg("analytics server stopped")
+	}()
+
+	select {
+	case <-sig:
+		log.Info().Msg("analytics server stopping")
+	case <-done:
+		log.Info().Msg("analytics server done")
+	case <-failed:
+		log.Warn().Msg("analytics server aborted")
+	}
+
+	go func() {
+		<-sig
+		log.Warn().Msg("forcing exit")
+		os.Exit(1)
+	}()
+
+	// The following code starts a shut down with a certain timeout and makes
+	// sure that the main executing components are shutting down within the
+	// allocated shutdown time. Otherwise, we will force the shutdown and log
+	// an error. We then wait for shutdown on each component to complete.
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	err = server.Shutdown(ctx)
 	if err != nil {
-		log.Error().Err(err).Msg("could not start server")
+		log.Error().Err(err).Msg("could not shut down analytics server")
 		return failure
 	}
 
 	return success
 }
 
+// Create a formatted link for the GraphQL Playground URL.
 func formatPlaygroundURL(address string, path string) string {
 
 	path = strings.TrimPrefix(path, "/")
@@ -114,4 +176,13 @@ func formatPlaygroundURL(address string, path string) string {
 	}
 
 	return fmt.Sprintf("http://%s/%s", address, path)
+}
+
+// Create an echo.HandlerFunc for the GraphQL server.
+func echoHandler(h *handler.Server) echo.HandlerFunc {
+
+	return func(ctx echo.Context) error {
+		h.ServeHTTP(ctx.Response().Writer, ctx.Request())
+		return nil
+	}
 }
