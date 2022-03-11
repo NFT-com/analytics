@@ -27,8 +27,9 @@ import (
 )
 
 const (
-	defaultDatabase       = "host=localhost user=nft-user password=nft-test-pass dbname=nft-com port=5432 sslmode=disable"
-	defaultPlaygroundPath = "/"
+	defaultDatabase        = "host=localhost user=nft-user password=nft-test-pass dbname=nft-com port=5432 sslmode=disable"
+	defaultPlaygroundPath  = "/"
+	defaultGraphQLEndpoint = "/graphql"
 )
 
 const (
@@ -47,11 +48,12 @@ func run() int {
 	signal.Notify(sig, os.Interrupt)
 
 	var (
-		flagBind            string
-		flagPlayground      string
-		flagDatabase        string
-		flagLogLevel        string
-		flagComplexityLimit int
+		flagBind             string
+		flagPlayground       string
+		flagDatabase         string
+		flagLogLevel         string
+		flagComplexityLimit  int
+		flagEnablePlayground bool
 	)
 
 	pflag.StringVarP(&flagBind, "bind", "b", ":8080", "bind address for serving requests")
@@ -59,6 +61,7 @@ func run() int {
 	pflag.StringVarP(&flagDatabase, "database", "d", defaultDatabase, "database address")
 	pflag.StringVarP(&flagLogLevel, "log-level", "l", "info", "log level")
 	pflag.IntVar(&flagComplexityLimit, "query-complexity", 0, "GraphQL query complexity limit")
+	pflag.BoolVar(&flagEnablePlayground, "enable-playground", false, "Enable GraphQL playground")
 
 	pflag.Parse()
 
@@ -98,9 +101,6 @@ func run() int {
 		gqlServer.Use(extension.FixedComplexityLimit(flagComplexityLimit))
 	}
 
-	// Create a playground handler.
-	playground := playground.Handler("GraphQL playground", "/graphql")
-
 	// Initialize Echo Web Server.
 	server := echo.New()
 	server.HideBanner = true
@@ -112,12 +112,21 @@ func run() int {
 	server.Use(lecho.Middleware(lecho.Config{Logger: slog}))
 
 	// Initialize server endpoints.
-	server.GET(flagPlayground, echo.WrapHandler(playground))
-	server.POST("/graphql", echoHandler(gqlServer))
+	server.POST(defaultGraphQLEndpoint, echoHandler(gqlServer))
 
-	// Log the playground URL.
-	playgroundURL := formatPlaygroundURL(flagBind, flagPlayground)
-	log.Info().Str("address", playgroundURL).Msg("GraphQL playground URL")
+	// If GraphQL Playground is enabled, initialize the handler.
+	if flagEnablePlayground {
+
+		// Create a playground handler.
+		playground := playground.Handler("GraphQL playground", defaultGraphQLEndpoint)
+
+		// Set the echo handler for the playground.
+		server.GET(flagPlayground, echo.WrapHandler(playground))
+
+		// Log the playground URL.
+		playgroundURL := formatPlaygroundURL(flagBind, flagPlayground)
+		log.Info().Str("address", playgroundURL).Msg("GraphQL playground URL")
+	}
 
 	// This section launches the main executing components in their own
 	// goroutine, so they can run concurrently. Afterwards, we wait for an
