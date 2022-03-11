@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/rs/zerolog"
 	"github.com/spf13/pflag"
@@ -37,16 +38,18 @@ func main() {
 func run() int {
 
 	var (
-		flagBind       string
-		flagPlayground string
-		flagDatabase   string
-		flagLogLevel   string
+		flagBind            string
+		flagPlayground      string
+		flagDatabase        string
+		flagLogLevel        string
+		flagComplexityLimit int
 	)
 
 	pflag.StringVarP(&flagBind, "bind", "b", ":8080", "bind address for serving requests")
 	pflag.StringVarP(&flagPlayground, "playground-path", "p", defaultPlaygroundPath, "path for GraphQL playground")
 	pflag.StringVarP(&flagDatabase, "database", "d", defaultDatabase, "database address")
 	pflag.StringVarP(&flagLogLevel, "log-level", "l", "info", "log level")
+	pflag.IntVar(&flagComplexityLimit, "query-complexity", 0, "GraphQL query complexity limit")
 
 	pflag.Parse()
 
@@ -75,8 +78,16 @@ func run() int {
 	cfg := generated.Config{
 		Resolvers: server,
 	}
+
 	schema := generated.NewExecutableSchema(cfg)
 	gqlServer := handler.NewDefaultServer(schema)
+
+	// Set query complexity limit - each field in a selection set and
+	// each nesting level adds the value of one to the overall query
+	// complexity.
+	if flagComplexityLimit > 0 {
+		gqlServer.Use(extension.FixedComplexityLimit(flagComplexityLimit))
+	}
 
 	// FIXME: Remove this in a final version
 	http.Handle(flagPlayground, playground.Handler("GraphQL playground", "/graphql"))
