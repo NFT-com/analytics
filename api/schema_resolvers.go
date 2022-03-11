@@ -60,6 +60,18 @@ func (r *nFTServer) Collection(ctx context.Context, obj *api.NFT) (*api.Collecti
 	return r.Server.GetCollection(obj.CollectionID)
 }
 
+func (r *queryServer) Chain(ctx context.Context, id string) (*api.Chain, error) {
+	// Chain implements the `chain` GraphQL query
+
+	return r.Server.GetChain(id)
+}
+
+func (r *queryServer) Chains(ctx context.Context) ([]*api.Chain, error) {
+	// Chains implements the `chains` GraphQL query.
+
+	return r.Server.Chains()
+}
+
 func (r *queryServer) Nft(ctx context.Context, id string) (*api.NFT, error) {
 	// Nft implements the `nft` GraphQL query.
 

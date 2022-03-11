@@ -26,8 +26,8 @@ func (s *Storage) MarketplacesForCollection(collectionID string) ([]*api.Marketp
 	return marketplaces, nil
 }
 
-// MarketplaceCollectionsList returns all Collections associated with the specified Marketplace.
-func (s *Storage) MarketplaceCollectionsList(marketplaceID string) ([]*api.Collection, error) {
+// MarketplaceCollections returns all Collections associated with the specified Marketplace.
+func (s *Storage) MarketplaceCollections(marketplaceID string) ([]*api.Collection, error) {
 
 	var collections []*api.Collection
 

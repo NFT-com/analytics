@@ -250,6 +250,22 @@ enum NFTOrderField {
 The query root of NFT.com GraphQL interface.
 """
 type Query {
+
+    """
+    Get a single chain.
+    """
+    chain(
+        """
+        ID of the Chain.
+        """
+        id: ID!
+    ): Chain
+
+    """
+    List chains.
+    """
+    chains: [Chain!]
+
     """
     Get a single NFT.
     """

@@ -82,6 +82,8 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		Chain               func(childComplexity int, id string) int
+		Chains              func(childComplexity int) int
 		Collection          func(childComplexity int, id string) int
 		CollectionByAddress func(childComplexity int, chainID string, contract string) int
 		Collections         func(childComplexity int, chain *string, orderBy *api.CollectionOrder) int
@@ -108,6 +110,8 @@ type NFTResolver interface {
 	Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error)
 }
 type QueryResolver interface {
+	Chain(ctx context.Context, id string) (*api.Chain, error)
+	Chains(ctx context.Context) ([]*api.Chain, error)
 	Nft(ctx context.Context, id string) (*api.NFT, error)
 	NftByTokenID(ctx context.Context, chainID string, contract string, tokenID string) (*api.NFT, error)
 	Nfts(ctx context.Context, owner *string, collection *string, rarityMin *float64, orderBy *api.NFTOrder) ([]*api.NFT, error)
@@ -291,6 +295,25 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.NFT.URI(childComplexity), true
+
+	case "Query.chain":
+		if e.complexity.Query.Chain == nil {
+			break
+		}
+
+		args, err := ec.field_Query_chain_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Chain(childComplexity, args["id"].(string)), true
+
+	case "Query.chains":
+		if e.complexity.Query.Chains == nil {
+			break
+		}
+
+		return e.complexity.Query.Chains(childComplexity), true
 
 	case "Query.collection":
 		if e.complexity.Query.Collection == nil {
@@ -661,6 +684,22 @@ enum NFTOrderField {
 The query root of NFT.com GraphQL interface.
 """
 type Query {
+
+    """
+    Get a single chain.
+    """
+    chain(
+        """
+        ID of the Chain.
+        """
+        id: ID!
+    ): Chain
+
+    """
+    List chains.
+    """
+    chains: [Chain!]
+
     """
     Get a single NFT.
     """
@@ -776,6 +815,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_chain_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -1758,6 +1812,77 @@ func (ec *executionContext) _NFT_collection(ctx context.Context, field graphql.C
 	res := resTmp.(*api.Collection)
 	fc.Result = res
 	return ec.marshalNCollection2ᚖgithubᚗcomᚋNFTᚑcomᚋindexerᚑapiᚋmodelsᚋapiᚐCollection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_chain(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_chain_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Chain(rctx, args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*api.Chain)
+	fc.Result = res
+	return ec.marshalOChain2ᚖgithubᚗcomᚋNFTᚑcomᚋindexerᚑapiᚋmodelsᚋapiᚐChain(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_chains(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Chains(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*api.Chain)
+	fc.Result = res
+	return ec.marshalOChain2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋindexerᚑapiᚋmodelsᚋapiᚐChainᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_nft(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3719,6 +3844,46 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
+		case "chain":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_chain(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "chains":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_chains(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
 		case "nft":
 			field := field
 
@@ -4777,6 +4942,60 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOChain2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋindexerᚑapiᚋmodelsᚋapiᚐChainᚄ(ctx context.Context, sel ast.SelectionSet, v []*api.Chain) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNChain2ᚖgithubᚗcomᚋNFTᚑcomᚋindexerᚑapiᚋmodelsᚋapiᚐChain(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOChain2ᚖgithubᚗcomᚋNFTᚑcomᚋindexerᚑapiᚋmodelsᚋapiᚐChain(ctx context.Context, sel ast.SelectionSet, v *api.Chain) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Chain(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOCollection2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋindexerᚑapiᚋmodelsᚋapiᚐCollectionᚄ(ctx context.Context, sel ast.SelectionSet, v []*api.Collection) graphql.Marshaler {

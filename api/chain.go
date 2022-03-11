@@ -16,3 +16,14 @@ func (s *Server) GetChain(id string) (*api.Chain, error) {
 
 	return chain, nil
 }
+
+// Chains returns a list of all chains.
+func (s *Server) Chains() ([]*api.Chain, error) {
+
+	chains, err := s.storage.Chains()
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve chains: %w", err)
+	}
+
+	return chains, nil
+}

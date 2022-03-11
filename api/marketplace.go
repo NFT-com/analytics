@@ -9,7 +9,7 @@ import (
 // MarketplaceCollections returns a list of collections on a specified marketplace.
 func (s *Server) MarketplaceCollections(marketplaceID string) ([]*api.Collection, error) {
 
-	collections, err := s.storage.MarketplaceCollectionsList(marketplaceID)
+	collections, err := s.storage.MarketplaceCollections(marketplaceID)
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve collections on a marketplace: %w", err)
 	}
