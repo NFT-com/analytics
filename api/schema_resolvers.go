@@ -32,7 +32,6 @@ func (r *collectionServer) Chain(ctx context.Context, obj *api.Collection) (*api
 func (r *collectionServer) Marketplaces(ctx context.Context, obj *api.Collection) ([]*api.Marketplace, error) {
 	// Marketplace handles expanding the list of Marketplaces within a Collection object.
 
-	// FIXME: think of better naming
 	return r.Server.collectionsListings(obj.ID)
 }
 

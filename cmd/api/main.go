@@ -75,7 +75,6 @@ func run() int {
 	}
 	log = log.Level(level)
 
-	// FIXME: Quick choice for Gorm + zerolog, not a definite one.
 	dbCfg := gorm.Config{
 		Logger: gormzerolog.NewWithLogger(log),
 	}
@@ -93,8 +92,6 @@ func run() int {
 
 	schema := generated.NewExecutableSchema(cfg)
 	gqlServer := handler.NewDefaultServer(schema)
-
-	// FIXME: Investigate complexity limit for the `chain` and `chains` query alone
 
 	// Set query complexity limit - each field in a selection set and
 	// each nesting level adds the value of one to the overall query
