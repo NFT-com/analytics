@@ -12,10 +12,10 @@ func (s *Storage) MarketplacesForCollection(collectionID string) ([]*api.Marketp
 	var marketplaces []*api.Marketplace
 
 	err := s.db.
-		Table("collection c").
+		Table("marketplace m").
 		Select("m.*").
-		Joins("INNER JOIN marketplace_collections mc ON c.id = mc.collection_id").
-		Joins("INNER JOIN marketplace m ON mc.marketplace_id = m.id").
+		Joins("INNER JOIN marketplace_collections mc ON m.id = mc.marketplace_id").
+		Joins("INNER JOIN collection c ON mc.collection_id = c.id").
 		Where("c.id = ?", collectionID).
 		Find(&marketplaces).
 		Error
@@ -49,12 +49,7 @@ func (s *Storage) MarketplaceCollections(marketplaceID string) ([]*api.Collectio
 // Retrieve a list of Marketplaces on a specified Chain.
 func (s *Storage) MarketplacesByChain(chainID string) ([]*api.Marketplace, error) {
 
-	// FIXME: Does it make a difference to use `Table("marketplace m")` vs `Table("collection c")` ?
-	// If not, make it uniform.
-
 	var marketplaces []*api.Marketplace
-
-	// FIXME: Suspect using IN would be faster here.
 
 	err := s.db.
 		Table("marketplace m").
