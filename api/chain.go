@@ -1,8 +1,6 @@
 package api
 
 import (
-	"fmt"
-
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
@@ -11,7 +9,11 @@ func (s *Server) getChain(id string) (*api.Chain, error) {
 
 	chain, err := s.storage.Chain(id)
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve chain: %w", err)
+		s.log.Error().
+			Err(err).
+			Str("id", id).
+			Msg("could not retrieve chain")
+		return nil, errRetrieveChainFailed
 	}
 
 	return chain, nil
@@ -22,7 +24,10 @@ func (s *Server) chains() ([]*api.Chain, error) {
 
 	chains, err := s.storage.Chains()
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve chains: %w", err)
+		s.log.Error().
+			Err(err).
+			Msg("could not retrieve chains")
+		return nil, errRetrieveChainFailed
 	}
 
 	return chains, nil

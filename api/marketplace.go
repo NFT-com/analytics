@@ -1,8 +1,6 @@
 package api
 
 import (
-	"fmt"
-
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
@@ -11,7 +9,11 @@ func (s *Server) marketplaceCollections(marketplaceID string) ([]*api.Collection
 
 	collections, err := s.storage.MarketplaceCollections(marketplaceID)
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve collections on a marketplace: %w", err)
+		s.log.Error().
+			Err(err).
+			Str("marketplace", marketplaceID).
+			Msg("could not retrieve collections on a marketplace")
+		return nil, errRetrieveCollectionFailed
 	}
 
 	return collections, nil
@@ -22,7 +24,11 @@ func (s *Server) marketplacesByChain(chainID string) ([]*api.Marketplace, error)
 
 	marketplaces, err := s.storage.MarketplacesByChain(chainID)
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve marketplaces: %w", err)
+		s.log.Error().
+			Err(err).
+			Str("chain", chainID).
+			Msg("could not retrieve marketplaces for a chain")
+		return nil, errRetrieveMarketplaceFailed
 	}
 
 	return marketplaces, nil
@@ -33,7 +39,11 @@ func (s *Server) marketplaceChains(marketplaceID string) ([]*api.Chain, error) {
 
 	chains, err := s.storage.MarketplaceChains(marketplaceID)
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve chains: %w", err)
+		s.log.Error().
+			Err(err).
+			Str("marketplace", marketplaceID).
+			Msg("could not retrieve chains for a marketplace")
+		return nil, errRetrieveChainFailed
 	}
 
 	return chains, nil

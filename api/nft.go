@@ -1,8 +1,6 @@
 package api
 
 import (
-	"fmt"
-
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
@@ -11,7 +9,11 @@ func (s *Server) getNFT(id string) (*api.NFT, error) {
 
 	nft, err := s.storage.NFT(id)
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve nft: %w", err)
+		s.log.Error().
+			Err(err).
+			Str("id", id).
+			Msg("could not retrieve nft")
+		return nil, errRetrieveNFTFailed
 	}
 
 	return nft, nil
@@ -22,7 +24,13 @@ func (s *Server) getNFTByTokenID(chainID string, contract string, tokenID string
 
 	nft, err := s.storage.NFTByTokenID(chainID, contract, tokenID)
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve nft: %w", err)
+		s.log.Error().
+			Err(err).
+			Str("chain", chainID).
+			Str("contract", contract).
+			Str("token_id", tokenID).
+			Msg("could not retrieve nft")
+		return nil, errRetrieveNFTFailed
 	}
 
 	return nft, nil
@@ -33,7 +41,18 @@ func (s *Server) nfts(owner *string, collection *string, rarityMin *float64, ord
 
 	nfts, err := s.storage.NFTs(owner, collection, rarityMin, orderBy)
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve nfts: %w", err)
+		log := s.log.Error().Err(err)
+		if owner != nil {
+			log = log.Str("owner", *owner)
+		}
+		if collection != nil {
+			log = log.Str("collection", *collection)
+		}
+		if rarityMin != nil {
+			log = log.Float64("rarity", *rarityMin)
+		}
+		log.Msg("could not retrieve nfts")
+		return nil, errRetrieveNFTFailed
 	}
 
 	return nfts, nil
