@@ -6,8 +6,8 @@ import (
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
-// MarketplaceCollections returns a list of collections on a specified marketplace.
-func (s *Server) MarketplaceCollections(marketplaceID string) ([]*api.Collection, error) {
+// marketplaceCollections returns a list of collections on a specified marketplace.
+func (s *Server) marketplaceCollections(marketplaceID string) ([]*api.Collection, error) {
 
 	collections, err := s.storage.MarketplaceCollections(marketplaceID)
 	if err != nil {
@@ -17,8 +17,8 @@ func (s *Server) MarketplaceCollections(marketplaceID string) ([]*api.Collection
 	return collections, nil
 }
 
-// MarketplacesByChain returns a list of marketplaces on a specified chain.
-func (s *Server) MarketplacesByChain(chainID string) ([]*api.Marketplace, error) {
+// marketplacesByChain returns a list of marketplaces on a specified chain.
+func (s *Server) marketplacesByChain(chainID string) ([]*api.Marketplace, error) {
 
 	marketplaces, err := s.storage.MarketplacesByChain(chainID)
 	if err != nil {
@@ -28,8 +28,8 @@ func (s *Server) MarketplacesByChain(chainID string) ([]*api.Marketplace, error)
 	return marketplaces, nil
 }
 
-// MarketplaceChains returns a list of chains that collections listed on a marketplace reside on.
-func (s *Server) MarketplaceChains(marketplaceID string) ([]*api.Chain, error) {
+// marketplaceChains returns a list of chains that collections listed on a marketplace reside on.
+func (s *Server) marketplaceChains(marketplaceID string) ([]*api.Chain, error) {
 
 	chains, err := s.storage.MarketplaceChains(marketplaceID)
 	if err != nil {

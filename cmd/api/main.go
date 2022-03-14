@@ -86,7 +86,7 @@ func run() int {
 	}
 
 	storage := storage.New(db)
-	apiServer := api.NewServer(storage)
+	apiServer := api.NewServer(storage, log)
 	cfg := generated.Config{
 		Resolvers: apiServer,
 	}
