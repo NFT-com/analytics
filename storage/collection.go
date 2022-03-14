@@ -4,6 +4,9 @@ import (
 	"errors"
 	"fmt"
 
+	"gorm.io/gorm"
+
+	server "github.com/NFT-com/indexer-api/api"
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
@@ -15,8 +18,10 @@ func (s *Storage) Collection(id string) (*api.Collection, error) {
 	}
 
 	err := s.db.First(&collection).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, server.ErrRecordNotFound
+	}
 	if err != nil {
-		// FIXME: err not found is a separate thing
 		return nil, fmt.Errorf("could not retrieve collection: %w", err)
 	}
 
@@ -38,6 +43,9 @@ func (s *Storage) CollectionByAddress(chainID string, contract string) (*api.Col
 		}).
 		First(&collection).
 		Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, server.ErrRecordNotFound
+	}
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve collection: %w", err)
 	}

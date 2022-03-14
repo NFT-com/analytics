@@ -4,6 +4,9 @@ import (
 	"errors"
 	"fmt"
 
+	"gorm.io/gorm"
+
+	server "github.com/NFT-com/indexer-api/api"
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
@@ -15,8 +18,10 @@ func (s *Storage) NFT(id string) (*api.NFT, error) {
 	}
 
 	err := s.db.First(&nft).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, server.ErrRecordNotFound
+	}
 	if err != nil {
-		// FIXME: err not found is a separate thing
 		return nil, fmt.Errorf("could not retrieve nft: %w", err)
 	}
 
@@ -38,6 +43,9 @@ func (s *Storage) NFTByTokenID(chainID string, contract string, tokenID string) 
 		Where("token_id = ?", tokenID).
 		First(&nft).
 		Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, server.ErrRecordNotFound
+	}
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve nft: %w", err)
 	}

@@ -19,5 +19,3 @@ func New(db *gorm.DB) *Storage {
 
 	return &storage
 }
-
-// FIXME: Improve error handling everywhere.

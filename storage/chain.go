@@ -1,12 +1,16 @@
 package storage
 
 import (
+	"errors"
 	"fmt"
 
+	"gorm.io/gorm"
+
+	server "github.com/NFT-com/indexer-api/api"
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
-// Retrieve a Chain based on the ID.
+// Chain will retrieve a single chain based on the ID.
 func (s *Storage) Chain(id string) (*api.Chain, error) {
 
 	chain := api.Chain{
@@ -14,6 +18,9 @@ func (s *Storage) Chain(id string) (*api.Chain, error) {
 	}
 
 	err := s.db.First(&chain).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, server.ErrRecordNotFound
+	}
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve chain: %w", err)
 	}
