@@ -11,7 +11,7 @@ func (s *Server) marketplaceCollections(marketplaceID string) ([]*api.Collection
 	if err != nil {
 		s.logError(err).
 			Str("marketplace", marketplaceID).
-			Msg("could not retrieve collections on a marketplace")
+			Msg("could not retrieve collections for marketplace")
 		return nil, errRetrieveCollectionFailed
 	}
 
@@ -25,7 +25,7 @@ func (s *Server) marketplacesByChain(chainID string) ([]*api.Marketplace, error)
 	if err != nil {
 		s.logError(err).
 			Str("chain", chainID).
-			Msg("could not retrieve marketplaces for a chain")
+			Msg("could not retrieve marketplaces for chain")
 		return nil, errRetrieveMarketplaceFailed
 	}
 

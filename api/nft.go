@@ -47,7 +47,7 @@ func (s *Server) nfts(owner *string, collection *string, rarityMin *float64, ord
 			log = log.Str("collection", *collection)
 		}
 		if rarityMin != nil {
-			log = log.Float64("rarity", *rarityMin)
+			log = log.Float64("min_rarity", *rarityMin)
 		}
 		log.Msg("could not retrieve nfts")
 		return nil, errRetrieveNFTFailed
