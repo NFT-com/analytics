@@ -28,8 +28,8 @@ func (s *Storage) Collection(id string) (*api.Collection, error) {
 	return &collection, nil
 }
 
-// CollectionByAddresss returns a single collection based on the chain ID and the contract addresss.
-func (s *Storage) CollectionByAddress(chainID string, contract string) (*api.Collection, error) {
+// CollectionByContract returns a single collection based on the chain ID and the contract addresss.
+func (s *Storage) CollectionByContract(chainID string, contract string) (*api.Collection, error) {
 
 	if chainID == "" || contract == "" {
 		return nil, errors.New("mandatory fields missing")

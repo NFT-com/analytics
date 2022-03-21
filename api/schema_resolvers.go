@@ -111,7 +111,7 @@ func (r *queryServer) Collection(ctx context.Context, id string) (*api.Collectio
 func (r *queryServer) CollectionByAddress(ctx context.Context, chainID string, contract string) (*api.Collection, error) {
 	// CollectionByAddress implements the `collectionByAddress` GraphQL query.
 
-	return r.Server.getCollectionByAddress(chainID, contract)
+	return r.Server.getCollectionByContract(chainID, contract)
 }
 
 func (r *queryServer) Collections(ctx context.Context, chain *string, orderBy *api.CollectionOrder) ([]*api.Collection, error) {

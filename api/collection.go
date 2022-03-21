@@ -18,10 +18,10 @@ func (s *Server) getCollection(id string) (*api.Collection, error) {
 	return collection, nil
 }
 
-// getCollectionByAddress returns a single collection for the specified chain, given its contract address.
-func (s *Server) getCollectionByAddress(chainID string, contract string) (*api.Collection, error) {
+// getCollectionByContract returns a single collection for the specified chain, given its contract address.
+func (s *Server) getCollectionByContract(chainID string, contract string) (*api.Collection, error) {
 
-	collection, err := s.storage.CollectionByAddress(chainID, contract)
+	collection, err := s.storage.CollectionByContract(chainID, contract)
 	if err != nil {
 		s.logError(err).
 			Str("chain", chainID).
