@@ -1,16 +1,16 @@
-# API
+# Analytics API
 
 ## Usage
 
 ```
-Usage of api:
+Usage of analytics-api:
   -b, --bind string              bind address for serving requests (default ":8080")
   -d, --database string          database address
-      --enable-playground        enable GraphQL playground
-      --enable-query-logging     enable logging of database queries (default true)
   -l, --log-level string         log level (default "info")
   -p, --playground-path string   path for GraphQL playground (default "/")
       --query-complexity int     GraphQL query complexity limit
+      --enable-playground        enable GraphQL playground
+      --enable-query-logging     enable logging of database queries (default true)
 ```
 
 ## Database Address - Data Source Name

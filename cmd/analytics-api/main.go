@@ -49,18 +49,18 @@ func run() int {
 
 	var (
 		flagBind               string
-		flagPlayground         string
 		flagDatabase           string
 		flagLogLevel           string
+		flagPlayground         string
 		flagComplexityLimit    int
 		flagEnablePlayground   bool
 		flagEnableQueryLogging bool
 	)
 
 	pflag.StringVarP(&flagBind, "bind", "b", ":8080", "bind address for serving requests")
-	pflag.StringVarP(&flagPlayground, "playground-path", "p", defaultPlaygroundPath, "path for GraphQL playground")
 	pflag.StringVarP(&flagDatabase, "database", "d", "", "database address")
 	pflag.StringVarP(&flagLogLevel, "log-level", "l", "info", "log level")
+	pflag.StringVarP(&flagPlayground, "playground-path", "p", defaultPlaygroundPath, "path for GraphQL playground")
 	pflag.IntVar(&flagComplexityLimit, "query-complexity", 0, "GraphQL query complexity limit")
 	pflag.BoolVar(&flagEnablePlayground, "enable-playground", false, "enable GraphQL playground")
 	pflag.BoolVar(&flagEnableQueryLogging, "enable-query-logging", true, "enable logging of database queries")
