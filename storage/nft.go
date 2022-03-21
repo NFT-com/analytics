@@ -31,8 +31,14 @@ func (s *Storage) NFT(id string) (*api.NFT, error) {
 // NFTByTokenID retrieves a single NFT based on the chain, contract and the tokenID.
 func (s *Storage) NFTByTokenID(chainID string, contract string, tokenID string) (*api.NFT, error) {
 
-	if chainID == "" || contract == "" || tokenID == "" {
-		return nil, errors.New("mandatory fields missing")
+	if chainID == "" {
+		return nil, errors.New("chain ID is required")
+	}
+	if contract == "" {
+		return nil, errors.New("contract address is required")
+	}
+	if tokenID == "" {
+		return nil, errors.New("token ID is required")
 	}
 
 	var nft api.NFT
