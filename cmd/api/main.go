@@ -28,7 +28,6 @@ import (
 )
 
 const (
-	defaultDatabase        = "host=localhost user=nft-user password=nft-test-pass dbname=nft-com port=5432 sslmode=disable"
 	defaultPlaygroundPath  = "/"
 	defaultGraphQLEndpoint = "/graphql"
 )
@@ -60,7 +59,7 @@ func run() int {
 
 	pflag.StringVarP(&flagBind, "bind", "b", ":8080", "bind address for serving requests")
 	pflag.StringVarP(&flagPlayground, "playground-path", "p", defaultPlaygroundPath, "path for GraphQL playground")
-	pflag.StringVarP(&flagDatabase, "database", "d", defaultDatabase, "database address")
+	pflag.StringVarP(&flagDatabase, "database", "d", "", "database address")
 	pflag.StringVarP(&flagLogLevel, "log-level", "l", "info", "log level")
 	pflag.IntVar(&flagComplexityLimit, "query-complexity", 0, "GraphQL query complexity limit")
 	pflag.BoolVar(&flagEnablePlayground, "enable-playground", false, "enable GraphQL playground")
@@ -77,6 +76,11 @@ func run() int {
 		return failure
 	}
 	log = log.Level(level)
+
+	if flagDatabase == "" {
+		log.Error().Msg("database address is required")
+		return failure
+	}
 
 	// Enable GORM logging if database query logs are enabled.
 	var dblog logger.Interface
