@@ -67,7 +67,7 @@ func run() int {
 
 	// Initialize logging.
 	zerolog.TimestampFunc = func() time.Time { return time.Now().UTC() }
-	log := zerolog.New(os.Stderr).With().Timestamp().Str("level", flagLogLevel).Logger()
+	log := zerolog.New(os.Stderr).With().Timestamp().Logger()
 	level, err := zerolog.ParseLevel(flagLogLevel)
 	if err != nil {
 		log.Error().Err(err).Msg("could not parse log level")

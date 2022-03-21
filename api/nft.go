@@ -9,8 +9,7 @@ func (s *Server) getNFT(id string) (*api.NFT, error) {
 
 	nft, err := s.storage.NFT(id)
 	if err != nil {
-		s.log.Error().
-			Err(err).
+		s.logError(err).
 			Str("id", id).
 			Msg("could not retrieve nft")
 		return nil, errRetrieveNFTFailed
@@ -24,8 +23,7 @@ func (s *Server) getNFTByTokenID(chainID string, contract string, tokenID string
 
 	nft, err := s.storage.NFTByTokenID(chainID, contract, tokenID)
 	if err != nil {
-		s.log.Error().
-			Err(err).
+		s.logError(err).
 			Str("chain", chainID).
 			Str("contract", contract).
 			Str("token_id", tokenID).
@@ -41,7 +39,7 @@ func (s *Server) nfts(owner *string, collection *string, rarityMin *float64, ord
 
 	nfts, err := s.storage.NFTs(owner, collection, rarityMin, orderBy)
 	if err != nil {
-		log := s.log.Error().Err(err)
+		log := s.logError(err)
 		if owner != nil {
 			log = log.Str("owner", *owner)
 		}

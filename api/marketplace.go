@@ -9,8 +9,7 @@ func (s *Server) marketplaceCollections(marketplaceID string) ([]*api.Collection
 
 	collections, err := s.storage.MarketplaceCollections(marketplaceID)
 	if err != nil {
-		s.log.Error().
-			Err(err).
+		s.logError(err).
 			Str("marketplace", marketplaceID).
 			Msg("could not retrieve collections on a marketplace")
 		return nil, errRetrieveCollectionFailed
@@ -24,8 +23,7 @@ func (s *Server) marketplacesByChain(chainID string) ([]*api.Marketplace, error)
 
 	marketplaces, err := s.storage.MarketplacesByChain(chainID)
 	if err != nil {
-		s.log.Error().
-			Err(err).
+		s.logError(err).
 			Str("chain", chainID).
 			Msg("could not retrieve marketplaces for a chain")
 		return nil, errRetrieveMarketplaceFailed
@@ -39,8 +37,7 @@ func (s *Server) marketplaceChains(marketplaceID string) ([]*api.Chain, error) {
 
 	chains, err := s.storage.MarketplaceChains(marketplaceID)
 	if err != nil {
-		s.log.Error().
-			Err(err).
+		s.logError(err).
 			Str("marketplace", marketplaceID).
 			Msg("could not retrieve chains for a marketplace")
 		return nil, errRetrieveChainFailed

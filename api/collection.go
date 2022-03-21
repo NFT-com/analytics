@@ -9,8 +9,7 @@ func (s *Server) getCollection(id string) (*api.Collection, error) {
 
 	collection, err := s.storage.Collection(id)
 	if err != nil {
-		s.log.Error().
-			Err(err).
+		s.logError(err).
 			Str("id", id).
 			Msg("could not retrieve collection")
 		return nil, errRetrieveCollectionFailed
@@ -24,8 +23,7 @@ func (s *Server) getCollectionByAddress(chainID string, contract string) (*api.C
 
 	collection, err := s.storage.CollectionByAddress(chainID, contract)
 	if err != nil {
-		s.log.Error().
-			Err(err).
+		s.logError(err).
 			Str("chain", chainID).
 			Str("contract", contract).
 			Msg("could not retrieve collection")
@@ -40,8 +38,7 @@ func (s *Server) getCollectionNFTs(collectionID string) ([]*api.NFT, error) {
 
 	nfts, err := s.storage.CollectionNFTs(collectionID)
 	if err != nil {
-		s.log.Error().
-			Err(err).
+		s.logError(err).
 			Str("id", collectionID).
 			Msg("could not retrieve NFTs for a collection")
 		return nil, errRetrieveNFTFailed
@@ -55,7 +52,7 @@ func (s *Server) collections(chain *string, orderBy api.CollectionOrder) ([]*api
 
 	collections, err := s.storage.Collections(chain, orderBy)
 	if err != nil {
-		log := s.log.Error().Err(err)
+		log := s.logError(err)
 		if chain != nil {
 			log = log.Str("chain", *chain)
 		}
@@ -71,8 +68,7 @@ func (s *Server) collectionsByChain(chainID string) ([]*api.Collection, error) {
 
 	collections, err := s.storage.CollectionsByChain(chainID)
 	if err != nil {
-		s.log.Error().
-			Err(err).
+		s.logError(err).
 			Str("chain", chainID).
 			Msg("could not retrieve collections for a chain")
 		return nil, errRetrieveCollectionFailed
@@ -86,8 +82,7 @@ func (s *Server) collectionsListings(collectionID string) ([]*api.Marketplace, e
 
 	marketplaces, err := s.storage.MarketplacesForCollection(collectionID)
 	if err != nil {
-		s.log.Error().
-			Err(err).
+		s.logError(err).
 			Str("collection", collectionID).
 			Msg("could not retrieve marketplaces for a collection")
 		return nil, errRetrieveMarketplaceFailed

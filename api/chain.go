@@ -9,10 +9,7 @@ func (s *Server) getChain(id string) (*api.Chain, error) {
 
 	chain, err := s.storage.Chain(id)
 	if err != nil {
-		s.log.Error().
-			Err(err).
-			Str("id", id).
-			Msg("could not retrieve chain")
+		s.logError(err).Str("id", id).Msg("could not retrieve chain")
 		return nil, errRetrieveChainFailed
 	}
 
@@ -24,9 +21,7 @@ func (s *Server) chains() ([]*api.Chain, error) {
 
 	chains, err := s.storage.Chains()
 	if err != nil {
-		s.log.Error().
-			Err(err).
-			Msg("could not retrieve chains")
+		s.logError(err).Msg("could not retrieve chains")
 		return nil, errRetrieveChainFailed
 	}
 
