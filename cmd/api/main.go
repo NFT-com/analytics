@@ -63,8 +63,8 @@ func run() int {
 	pflag.StringVarP(&flagDatabase, "database", "d", defaultDatabase, "database address")
 	pflag.StringVarP(&flagLogLevel, "log-level", "l", "info", "log level")
 	pflag.IntVar(&flagComplexityLimit, "query-complexity", 0, "GraphQL query complexity limit")
-	pflag.BoolVar(&flagEnablePlayground, "enable-playground", false, "Enable GraphQL playground")
-	pflag.BoolVar(&flagEnableQueryLogging, "enable-query-logging", true, "Enable logging of database queries")
+	pflag.BoolVar(&flagEnablePlayground, "enable-playground", false, "enable GraphQL playground")
+	pflag.BoolVar(&flagEnableQueryLogging, "enable-query-logging", true, "enable logging of database queries")
 
 	pflag.Parse()
 
@@ -104,7 +104,7 @@ func run() int {
 	schema := generated.NewExecutableSchema(cfg)
 	gqlServer := handler.NewDefaultServer(schema)
 
-	// Set query complexity limit - each field in a selection set and
+	// Set query complexity limit — each field in a selection set and
 	// each nesting level adds the value of one to the overall query
 	// complexity.
 	if flagComplexityLimit > 0 {

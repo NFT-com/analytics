@@ -86,7 +86,7 @@ func (r *queryServer) NftByTokenID(ctx context.Context, chainID string, contract
 func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *string, rarityMin *float64, orderBy *api.NFTOrder) ([]*api.NFT, error) {
 	// Nfts implements the `nfts` GraphQL query.
 
-	// FIXME: remove when all modes become supported
+	// FIXME: remove the validation of the sorting mode when all modes become supported
 	switch orderBy.Field {
 
 	case api.NFTOrderFieldValue:
