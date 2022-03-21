@@ -45,6 +45,7 @@ func (m Marketplace) TableName() string {
 	return marketplaceDBTable
 }
 
+// NFT represents a single Non-Fungible Token.
 type NFT struct {
 	ID           string  `json:"id"`
 	TokenID      string  `json:"tokenID"`

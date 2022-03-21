@@ -280,6 +280,8 @@ Marketplace represents a single NFT marketplace (e.g. Opensea, DefiKingdoms).
 
 ### NFT
 
+NFT represents a single Non-Fungible Token.
+
 <table>
 	<thead>
 		<tr>

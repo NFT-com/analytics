@@ -613,6 +613,9 @@ enum CollectionOrderField {
     DAILY_VOLUME
 }
 
+"""
+NFT represents a single Non-Fungible Token.
+"""
 type NFT {
     """
     NFT ID.
