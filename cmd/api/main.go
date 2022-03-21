@@ -20,6 +20,7 @@ import (
 	"github.com/ziflex/lecho/v2"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/NFT-com/indexer-api/api"
 	"github.com/NFT-com/indexer-api/graph/generated"
@@ -48,12 +49,13 @@ func run() int {
 	signal.Notify(sig, os.Interrupt)
 
 	var (
-		flagBind             string
-		flagPlayground       string
-		flagDatabase         string
-		flagLogLevel         string
-		flagComplexityLimit  int
-		flagEnablePlayground bool
+		flagBind               string
+		flagPlayground         string
+		flagDatabase           string
+		flagLogLevel           string
+		flagComplexityLimit    int
+		flagEnablePlayground   bool
+		flagEnableQueryLogging bool
 	)
 
 	pflag.StringVarP(&flagBind, "bind", "b", ":8080", "bind address for serving requests")
@@ -62,6 +64,7 @@ func run() int {
 	pflag.StringVarP(&flagLogLevel, "log-level", "l", "info", "log level")
 	pflag.IntVar(&flagComplexityLimit, "query-complexity", 0, "GraphQL query complexity limit")
 	pflag.BoolVar(&flagEnablePlayground, "enable-playground", false, "Enable GraphQL playground")
+	pflag.BoolVar(&flagEnableQueryLogging, "enable-query-logging", true, "Enable logging of database queries")
 
 	pflag.Parse()
 
@@ -75,8 +78,16 @@ func run() int {
 	}
 	log = log.Level(level)
 
+	// Enable GORM logging if database query logs are enabled.
+	var dblog logger.Interface
+	if flagEnableQueryLogging {
+		dblog = gormzerolog.NewWithLogger(log)
+	} else {
+		dblog = logger.Default.LogMode(logger.Silent)
+	}
+
 	dbCfg := gorm.Config{
-		Logger: gormzerolog.NewWithLogger(log),
+		Logger: dblog,
 	}
 	db, err := gorm.Open(postgres.Open(flagDatabase), &dbCfg)
 	if err != nil {
