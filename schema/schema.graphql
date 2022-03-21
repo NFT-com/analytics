@@ -119,11 +119,6 @@ type Collection {
     marketplaces: [Marketplace!]
 
     """
-    Marketplaces this collection is on.
-    """
-    marketplaces: [Marketplace!]
-
-    """
     List of NFTs that are part of this collection.
     """
     nfts: [NFT!]
