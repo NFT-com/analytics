@@ -10,7 +10,7 @@ import (
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
-// Chain will retrieve a single chain based on the ID.
+// Chain retrieves a single chain based on the ID.
 func (s *Storage) Chain(id string) (*api.Chain, error) {
 
 	chain := api.Chain{
@@ -28,7 +28,7 @@ func (s *Storage) Chain(id string) (*api.Chain, error) {
 	return &chain, nil
 }
 
-// Chains returns a list of known chains.
+// Chains retrieves a list of all known chains.
 func (s *Storage) Chains() ([]*api.Chain, error) {
 
 	var chains []*api.Chain

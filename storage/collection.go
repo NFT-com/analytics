@@ -10,7 +10,7 @@ import (
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
-// Collection will retrieve a single collection based on the ID.
+// Collection retrieves a single collection from its ID.
 func (s *Storage) Collection(id string) (*api.Collection, error) {
 
 	collection := api.Collection{
@@ -28,7 +28,7 @@ func (s *Storage) Collection(id string) (*api.Collection, error) {
 	return &collection, nil
 }
 
-// CollectionByContract returns a single collection based on the chain ID and the contract addresss.
+// CollectionByContract retrieves a single collection based on the chain ID and the contract addresss.
 func (s *Storage) CollectionByContract(chainID string, contract string) (*api.Collection, error) {
 
 	if chainID == "" || contract == "" {
@@ -53,6 +53,7 @@ func (s *Storage) CollectionByContract(chainID string, contract string) (*api.Co
 	return &collection, nil
 }
 
+// Collections retrieves the list of collections on a chain.
 func (s *Storage) Collections(chain *string, orderBy api.CollectionOrder) ([]*api.Collection, error) {
 
 	query := api.Collection{}
@@ -77,7 +78,7 @@ func (s *Storage) Collections(chain *string, orderBy api.CollectionOrder) ([]*ap
 	return collections, nil
 }
 
-// CollectionNFTs will return the list of NFTs in a specific Collection.
+// CollectionNFTs retrieves the list of NFTs in a specific Collection.
 func (s *Storage) CollectionNFTs(collectionID string) ([]*api.NFT, error) {
 
 	var nfts []*api.NFT
@@ -94,7 +95,7 @@ func (s *Storage) CollectionNFTs(collectionID string) ([]*api.NFT, error) {
 
 }
 
-// Retrieve a list of Cllections on a specified Chain.
+// CollectionsByChain retrieves a list of Cllections on a specified Chain.
 func (s *Storage) CollectionsByChain(chainID string) ([]*api.Collection, error) {
 
 	var collections []*api.Collection

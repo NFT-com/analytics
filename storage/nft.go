@@ -10,7 +10,7 @@ import (
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
-// NFT returns a single NFT based on the ID.
+// NFT retrieves a single NFT based on the ID.
 func (s *Storage) NFT(id string) (*api.NFT, error) {
 
 	nft := api.NFT{
@@ -28,7 +28,7 @@ func (s *Storage) NFT(id string) (*api.NFT, error) {
 	return &nft, nil
 }
 
-// NFTByTokenID returns a single NFT based on the chain, contract and the tokenID.
+// NFTByTokenID retrieves a single NFT based on the chain, contract and the tokenID.
 func (s *Storage) NFTByTokenID(chainID string, contract string, tokenID string) (*api.NFT, error) {
 
 	if chainID == "" || contract == "" || tokenID == "" {
@@ -53,7 +53,7 @@ func (s *Storage) NFTByTokenID(chainID string, contract string, tokenID string) 
 	return &nft, nil
 }
 
-// NFTs returns a list of NFTs fitting the specified criteria.
+// NFTs retrieves a list of NFTs fitting the specified criteria.
 func (s *Storage) NFTs(owner *string, collectionID *string, rarityMin *float64, orderBy api.NFTOrder) ([]*api.NFT, error) {
 
 	// Apply explicit query filters - the token owner and collection ID.

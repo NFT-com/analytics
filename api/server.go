@@ -10,7 +10,7 @@ type Server struct {
 	log     zerolog.Logger
 }
 
-// NewServer will create a new API server.
+// NewServer creates a new API server.
 func NewServer(storage Storage, log zerolog.Logger) *Server {
 
 	server := Server{
