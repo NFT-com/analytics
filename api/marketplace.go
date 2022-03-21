@@ -39,7 +39,7 @@ func (s *Server) marketplaceChains(marketplaceID string) ([]*api.Chain, error) {
 	if err != nil {
 		s.logError(err).
 			Str("marketplace", marketplaceID).
-			Msg("could not retrieve chains for a marketplace")
+			Msg("could not retrieve chains for marketplace")
 		return nil, errRetrieveChainFailed
 	}
 
