@@ -72,8 +72,8 @@ func (s *Storage) MarketplaceChains(marketplaceID string) ([]*api.Chain, error) 
 	var chains []*api.Chain
 
 	selection := s.db.
-		Select("DISTINCT c.chain_id").
 		Table("marketplace_collections mc").
+		Select("DISTINCT c.chain_id").
 		Joins("INNER JOIN collection c ON mc.collection_id = c.id").
 		Where("mc.marketplace_id = ?", marketplaceID)
 
