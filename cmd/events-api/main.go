@@ -1,7 +1,11 @@
 package main
 
 import (
+	"context"
+	"errors"
+	"net/http"
 	"os"
+	"os/signal"
 	"time"
 
 	"github.com/NFT-com/events-api/api"
@@ -35,6 +39,10 @@ func main() {
 }
 
 func run() int {
+
+	// Signal catching for clean shutdown.
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt)
 
 	var (
 		flagBind               string
@@ -106,6 +114,50 @@ func run() int {
 	server.GET(transferEndpoint, api.Transfer)
 	server.GET(saleEndpoint, api.Sale)
 	server.GET(burnEndpoint, api.Burn)
+
+	// This section launches the main executing components in their own
+	// goroutine, so they can run concurrently. Afterwards, we wait for an
+	// interrupt signal in order to proceed with the next section.
+	done := make(chan struct{})
+	failed := make(chan struct{})
+	go func() {
+		log.Info().Msg("events API server starting")
+		err := server.Start(flagBind)
+		if err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Warn().Err(err).Msg("events API server failed")
+			close(failed)
+		} else {
+			close(done)
+		}
+		log.Info().Msg("events API server stopped")
+	}()
+
+	select {
+	case <-sig:
+		log.Info().Msg("events API server stopping")
+	case <-done:
+		log.Info().Msg("events API server done")
+	case <-failed:
+		log.Warn().Msg("events API server aborted")
+	}
+
+	go func() {
+		<-sig
+		log.Warn().Msg("forcing exit")
+		os.Exit(1)
+	}()
+
+	// The following code starts a shut down with a certain timeout and makes
+	// sure that the main executing components are shutting down within the
+	// allocated shutdown time. Otherwise, we will force the shutdown and log
+	// an error. We then wait for shutdown on each component to complete.
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	err = server.Shutdown(ctx)
+	if err != nil {
+		log.Error().Err(err).Msg("could not shut down events API server")
+		return failure
+	}
 
 	return success
 }
