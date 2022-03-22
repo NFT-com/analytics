@@ -1,7 +1,7 @@
 package api
 
-// request represents all of the supported query parameters for all endpoints.
-type request struct {
+// Filter contains all of the supported query parameters for all endpoints.
+type Filter struct {
 	Chain       string `query:"chain"`
 	Collection  string `query:"collection"`
 	Marketplace string `query:"marketplace"`
