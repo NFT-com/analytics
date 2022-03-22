@@ -1,7 +1,7 @@
 package api
 
 import (
-	"errors"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
@@ -18,12 +18,10 @@ func (a *API) Transfer(ctx echo.Context) error {
 		return bindError(err)
 	}
 
-	events, err := a.storage.GetEvents(Transfer, req)
+	transfers, err := a.storage.Transfers(req)
 	if err != nil {
 		return apiError(err)
 	}
 
-	_ = events
-
-	return errors.New("TBD: Not implemented")
+	return ctx.JSON(http.StatusOK, transfers)
 }

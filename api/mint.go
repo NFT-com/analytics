@@ -1,7 +1,7 @@
 package api
 
 import (
-	"errors"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
@@ -15,12 +15,10 @@ func (a *API) Mint(ctx echo.Context) error {
 		return bindError(err)
 	}
 
-	events, err := a.storage.GetEvents(Mint, req)
+	mints, err := a.storage.Mints(req)
 	if err != nil {
 		return apiError(err)
 	}
 
-	_ = events
-
-	return errors.New("TBD: Not implemented")
+	return ctx.JSON(http.StatusOK, mints)
 }
