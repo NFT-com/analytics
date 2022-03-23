@@ -18,8 +18,8 @@ CREATE TABLE transfers (
     collection_id UUID NOT NULL,
     block BIGINT NOT NULL,
     transaction_hash VARCHAR(64) NOT NULL,
-    from TEXT NOT NULL,
-    to TEXT NOT NULL,
+    from_address TEXT NOT NULL,
+    to_address TEXT NOT NULL,
     price BIGINT NOT NULL, -- FIXME: Check - what format will we be using for price?
     emitted_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT NOW()
