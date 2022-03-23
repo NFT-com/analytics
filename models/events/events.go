@@ -4,45 +4,54 @@ import (
 	"math/big"
 )
 
-// FIXME: Check these types.
+// FIXME: Check - plural or singular for package name?
+
+// FIXME: Types modeled after tentative_tables.sql and are subject to change.
 
 // Mint represents a mint event.
 type Mint struct {
-	Chain       string
-	Collection  string
-	TokenID     big.Int
-	Minter      string
-	BlockNumber big.Int
-	Timestamp   string
+	TokenID     string  `json:"token_id" gorm:"id"`
+	Chain       string  `json:"chain" gorm:"chain_id"`
+	Collection  string  `json:"collection" gorm:"collection_id"`
+	BlockNumber big.Int `json:"block" gorm:"block"`
+	Transaction string  `json:"transaction" gorm:"transaction_hash"`
+	Minter      string  `json:"minter" gorm:"minter"`
+	Timestamp   string  `json:"timestamp" gorm:"emitted_at"`
 }
 
 // Transfer represents a transfer event.
 type Transfer struct {
-	Chain       string
-	Collection  string
-	TokenID     big.Int
-	From        string
-	To          string
-	Price       string
-	BlockNumber big.Int
-	Timestamp   string
+	TokenID     string  `json:"token_id" gorm:"id"`
+	Chain       string  `json:"chain" gorm:"chain_id"`
+	Collection  string  `json:"collection" gorm:"collection_id"`
+	BlockNumber big.Int `json:"block" gorm:"block"`
+	Transaction string  `json:"transaction" gorm:"transaction_hash"`
+	From        string  `json:"from" gorm:"from"`
+	To          string  `json:"to" gorm:"to"`
+	Price       string  `json:"price" gorm:"price"`
+	Timestamp   string  `json:"timestamp" gorm:"emitted_at"`
 }
 
 // Sale represents a sale event.
 type Sale struct {
-	Chain       string
-	Collection  string
-	TokenID     big.Int
-	BlockNumber big.Int
-	Timestamp   string
+	TokenID     string  `json:"token_id" gorm:"id"`
+	Chain       string  `json:"chain" gorm:"chain_id"`
+	Collection  string  `json:"collection" gorm:"collection_id"`
+	BlockNumber big.Int `json:"block" gorm:"block"`
+	Transaction string  `json:"transaction" gorm:"transaction_hash"`
+	Marketplace string  `json:"marketplace" gorm:"marketplace"`
+	Owner       string  `json:"owner" gorm:"owner"`
+	Price       string  `json:"price" gorm:"price"`
+	Timestamp   string  `json:"timestamp" gorm:"emitted_at"`
 }
 
 // Burn represents a burn event.
 type Burn struct {
-	Chain       string
-	Collection  string
-	TokenID     big.Int
-	Owner       string
-	BlockNumber big.Int
-	Timestamp   string
+	TokenID     string  `json:"token_id" gorm:"id"`
+	Chain       string  `json:"chain" gorm:"chain_id"`
+	Collection  string  `json:"collection" gorm:"collection_id"`
+	BlockNumber big.Int `json:"block" gorm:"block"`
+	Transaction string  `json:"transaction" gorm:"transaction_hash"`
+	Burner      string  `json:"burner" gorm:"burner"`
+	Timestamp   string  `json:"timestamp" gorm:"emitted_at"`
 }
