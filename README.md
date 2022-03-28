@@ -1,9 +1,9 @@
-# Analytics API
+# Graph API
 
 ## Usage
 
 ```
-Usage of analytics-api:
+Usage of graph-api:
   -b, --bind string              bind address for serving requests (default ":8080")
   -d, --database string          database address
   -l, --log-level string         log level (default "info")
