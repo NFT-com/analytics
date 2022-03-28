@@ -15,6 +15,9 @@ var (
 	errRetrieveNFTFailed         = errors.New("could not retrieve NFT(s)")
 )
 
+// TODO: Improve logging and error handling in the server code.
+// See https://github.com/NFT-com/graph-api/issues/7
+
 // logError returns a prepared log entry. Errors resulting from requesting unknown records
 // will be logged with a debug severity, in order to prevent excessive logging.
 func (s *Server) logError(err error) *zerolog.Event {
