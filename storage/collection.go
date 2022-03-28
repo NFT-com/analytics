@@ -86,7 +86,7 @@ func (s *Storage) CollectionNFTs(collectionID string) ([]*api.NFT, error) {
 
 	var nfts []*api.NFT
 	err := s.db.Where(api.NFT{
-		CollectionID: collectionID,
+		Collection: collectionID,
 	}).
 		Find(&nfts).
 		Error

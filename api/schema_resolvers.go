@@ -56,7 +56,7 @@ func (r *marketplaceServer) Collections(ctx context.Context, obj *api.Marketplac
 func (r *nFTServer) Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error) {
 	// Collection handles expanding the Collection object within an NFT object.
 
-	return r.Server.getCollection(obj.CollectionID)
+	return r.Server.getCollection(obj.Collection)
 }
 
 func (r *queryServer) Chain(ctx context.Context, id string) (*api.Chain, error) {

@@ -43,7 +43,7 @@ func (s *Storage) NFTByTokenID(chainID string, contract string, tokenID string) 
 
 	var nft api.NFT
 	err := s.db.
-		Joins("INNER JOIN collection c ON collection_id = c.id").
+		Joins("INNER JOIN collections c ON collection = c.id").
 		Where("c.chain_id = ?", chainID).
 		Where("c.address = ?", contract).
 		Where("token_id = ?", tokenID).
@@ -68,7 +68,7 @@ func (s *Storage) NFTs(owner *string, collectionID *string, rarityMin *float64, 
 		query.Owner = *owner
 	}
 	if collectionID != nil {
-		query.CollectionID = *collectionID
+		query.Collection = *collectionID
 	}
 	db := s.db.Where(query)
 
