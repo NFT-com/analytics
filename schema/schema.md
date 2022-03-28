@@ -233,6 +233,21 @@ Collection represents a group of NFTs that share the same smart contract.
 			<td>Address of the smart-contract.</td>
 		</tr>
 		<tr>
+			<td colspan="2" valign="top"><strong>website</strong></td>
+			<td valign="top"><a href="#string">String</a></td>
+			<td>Collection website.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>image_url</strong></td>
+			<td valign="top"><a href="#string">String</a></td>
+			<td>URL of an image for the collection.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>token_uri</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>URI of the token from the collection, directing to e.g. a JSON file with asset metadata.</td>
+		</tr>
+		<tr>
 			<td colspan="2" valign="top"><strong>chain</strong></td>
 			<td valign="top"><a href="#chain">Chain</a>!</td>
 			<td>Chain on which collection resides on.</td>
@@ -280,6 +295,11 @@ Marketplace represents a single NFT marketplace (e.g. Opensea, DefiKingdoms).
 			<td>Description of the marketplace.</td>
 		</tr>
 		<tr>
+			<td colspan="2" valign="top"><strong>website</strong></td>
+			<td valign="top"><a href="#string">String</a></td>
+			<td>Marketplace website.</td>
+		</tr>
+		<tr>
 			<td colspan="2" valign="top"><strong>chains</strong></td>
 			<td valign="top">[<a href="#chain">Chain</a>!]!</td>
 			<td>Chains the marketplace operates on.</td>
@@ -320,11 +340,6 @@ NFT represents a single Non-Fungible Token.
 			<td colspan="2" valign="top"><strong>owner</strong></td>
 			<td valign="top"><a href="#address">Address</a>!</td>
 			<td>Address of the account that owns the NFT.</td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top"><strong>uri</strong></td>
-			<td valign="top"><a href="#string">String</a>!</td>
-			<td>URI of the NFT, directing to e.g. a JSON file with asset metadata.</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>rarity</strong></td>
