@@ -1,4 +1,4 @@
-module github.com/NFT-com/indexer-api
+module github.com/NFT-com/graph-api
 
 go 1.17
 

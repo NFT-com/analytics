@@ -6,8 +6,8 @@ import (
 
 	"gorm.io/gorm"
 
-	server "github.com/NFT-com/indexer-api/api"
-	"github.com/NFT-com/indexer-api/models/api"
+	server "github.com/NFT-com/graph-api/api"
+	"github.com/NFT-com/graph-api/models/api"
 )
 
 // NFT retrieves a single NFT based on the ID.

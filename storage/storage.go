@@ -4,6 +4,8 @@ import (
 	"gorm.io/gorm"
 )
 
+// TODO: Refactor the storage package so it's more generic.
+
 // Storage provides the database interaction functionality, such as retrieving NFTs and Collections
 // from the database.
 type Storage struct {

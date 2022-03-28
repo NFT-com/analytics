@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/NFT-com/indexer-api/models/api"
+	"github.com/NFT-com/graph-api/models/api"
 )
 
 // getNFT returns a single NFT based on its ID.
