@@ -59,9 +59,12 @@ type ComplexityRoot struct {
 		Chain        func(childComplexity int) int
 		Description  func(childComplexity int) int
 		ID           func(childComplexity int) int
+		ImageURL     func(childComplexity int) int
 		Marketplaces func(childComplexity int) int
 		Name         func(childComplexity int) int
 		Nfts         func(childComplexity int) int
+		TokenURI     func(childComplexity int) int
+		Website      func(childComplexity int) int
 	}
 
 	Marketplace struct {
@@ -70,6 +73,7 @@ type ComplexityRoot struct {
 		Description func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Name        func(childComplexity int) int
+		Website     func(childComplexity int) int
 	}
 
 	NFT struct {
@@ -78,7 +82,6 @@ type ComplexityRoot struct {
 		Owner      func(childComplexity int) int
 		Rarity     func(childComplexity int) int
 		TokenID    func(childComplexity int) int
-		URI        func(childComplexity int) int
 	}
 
 	Query struct {
@@ -198,6 +201,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Collection.ID(childComplexity), true
 
+	case "Collection.image_url":
+		if e.complexity.Collection.ImageURL == nil {
+			break
+		}
+
+		return e.complexity.Collection.ImageURL(childComplexity), true
+
 	case "Collection.marketplaces":
 		if e.complexity.Collection.Marketplaces == nil {
 			break
@@ -218,6 +228,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Collection.Nfts(childComplexity), true
+
+	case "Collection.token_uri":
+		if e.complexity.Collection.TokenURI == nil {
+			break
+		}
+
+		return e.complexity.Collection.TokenURI(childComplexity), true
+
+	case "Collection.website":
+		if e.complexity.Collection.Website == nil {
+			break
+		}
+
+		return e.complexity.Collection.Website(childComplexity), true
 
 	case "Marketplace.chains":
 		if e.complexity.Marketplace.Chains == nil {
@@ -254,6 +278,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Marketplace.Name(childComplexity), true
 
+	case "Marketplace.website":
+		if e.complexity.Marketplace.Website == nil {
+			break
+		}
+
+		return e.complexity.Marketplace.Website(childComplexity), true
+
 	case "NFT.collection":
 		if e.complexity.NFT.Collection == nil {
 			break
@@ -288,13 +319,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.NFT.TokenID(childComplexity), true
-
-	case "NFT.uri":
-		if e.complexity.NFT.URI == nil {
-			break
-		}
-
-		return e.complexity.NFT.URI(childComplexity), true
 
 	case "Query.chain":
 		if e.complexity.Query.Chain == nil {
@@ -513,6 +537,11 @@ type Marketplace {
     description: String!
 
     """
+    Marketplace website.
+    """
+    website: String
+
+    """
     Chains the marketplace operates on.
     """
     chains: [Chain!]!
@@ -546,6 +575,21 @@ type Collection {
     Address of the smart-contract.
     """
     address: Address!
+
+    """
+    Collection website.
+    """
+    website: String
+
+    """
+    URL of an image for the collection.
+    """
+    image_url: String
+
+    """
+    URI of the token from the collection, directing to e.g. a JSON file with asset metadata.
+    """
+    token_uri: String!
 
     """
     Chain on which collection resides on.
@@ -631,11 +675,6 @@ type NFT {
     Address of the account that owns the NFT.
     """
     owner: Address!
-
-    """
-    URI of the NFT, directing to e.g. a JSON file with asset metadata.
-    """
-    uri: String!
 
     """
     Rarity score for the NFT.
@@ -1336,6 +1375,105 @@ func (ec *executionContext) _Collection_address(ctx context.Context, field graph
 	return ec.marshalNAddress2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Collection_website(ctx context.Context, field graphql.CollectedField, obj *api.Collection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Collection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Website, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Collection_image_url(ctx context.Context, field graphql.CollectedField, obj *api.Collection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Collection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ImageURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Collection_token_uri(ctx context.Context, field graphql.CollectedField, obj *api.Collection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Collection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TokenURI, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Collection_chain(ctx context.Context, field graphql.CollectedField, obj *api.Collection) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1540,6 +1678,38 @@ func (ec *executionContext) _Marketplace_description(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Marketplace_website(ctx context.Context, field graphql.CollectedField, obj *api.Marketplace) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Marketplace",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Website, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Marketplace_chains(ctx context.Context, field graphql.CollectedField, obj *api.Marketplace) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1710,41 +1880,6 @@ func (ec *executionContext) _NFT_owner(ctx context.Context, field graphql.Collec
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNAddress2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _NFT_uri(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "NFT",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.URI, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _NFT_rarity(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
@@ -3584,6 +3719,30 @@ func (ec *executionContext) _Collection(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "website":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Collection_website(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+		case "image_url":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Collection_image_url(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+		case "token_uri":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Collection_token_uri(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "chain":
 			field := field
 
@@ -3689,6 +3848,13 @@ func (ec *executionContext) _Marketplace(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "website":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Marketplace_website(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
 		case "chains":
 			field := field
 
@@ -3770,16 +3936,6 @@ func (ec *executionContext) _NFT(ctx context.Context, sel ast.SelectionSet, obj 
 		case "owner":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._NFT_owner(ctx, field, obj)
-			}
-
-			out.Values[i] = innerFunc(ctx)
-
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
-		case "uri":
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._NFT_uri(ctx, field, obj)
 			}
 
 			out.Values[i] = innerFunc(ctx)
@@ -5202,6 +5358,16 @@ func (ec *executionContext) unmarshalONFTOrder2ᚖgithubᚗcomᚋNFTᚑcomᚋind
 	}
 	res, err := ec.unmarshalInputNFTOrder(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
+	res, err := graphql.UnmarshalString(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	res := graphql.MarshalString(v)
+	return res
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
