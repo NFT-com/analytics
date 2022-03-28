@@ -8,6 +8,7 @@ import (
 
 // TODO: Refactor the queries below to not use explicit joins but leave it to the query compiler
 // to determine the best course of action.
+// See https://github.com/NFT-com/graph-api/issues/6
 
 // MarketplacesForCollection retrieves all marketplaces that the specified collection is associated with.
 func (s *Storage) MarketplacesForCollection(collectionID string) ([]*api.Marketplace, error) {
