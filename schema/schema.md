@@ -245,7 +245,7 @@ Collection represents a group of NFTs that share the same smart contract.
 		<tr>
 			<td colspan="2" valign="top"><strong>token_uri</strong></td>
 			<td valign="top"><a href="#string">String</a>!</td>
-			<td>URI of the token from the collection, directing to e.g. a JSON file with asset metadata.</td>
+			<td>Base URI for the tokens from the collection, directing to e.g. a JSON file with token metadata.</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>chain</strong></td>
