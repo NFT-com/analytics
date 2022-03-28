@@ -74,6 +74,11 @@ type Marketplace {
     description: String!
 
     """
+    Marketplace website.
+    """
+    website: String
+
+    """
     Chains the marketplace operates on.
     """
     chains: [Chain!]!
@@ -107,6 +112,21 @@ type Collection {
     Address of the smart-contract.
     """
     address: Address!
+
+    """
+    Collection website.
+    """
+    website: String
+
+    """
+    URL of an image for the collection.
+    """
+    image_url: String
+
+    """
+    URI of the token from the collection, directing to e.g. a JSON file with asset metadata.
+    """
+    token_uri: String!
 
     """
     Chain on which collection resides on.
@@ -192,11 +212,6 @@ type NFT {
     Address of the account that owns the NFT.
     """
     owner: Address!
-
-    """
-    URI of the NFT, directing to e.g. a JSON file with asset metadata.
-    """
-    uri: String!
 
     """
     Rarity score for the NFT.

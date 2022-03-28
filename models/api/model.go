@@ -25,6 +25,9 @@ type Collection struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Address     string `json:"address"`
+	Website     string `json:"website"`
+	ImageURL    string `json:"image_url"`
+	TokenURI    string `json:"token_uri"`
 	ChainID     string `json:"-"`
 }
 
@@ -38,6 +41,7 @@ type Marketplace struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	Website     string `json:"website"`
 }
 
 // TableName returns the name of the underlying database table for the Marketplace.
@@ -50,7 +54,6 @@ type NFT struct {
 	ID           string  `json:"id"`
 	TokenID      string  `json:"tokenID"`
 	Owner        string  `json:"owner"`
-	URI          string  `json:"uri"`
 	Rarity       float64 `json:"rarity"`
 	CollectionID string  `json:"-"`
 }

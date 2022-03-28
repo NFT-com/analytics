@@ -6,7 +6,7 @@ import (
 	"github.com/NFT-com/indexer-api/models/api"
 )
 
-// MarketplacesForCollection retrieves all Marketplaces that the specified Collection is associated with.
+// MarketplacesForCollection retrieves all marketplaces that the specified collection is associated with.
 func (s *Storage) MarketplacesForCollection(collectionID string) ([]*api.Marketplace, error) {
 
 	var marketplaces []*api.Marketplace
@@ -26,7 +26,7 @@ func (s *Storage) MarketplacesForCollection(collectionID string) ([]*api.Marketp
 	return marketplaces, nil
 }
 
-// MarketplaceCollections retrieves all Collections associated with the specified Marketplace.
+// MarketplaceCollections retrieves all collections associated with the specified marketplace.
 func (s *Storage) MarketplaceCollections(marketplaceID string) ([]*api.Collection, error) {
 
 	var collections []*api.Collection
@@ -46,7 +46,7 @@ func (s *Storage) MarketplaceCollections(marketplaceID string) ([]*api.Collectio
 	return collections, nil
 }
 
-// MarketplacesByChain retrieves a list of Marketplaces on a specified Chain.
+// MarketplacesByChain retrieves a list of marketplaces on a specified Chain.
 func (s *Storage) MarketplacesByChain(chainID string) ([]*api.Marketplace, error) {
 
 	var marketplaces []*api.Marketplace
@@ -66,7 +66,7 @@ func (s *Storage) MarketplacesByChain(chainID string) ([]*api.Marketplace, error
 	return marketplaces, nil
 }
 
-// MarketplaceChains retrieves all chains that the Marketplace supports.
+// MarketplaceChains retrieves all chains that the marketplace supports.
 func (s *Storage) MarketplaceChains(marketplaceID string) ([]*api.Chain, error) {
 
 	var chains []*api.Chain

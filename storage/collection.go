@@ -28,7 +28,7 @@ func (s *Storage) Collection(id string) (*api.Collection, error) {
 	return &collection, nil
 }
 
-// CollectionByContract retrieves a single collection based on the chain ID and the contract addresss.
+// CollectionByContract retrieves a single collection based on the chain ID and the contract address.
 func (s *Storage) CollectionByContract(chainID string, contract string) (*api.Collection, error) {
 
 	if chainID == "" {
@@ -81,7 +81,7 @@ func (s *Storage) Collections(chain *string, orderBy api.CollectionOrder) ([]*ap
 	return collections, nil
 }
 
-// CollectionNFTs retrieves the list of NFTs in a specific Collection.
+// CollectionNFTs retrieves the list of NFTs in a specific collection.
 func (s *Storage) CollectionNFTs(collectionID string) ([]*api.NFT, error) {
 
 	var nfts []*api.NFT
@@ -98,7 +98,7 @@ func (s *Storage) CollectionNFTs(collectionID string) ([]*api.NFT, error) {
 
 }
 
-// CollectionsByChain retrieves a list of Cllections on a specified Chain.
+// CollectionsByChain retrieves a list of collections on a specified Chain.
 func (s *Storage) CollectionsByChain(chainID string) ([]*api.Collection, error) {
 
 	var collections []*api.Collection
@@ -108,7 +108,7 @@ func (s *Storage) CollectionsByChain(chainID string) ([]*api.Collection, error) 
 		Find(&collections).
 		Error
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve collections: %W", err)
+		return nil, fmt.Errorf("could not retrieve collections: %w", err)
 	}
 
 	return collections, nil

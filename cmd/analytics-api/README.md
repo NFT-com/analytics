@@ -25,7 +25,7 @@ host=localhost user=database-user password=password dbname=database-name port=54
 ## GraphQL Playground
 
 The API provides a command line option to enable [GraphQL Playground](https://github.com/graphql/graphql-playground), and IDE for GraphQL development.
-By default GraphQL Playground is disabled, but can be enabled using the `--enable-playground` command line option.
+By default, GraphQL Playground is disabled, but can be enabled using the `--enable-playground` command line option.
 The URL where GraphQL Playground is hosted can be set using the `--playground-path` command line option.
 
 ## GraphQL Query Complexity
