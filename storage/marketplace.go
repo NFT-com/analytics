@@ -16,10 +16,10 @@ func (s *Storage) MarketplacesForCollection(collectionID string) ([]*api.Marketp
 	var marketplaces []*api.Marketplace
 
 	err := s.db.
-		Table("marketplace m").
+		Table("marketplaces m").
 		Select("m.*").
-		Joins("INNER JOIN marketplace_collections mc ON m.id = mc.marketplace_id").
-		Joins("INNER JOIN collection c ON mc.collection_id = c.id").
+		Joins("INNER JOIN marketplaces_collections mc ON m.id = mc.marketplace_id").
+		Joins("INNER JOIN collections c ON mc.collection_id = c.id").
 		Where("c.id = ?", collectionID).
 		Find(&marketplaces).
 		Error
@@ -36,10 +36,10 @@ func (s *Storage) MarketplaceCollections(marketplaceID string) ([]*api.Collectio
 	var collections []*api.Collection
 
 	err := s.db.
-		Table("marketplace m").
+		Table("marketplaces m").
 		Select("c.*").
-		Joins("INNER JOIN marketplace_collections mc ON m.id = mc.marketplace_id").
-		Joins("INNER JOIN collection c ON mc.collection_id = c.id").
+		Joins("INNER JOIN marketplaces_collections mc ON m.id = mc.marketplace_id").
+		Joins("INNER JOIN collections c ON mc.collection_id = c.id").
 		Where("m.id = ?", marketplaceID).
 		Find(&collections).
 		Error
@@ -56,10 +56,10 @@ func (s *Storage) MarketplacesByChain(chainID string) ([]*api.Marketplace, error
 	var marketplaces []*api.Marketplace
 
 	err := s.db.
-		Table("marketplace m").
+		Table("marketplaces m").
 		Select("DISTINCT m.*").
-		Joins("INNER JOIN marketplace_collections mc ON m.id = mc.marketplace_id").
-		Joins("INNER JOIN collection c ON mc.collection_id = c.id").
+		Joins("INNER JOIN marketplaces_collections mc ON m.id = mc.marketplace_id").
+		Joins("INNER JOIN collections c ON mc.collection_id = c.id").
 		Where("c.chain_id = ?", chainID).
 		Find(&marketplaces).
 		Error
@@ -76,9 +76,9 @@ func (s *Storage) MarketplaceChains(marketplaceID string) ([]*api.Chain, error) 
 	var chains []*api.Chain
 
 	selection := s.db.
-		Table("marketplace_collections mc").
+		Table("marketplaces_collections mc").
 		Select("DISTINCT c.chain_id").
-		Joins("INNER JOIN collection c ON mc.collection_id = c.id").
+		Joins("INNER JOIN collections c ON mc.collection_id = c.id").
 		Where("mc.marketplace_id = ?", marketplaceID)
 
 	err := s.db.
