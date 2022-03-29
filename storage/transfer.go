@@ -19,15 +19,7 @@ func (s *Storage) Transfers(selector events.TransferSelector) ([]events.Transfer
 
 	// Create the database query.
 	db := s.db.Where(query)
-
-	// Set start time condition if provided.
-	if selector.Start != "" {
-		db = db.Where("emitted_at >= ?", selector.Start)
-	}
-	// Set end time condition if provided.
-	if selector.End != "" {
-		db = db.Where("emitted_at <= ?", selector.End)
-	}
+	db = setTimeFilter(db, selector.TimeSelector)
 
 	var transfers []events.Transfer
 	err := db.Find(&transfers).Error

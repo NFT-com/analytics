@@ -18,15 +18,7 @@ func (s *Storage) Mints(selector events.MintSelector) ([]events.Mint, error) {
 
 	// Create the database query.
 	db := s.db.Where(query)
-
-	// Set start time condition if provided.
-	if selector.Start != "" {
-		db = db.Where("emitted_at >= ?", selector.Start)
-	}
-	// Set end time condition if provided.
-	if selector.End != "" {
-		db = db.Where("emitted_at <= ?", selector.End)
-	}
+	db = setTimeFilter(db, selector.TimeSelector)
 
 	var mints []events.Mint
 	err := db.Find(&mints).Error
