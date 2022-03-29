@@ -20,6 +20,7 @@ func (s *Storage) Transfers(selector events.TransferSelector) ([]events.Transfer
 	// Create the database query.
 	db := s.db.Where(query)
 	db = setTimeFilter(db, selector.TimeSelector)
+	db = setBlockRangeFilter(db, selector.BlockSelector)
 
 	var transfers []events.Transfer
 	err := db.Find(&transfers).Error

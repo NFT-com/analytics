@@ -4,6 +4,7 @@ package events
 // mint events.
 type MintSelector struct {
 	TimeSelector
+	BlockSelector
 	TokenSelector
 
 	Transaction string `query:"transaction"`
@@ -14,6 +15,7 @@ type MintSelector struct {
 // transfer events.
 type TransferSelector struct {
 	TimeSelector
+	BlockSelector
 	TokenSelector
 
 	Transaction string `query:"transaction"`
@@ -25,6 +27,7 @@ type TransferSelector struct {
 // sale events.
 type SaleSelector struct {
 	TimeSelector
+	BlockSelector
 
 	Transaction string `query:"transaction"`
 	Marketplace string `query:"marketplace"`
@@ -37,6 +40,7 @@ type SaleSelector struct {
 // burn events.
 type BurnSelector struct {
 	TimeSelector
+	BlockSelector
 	TokenSelector
 
 	Transaction string `query:"transaction"`
@@ -54,6 +58,12 @@ type TimeSelector struct {
 	End   string `query:"end"`
 }
 
+// BlockSelector allows selecting events in a block range.
+type BlockSelector struct {
+	BlockStart string `query:"block_start"`
+	BlockEnd   string `query:"block_end"`
+}
+
 // FIXME: Validate format if parameters are set.
-// FIXME: Add filters for start and end height.
 // FIXME: Change start/end timestamps.
+// FIXME: Will it work if Block selector fields are renamed?
