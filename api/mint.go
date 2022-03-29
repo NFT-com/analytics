@@ -9,7 +9,7 @@ import (
 // Mint returns all NFT mint events, according to the specified search criteria.
 func (a *API) Mint(ctx echo.Context) error {
 
-	var req Filter
+	var req MintSelector
 	err := ctx.Bind(&req)
 	if err != nil {
 		return bindError(err)

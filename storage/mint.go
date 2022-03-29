@@ -8,24 +8,25 @@ import (
 )
 
 // Mints retrieves all NFT mint events according to the specified filters.
-func (s *Storage) Mints(filter api.Filter) ([]events.Mint, error) {
+func (s *Storage) Mints(selector api.MintSelector) ([]events.Mint, error) {
 
 	query := events.Mint{
-		Chain:      filter.Chain,
-		Collection: filter.Collection,
-		TokenID:    filter.TokenID,
+		Collection:  selector.Collection,
+		Transaction: selector.Transaction,
+		TokenID:     selector.TokenID,
+		Owner:       selector.Owner,
 	}
 
 	// Create the database query.
 	db := s.db.Where(query)
 
 	// Set start time condition if provided.
-	if filter.Start != "" {
-		db = db.Where("timestamp > ?", filter.Start)
+	if selector.Start != "" {
+		db = db.Where("emitted_at >= ?", selector.Start)
 	}
 	// Set end time condition if provided.
-	if filter.End != "" {
-		db = db.Where("timestamp < ?", filter.End)
+	if selector.End != "" {
+		db = db.Where("emitted_at <= ?", selector.End)
 	}
 
 	var mints []events.Mint

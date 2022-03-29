@@ -9,7 +9,7 @@ import (
 // Burn returns all NFT burn events, according to the specified search criteria.
 func (a *API) Burn(ctx echo.Context) error {
 
-	var req Filter
+	var req BurnSelector
 	err := ctx.Bind(&req)
 	if err != nil {
 		return bindError(err)

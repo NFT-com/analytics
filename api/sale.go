@@ -9,7 +9,7 @@ import (
 // Sale returns all NFT sale events, according to the specified search criteria.
 func (a *API) Sale(ctx echo.Context) error {
 
-	var req Filter
+	var req SaleSelector
 	err := ctx.Bind(&req)
 	if err != nil {
 		return bindError(err)
