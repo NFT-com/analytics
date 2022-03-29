@@ -6,8 +6,8 @@ import (
 
 // FIXME: Change this once the interface becomes clear.
 type Storage interface {
-	Mints(MintSelector) ([]events.Mint, error)
-	Transfers(TransferSelector) ([]events.Transfer, error)
-	Sales(SaleSelector) ([]events.Sale, error)
-	Burns(BurnSelector) ([]events.Burn, error)
+	Mints(events.MintSelector) ([]events.Mint, error)
+	Transfers(events.TransferSelector) ([]events.Transfer, error)
+	Sales(events.SaleSelector) ([]events.Sale, error)
+	Burns(events.BurnSelector) ([]events.Burn, error)
 }

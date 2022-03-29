@@ -3,12 +3,11 @@ package storage
 import (
 	"fmt"
 
-	"github.com/NFT-com/events-api/api"
 	"github.com/NFT-com/events-api/models/events"
 )
 
 // Mints retrieves all NFT mint events according to the specified filters.
-func (s *Storage) Mints(selector api.MintSelector) ([]events.Mint, error) {
+func (s *Storage) Mints(selector events.MintSelector) ([]events.Mint, error) {
 
 	query := events.Mint{
 		Collection:  selector.Collection,

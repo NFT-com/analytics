@@ -10,7 +10,7 @@ type Mint struct {
 	Collection  string `gorm:"column:collection" json:"collection"`
 	BlockNumber string `gorm:"column:block" json:"block"`
 	Transaction string `gorm:"column:transaction_hash" json:"transaction"`
-	TokenID     string `gorm:"column:nft_id" json:"token_id"`
+	TokenID     string `gorm:"column:token_id" json:"token_id"`
 	Owner       string `gorm:"column:owner" json:"owner"`
 	Timestamp   string `gorm:"column:emitted_at" json:"timestamp"`
 }
@@ -18,33 +18,33 @@ type Mint struct {
 // Transfer represents a transfer event.
 type Transfer struct {
 	ID          string `gorm:"column:id" json:"-"`
-	TokenID     string `json:"token_id" gorm:"column:nft_id"`
-	Collection  string `json:"collection" gorm:"column:collection"`
-	BlockNumber string `json:"block" gorm:"column:block"`
-	Transaction string `json:"transaction" gorm:"column:transaction_hash"`
-	From        string `json:"from" gorm:"column:from_address"`
-	To          string `json:"to" gorm:"column:to_address"`
-	Timestamp   string `json:"timestamp" gorm:"column:emitted_at"`
+	TokenID     string `gorm:"column:token_id" json:"token_id"`
+	Collection  string `gorm:"column:collection" json:"collection"`
+	BlockNumber string `gorm:"column:block" json:"block"`
+	Transaction string `gorm:"column:transaction_hash" json:"transaction"`
+	From        string `gorm:"column:from_address" json:"from"`
+	To          string `gorm:"column:to_address" json:"to"`
+	Timestamp   string `gorm:"column:emitted_at" json:"timestamp"`
 }
 
 // Sale represents a sale event.
 type Sale struct {
 	ID          string `gorm:"column:id" json:"-"`
-	Marketplace string `json:"marketplace" gorm:"column:marketplace"`
-	BlockNumber string `json:"block" gorm:"column:block"`
-	Transaction string `json:"transaction" gorm:"column:transaction_hash"`
-	Seller      string `json:"seller" gorm:"column:seller"`
-	Buyer       string `json:"buyer" gorm:"column:buyer"`
-	Price       string `json:"price" gorm:"column:price"`
-	Timestamp   string `json:"timestamp" gorm:"column:emitted_at"`
+	Marketplace string `gorm:"column:marketplace" json:"marketplace"`
+	BlockNumber string `gorm:"column:block" json:"block"`
+	Transaction string `gorm:"column:transaction_hash" json:"transaction"`
+	Seller      string `gorm:"column:seller" json:"seller"`
+	Buyer       string `gorm:"column:buyer" json:"buyer"`
+	Price       string `gorm:"column:price" json:"price"`
+	Timestamp   string `gorm:"column:emitted_at" json:"timestamp"`
 }
 
 // Burn represents a burn event.
 type Burn struct {
 	ID          string `gorm:"column:id" json:"-"`
-	Collection  string `json:"collection" gorm:"column:collection"`
-	BlockNumber string `json:"block" gorm:"column:block"`
-	Transaction string `json:"transaction" gorm:"column:transaction_hash"`
-	TokenID     string `json:"token_id" gorm:"column:nft_id"`
-	Timestamp   string `json:"timestamp" gorm:"column:emitted_at"`
+	Collection  string `gorm:"column:collection" json:"collection"`
+	BlockNumber string `gorm:"column:block" json:"block"`
+	Transaction string `gorm:"column:transaction_hash" json:"transaction"`
+	TokenID     string `gorm:"column:token_id" json:"token_id"`
+	Timestamp   string `gorm:"column:emitted_at" json:"timestamp"`
 }

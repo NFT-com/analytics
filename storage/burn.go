@@ -3,12 +3,11 @@ package storage
 import (
 	"fmt"
 
-	"github.com/NFT-com/events-api/api"
 	"github.com/NFT-com/events-api/models/events"
 )
 
 // Burns retrieves all NFT burn events according to the specified filters.
-func (s *Storage) Burns(selector api.BurnSelector) ([]events.Burn, error) {
+func (s *Storage) Burns(selector events.BurnSelector) ([]events.Burn, error) {
 
 	query := events.Burn{
 		Collection:  selector.Collection,

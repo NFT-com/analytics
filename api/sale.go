@@ -4,12 +4,14 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+
+	"github.com/NFT-com/events-api/models/events"
 )
 
 // Sale returns all NFT sale events, according to the specified search criteria.
 func (a *API) Sale(ctx echo.Context) error {
 
-	var req SaleSelector
+	var req events.SaleSelector
 	err := ctx.Bind(&req)
 	if err != nil {
 		return bindError(err)

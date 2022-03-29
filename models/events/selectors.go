@@ -1,4 +1,4 @@
-package api
+package events
 
 // MintSelector contains all of the supported query parameters for filtering
 // mint events.

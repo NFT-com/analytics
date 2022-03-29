@@ -3,12 +3,11 @@ package storage
 import (
 	"fmt"
 
-	"github.com/NFT-com/events-api/api"
 	"github.com/NFT-com/events-api/models/events"
 )
 
 // Transfers retrieves all NFT transfer events according to the specified filters.
-func (s *Storage) Transfers(selector api.TransferSelector) ([]events.Transfer, error) {
+func (s *Storage) Transfers(selector events.TransferSelector) ([]events.Transfer, error) {
 
 	query := events.Transfer{
 		Collection:  selector.Collection,

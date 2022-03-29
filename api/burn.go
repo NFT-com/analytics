@@ -4,12 +4,14 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+
+	"github.com/NFT-com/events-api/models/events"
 )
 
 // Burn returns all NFT burn events, according to the specified search criteria.
 func (a *API) Burn(ctx echo.Context) error {
 
-	var req BurnSelector
+	var req events.BurnSelector
 	err := ctx.Bind(&req)
 	if err != nil {
 		return bindError(err)

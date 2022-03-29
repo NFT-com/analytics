@@ -3,12 +3,11 @@ package storage
 import (
 	"fmt"
 
-	"github.com/NFT-com/events-api/api"
 	"github.com/NFT-com/events-api/models/events"
 )
 
 // Sales retrieves all NFT sale events according to the specified filters.
-func (s *Storage) Sales(selector api.SaleSelector) ([]events.Sale, error) {
+func (s *Storage) Sales(selector events.SaleSelector) ([]events.Sale, error) {
 
 	query := events.Sale{
 		Marketplace: selector.Marketplace,
