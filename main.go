@@ -32,6 +32,9 @@ const (
 	transferEndpoint = "/transfers/"
 	burnEndpoint     = "/burns/"
 	saleEndpoint     = "/sales/"
+
+	// Default event batch size.
+	defaultBatchSize = 100
 )
 
 func main() {
@@ -46,12 +49,14 @@ func run() int {
 
 	var (
 		flagBind               string
+		flagBatchSize          uint
 		flagDatabase           string
 		flagLogLevel           string
 		flagEnableQueryLogging bool
 	)
 
 	pflag.StringVarP(&flagBind, "bind", "b", ":8080", "bind address for serving requests")
+	pflag.UintVarP(&flagBatchSize, "batch-size", "s", defaultBatchSize, "default limit for number of events returned in a single call")
 	pflag.StringVarP(&flagDatabase, "database", "d", "", "database address")
 	pflag.StringVarP(&flagLogLevel, "log-level", "l", "info", "log level")
 	pflag.BoolVar(&flagEnableQueryLogging, "enable-query-logging", true, "enable logging of database queries")
@@ -91,7 +96,7 @@ func run() int {
 	}
 
 	// Initialize storage component.
-	storage := storage.New(db)
+	storage := storage.New(db, storage.WithBatchSize(flagBatchSize))
 
 	// Initialize the API handler.
 	api := api.New(storage)
