@@ -1,8 +1,6 @@
 package storage
 
 import (
-	"fmt"
-
 	"gorm.io/gorm"
 )
 
@@ -27,8 +25,6 @@ func New(db *gorm.DB, opts ...OptionFunc) *Storage {
 		db:        db,
 		batchSize: cfg.BatchSize,
 	}
-
-	fmt.Printf("batch size: %v", s.batchSize)
 
 	return &s
 }

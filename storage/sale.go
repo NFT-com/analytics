@@ -18,7 +18,7 @@ func (s *Storage) Sales(selector events.SaleSelector) ([]events.Sale, error) {
 	}
 
 	// Create the database query.
-	db := s.db.Where(query)
+	db := s.createQuery(query)
 	db = setTimeFilter(db, selector.TimeSelector)
 	db = setBlockRangeFilter(db, selector.BlockSelector)
 

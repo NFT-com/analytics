@@ -99,10 +99,7 @@ func run() int {
 	storage := storage.New(db, storage.WithBatchSize(flagBatchSize))
 
 	// Initialize the API handler.
-	api := api.New(storage)
-
-	// FIXME: Remove when storage starts getting used.
-	_ = storage
+	api := api.New(storage, log)
 
 	// Initialize Echo Web Server.
 	server := echo.New()
