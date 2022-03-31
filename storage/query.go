@@ -12,7 +12,8 @@ func (s *Storage) createQuery(query interface{}) *gorm.DB {
 	db := s.db.
 		Where(query).
 		Limit(int(s.batchSize)).
-		Order("emitted_at DESC")
+		Order("emitted_at DESC").
+		Order("id DESC")
 
 	return db
 }
@@ -20,14 +21,14 @@ func (s *Storage) createQuery(query interface{}) *gorm.DB {
 // setTimeFilter will add the time range condition to the query, if provided.
 func setTimeFilter(db *gorm.DB, selector events.TimeSelector) *gorm.DB {
 
-	// Set start time condition - inclusive.
+	// Set start time condition.
 	if selector.Start != "" {
 		db = db.Where("emitted_at >= ?", selector.Start)
 	}
 
-	// Set end time condition - exclusive.
+	// Set end time condition.
 	if selector.End != "" {
-		db = db.Where("emitted_at < ?", selector.End)
+		db = db.Where("emitted_at <= ?", selector.End)
 	}
 
 	return db

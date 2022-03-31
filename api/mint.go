@@ -8,19 +8,36 @@ import (
 	"github.com/NFT-com/events-api/models/events"
 )
 
+// mintRequest describes a request to the mints endpoint.
+type mintRequest struct {
+	events.MintSelector
+	Page string `query:"page"`
+}
+
+// mintResponse describes a response to the mint listing request.
+type mintResponse struct {
+	Events   []events.Mint `json:"events"`
+	NextPage string        `json:"next_page,omitempty"`
+}
+
 // Mint returns all NFT mint events, according to the specified search criteria.
 func (a *API) Mint(ctx echo.Context) error {
 
-	var req events.MintSelector
+	var req mintRequest
 	err := ctx.Bind(&req)
 	if err != nil {
 		return bindError(err)
 	}
 
-	mints, err := a.storage.Mints(req)
+	mints, token, err := a.storage.Mints(req.MintSelector, req.Page)
 	if err != nil {
 		return apiError(err)
 	}
 
-	return ctx.JSON(http.StatusOK, mints)
+	res := mintResponse{
+		Events:   mints,
+		NextPage: token,
+	}
+
+	return ctx.JSON(http.StatusOK, res)
 }

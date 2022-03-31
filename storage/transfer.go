@@ -6,9 +6,16 @@ import (
 	"github.com/NFT-com/events-api/models/events"
 )
 
-// Transfers retrieves all NFT transfer events according to the specified filters.
-func (s *Storage) Transfers(selector events.TransferSelector) ([]events.Transfer, error) {
+// FIXME: Think about retrieving more records than needed to know if there's another page or not.
 
+// Transfers retrieves NFT transfer events according to the specified filters.
+// Number of events returned is limited by the `batchSize` `Storage` parameter.
+// If the number of events for the specified criteria is greater than `batchSize`,
+// a token is provided along with the list of events. This token should be provided
+// when retrieving the next batch of records.
+func (s *Storage) Transfers(selector events.TransferSelector, token string) ([]events.Transfer, string, error) {
+
+	// Initialize the query variable.
 	query := events.Transfer{
 		Collection:  selector.Collection,
 		Transaction: selector.Transaction,
@@ -21,12 +28,30 @@ func (s *Storage) Transfers(selector events.TransferSelector) ([]events.Transfer
 	db := s.createQuery(query)
 	db = setTimeFilter(db, selector.TimeSelector)
 	db = setBlockRangeFilter(db, selector.BlockSelector)
+	if token != "" {
 
+		offsetID, err := unpackToken(token)
+		if err != nil {
+			return nil, "", fmt.Errorf("could not unpack id: %w", err)
+		}
+
+		db = db.Where("id > ?", offsetID)
+	}
+
+	// Retrieve the list of events.
 	var transfers []events.Transfer
 	err := db.Find(&transfers).Error
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve transfer events: %w", err)
+		return nil, "", fmt.Errorf("could not retrieve transfer events: %w", err)
 	}
 
-	return transfers, nil
+	if len(transfers) == 0 {
+		return transfers, "", nil
+	}
+
+	// Create a token for a subsequent search.
+	lastID := transfers[len(transfers)-1].ID
+	nextToken := createToken(lastID)
+
+	return transfers, nextToken, nil
 }

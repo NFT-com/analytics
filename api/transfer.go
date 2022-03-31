@@ -32,30 +32,14 @@ func (a *API) Transfer(ctx echo.Context) error {
 		return bindError(err)
 	}
 
-	selector := req.TransferSelector
-	if req.Page != "" {
-
-		end, err := unpackPaginationToken(req.Page)
-		if err != nil {
-			return bindError(err)
-		}
-
-		selector.TimeSelector.End = end
-	}
-
-	transfers, err := a.storage.Transfers(selector)
+	transfers, token, err := a.storage.Transfers(req.TransferSelector, req.Page)
 	if err != nil {
 		return apiError(err)
 	}
 
 	res := transferResponse{
-		Events: transfers,
-	}
-
-	if len(transfers) > 0 {
-		lastTimestamp := transfers[len(transfers)-1].Timestamp
-
-		res.NextPage = createPaginationToken(lastTimestamp)
+		Events:   transfers,
+		NextPage: token,
 	}
 
 	return ctx.JSON(http.StatusOK, res)
