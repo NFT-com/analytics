@@ -25,22 +25,16 @@ func (s *Storage) Transfers(selector events.TransferSelector, token string) ([]e
 	}
 
 	// Create the database query.
-	db := s.createQuery(query)
+	db, err := s.createQuery(query, token)
+	if err != nil {
+		return nil, "", fmt.Errorf("could not create query: %w", err)
+	}
 	db = setTimeFilter(db, selector.TimeSelector)
 	db = setBlockRangeFilter(db, selector.BlockSelector)
-	if token != "" {
-
-		offsetID, err := unpackToken(token)
-		if err != nil {
-			return nil, "", fmt.Errorf("could not unpack id: %w", err)
-		}
-
-		db = db.Where("id > ?", offsetID)
-	}
 
 	// Retrieve the list of events.
 	var transfers []events.Transfer
-	err := db.Find(&transfers).Error
+	err = db.Find(&transfers).Error
 	if err != nil {
 		return nil, "", fmt.Errorf("could not retrieve transfer events: %w", err)
 	}

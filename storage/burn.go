@@ -21,22 +21,16 @@ func (s *Storage) Burns(selector events.BurnSelector, token string) ([]events.Bu
 	}
 
 	// Create the database query.
-	db := s.createQuery(query)
+	db, err := s.createQuery(query, token)
+	if err != nil {
+		return nil, "", fmt.Errorf("could not create query: %w", err)
+	}
 	db = setTimeFilter(db, selector.TimeSelector)
 	db = setBlockRangeFilter(db, selector.BlockSelector)
-	if token != "" {
-
-		offsetID, err := unpackToken(token)
-		if err != nil {
-			return nil, "", fmt.Errorf("could not unpack id: %w", err)
-		}
-
-		db = db.Where("id > ?", offsetID)
-	}
 
 	// Retrieve the list of events.
 	var burns []events.Burn
-	err := db.Find(&burns).Error
+	err = db.Find(&burns).Error
 	if err != nil {
 		return nil, "", fmt.Errorf("could not retrieve burn events: %w", err)
 	}

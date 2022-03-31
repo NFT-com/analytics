@@ -1,13 +1,15 @@
 package storage
 
 import (
+	"fmt"
+
 	"gorm.io/gorm"
 
 	"github.com/NFT-com/events-api/models/events"
 )
 
-// createQuery returns an appropriate lookup query.
-func (s *Storage) createQuery(query interface{}) *gorm.DB {
+// createQuery creates an appropriate event lookup query.
+func (s *Storage) createQuery(query interface{}, token string) (*gorm.DB, error) {
 
 	db := s.db.
 		Where(query).
@@ -15,7 +17,17 @@ func (s *Storage) createQuery(query interface{}) *gorm.DB {
 		Order("emitted_at DESC").
 		Order("id DESC")
 
-	return db
+	// If there's a token provided, unpack it and use it
+	// to determine the offset.
+	if token != "" {
+		offsetID, err := unpackToken(token)
+		if err != nil {
+			return nil, fmt.Errorf("could not unpack event ID for query offset: %w", err)
+		}
+		db = db.Where("id > ?", offsetID)
+	}
+
+	return db, nil
 }
 
 // setTimeFilter will add the time range condition to the query, if provided.

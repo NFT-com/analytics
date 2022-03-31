@@ -22,22 +22,16 @@ func (s *Storage) Mints(selector events.MintSelector, token string) ([]events.Mi
 	}
 
 	// Create the database query.
-	db := s.createQuery(query)
+	db, err := s.createQuery(query, token)
+	if err != nil {
+		return nil, "", fmt.Errorf("could not create query: %w", err)
+	}
 	db = setTimeFilter(db, selector.TimeSelector)
 	db = setBlockRangeFilter(db, selector.BlockSelector)
-	if token != "" {
-
-		offsetID, err := unpackToken(token)
-		if err != nil {
-			return nil, "", fmt.Errorf("could not unpack id: %w", err)
-		}
-
-		db = db.Where("id > ?", offsetID)
-	}
 
 	// Retrieve the list of events.
 	var mints []events.Mint
-	err := db.Find(&mints).Error
+	err = db.Find(&mints).Error
 	if err != nil {
 		return nil, "", fmt.Errorf("could not retrieve mint events: %w", err)
 	}
