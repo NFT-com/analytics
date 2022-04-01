@@ -6,8 +6,6 @@ import (
 	"github.com/NFT-com/events-api/models/events"
 )
 
-// FIXME: Think about retrieving more records than needed to know if there's another page or not.
-
 // Transfers retrieves NFT transfer events according to the specified filters.
 // Number of events returned is limited by the `batchSize` `Storage` parameter.
 // If the number of events for the specified criteria is greater than `batchSize`,
@@ -25,7 +23,14 @@ func (s *Storage) Transfers(selector events.TransferSelector, token string) ([]e
 	}
 
 	// Create the database query.
-	db, err := s.createQuery(query, token)
+	// NOTE: This function creates a query with a limit of `batchSize + 1`.
+	// This is done in order to see if there are more records fitting the search
+	// criteria after the current batch. If the number of returned records
+	// `n <= batchSize`, then there is no next page, and we saved ourselves
+	// the cost of doing another database query to do `SELECT COUNT(*) ...`.
+	// It is up to the caller to trim the result set to fit the `batchSize`.
+	limit := s.batchSize + 1
+	db, err := s.createQuery(query, token, limit)
 	if err != nil {
 		return nil, "", fmt.Errorf("could not create query: %w", err)
 	}
@@ -46,13 +51,10 @@ func (s *Storage) Transfers(selector events.TransferSelector, token string) ([]e
 		return transfers, "", nil
 	}
 
-	// The number of records is larger than `batchSize`, meaning there's
-	// at least one more page of results - create a token to continue the
-	// iteration.
-
 	// Trim the list to correct size, removing the last element.
 	transfers = transfers[:s.batchSize]
 
+	// Create a token to continue the iteration.
 	last := transfers[len(transfers)-1]
 	nextToken := createToken(last.BlockNumber, last.EventIndex)
 

@@ -21,8 +21,10 @@ func (s *Storage) Sales(selector events.SaleSelector, token string) ([]events.Sa
 		Price:       selector.Price,
 	}
 
-	// Create the database query.
-	db, err := s.createQuery(query, token)
+	// NOTE: This function creates a query with a limit of `batchSize + 1` to avoid unnecessary queries.
+	// See the comment for the `Transfers` query creation for more details.
+	limit := s.batchSize + 1
+	db, err := s.createQuery(query, token, limit)
 	if err != nil {
 		return nil, "", fmt.Errorf("could not create query: %w", err)
 	}
@@ -42,13 +44,10 @@ func (s *Storage) Sales(selector events.SaleSelector, token string) ([]events.Sa
 		return sales, "", nil
 	}
 
-	// The number of records is larger than `batchSize`, meaning there's
-	// at least one more page of results - create a token to continue the
-	// iteration.
-
 	// Trim the list to correct size, removing the last element.
 	sales = sales[:s.batchSize]
 
+	// Create a token for a subsequent search.
 	last := sales[len(sales)-1]
 	nextToken := createToken(last.BlockNumber, last.EventIndex)
 

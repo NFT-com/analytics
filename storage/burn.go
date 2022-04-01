@@ -20,8 +20,10 @@ func (s *Storage) Burns(selector events.BurnSelector, token string) ([]events.Bu
 		Transaction: selector.Transaction,
 	}
 
-	// Create the database query.
-	db, err := s.createQuery(query, token)
+	// NOTE: This function creates a query with a limit of `batchSize + 1` to avoid unnecessary queries.
+	// See the comment for the `Transfers` query creation for more details.
+	limit := s.batchSize + 1
+	db, err := s.createQuery(query, token, limit)
 	if err != nil {
 		return nil, "", fmt.Errorf("could not create query: %w", err)
 	}
@@ -49,7 +51,7 @@ func (s *Storage) Burns(selector events.BurnSelector, token string) ([]events.Bu
 	// Trim the list to correct size, removing the last element.
 	burns = burns[:s.batchSize]
 
-	// Create a token for a subsequent search.
+	// Create a token to continue the iteration.
 	last := burns[len(burns)-1]
 	nextToken := createToken(last.BlockNumber, last.EventIndex)
 
