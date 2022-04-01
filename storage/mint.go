@@ -36,9 +36,19 @@ func (s *Storage) Mints(selector events.MintSelector, token string) ([]events.Mi
 		return nil, "", fmt.Errorf("could not retrieve mint events: %w", err)
 	}
 
-	if len(mints) == 0 {
+	// If the number of returned items is smaller or equal to `batchSize`,
+	// there is no next page of results.
+	haveMore := uint(len(mints)) > s.batchSize
+	if !haveMore {
 		return mints, "", nil
 	}
+
+	// The number of records is larger than `batchSize`, meaning there's
+	// at least one more page of results - create a token to continue the
+	// iteration.
+
+	// Trim the list to correct size, removing the last element.
+	mints = mints[:s.batchSize]
 
 	// Create a token for a subsequent search.
 	lastID := mints[len(mints)-1].ID

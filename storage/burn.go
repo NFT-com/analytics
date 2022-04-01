@@ -35,9 +35,19 @@ func (s *Storage) Burns(selector events.BurnSelector, token string) ([]events.Bu
 		return nil, "", fmt.Errorf("could not retrieve burn events: %w", err)
 	}
 
-	if len(burns) == 0 {
+	// If the number of returned items is smaller or equal to `batchSize`,
+	// there is no next page of results.
+	haveMore := uint(len(burns)) > s.batchSize
+	if !haveMore {
 		return burns, "", nil
 	}
+
+	// The number of records is larger than `batchSize`, meaning there's
+	// at least one more page of results - create a token to continue the
+	// iteration.
+
+	// Trim the list to correct size, removing the last element.
+	burns = burns[:s.batchSize]
 
 	// Create a token for a subsequent search.
 	lastID := burns[len(burns)-1].ID

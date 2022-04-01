@@ -39,13 +39,22 @@ func (s *Storage) Transfers(selector events.TransferSelector, token string) ([]e
 		return nil, "", fmt.Errorf("could not retrieve transfer events: %w", err)
 	}
 
-	if len(transfers) == 0 {
+	// If the number of returned items is smaller or equal to `batchSize`,
+	// there is no next page of results.
+	haveMore := uint(len(transfers)) > s.batchSize
+	if !haveMore {
 		return transfers, "", nil
 	}
 
-	// Create a token for a subsequent search.
+	// The number of records is larger than `batchSize`, meaning there's
+	// at least one more page of results - create a token to continue the
+	// iteration.
+
+	// Trim the list to correct size, removing the last element.
+	transfers = transfers[:s.batchSize]
+
 	lastID := transfers[len(transfers)-1].ID
 	nextToken := createToken(lastID)
 
-	return transfers, nextToken, nil
+	return transfers[:s.batchSize], nextToken, nil
 }

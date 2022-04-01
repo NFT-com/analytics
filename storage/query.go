@@ -9,11 +9,17 @@ import (
 )
 
 // createQuery creates an appropriate event lookup query.
+// NOTE: This function creates a query with a limit of `batchSize + 1`.
+// This is done in order to see if there are more records fitting the search
+// criteria after the current batch. If the number of returned records
+// `n <= batchSize`, then there is no next page, and we saved ourselves
+// the cost of doing another database query to do `SELECT COUNT(*) ...`.
+// It is up to the caller to trim the result set to fit the `batchSize`.
 func (s *Storage) createQuery(query interface{}, token string) (*gorm.DB, error) {
 
 	db := s.db.
 		Where(query).
-		Limit(int(s.batchSize)).
+		Limit(int(s.batchSize + 1)).
 		Order("emitted_at DESC").
 		Order("id DESC")
 

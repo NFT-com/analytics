@@ -35,11 +35,20 @@ func (s *Storage) Sales(selector events.SaleSelector, token string) ([]events.Sa
 		return nil, "", fmt.Errorf("could not retrieve sales events: %w", err)
 	}
 
-	if len(sales) == 0 {
+	// If the number of returned items is smaller or equal to `batchSize`,
+	// there is no next page of results.
+	haveMore := uint(len(sales)) > s.batchSize
+	if !haveMore {
 		return sales, "", nil
 	}
 
-	// Create a token for a subsequent search.
+	// The number of records is larger than `batchSize`, meaning there's
+	// at least one more page of results - create a token to continue the
+	// iteration.
+
+	// Trim the list to correct size, removing the last element.
+	sales = sales[:s.batchSize]
+
 	lastID := sales[len(sales)-1].ID
 	nextToken := createToken(lastID)
 
