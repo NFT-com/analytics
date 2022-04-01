@@ -49,8 +49,8 @@ func (s *Storage) Sales(selector events.SaleSelector, token string) ([]events.Sa
 	// Trim the list to correct size, removing the last element.
 	sales = sales[:s.batchSize]
 
-	lastID := sales[len(sales)-1].ID
-	nextToken := createToken(lastID)
+	last := sales[len(sales)-1]
+	nextToken := createToken(last.BlockNumber, last.EventIndex)
 
 	return sales, nextToken, nil
 }

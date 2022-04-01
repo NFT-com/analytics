@@ -20,18 +20,29 @@ func (s *Storage) createQuery(query interface{}, token string) (*gorm.DB, error)
 	db := s.db.
 		Where(query).
 		Limit(int(s.batchSize + 1)).
-		Order("emitted_at DESC").
-		Order("id DESC")
+		Order("block DESC").
+		Order("event_index DESC")
+
+	// If we don't have a token, we're done.
+	if token == "" {
+		return db, nil
+	}
 
 	// If there's a token provided, unpack it and use it
 	// to determine the offset.
-	if token != "" {
-		offsetID, err := unpackToken(token)
-		if err != nil {
-			return nil, fmt.Errorf("could not unpack event ID for query offset: %w", err)
-		}
-		db = db.Where("id > ?", offsetID)
+
+	blockNo, eventIndex, err := unpackToken(token)
+	if err != nil {
+		return nil, fmt.Errorf("could not unpack event ID for query offset: %w", err)
 	}
+
+	// If this is a continued iteration, request earlier events in the same block
+	// and earlier blocks.
+	db = db.Where(
+		s.db.Where("block < ?", blockNo),
+	).Or(
+		s.db.Where("block = ?", blockNo).Where("event_index < ?", eventIndex),
+	)
 
 	return db, nil
 }

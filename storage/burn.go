@@ -50,8 +50,8 @@ func (s *Storage) Burns(selector events.BurnSelector, token string) ([]events.Bu
 	burns = burns[:s.batchSize]
 
 	// Create a token for a subsequent search.
-	lastID := burns[len(burns)-1].ID
-	nextToken := createToken(lastID)
+	last := burns[len(burns)-1]
+	nextToken := createToken(last.BlockNumber, last.EventIndex)
 
 	return burns, nextToken, nil
 }

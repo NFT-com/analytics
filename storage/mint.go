@@ -51,8 +51,8 @@ func (s *Storage) Mints(selector events.MintSelector, token string) ([]events.Mi
 	mints = mints[:s.batchSize]
 
 	// Create a token for a subsequent search.
-	lastID := mints[len(mints)-1].ID
-	nextToken := createToken(lastID)
+	last := mints[len(mints)-1]
+	nextToken := createToken(last.BlockNumber, last.EventIndex)
 
 	return mints, nextToken, nil
 }

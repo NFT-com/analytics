@@ -53,8 +53,8 @@ func (s *Storage) Transfers(selector events.TransferSelector, token string) ([]e
 	// Trim the list to correct size, removing the last element.
 	transfers = transfers[:s.batchSize]
 
-	lastID := transfers[len(transfers)-1].ID
-	nextToken := createToken(lastID)
+	last := transfers[len(transfers)-1]
+	nextToken := createToken(last.BlockNumber, last.EventIndex)
 
-	return transfers[:s.batchSize], nextToken, nil
+	return transfers, nextToken, nil
 }
