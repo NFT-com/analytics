@@ -5,7 +5,7 @@ type Mint struct {
 	ID          string `gorm:"column:id" json:"-"`
 	Collection  string `gorm:"column:collection" json:"collection"`
 	BlockNumber string `gorm:"column:block" json:"block"`
-	EventIndex  uint   `gorm:"column:event_index" json:"-"`
+	EventIndex  uint   `gorm:"column:event_index" json:"event_index"`
 	Transaction string `gorm:"column:transaction_hash" json:"transaction"`
 	TokenID     string `gorm:"column:token_id" json:"token_id"`
 	Owner       string `gorm:"column:owner" json:"owner"`
@@ -18,7 +18,7 @@ type Transfer struct {
 	TokenID     string `gorm:"column:token_id" json:"token_id"`
 	Collection  string `gorm:"column:collection" json:"collection"`
 	BlockNumber string `gorm:"column:block" json:"block"`
-	EventIndex  uint   `gorm:"column:event_index" json:"-"`
+	EventIndex  uint   `gorm:"column:event_index" json:"event_index"`
 	Transaction string `gorm:"column:transaction_hash" json:"transaction"`
 	From        string `gorm:"column:from_address" json:"from"`
 	To          string `gorm:"column:to_address" json:"to"`
@@ -30,7 +30,7 @@ type Sale struct {
 	ID          string `gorm:"column:id" json:"-"`
 	Marketplace string `gorm:"column:marketplace" json:"marketplace"`
 	BlockNumber string `gorm:"column:block" json:"block"`
-	EventIndex  uint   `gorm:"column:event_index" json:"-"`
+	EventIndex  uint   `gorm:"column:event_index" json:"event_index"`
 	Transaction string `gorm:"column:transaction_hash" json:"transaction"`
 	Seller      string `gorm:"column:seller" json:"seller"`
 	Buyer       string `gorm:"column:buyer" json:"buyer"`
@@ -43,7 +43,7 @@ type Burn struct {
 	ID          string `gorm:"column:id" json:"-"`
 	Collection  string `gorm:"column:collection" json:"collection"`
 	BlockNumber string `gorm:"column:block" json:"block"`
-	EventIndex  uint   `gorm:"column:event_index" json:"-"`
+	EventIndex  uint   `gorm:"column:event_index" json:"event_index"`
 	Transaction string `gorm:"column:transaction_hash" json:"transaction"`
 	TokenID     string `gorm:"column:token_id" json:"token_id"`
 	Timestamp   string `gorm:"column:emitted_at" json:"timestamp"`
