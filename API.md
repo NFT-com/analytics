@@ -1,6 +1,7 @@
 # Events API
 
 Events API is a REST API serving time series data relating to NFT-related events occurring on a blockchain.
+Events are served in a reverse chronological order, meaning most recent events are returned first.
 
 ## Endpoints
 
@@ -14,40 +15,80 @@ Supported endpoints are:
 
 Listing all events for a single NFT is done by issuing requests to individual endpoints and merging the results.
 
-### Filters
+### Mints
 
-Some filters will apply to all endpoints.
-It should be possible to retrieve all events by specifying:
+Listing mint events is done by issuing a `GET` request to the `/mints/` endpoint.
+The following filters are available for mint events:
 
-- chain
-- collection
-- marketplace
-- NFT (by token ID)
-- time range (in the form of `start` and `end` times)
+- `collection` - UUID of the collection
+- `token_id` - Non-Fungible Token ID, as seen on the chain
+- `transaction` - UUID of the transaction
+- `start` - start time in RFC3339 format (inclusive)
+- `end` - end time in RFC3339 format (inclusive)
+- `block_start` - string representation of the block number in decimal format (inclusive)
+- `block_end` - string representation of the block number in decimal format (inclusive)
+- `owner` - address of the token owner
 
-Some filters are specific for a single endpoint, for example, the `/transfers/` endpoint could have `from` and `to` parameters (Ethereum addresses) as well as the price, while the `/burns/` endpoint could have the `owner` parameter.
+### Transfers
 
-### Paging
+Listing transfer events is done by issuing a `GET` request to the `/transfers` endpoint.
+The following filters are available for transfer events:
 
-Number of events for a specific query can be rather large.
-One frequent paging mechanism is *cursor based paging* where the token for the next page is returned in the response payload, and that token is used to retrieve the next page of results.
+- `collection` - UUID of the collection
+- `token_id` - Non-Fungible Token ID, as seen on the chain
+- `transaction` - UUID of the transaction
+- `start` - start time in RFC3339 format (inclusive)
+- `end` - end time in RFC3339 format (inclusive)
+- `block_start` - string representation of the block number in decimal format (inclusive)
+- `block_end` - string representation of the block number in decimal format (inclusive)
+- `from` - address of the token sender
+- `to` - address of the token receiver 
 
-### Query examples
+### Burns
 
-List all `mint` events on Ethereum in a date range:
+Listing burn events is done by issuing a `GET` request to the `/burns/` endpoint.
+The following filters are available for burn events:
 
+- `collection` - UUID of the collection
+- `token_id` - Non-Fungible Token ID, as seen on the chain
+- `transaction` - UUID of the transaction
+- `start` - start time in RFC3339 format (inclusive)
+- `end` - end time in RFC3339 format (inclusive)
+- `block_start` - string representation of the block number in decimal format (inclusive)
+- `block_end` - string representation of the block number in decimal format (inclusive)
+
+### Sales
+
+Listing sale events is done by issuing a `GET` request to the `/sales/` endpoint.
+The following filters are available for sale events:
+
+- `marketplace` - UUID of the marketplace
+- `transaction` - UUID of the transaction
+- `start` - start time in RFC3339 format (inclusive)
+- `end` - end time in RFC3339 format (inclusive)
+- `block_start` - string representation of the block number in decimal format (inclusive)
+- `block_end` - string representation of the block number in decimal format (inclusive)
+- `seller` - address of the token seller
+- `buyer` - address of the token buyer
+- `price` - price for the token
+
+## Pagination
+
+Since the number of events fitting a search criteria can be large, events are returned in batches.
+Default number of events returned in a single batch is configured on the back-end side via a CLI flag.
+
+When a given search criteria has more events than what is returned in a single batch, a `next_page` token is included in the API response:
+
+```json
+{
+  "events": [],
+  "next_page": "MTAwMDAwMDk5MDow"
+}
 ```
-curl events.nft.com/mints/?chain=ethereum&start=1234560&end=1234567
-```
 
-List all `transfer` events on Ethereum between two specific addresses:
+This token should be provided in the subsequent request as a `page` query parameter, along with the original search parameters - e.g. `curl -X GET localhost:8080/transfers/?collection=collectionID&token_id=tokenID&page=MTAwMDAwMDk5MDow`.
+The process should be repeated until there are no more pages to process, at which point the `next_page` token will be omitted from the response.
 
-```
-curl events.nft.com/transfers/?start=1234560&end=1234567&from=<addressA>&to=<addressB>
-```
+## Examples
 
-List all `transfer` Ethereum events for Opensea marketplace relating to the CryptoPunks collection:
-
-```
-curl events.nft.com/transfers/?chain=ethereum&collection=cryptopunks&marketplace=opensea
-```
+Postman collections with query examples and tests can be found at [/resources/postman/](/resources/postman/).

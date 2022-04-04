@@ -6,6 +6,8 @@ import (
 	"github.com/NFT-com/events-api/models/events"
 )
 
+// FIXME: Add postman tests for sale events.
+
 // Sales retrieves NFT sale events according to the specified filters.
 // Number of events returned is limited by the `batchSize` `Storage` parameter.
 // If the number of events for the specified criteria is greater than `batchSize`,
@@ -18,7 +20,8 @@ func (s *Storage) Sales(selector events.SaleSelector, token string) ([]events.Sa
 		Transaction: selector.Transaction,
 		Seller:      selector.Seller,
 		Buyer:       selector.Buyer,
-		Price:       selector.Price,
+		// FIXME: The price should be a lower bound, not an exact match.
+		Price: selector.Price,
 	}
 
 	// NOTE: This function creates a query with a limit of `batchSize + 1` to avoid unnecessary queries.
