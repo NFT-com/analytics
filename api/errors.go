@@ -6,6 +6,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// FIXME: Improve error handling - some errors need not be relayed to the user.
+
 // bindError is used when user input was malformed.
 func bindError(err error) *echo.HTTPError {
 	return echo.NewHTTPError(http.StatusBadRequest, err.Error())
