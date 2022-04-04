@@ -1,9 +1,5 @@
 package events
 
-// FIXME: Check - plural or singular for package name?
-// FIXME: Types modeled after tentative_tables.sql and are subject to change.
-// FIXME: Use numbers for block numbers.
-
 // Mint represents a mint event.
 type Mint struct {
 	ID          string `gorm:"column:id" json:"-"`

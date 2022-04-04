@@ -4,7 +4,8 @@ import (
 	"github.com/NFT-com/events-api/models/events"
 )
 
-// FIXME: Change this once the interface becomes clear.
+// Storage retrieves the list of events given the selector and a token.
+// Token is used to determine from where in the record set iteration should continue.
 type Storage interface {
 	Mints(events.MintSelector, string) ([]events.Mint, string, error)
 	Transfers(events.TransferSelector, string) ([]events.Transfer, string, error)
