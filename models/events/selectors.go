@@ -51,19 +51,3 @@ type TokenSelector struct {
 	Collection string `query:"collection"`
 	TokenID    string `query:"token_id"`
 }
-
-// TimeSelector allows selecting events in a time range.
-type TimeSelector struct {
-	Start string `query:"start"`
-	End   string `query:"end"`
-}
-
-// BlockSelector allows selecting events in a block range.
-type BlockSelector struct {
-	BlockStart string `query:"block_start"`
-	BlockEnd   string `query:"block_end"`
-}
-
-// FIXME: Validate format if parameters are set.
-// FIXME: Change start/end timestamps.
-// FIXME: Will it work if Block selector fields are renamed?

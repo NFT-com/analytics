@@ -2,6 +2,7 @@ package storage
 
 import (
 	"fmt"
+	"time"
 
 	"gorm.io/gorm"
 
@@ -45,13 +46,15 @@ func (s *Storage) createQuery(query interface{}, token string, limit uint) (*gor
 func setTimeFilter(db *gorm.DB, selector events.TimeSelector) *gorm.DB {
 
 	// Set start time condition.
-	if selector.Start != "" {
-		db = db.Where("emitted_at >= ?", selector.Start)
+	start := time.Time(selector.Start)
+	if !start.IsZero() {
+		db = db.Where("emitted_at >= ?", start.Format(events.TimeLayout))
 	}
 
 	// Set end time condition.
-	if selector.End != "" {
-		db = db.Where("emitted_at <= ?", selector.End)
+	end := time.Time(selector.End)
+	if !end.IsZero() {
+		db = db.Where("emitted_at <= ?", end.Format(events.TimeLayout))
 	}
 
 	return db
