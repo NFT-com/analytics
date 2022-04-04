@@ -357,7 +357,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/transfers/?start=2022-03-28 11:30",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/transfers/?start={{start-time}}",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
@@ -370,7 +370,7 @@
 					"query": [
 						{
 							"key": "start",
-							"value": "2022-03-28 11:30"
+							"value": "{{start-time}}"
 						}
 					]
 				}
@@ -505,8 +505,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"// Check that all events are from the correct sender and have \r",
-							"// the correct receiver.\r",
+							"// Check that events are from the requested block range.\r",
 							"let response = pm.response.json();\r",
 							"\r",
 							"let start = BigInt(pm.request.url.query.get('block_start'));\r",
@@ -680,12 +679,12 @@
 		},
 		{
 			"key": "start-time",
-			"value": "2022-04-01 11:30",
+			"value": "2022-04-01T11:30:00Z",
 			"type": "string"
 		},
 		{
 			"key": "end-time",
-			"value": "2022-04-04 12:35",
+			"value": "2022-04-04T12:35:00Z",
 			"type": "string"
 		},
 		{
@@ -705,7 +704,7 @@
 		},
 		{
 			"key": "start-time-in-block-range",
-			"value": "2022-02-19 01:40",
+			"value": "2022-02-19T01:40:00Z",
 			"type": "string"
 		}
 	]

@@ -1,0 +1,496 @@
+{
+	"info": {
+		"_postman_id": "7c816748-0306-4c88-9390-fa63942f3399",
+		"name": "Mints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "All mints",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/mints/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"mints",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mints from a specific collection",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that all events are from the correct collection.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let expected = pm.request.url.query.get('collection');\r",
+							"\r",
+							"response.events.forEach(function(mint) {\r",
+							"    pm.test(\"Mint is from the correct collection\", function() {\r",
+							"        pm.expect(mint.collection).to.be.eq(expected)\r",
+							"    });\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/mints/?collection={{collection-id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"mints",
+						""
+					],
+					"query": [
+						{
+							"key": "collection",
+							"value": "{{collection-id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mints from a specific transaction",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that all events are from the correct transaction.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let expected = pm.request.url.query.get('transaction');\r",
+							"\r",
+							"response.events.forEach(function(mint) {\r",
+							"    pm.test(\"Mint is from the correct transaction\", function() {\r",
+							"        pm.expect(mint.transaction).to.be.eq(expected)\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/mints/?transaction={{transaction-id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"mints",
+						""
+					],
+					"query": [
+						{
+							"key": "transaction",
+							"value": "{{transaction-id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mints after a specific time",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const moment = require(\"moment\")\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"// Parse the start and end parameters.\r",
+							"let start = moment(decodeURI(pm.request.url.query.get('start')));\r",
+							"\r",
+							"response.events.forEach(function(mint) {\r",
+							"\r",
+							"    // Parse the event timestamp.\r",
+							"    let ts = moment(mint.timestamp);\r",
+							"    pm.test(\"Event timestamp is valid\", function() {\r",
+							"        pm.expect(ts.isValid()).to.be.true\r",
+							"    });\r",
+							"\r",
+							"    // Verify the event timestamp is after the specified time.\r",
+							"    pm.test(\"Event timestamp is after the start threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrAfter(start)).to.be.true\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/mints/?start={{start-time}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"mints",
+						""
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "{{start-time}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mints in a time range",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const moment = require(\"moment\")\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"// Parse the start and end parameters.\r",
+							"let start = moment(decodeURI(pm.request.url.query.get('start')));\r",
+							"let end = moment(decodeURI(pm.request.url.query.get('end')));\r",
+							"\r",
+							"response.events.forEach(function(mint) {\r",
+							"\r",
+							"    // Parse the event timestamp.\r",
+							"    let ts = moment(mint.timestamp);\r",
+							"    pm.test(\"Event timestamp is valid\", function() {\r",
+							"        pm.expect(ts.isValid()).to.be.true\r",
+							"    });\r",
+							"\r",
+							"    // Verify the event timestamp is within the set limits.\r",
+							"    pm.test(\"Event timestamp is after the start threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrAfter(start)).to.be.true\r",
+							"    });\r",
+							"    pm.test(\"Event timestamp is before the end threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrBefore(end)).to.be.true\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/mints/?start={{start-time}}&end={{end-time}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"mints",
+						""
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "{{start-time}}"
+						},
+						{
+							"key": "end",
+							"value": "{{end-time}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mints from a collection from a time range",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const moment = require(\"moment\")\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"// Parse the start and end parameters.\r",
+							"let start = moment(decodeURI(pm.request.url.query.get('start')));\r",
+							"let end = moment(decodeURI(pm.request.url.query.get('end')));\r",
+							"let collection = pm.request.url.query.get('collection');\r",
+							"\r",
+							"response.events.forEach(function(mint) {\r",
+							"\r",
+							"     pm.test (\"Event collection is the requested one\", function() {\r",
+							"        pm.expect(mint.collection).to.be.eq(collection)\r",
+							"    });\r",
+							"\r",
+							"    // Parse the event timestamp.\r",
+							"    let ts = moment(mint.timestamp);\r",
+							"    pm.test(\"Event timestamp is valid\", function() {\r",
+							"        pm.expect(ts.isValid()).to.be.true\r",
+							"    });\r",
+							"\r",
+							"    // Verify the event timestamp is within the set limits.\r",
+							"    pm.test(\"Event timestamp is after the start threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrAfter(start)).to.be.true\r",
+							"    });\r",
+							"    pm.test(\"Event timestamp is before the end threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrBefore(end)).to.be.true\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/mints/?start={{start-time}}&end={{end-time}}&collection={{collection-id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"mints",
+						""
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "{{start-time}}"
+						},
+						{
+							"key": "end",
+							"value": "{{end-time}}"
+						},
+						{
+							"key": "collection",
+							"value": "{{collection-id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mints of a specific token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that all events are from the correct collection.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let collection = pm.request.url.query.get('collection');\r",
+							"let tokenID = pm.request.url.query.get('token_id');\r",
+							"\r",
+							"response.events.forEach(function(mint) {\r",
+							"    pm.test(\"Mint is from the correct collection\", function() {\r",
+							"        pm.expect(mint.collection).to.be.eq(collection)\r",
+							"    });\r",
+							"\r",
+							"    pm.test(\"Mint is of the correct token\", function() {\r",
+							"        pm.expect(mint.token_id).to.be.eq(tokenID)\r",
+							"    });\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/mints/?token_id={{token-id}}&collection={{collection-id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"mints",
+						""
+					],
+					"query": [
+						{
+							"key": "token_id",
+							"value": "{{token-id}}"
+						},
+						{
+							"key": "collection",
+							"value": "{{collection-id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mints for an owner",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that all mints are for the correct owner.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let expected = pm.request.url.query.get('owner');\r",
+							"\r",
+							"response.events.forEach(function(mint) {\r",
+							"    pm.test(\"Mint is for the correct owner\", function() {\r",
+							"        pm.expect(mint.owner).to.be.eq(expected)\r",
+							"    });\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/mints/?owner={{owner}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"mints",
+						""
+					],
+					"query": [
+						{
+							"key": "owner",
+							"value": "{{owner}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Check status code.",
+					"pm.test(\"Status code is 200\", function () {",
+					"    pm.response.to.have.status(200);",
+					"});",
+					"",
+					"// Verify that there are at least some events returned.",
+					"let response = pm.response.json();",
+					"pm.test(\"Events returned\", function() {",
+					"    pm.expect(response.events.length).to.be.least(1)",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "collection-id",
+			"value": "b218408e-2b60-4d27-babe-ee7d3caff7dd",
+			"type": "string"
+		},
+		{
+			"key": "transaction-id",
+			"value": "tx-hash-20",
+			"type": "string"
+		},
+		{
+			"key": "start-time",
+			"value": "2022-03-10T07:00:00Z",
+			"type": "string"
+		},
+		{
+			"key": "end-time",
+			"value": "2022-03-17T09:00:00Z",
+			"type": "string"
+		},
+		{
+			"key": "start-block",
+			"value": "1000000200",
+			"type": "string"
+		},
+		{
+			"key": "end-block",
+			"value": "1000000230",
+			"type": "string"
+		},
+		{
+			"key": "owner",
+			"value": "owner-addr-1",
+			"type": "string"
+		},
+		{
+			"key": "token-id",
+			"value": "977",
+			"type": "string"
+		}
+	]
+}

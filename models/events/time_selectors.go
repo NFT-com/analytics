@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	TimeLayout = "2006-01-02 15:04"
+	TimeLayout = time.RFC3339
 )
 
 // TimeSelector allows selecting events in a time range.
