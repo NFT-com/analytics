@@ -3,7 +3,7 @@ package storage
 import (
 	"fmt"
 
-	"github.com/NFT-com/graph-api/models/api"
+	"github.com/NFT-com/graph-api/graph-api/models/api"
 )
 
 // TODO: Refactor the queries below to not use explicit joins but leave it to the query compiler
