@@ -11,12 +11,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/mints/",
-					"protocol": "http",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/mints/",
+					"protocol": "{{scheme}}",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
+					"port": "{{port}}",
 					"path": [
 						"mints",
 						""
@@ -53,12 +53,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/mints/?collection={{collection-id}}",
-					"protocol": "http",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/mints/?collection={{collection-id}}",
+					"protocol": "{{scheme}}",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
+					"port": "{{port}}",
 					"path": [
 						"mints",
 						""
@@ -100,12 +100,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/mints/?transaction={{transaction-id}}",
-					"protocol": "http",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/mints/?transaction={{transaction-id}}",
+					"protocol": "{{scheme}}",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
+					"port": "{{port}}",
 					"path": [
 						"mints",
 						""
@@ -157,12 +157,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/mints/?start={{start-time}}",
-					"protocol": "http",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/mints/?start={{start-time}}",
+					"protocol": "{{scheme}}",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
+					"port": "{{port}}",
 					"path": [
 						"mints",
 						""
@@ -218,12 +218,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/mints/?start={{start-time}}&end={{end-time}}",
-					"protocol": "http",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/mints/?start={{start-time}}&end={{end-time}}",
+					"protocol": "{{scheme}}",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
+					"port": "{{port}}",
 					"path": [
 						"mints",
 						""
@@ -288,12 +288,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/mints/?start={{start-time}}&end={{end-time}}&collection={{collection-id}}",
-					"protocol": "http",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/mints/?start={{start-time}}&end={{end-time}}&collection={{collection-id}}",
+					"protocol": "{{scheme}}",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
+					"port": "{{port}}",
 					"path": [
 						"mints",
 						""
@@ -349,12 +349,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/mints/?token_id={{token-id}}&collection={{collection-id}}",
-					"protocol": "http",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/mints/?token_id={{token-id}}&collection={{collection-id}}",
+					"protocol": "{{scheme}}",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
+					"port": "{{port}}",
 					"path": [
 						"mints",
 						""
@@ -401,12 +401,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/mints/?owner={{owner}}",
-					"protocol": "http",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/mints/?owner={{owner}}",
+					"protocol": "{{scheme}}",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
+					"port": "{{port}}",
 					"path": [
 						"mints",
 						""

@@ -22,12 +22,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/burns/",
-					"protocol": "http",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/burns/",
+					"protocol": "{{scheme}}",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
+					"port": "{{port}}",
 					"path": [
 						"burns",
 						""
@@ -64,12 +64,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/burns/?collection={{collection-id}}",
-					"protocol": "http",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/burns/?collection={{collection-id}}",
+					"protocol": "{{scheme}}",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
+					"port": "{{port}}",
 					"path": [
 						"burns",
 						""
@@ -111,12 +111,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/burns/?transaction=tx-hash-18",
-					"protocol": "http",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/burns/?transaction={{transaction-id}}",
+					"protocol": "{{scheme}}",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
+					"port": "{{port}}",
 					"path": [
 						"burns",
 						""
@@ -124,7 +124,7 @@
 					"query": [
 						{
 							"key": "transaction",
-							"value": "tx-hash-18"
+							"value": "{{transaction-id}}"
 						}
 					]
 				}
@@ -172,12 +172,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/burns/?start={{start-time}}&end={{end-time}}",
-					"protocol": "http",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/burns/?start={{start-time}}&end={{end-time}}",
+					"protocol": "{{scheme}}",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
+					"port": "{{port}}",
 					"path": [
 						"burns",
 						""
@@ -242,12 +242,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/burns/?start={{start-time}}&end={{end-time}}&collection={{collection-id}}",
-					"protocol": "http",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/burns/?start={{start-time}}&end={{end-time}}&collection={{collection-id}}",
+					"protocol": "{{scheme}}",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
+					"port": "{{port}}",
 					"path": [
 						"burns",
 						""
@@ -301,12 +301,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/burns/?block_start={{start-block}}&block_end={{end-block}}",
-					"protocol": "http",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/burns/?block_start={{start-block}}&block_end={{end-block}}",
+					"protocol": "{{scheme}}",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
+					"port": "{{port}}",
 					"path": [
 						"burns",
 						""

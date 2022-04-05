@@ -20,8 +20,6 @@ func (s *Storage) Sales(selector events.SaleSelector, token string) ([]events.Sa
 		Transaction: selector.Transaction,
 		Seller:      selector.Seller,
 		Buyer:       selector.Buyer,
-		// FIXME: The price should be a lower bound, not an exact match.
-		Price: selector.Price,
 	}
 
 	// NOTE: This function creates a query with a limit of `batchSize + 1` to avoid unnecessary queries.
@@ -33,6 +31,10 @@ func (s *Storage) Sales(selector events.SaleSelector, token string) ([]events.Sa
 	}
 	db = setTimeFilter(db, selector.TimeSelector)
 	db = setBlockRangeFilter(db, selector.BlockSelector)
+
+	if selector.Price != "" {
+		db = db.Where("price >= ?", selector.Price)
+	}
 
 	var sales []events.Sale
 	err = db.Find(&sales).Error
