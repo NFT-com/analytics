@@ -4,6 +4,7 @@
 
 ```
 Usage of graph-api:
+  -a, --aggregation-api string   URL of the Aggregation API
   -b, --bind string              bind address for serving requests (default ":8080")
   -d, --database string          database address
   -l, --log-level string         log level (default "info")

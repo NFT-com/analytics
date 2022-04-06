@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  events-api:
+    build:
+      context: .
+      dockerfile: cmd/events-api/Dockerfile
+    restart: always
+    entrypoint: '/api --database "host=host.docker.internal user=db-user password=db-pass dbname=db-name port=5432"'
+    ports:
+      - '8085:8080'
+  
+  aggregation-api:
+    build:
+      context: .
+      dockerfile: cmd/aggregation-api/Dockerfile
+    # FIXME: Once the API is implemented, the restart should be enabled.
+    # restart: always
+    entrypoint: '/api --events-api=events-api:8080'
+    ports:
+      - '8084:8080'
+    depends_on:
+      - events-api
+
+  graph-api:
+    build:
+      context: .
+      dockerfile: cmd/graph-api/Dockerfile
+    restart: always
+    entrypoint: '/api --database "host=host.docker.internal user=db-user password=db-pass dbname=db-name port=5432" --enable-playground'
+    ports:
+      - '8083:8080'
+    # FIXME: Once the aggregation API is implemented, the dependency should be added.
+    # depends_on:
+    #   - aggregation-api

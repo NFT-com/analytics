@@ -22,7 +22,7 @@ The following filters are available for mint events:
 
 - `collection` - UUID of the collection
 - `token_id` - Non-Fungible Token ID, as seen on the chain
-- `transaction` - UUID of the transaction
+- `transaction` - transaction ID
 - `start` - start time in RFC3339 format (inclusive)
 - `end` - end time in RFC3339 format (inclusive)
 - `block_start` - string representation of the block number in decimal format (inclusive)
@@ -36,7 +36,7 @@ The following filters are available for transfer events:
 
 - `collection` - UUID of the collection
 - `token_id` - Non-Fungible Token ID, as seen on the chain
-- `transaction` - UUID of the transaction
+-- `transaction` - transaction ID
 - `start` - start time in RFC3339 format (inclusive)
 - `end` - end time in RFC3339 format (inclusive)
 - `block_start` - string representation of the block number in decimal format (inclusive)
@@ -51,7 +51,7 @@ The following filters are available for burn events:
 
 - `collection` - UUID of the collection
 - `token_id` - Non-Fungible Token ID, as seen on the chain
-- `transaction` - UUID of the transaction
+- `transaction` - transaction ID
 - `start` - start time in RFC3339 format (inclusive)
 - `end` - end time in RFC3339 format (inclusive)
 - `block_start` - string representation of the block number in decimal format (inclusive)
@@ -63,7 +63,7 @@ Listing sale events is done by issuing a `GET` request to the `/sales/` endpoint
 The following filters are available for sale events:
 
 - `marketplace` - UUID of the marketplace
-- `transaction` - UUID of the transaction
+- `transaction` - transaction ID
 - `start` - start time in RFC3339 format (inclusive)
 - `end` - end time in RFC3339 format (inclusive)
 - `block_start` - string representation of the block number in decimal format (inclusive)

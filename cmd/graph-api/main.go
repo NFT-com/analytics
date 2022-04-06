@@ -49,6 +49,7 @@ func run() int {
 	signal.Notify(sig, os.Interrupt)
 
 	var (
+		flagAggregationAPI     string
 		flagBind               string
 		flagDatabase           string
 		flagLogLevel           string
@@ -58,6 +59,7 @@ func run() int {
 		flagEnableQueryLogging bool
 	)
 
+	pflag.StringVarP(&flagAggregationAPI, "aggregation-api", "a", "", "URL of the Aggregation API")
 	pflag.StringVarP(&flagBind, "bind", "b", ":8080", "bind address for serving requests")
 	pflag.StringVarP(&flagDatabase, "database", "d", "", "database address")
 	pflag.StringVarP(&flagLogLevel, "log-level", "l", "info", "log level")
