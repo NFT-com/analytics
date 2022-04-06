@@ -4,7 +4,7 @@ schema:
 
 # Where should the generated server code go?
 exec:
-  filename: graph/generated/generated.go
+  filename: generated/generated.go
   package: generated
 
 # Path to generated models
@@ -24,7 +24,7 @@ resolver:
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
-  - "github.com/NFT-com/graph-api/models/api"
+  - "github.com/NFT-com/graph-api/graph/models/api"
 
 # This section declares type mapping between the GraphQL and go type systems
 #
@@ -45,4 +45,4 @@ models:
       - github.com/99designs/gqlgen/graphql.Int32
   NFT:
     model:
-      - "github.com/NFT-com/graph-api/models/api.NFT"
+      - "github.com/NFT-com/graph-api/graph/models/api.NFT"
