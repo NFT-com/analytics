@@ -6,8 +6,8 @@ import (
 
 	"gorm.io/gorm"
 
-	server "github.com/NFT-com/graph-api/graph-api/api"
-	"github.com/NFT-com/graph-api/graph-api/models/api"
+	server "github.com/NFT-com/graph-api/graph/api"
+	"github.com/NFT-com/graph-api/graph/models/api"
 )
 
 // Collection retrieves a single collection from its ID.

@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/NFT-com/graph-api/graph-api/models/api"
+	"github.com/NFT-com/graph-api/graph/models/api"
 )
 
 type Storage interface {

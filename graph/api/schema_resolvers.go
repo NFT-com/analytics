@@ -7,8 +7,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/NFT-com/graph-api/graph-api/graph/generated"
-	"github.com/NFT-com/graph-api/graph-api/models/api"
+	"github.com/NFT-com/graph-api/graph/generated"
+	"github.com/NFT-com/graph-api/graph/models/api"
 )
 
 func (r *chainServer) Marketplaces(ctx context.Context, obj *api.Chain) ([]*api.Marketplace, error) {
