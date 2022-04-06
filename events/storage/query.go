@@ -6,7 +6,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/NFT-com/events-api/models/events"
+	"github.com/NFT-com/graph-api/events/models/events"
 )
 
 // createQuery creates an appropriate event lookup query.

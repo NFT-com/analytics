@@ -3,7 +3,7 @@ package storage
 import (
 	"fmt"
 
-	"github.com/NFT-com/events-api/models/events"
+	"github.com/NFT-com/graph-api/events/models/events"
 )
 
 // Burns retrieves NFT burn events according to the specified filters.

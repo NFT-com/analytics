@@ -8,8 +8,6 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/NFT-com/events-api/api"
-	"github.com/NFT-com/events-api/storage"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog"
 	"github.com/spf13/pflag"
@@ -18,6 +16,9 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+
+	"github.com/NFT-com/graph-api/events/api"
+	"github.com/NFT-com/graph-api/events/storage"
 )
 
 const (

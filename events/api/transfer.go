@@ -5,7 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/NFT-com/events-api/models/events"
+	"github.com/NFT-com/graph-api/events/models/events"
 )
 
 // transferRequest describes a request to the transfer endpoint.

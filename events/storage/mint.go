@@ -3,25 +3,22 @@ package storage
 import (
 	"fmt"
 
-	"github.com/NFT-com/events-api/models/events"
+	"github.com/NFT-com/graph-api/events/models/events"
 )
 
-// FIXME: Add postman tests for sale events.
-
-// Sales retrieves NFT sale events according to the specified filters.
+// Mints retrieves NFT mint events according to the specified filters.
 // Number of events returned is limited by the `batchSize` `Storage` parameter.
 // If the number of events for the specified criteria is greater than `batchSize`,
 // a token is provided along with the list of events. This token should be provided
 // when retrieving the next batch of records.
-func (s *Storage) Sales(selector events.SaleSelector, token string) ([]events.Sale, string, error) {
+func (s *Storage) Mints(selector events.MintSelector, token string) ([]events.Mint, string, error) {
 
-	query := events.Sale{
-		Marketplace: selector.Marketplace,
+	// Initialize the query variable.
+	query := events.Mint{
+		Collection:  selector.Collection,
 		Transaction: selector.Transaction,
-		Seller:      selector.Seller,
-		Buyer:       selector.Buyer,
-		// FIXME: The price should be a lower bound, not an exact match.
-		Price: selector.Price,
+		TokenID:     selector.TokenID,
+		Owner:       selector.Owner,
 	}
 
 	// NOTE: This function creates a query with a limit of `batchSize + 1` to avoid unnecessary queries.
@@ -34,25 +31,26 @@ func (s *Storage) Sales(selector events.SaleSelector, token string) ([]events.Sa
 	db = setTimeFilter(db, selector.TimeSelector)
 	db = setBlockRangeFilter(db, selector.BlockSelector)
 
-	var sales []events.Sale
-	err = db.Find(&sales).Error
+	// Retrieve the list of events.
+	var mints []events.Mint
+	err = db.Find(&mints).Error
 	if err != nil {
-		return nil, "", fmt.Errorf("could not retrieve sales events: %w", err)
+		return nil, "", fmt.Errorf("could not retrieve mint events: %w", err)
 	}
 
 	// If the number of returned items is smaller or equal to `batchSize`,
 	// there is no next page of results.
-	haveMore := uint(len(sales)) > s.batchSize
+	haveMore := uint(len(mints)) > s.batchSize
 	if !haveMore {
-		return sales, "", nil
+		return mints, "", nil
 	}
 
 	// Trim the list to correct size, removing the last element.
-	sales = sales[:s.batchSize]
+	mints = mints[:s.batchSize]
 
-	// Create a token for a subsequent search.
-	last := sales[len(sales)-1]
+	// Create a token to continue the iteration.
+	last := mints[len(mints)-1]
 	nextToken := createToken(last.BlockNumber, last.EventIndex)
 
-	return sales, nextToken, nil
+	return mints, nextToken, nil
 }

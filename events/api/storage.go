@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/NFT-com/events-api/models/events"
+	"github.com/NFT-com/graph-api/events/models/events"
 )
 
 // Storage retrieves the list of events given the selector and a token.
