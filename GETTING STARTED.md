@@ -11,14 +11,14 @@ All docker commands are supposed to be ran from the root of the repository.
 4. [Graph API](#graph-api)
 5. [Running all APIs with Docker Compose](#running-all-apis-with-docker-compose)
 
-# Requirements
+## Requirements
 
 * [Docker](https://docs.docker.com/get-docker/)
 * Optional: [Docker Compose](https://docs.docker.com/compose/install/)
 
-# Events API
+## Events API
 
-## Build the Docker Image
+### Build the Docker Image
 
 To build the docker image for the Events API run:
 
@@ -26,7 +26,7 @@ To build the docker image for the Events API run:
 docker build -t events-api -f ./cmd/events-api/Dockerfile .
 ```
 
-## Run the Docker Image
+### Run the Docker Image
 
 To run a docker image inside a container, publishing port `8080` and passing along CLI arguments to the application, we can use `docker run`:
 
@@ -34,17 +34,17 @@ To run a docker image inside a container, publishing port `8080` and passing alo
 docker run -p 8080:8080 events-api --database "host=host.docker.internal user=db-user password=db-pass dbname=db-name port=5432"
 ```
 
-## Further Reading
+### Further Reading
 
 More details about the application's usage and CLI flags can be found at [/cmd/events-api/README.md](/cmd/events-api/README.md).
 
-For more details about the API's usage, see [/events/API.md](/events/API.md).
+For more details about the API's usage, Postman examples and tests see [/events/API.md](/events/API.md).
 
-# Aggregation API
+## Aggregation API
 
 > ⚠️ A running Events API server is a prerequisite for the Aggregation API.
 
-## Build the Docker Image
+### Build the Docker Image
 
 To build the docker image for the Aggregation API run:
 
@@ -52,7 +52,7 @@ To build the docker image for the Aggregation API run:
 docker build -t aggregation-api -f ./cmd/aggregation-api/Dockerfile .
 ```
 
-## Running the Docker Image
+### Running the Docker Image
 
 To run a docker image inside a container, publishing port `8080` and forwarding CLI arguments to the application, we can use `docker run`:
 
@@ -60,15 +60,15 @@ To run a docker image inside a container, publishing port `8080` and forwarding 
 docker run -p 8080:8080 aggregation-api --bind ':8080' --events-api=example.com:9999
 ```
 
-## Further Reading
+### Further Reading
 
 More details about the application's usage and CLI flags can be found at [/cmd/aggregation-api/README.md](/cmd/aggregation-api/README.md).
 
-# Graph API
+## Graph API
 
 > ⚠️ A running Aggregation API server is a prerequisite for the Graph API.
 
-## Build the Docker Image
+### Build the Docker Image
 
 To build the docker image for the Graph API run:
 
@@ -76,7 +76,7 @@ To build the docker image for the Graph API run:
 docker build -t graph-api -f ./cmd/graph-api/Dockerfile .
 ```
 
-## Running the Docker Image
+### Running the Docker Image
 
 To run a docker image inside a container, publishing port `8080` and forwarding CLI arguments to the application, we can use `docker run`:
 
@@ -84,7 +84,7 @@ To run a docker image inside a container, publishing port `8080` and forwarding 
 docker run -p 8080:8080 graph-api --database "host=host.docker.internal user=db-user password=db-pass dbname=db-name port=5432" --enable-playground --bind ':8080'
 ```
 
-## Further Reading
+### Further Reading
 
 More details about the application's usage and CLI flags can be found at [/cmd/graph-api/README.md](/cmd/graph-api/README.md).
 

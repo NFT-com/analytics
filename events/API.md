@@ -89,6 +89,9 @@ When a given search criteria has more events than what is returned in a single b
 This token should be provided in the subsequent request as a `page` query parameter, along with the original search parameters - e.g. `curl -X GET localhost:8080/transfers/?collection=collectionID&token_id=tokenID&page=MTAwMDAwMDk5MDow`.
 The process should be repeated until there are no more pages to process, at which point the `next_page` token will be omitted from the response.
 
-## Examples
+## Examples and Tests
 
-Postman collections with query examples and tests can be found at [/resources/postman/](/resources/postman/).
+Postman collections with query examples can be found at [/resources/postman/](/resources/postman/).
+
+Each collection and each request have a number of tests associated with them, which can be executed by using the [Postman Collection Runner](https://learning.postman.com/docs/running-collections/intro-to-collection-runs/).
+Tests verify that all requests succeeded with a `200 OK` status code, as well as that the output has the expected output.

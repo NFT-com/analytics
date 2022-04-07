@@ -6,7 +6,8 @@ import (
 	"github.com/NFT-com/graph-api/events/models/events"
 )
 
-// FIXME: Add postman tests for sale events.
+// TODO: Add postman tests for sale events.
+// See https://github.com/NFT-com/graph-api/issues/11
 
 // Sales retrieves NFT sale events according to the specified filters.
 // Number of events returned is limited by the `batchSize` `Storage` parameter.
