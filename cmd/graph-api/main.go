@@ -12,6 +12,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/pflag"
 	gormzerolog "github.com/wei840222/gorm-zerolog"
 	"github.com/ziflex/lecho/v2"
@@ -33,16 +34,14 @@ const (
 	defaultGraphQLEndpoint = "/graphql"
 )
 
-const (
-	success = 0
-	failure = 1
-)
-
 func main() {
-	os.Exit(run())
+	err := run()
+	if err != nil {
+		log.Fatal().Err(err).Send()
+	}
 }
 
-func run() int {
+func run() error {
 
 	// Signal catching for clean shutdown.
 	sig := make(chan os.Signal, 1)
@@ -75,14 +74,13 @@ func run() int {
 	log := zerolog.New(os.Stderr).With().Timestamp().Logger().Level(zerolog.DebugLevel)
 	level, err := zerolog.ParseLevel(flagLogLevel)
 	if err != nil {
-		log.Error().Err(err).Msg("could not parse log level")
-		return failure
+		return fmt.Errorf("could not parse log level: %w", err)
 	}
 	log = log.Level(level)
+	zerolog.SetGlobalLevel(level)
 
 	if flagDatabase == "" {
-		log.Error().Msg("database address is required")
-		return failure
+		return errors.New("database address is required")
 	}
 
 	// Enable GORM logging if database query logs are enabled.
@@ -98,8 +96,7 @@ func run() int {
 	}
 	db, err := gorm.Open(postgres.Open(flagDatabase), &dbCfg)
 	if err != nil {
-		log.Error().Err(err).Msg("could not connect to database")
-		return failure
+		return fmt.Errorf("could not connect to database: %w", err)
 	}
 
 	storage := storage.New(db)
@@ -185,11 +182,10 @@ func run() int {
 	defer cancel()
 	err = server.Shutdown(ctx)
 	if err != nil {
-		log.Error().Err(err).Msg("could not shut down analytics server")
-		return failure
+		return fmt.Errorf("could not shut down analytics server: %w", err)
 	}
 
-	return success
+	return nil
 }
 
 // Create a formatted link for the GraphQL Playground URL.

@@ -1,24 +1,23 @@
 package main
 
 import (
+	"errors"
 	"os"
 	"time"
 
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/pflag"
 )
 
-const (
-	// Status codes.
-	success = 0
-	failure = 1
-)
-
 func main() {
-	os.Exit(run())
+	err := run()
+	if err != nil {
+		log.Fatal().Err(err).Send()
+	}
 }
 
-func run() int {
+func run() error {
 
 	var (
 		flagBind      string
@@ -37,11 +36,10 @@ func run() int {
 	log := zerolog.New(os.Stderr).With().Timestamp().Logger().Level(zerolog.DebugLevel)
 	level, err := zerolog.ParseLevel(flagLogLevel)
 	if err != nil {
-		log.Error().Err(err).Msg("could not parse log level")
-		return failure
+		return errors.New("could not parse log level")
 	}
 	log = log.Level(level)
+	zerolog.SetGlobalLevel(level)
 
-	log.Error().Msg("TBD: not implemented")
-	return failure
+	return errors.New("TBD: not implemented")
 }
