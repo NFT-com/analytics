@@ -24,12 +24,14 @@ func (s *Storage) Mints(selector events.MintSelector, token string) ([]events.Mi
 	// NOTE: This function creates a query with a limit of `batchSize + 1` to avoid unnecessary queries.
 	// See the comment for the `Transfers` query creation for more details.
 	limit := s.batchSize + 1
-	db, err := s.createQuery(query, token, limit)
+	db, err := s.createQuery(query, token,
+		withLimit(limit),
+		withTimeFilter(selector.TimeSelector),
+		withBlockRangeFilter(selector.BlockSelector),
+	)
 	if err != nil {
 		return nil, "", fmt.Errorf("could not create query: %w", err)
 	}
-	db = setTimeFilter(db, selector.TimeSelector)
-	db = setBlockRangeFilter(db, selector.BlockSelector)
 
 	// Retrieve the list of events.
 	var mints []events.Mint

@@ -30,12 +30,14 @@ func (s *Storage) Transfers(selector events.TransferSelector, token string) ([]e
 	// the cost of doing another database query to do `SELECT COUNT(*) ...`.
 	// It is up to the caller to trim the result set to fit the `batchSize`.
 	limit := s.batchSize + 1
-	db, err := s.createQuery(query, token, limit)
+	db, err := s.createQuery(query, token,
+		withLimit(limit),
+		withTimeFilter(selector.TimeSelector),
+		withBlockRangeFilter(selector.BlockSelector),
+	)
 	if err != nil {
 		return nil, "", fmt.Errorf("could not create query: %w", err)
 	}
-	db = setTimeFilter(db, selector.TimeSelector)
-	db = setBlockRangeFilter(db, selector.BlockSelector)
 
 	// Retrieve the list of events.
 	var transfers []events.Transfer
