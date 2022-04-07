@@ -22,7 +22,7 @@ const (
 // the next batch of records.
 
 func createToken(block string, eventIndex uint) string {
-	raw := fmt.Sprintf("%v%v%v", block, tokenDelimiter, eventIndex)
+	raw := fmt.Sprintf("%s%s%d", block, tokenDelimiter, eventIndex)
 	return base64.RawStdEncoding.EncodeToString([]byte(raw))
 }
 
@@ -37,19 +37,19 @@ func unpackToken(token string) (string, uint, error) {
 	// Split the token fields.
 	fields := strings.Split(string(decoded), tokenDelimiter)
 	if len(fields) != tokenFieldCount {
-		return "", 0, fmt.Errorf("unexpected token field count (have: %v, want: %v)", tokenFieldCount, len(fields))
+		return "", 0, fmt.Errorf("unexpected token field count (have: %d, want: %d)", tokenFieldCount, len(fields))
 	}
 
 	// Verify that the first field is a valid block number.
 	blockNo, ok := big.NewInt(0).SetString(fields[0], tokenNumberBase)
 	if !ok {
-		return "", 0, fmt.Errorf("invalid token block number (have: %v)", fields[0])
+		return "", 0, fmt.Errorf("invalid token block number (have: %s)", fields[0])
 	}
 
 	// Verify that the second field is a valid event/log index.
 	eventIndex, err := strconv.ParseUint(fields[1], tokenNumberBase, 62)
 	if err != nil {
-		return "", 0, fmt.Errorf("invalid event index number (have: %v): %w", fields[1], err)
+		return "", 0, fmt.Errorf("invalid event index number (have: %s): %w", fields[1], err)
 	}
 
 	// Return block number as a decimal string with an event index.

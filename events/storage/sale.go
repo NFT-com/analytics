@@ -10,7 +10,7 @@ import (
 // See https://github.com/NFT-com/graph-api/issues/11
 
 // Sales retrieves NFT sale events according to the specified filters.
-// Number of events returned is limited by the `batchSize` `Storage` parameter.
+// The number of events returned is limited by the `batchSize` `Storage` parameter.
 // If the number of events for the specified criteria is greater than `batchSize`,
 // a token is provided along with the list of events. This token should be provided
 // when retrieving the next batch of records.
@@ -45,8 +45,8 @@ func (s *Storage) Sales(selector events.SaleSelector, token string) ([]events.Sa
 
 	// If the number of returned items is smaller or equal to `batchSize`,
 	// there is no next page of results.
-	haveMore := uint(len(sales)) > s.batchSize
-	if !haveMore {
+	lastPage := uint(len(sales)) <= s.batchSize
+	if lastPage {
 		return sales, "", nil
 	}
 

@@ -1,7 +1,7 @@
 # Getting Started
 
 This guide aims to help users setup the project and run the APIs that are part of this repository.
-All docker commands are supposed to be ran from the root of the repository.
+All docker commands are supposed to be run from the root of the repository.
 
 **Table of Contents**
 
@@ -36,9 +36,9 @@ docker run -p 8080:8080 events-api --database "host=host.docker.internal user=db
 
 ### Further Reading
 
-More details about the application's usage and CLI flags can be found at [/cmd/events-api/README.md](/cmd/events-api/README.md).
+More details about the application's usage and CLI flags can be found at [the Event API's readme file](/cmd/events-api/README.md).
 
-For more details about the API's usage, Postman examples and tests see [/events/API.md](/events/API.md).
+For more details about the API's usage, Postman examples and tests see [the Event API documentation page](/events/API.md).
 
 ## Aggregation API
 
@@ -62,7 +62,7 @@ docker run -p 8080:8080 aggregation-api --bind ':8080' --events-api=example.com:
 
 ### Further Reading
 
-More details about the application's usage and CLI flags can be found at [/cmd/aggregation-api/README.md](/cmd/aggregation-api/README.md).
+More details about the application's usage and CLI flags can be found at [the aggregation API's readme file](/cmd/aggregation-api/README.md).
 
 ## Graph API
 
@@ -86,7 +86,7 @@ docker run -p 8080:8080 graph-api --database "host=host.docker.internal user=db-
 
 ### Further Reading
 
-More details about the application's usage and CLI flags can be found at [/cmd/graph-api/README.md](/cmd/graph-api/README.md).
+More details about the application's usage and CLI flags can be found at [the Graph API's readme file](/cmd/graph-api/README.md).
 
 For more details about the API's GraphQL schema, see [/graph/schema/schema.graphql](/graph/schema/schema.graphql).
 
@@ -94,7 +94,7 @@ Generated documentation for the schema can be found at [/graph/schema/schema.md]
 
 ## Running all APIs with Docker Compose
 
-It is possible to start all APIs at once using `docker-compose`, using the `docker-compose.yml` file at the root of the repo.
+It is possible to start all APIs at once with `docker-compose`, using the `docker-compose.yml` file at the root of the repository.
 The database connection parameters should instruct the APIs to connect to the database populated by the [indexer](https://github.com/NFT-com/indexer).
 
 ### Build the APIs

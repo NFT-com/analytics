@@ -7,7 +7,7 @@ import (
 )
 
 // Mints retrieves NFT mint events according to the specified filters.
-// Number of events returned is limited by the `batchSize` `Storage` parameter.
+// The number of events returned is limited by the `batchSize` `Storage` parameter.
 // If the number of events for the specified criteria is greater than `batchSize`,
 // a token is provided along with the list of events. This token should be provided
 // when retrieving the next batch of records.
@@ -40,8 +40,8 @@ func (s *Storage) Mints(selector events.MintSelector, token string) ([]events.Mi
 
 	// If the number of returned items is smaller or equal to `batchSize`,
 	// there is no next page of results.
-	haveMore := uint(len(mints)) > s.batchSize
-	if !haveMore {
+	lastPage := uint(len(mints)) <= s.batchSize
+	if lastPage {
 		return mints, "", nil
 	}
 

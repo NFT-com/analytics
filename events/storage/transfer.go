@@ -7,7 +7,7 @@ import (
 )
 
 // Transfers retrieves NFT transfer events according to the specified filters.
-// Number of events returned is limited by the `batchSize` `Storage` parameter.
+// The number of events returned is limited by the `batchSize` `Storage` parameter.
 // If the number of events for the specified criteria is greater than `batchSize`,
 // a token is provided along with the list of events. This token should be provided
 // when retrieving the next batch of records.
@@ -46,8 +46,8 @@ func (s *Storage) Transfers(selector events.TransferSelector, token string) ([]e
 
 	// If the number of returned items is smaller or equal to `batchSize`,
 	// there is no next page of results.
-	haveMore := uint(len(transfers)) > s.batchSize
-	if !haveMore {
+	lastPage := uint(len(transfers)) <= s.batchSize
+	if lastPage {
 		return transfers, "", nil
 	}
 

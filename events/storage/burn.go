@@ -7,7 +7,7 @@ import (
 )
 
 // Burns retrieves NFT burn events according to the specified filters.
-// Number of events returned is limited by the `batchSize` `Storage` parameter.
+// The number of events returned is limited by the `batchSize` `Storage` parameter.
 // If the number of events for the specified criteria is greater than `batchSize`,
 // a token is provided along with the list of events. This token should be provided
 // when retrieving the next batch of records.
@@ -39,13 +39,13 @@ func (s *Storage) Burns(selector events.BurnSelector, token string) ([]events.Bu
 
 	// If the number of returned items is smaller or equal to `batchSize`,
 	// there is no next page of results.
-	haveMore := uint(len(burns)) > s.batchSize
-	if !haveMore {
+	lastPage := uint(len(burns)) <= s.batchSize
+	if lastPage {
 		return burns, "", nil
 	}
 
 	// The number of records is larger than `batchSize`, meaning there's
-	// at least one more page of results - create a token to continue the
+	// at least one more page of results — create a token to continue the
 	// iteration.
 
 	// Trim the list to correct size, removing the last element.
