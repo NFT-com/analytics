@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -20,18 +19,19 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"github.com/99designs/gqlgen/graphql/handler"
-	"github.com/99designs/gqlgen/graphql/handler/extension"
-	"github.com/99designs/gqlgen/graphql/playground"
-
-	"github.com/NFT-com/graph-api/graph/api"
-	"github.com/NFT-com/graph-api/graph/generated"
-	"github.com/NFT-com/graph-api/graph/storage"
+	"github.com/NFT-com/graph-api/events/api"
+	"github.com/NFT-com/graph-api/events/storage"
 )
 
 const (
-	defaultPlaygroundPath  = "/"
-	defaultGraphQLEndpoint = "/graphql"
+	// Server endpoints.
+	mintEndpoint     = "/mints/"
+	transferEndpoint = "/transfers/"
+	burnEndpoint     = "/burns/"
+	saleEndpoint     = "/sales/"
+
+	// Default event batch size.
+	defaultBatchSize = 100
 )
 
 func main() {
@@ -48,23 +48,17 @@ func run() error {
 	signal.Notify(sig, os.Interrupt)
 
 	var (
-		flagAggregationAPI     string
 		flagBind               string
+		flagBatchSize          uint
 		flagDatabase           string
 		flagLogLevel           string
-		flagPlayground         string
-		flagComplexityLimit    int
-		flagEnablePlayground   bool
 		flagEnableQueryLogging bool
 	)
 
-	pflag.StringVarP(&flagAggregationAPI, "aggregation-api", "a", "", "URL of the Aggregation API")
 	pflag.StringVarP(&flagBind, "bind", "b", ":8080", "bind address for serving requests")
+	pflag.UintVarP(&flagBatchSize, "batch-size", "s", defaultBatchSize, "default limit for number of events returned in a single call")
 	pflag.StringVarP(&flagDatabase, "database", "d", "", "database address")
 	pflag.StringVarP(&flagLogLevel, "log-level", "l", "info", "log level")
-	pflag.StringVarP(&flagPlayground, "playground-path", "p", defaultPlaygroundPath, "path for GraphQL playground")
-	pflag.IntVar(&flagComplexityLimit, "query-complexity", 0, "GraphQL query complexity limit")
-	pflag.BoolVar(&flagEnablePlayground, "enable-playground", false, "enable GraphQL playground")
 	pflag.BoolVar(&flagEnableQueryLogging, "enable-query-logging", true, "enable logging of database queries")
 
 	pflag.Parse()
@@ -99,21 +93,11 @@ func run() error {
 		return fmt.Errorf("could not connect to database: %w", err)
 	}
 
-	storage := storage.New(db)
-	apiServer := api.NewServer(storage, log)
-	cfg := generated.Config{
-		Resolvers: apiServer,
-	}
+	// Initialize storage component.
+	storage := storage.New(db, storage.WithBatchSize(flagBatchSize))
 
-	schema := generated.NewExecutableSchema(cfg)
-	gqlServer := handler.NewDefaultServer(schema)
-
-	// Set query complexity limit — each field in a selection set and
-	// each nesting level adds the value of one to the overall query
-	// complexity.
-	if flagComplexityLimit > 0 {
-		gqlServer.Use(extension.FixedComplexityLimit(flagComplexityLimit))
-	}
+	// Initialize the API handler.
+	api := api.New(storage, log)
 
 	// Initialize Echo Web Server.
 	server := echo.New()
@@ -125,22 +109,11 @@ func run() error {
 	server.Logger = lecho.From(log)
 	server.Use(lecho.Middleware(lecho.Config{Logger: slog}))
 
-	// Initialize server endpoints.
-	server.POST(defaultGraphQLEndpoint, echoHandler(gqlServer))
-
-	// If GraphQL Playground is enabled, initialize the handler.
-	if flagEnablePlayground {
-
-		// Create a playground handler.
-		playground := playground.Handler("GraphQL playground", defaultGraphQLEndpoint)
-
-		// Set the echo handler for the playground.
-		server.GET(flagPlayground, echo.WrapHandler(playground))
-
-		// Log the playground URL.
-		playgroundURL := formatPlaygroundURL(flagBind, flagPlayground)
-		log.Info().Str("address", playgroundURL).Msg("GraphQL playground URL")
-	}
+	// Initialize routes.
+	server.GET(mintEndpoint, api.Mint)
+	server.GET(transferEndpoint, api.Transfer)
+	server.GET(saleEndpoint, api.Sale)
+	server.GET(burnEndpoint, api.Burn)
 
 	// This section launches the main executing components in their own
 	// goroutine, so they can run concurrently. Afterwards, we wait for an
@@ -148,24 +121,24 @@ func run() error {
 	done := make(chan struct{})
 	failed := make(chan struct{})
 	go func() {
-		log.Info().Msg("analytics server starting")
+		log.Info().Msg("events API server starting")
 		err := server.Start(flagBind)
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Warn().Err(err).Msg("analytics server failed")
+			log.Warn().Err(err).Msg("events API server failed")
 			close(failed)
 		} else {
 			close(done)
 		}
-		log.Info().Msg("analytics server stopped")
+		log.Info().Msg("events API server stopped")
 	}()
 
 	select {
 	case <-sig:
-		log.Info().Msg("analytics server stopping")
+		log.Info().Msg("events API server stopping")
 	case <-done:
-		log.Info().Msg("analytics server done")
+		log.Info().Msg("events API server done")
 	case <-failed:
-		log.Warn().Msg("analytics server aborted")
+		log.Warn().Msg("events API server aborted")
 	}
 
 	go func() {
@@ -182,29 +155,8 @@ func run() error {
 	defer cancel()
 	err = server.Shutdown(ctx)
 	if err != nil {
-		return fmt.Errorf("could not shut down analytics server: %w", err)
+		return fmt.Errorf("could not shut down events API server: %w", err)
 	}
 
 	return nil
-}
-
-// Create a formatted link for the GraphQL Playground URL.
-func formatPlaygroundURL(address string, path string) string {
-
-	path = strings.TrimPrefix(path, "/")
-
-	if strings.HasPrefix(address, ":") {
-		return fmt.Sprintf("http://localhost%s/%s", address, path)
-	}
-
-	return fmt.Sprintf("http://%s/%s", address, path)
-}
-
-// Create an echo.HandlerFunc for the GraphQL server.
-func echoHandler(h *handler.Server) echo.HandlerFunc {
-
-	return func(ctx echo.Context) error {
-		h.ServeHTTP(ctx.Response().Writer, ctx.Request())
-		return nil
-	}
 }

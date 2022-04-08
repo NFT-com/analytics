@@ -1,0 +1,711 @@
+{
+	"info": {
+		"_postman_id": "d5cfe06a-c264-45c8-bf63-af50ef508e15",
+		"name": "Transfers",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "All transfers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/transfers/",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"transfers",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfers from a collection",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that all events are from the correct collection.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let expected = pm.request.url.query.get('collection');\r",
+							"\r",
+							"response.events.forEach(function(transfer) {\r",
+							"    pm.test(\"Transfer is from the correct collection\", function() {\r",
+							"        pm.expect(transfer.collection).to.be.eq(expected)\r",
+							"    });\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/transfers/?collection={{collection-id}}",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"transfers",
+						""
+					],
+					"query": [
+						{
+							"key": "collection",
+							"value": "{{collection-id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfers from an account",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that all events are from the correct sender.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let expected = pm.request.url.query.get('from');\r",
+							"\r",
+							"response.events.forEach(function(transfer) {\r",
+							"    pm.test(\"Transfer is from the correct sender\", function() {\r",
+							"        pm.expect(transfer.from).to.be.eq(expected)\r",
+							"    });\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/transfers/?from={{from-address}}",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"transfers",
+						""
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "{{from-address}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfers of a specific token from an account",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that all events are from the correct sender.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let account = pm.request.url.query.get('from');\r",
+							"let tokenID = pm.request.url.query.get(\"token_id\");\r",
+							"\r",
+							"response.events.forEach(function(transfer) {\r",
+							"    pm.test(\"Transfer is from the correct sender\", function() {\r",
+							"        pm.expect(transfer.from).to.be.eq(account)\r",
+							"    });\r",
+							"\r",
+							"    pm.test(\"Transfer is of the correct token\", function() {\r",
+							"        pm.expect(transfer.token_id).to.be.eq(tokenID)\r",
+							"    });\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/transfers/?from={{from-address}}&token_id={{token-id}}",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"transfers",
+						""
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "{{from-address}}"
+						},
+						{
+							"key": "token_id",
+							"value": "{{token-id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfers from an account to a specific account",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that all events are from the correct sender and have \r",
+							"// the correct receiver.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let sender = pm.request.url.query.get('from');\r",
+							"let receiver = pm.request.url.query.get('to');\r",
+							"\r",
+							"response.events.forEach(function(transfer) {\r",
+							"    pm.test(\"Transfer is from the correct sender\", function() {\r",
+							"        pm.expect(transfer.from).to.be.eq(sender)\r",
+							"    });\r",
+							"    pm.test(\"Transfer is to the correct receiver\", function() {\r",
+							"        pm.expect(transfer.to).to.be.eq(receiver)\r",
+							"    });\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/transfers/?from={{from-address}}&to={{to-address}}",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"transfers",
+						""
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "{{from-address}}"
+						},
+						{
+							"key": "to",
+							"value": "{{to-address}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfers in a time range",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const moment = require(\"moment\")\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"// Parse the start and end parameters.\r",
+							"let start = moment(decodeURI(pm.request.url.query.get('start')));\r",
+							"let end = moment(decodeURI(pm.request.url.query.get('end')));\r",
+							"\r",
+							"response.events.forEach(function(transfer) {\r",
+							"\r",
+							"    // Parse the event timestamp.\r",
+							"    let ts = moment(transfer.timestamp);\r",
+							"    pm.test(\"Event timestamp is valid\", function() {\r",
+							"        pm.expect(ts.isValid()).to.be.true\r",
+							"    });\r",
+							"\r",
+							"    // Verify the event timestamp is within the set limits.\r",
+							"    pm.test(\"Event timestamp is after the start threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrAfter(start)).to.be.true\r",
+							"    });\r",
+							"    pm.test(\"Event timestamp is before the end threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrBefore(end)).to.be.true\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/transfers/?start={{start-time}}&end={{end-time}}",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"transfers",
+						""
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "{{start-time}}"
+						},
+						{
+							"key": "end",
+							"value": "{{end-time}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfers after a specified time",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const moment = require(\"moment\")\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"// Parse the start and end parameters.\r",
+							"let start = moment(decodeURI(pm.request.url.query.get('start')));\r",
+							"\r",
+							"response.events.forEach(function(transfer) {\r",
+							"\r",
+							"    // Parse the event timestamp.\r",
+							"    let ts = moment(transfer.timestamp);\r",
+							"    pm.test(\"Event timestamp is valid\", function() {\r",
+							"        pm.expect(ts.isValid()).to.be.true\r",
+							"    });\r",
+							"\r",
+							"    // Verify the event timestamp is after the specified time.\r",
+							"    pm.test(\"Event timestamp is after the start threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrAfter(start)).to.be.true\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/transfers/?start={{start-time}}",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"transfers",
+						""
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "{{start-time}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfers in a time range from a collection",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const moment = require(\"moment\")\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"// Parse the start and end parameters.\r",
+							"let start = moment(decodeURI(pm.request.url.query.get('start')));\r",
+							"let end = moment(decodeURI(pm.request.url.query.get('end')));\r",
+							"let collection = pm.request.url.query.get('collection');\r",
+							"\r",
+							"response.events.forEach(function(transfer) {\r",
+							"\r",
+							"    pm.test (\"Event collection is the requested one\", function() {\r",
+							"        pm.expect(transfer.collection).to.be.eq(collection)\r",
+							"    });\r",
+							"\r",
+							"    // Parse the event timestamp.\r",
+							"    let ts = moment(transfer.timestamp);\r",
+							"    pm.test(\"Event timestamp is valid\", function() {\r",
+							"        pm.expect(ts.isValid()).to.be.true\r",
+							"    });\r",
+							"\r",
+							"    // Verify the event timestamp is within the set limits.\r",
+							"    pm.test(\"Event timestamp is after the start threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrAfter(start)).to.be.true\r",
+							"    });\r",
+							"    pm.test(\"Event timestamp is before the end threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrBefore(end)).to.be.true\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/transfers/?start={{start-time}}&end={{end-time}}&collection={{collection-id}}",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"transfers",
+						""
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "{{start-time}}"
+						},
+						{
+							"key": "end",
+							"value": "{{end-time}}"
+						},
+						{
+							"key": "collection",
+							"value": "{{collection-id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfers in a transaction",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that all events are from the correct transaction.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let expected = pm.request.url.query.get('transaction');\r",
+							"\r",
+							"response.events.forEach(function(transfer) {\r",
+							"    pm.test(\"Transfer is from the correct transaction\", function() {\r",
+							"        pm.expect(transfer.transaction).to.be.eq(expected)\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/transfers/?transaction={{transaction-id}}",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"transfers",
+						""
+					],
+					"query": [
+						{
+							"key": "transaction",
+							"value": "{{transaction-id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfers in a block range",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that events are from the requested block range.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let start = BigInt(pm.request.url.query.get('block_start'));\r",
+							"let end = BigInt(pm.request.url.query.get('block_end'));\r",
+							"\r",
+							"response.events.forEach(function(transfer) {\r",
+							"    \r",
+							"    let block = BigInt(transfer.block);\r",
+							"    pm.test(\"Transfer is from the expected block range\", function() {\r",
+							"        pm.expect(start <= block)\r",
+							"        pm.expect(block <= end)\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/transfers/?block_start={{start-block}}&block_end={{end-block}}",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"transfers",
+						""
+					],
+					"query": [
+						{
+							"key": "block_start",
+							"value": "{{start-block}}"
+						},
+						{
+							"key": "block_end",
+							"value": "{{end-block}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfers in a block and time range",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const moment = require(\"moment\")\r",
+							"\r",
+							"// Check that from the correct block range, and after the\r",
+							"//specified timestamp.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let timeStart = moment(decodeURI(pm.request.url.query.get('start')));\r",
+							"let blockStart = BigInt(pm.request.url.query.get('block_start'));\r",
+							"let blockEnd = BigInt(pm.request.url.query.get('block_end'));\r",
+							"\r",
+							"\r",
+							"response.events.forEach(function(transfer) {\r",
+							"    \r",
+							"    let block = BigInt(transfer.block);\r",
+							"    pm.test(\"Transfer is from the expected block range\", function() {\r",
+							"        pm.expect(blockStart <= block)\r",
+							"        pm.expect(block <= blockEnd)\r",
+							"    });\r",
+							"\r",
+							"    let ts = moment(transfer.timestamp);\r",
+							"    pm.test(\"Event timestamp is valid\", function() {\r",
+							"        pm.expect(ts.isValid()).to.be.true\r",
+							"    });\r",
+							"\r",
+							"    pm.test(\"Event timestamp is after the start threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrAfter(timeStart)).to.be.true\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/transfers/?block_start={{start-block}}&block_end={{end-block}}&start={{start-time-in-block-range}}",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"transfers",
+						""
+					],
+					"query": [
+						{
+							"key": "block_start",
+							"value": "{{start-block}}"
+						},
+						{
+							"key": "block_end",
+							"value": "{{end-block}}"
+						},
+						{
+							"key": "start",
+							"value": "{{start-time-in-block-range}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Check status code.",
+					"pm.test(\"Status code is 200\", function () {",
+					"    pm.response.to.have.status(200);",
+					"});",
+					"",
+					"// Verify that there are at least some events returned.",
+					"let response = pm.response.json();",
+					"pm.test(\"Events returned\", function() {",
+					"    pm.expect(response.events.length).to.be.least(1)",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "collection-id",
+			"value": "b218408e-2b60-4d27-babe-ee7d3caff7dd",
+			"type": "string"
+		},
+		{
+			"key": "from-address",
+			"value": "from-generous",
+			"type": "string"
+		},
+		{
+			"key": "to-address",
+			"value": "to-addr-2",
+			"type": "string"
+		},
+		{
+			"key": "token-id",
+			"value": "9",
+			"type": "string"
+		},
+		{
+			"key": "start-time",
+			"value": "2022-04-01T11:30:00Z",
+			"type": "string"
+		},
+		{
+			"key": "end-time",
+			"value": "2022-04-04T12:35:00Z",
+			"type": "string"
+		},
+		{
+			"key": "start-block",
+			"value": "1000000980",
+			"type": "string"
+		},
+		{
+			"key": "end-block",
+			"value": "1000000999",
+			"type": "string"
+		},
+		{
+			"key": "transaction-id",
+			"value": "tx-hash-10",
+			"type": "string"
+		},
+		{
+			"key": "start-time-in-block-range",
+			"value": "2022-02-19T01:40:00Z",
+			"type": "string"
+		}
+	]
+}
