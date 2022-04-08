@@ -209,6 +209,16 @@ type NFT {
     tokenID: String!
 
     """
+    Name of the NFT.
+    """
+    name: String
+
+    """
+    URL of an image for the NFT.
+    """
+    image_url: String
+
+    """
     Address of the account that owns the NFT.
     """
     owner: Address!
@@ -219,9 +229,45 @@ type NFT {
     rarity: Float!
 
     """
+    Ratio for each of the NFT traits indicating how rare they are.
+    """
+    trait_rarities: [TraitRatio!]
+
+    """
     Collection this NFT is part of.
     """
     collection: Collection!
+}
+
+
+"""
+Trait represents a single NFT trait.
+"""
+type Trait {
+    """
+    Trait type.
+    """
+    Type: String!
+
+    """
+    Trait value.
+    """
+    Value: String!
+}
+
+"""
+Trait ratio represents the ratio of NFTs in a collection with this specific trait.
+"""
+type TraitRatio {
+    """
+    Trait for which the ratio is calculated.
+    """
+    trait: Trait!
+
+    """
+    Ratio of this trait.
+    """
+    ratio: Float!
 }
 
 """
