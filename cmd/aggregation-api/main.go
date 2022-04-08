@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"time"
 
@@ -36,7 +37,7 @@ func run() error {
 	log := zerolog.New(os.Stderr).With().Timestamp().Logger().Level(zerolog.DebugLevel)
 	level, err := zerolog.ParseLevel(flagLogLevel)
 	if err != nil {
-		return errors.New("could not parse log level")
+		return fmt.Errorf("could not parse log level: %w", err)
 	}
 	log = log.Level(level)
 	zerolog.SetGlobalLevel(level)
