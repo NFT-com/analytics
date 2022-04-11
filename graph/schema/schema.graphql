@@ -219,6 +219,11 @@ type NFT {
     image_url: String
 
     """
+    Description of the NFT.
+    """
+    description: String
+
+    """
     Address of the account that owns the NFT.
     """
     owner: Address!

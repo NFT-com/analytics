@@ -53,6 +53,13 @@ func (r *marketplaceServer) Collections(ctx context.Context, obj *api.Marketplac
 	return r.Server.marketplaceCollections(obj.ID)
 }
 
+func (r *nFTServer) TraitRarities(ctx context.Context, obj *api.NFT) ([]*api.TraitRatio, error) {
+	// TraitRarities returns, for each trait of the NFT, the percentage of NFTs
+	// in that collections that have that trait.
+
+	return r.Server.nftTraits(obj.ID)
+}
+
 func (r *nFTServer) Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error) {
 	// Collection handles expanding the Collection object within an NFT object.
 

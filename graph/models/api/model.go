@@ -29,9 +29,25 @@ type Marketplace struct {
 
 // NFT represents a single Non-Fungible Token.
 type NFT struct {
-	ID         string  `gorm:"column:id" json:"id"`
-	TokenID    string  `gorm:"column:token_id" json:"tokenID"`
-	Owner      string  `gorm:"column:owner" json:"owner"`
+	ID          string `gorm:"column:id" json:"id"`
+	Name        string `gorm:"column:name" json:"name,omitempty"`
+	ImageURL    string `gorm:"column:image" json:"image_url,omitempty"`
+	Description string `gorm:"column:description" json:"description,omitempty"`
+	TokenID     string `gorm:"column:token_id" json:"tokenID"`
+	Owner       string `gorm:"column:owner" json:"owner"`
+	// FIXME: Calculate this based on the traits field.
 	Rarity     float64 `gorm:"column:rarity" json:"rarity"`
 	Collection string  `gorm:"column:collection" json:"-"`
+}
+
+// Trait represents a single NFT trait.
+type Trait struct {
+	Type  string `json:"Type"`
+	Value string `json:"Value"`
+}
+
+// Trait ratio represents the ratio of NFTs in a collection with this specific trait.
+type TraitRatio struct {
+	Trait Trait   `json:"trait"`
+	Ratio float64 `json:"ratio"`
 }

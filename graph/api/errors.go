@@ -13,6 +13,7 @@ var (
 	errRetrieveCollectionFailed  = errors.New("could not retrieve collection(s)")
 	errRetrieveMarketplaceFailed = errors.New("could not retrieve marketplace(s)")
 	errRetrieveNFTFailed         = errors.New("could not retrieve NFT(s)")
+	errRetrieveTraitsFailed      = errors.New("could not retrieve NFT traits")
 )
 
 // TODO: Improve logging and error handling in the server code.
