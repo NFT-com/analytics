@@ -35,9 +35,7 @@ type NFT struct {
 	Description string `gorm:"column:description" json:"description,omitempty"`
 	TokenID     string `gorm:"column:token_id" json:"tokenID"`
 	Owner       string `gorm:"column:owner" json:"owner"`
-	// FIXME: Calculate this based on the traits field.
-	Rarity     float64 `gorm:"column:rarity" json:"rarity"`
-	Collection string  `gorm:"column:collection" json:"-"`
+	Collection  string `gorm:"column:collection" json:"-"`
 }
 
 // Trait represents a single NFT trait.

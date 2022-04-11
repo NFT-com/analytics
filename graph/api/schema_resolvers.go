@@ -53,9 +53,28 @@ func (r *marketplaceServer) Collections(ctx context.Context, obj *api.Marketplac
 	return r.Server.marketplaceCollections(obj.ID)
 }
 
+func (r *nFTServer) Rarity(ctx context.Context, obj *api.NFT) (float64, error) {
+	// Rarity returns the rarity of the NFT. Rarity is calculated by
+	// multiplying the rarity of each of the NFT traits.
+	// For example, if NFT has two traits that are present in 50% of
+	// NFTs in a collection, the rarity will be calculated as 0.5*0.5 = 0.25.
+
+	traits, err := r.Server.nftTraits(obj.ID)
+	if err != nil {
+		return 0, errRetrieveTraitsFailed
+	}
+
+	rarity := 1.0
+	for _, trait := range traits {
+		rarity = rarity * trait.Ratio
+	}
+
+	return rarity, nil
+}
+
 func (r *nFTServer) TraitRarities(ctx context.Context, obj *api.NFT) ([]*api.TraitRatio, error) {
-	// TraitRarities returns, for each trait of the NFT, the percentage of NFTs
-	// in that collections that have that trait.
+	// TraitRarities returns, for each trait of the NFT, the portion of NFTs
+	// in that collections that have that trait with that value.
 
 	return r.Server.nftTraits(obj.ID)
 }

@@ -124,6 +124,7 @@ type MarketplaceResolver interface {
 	Collections(ctx context.Context, obj *api.Marketplace) ([]*api.Collection, error)
 }
 type NFTResolver interface {
+	Rarity(ctx context.Context, obj *api.NFT) (float64, error)
 	TraitRarities(ctx context.Context, obj *api.NFT) ([]*api.TraitRatio, error)
 	Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error)
 }
@@ -2111,14 +2112,14 @@ func (ec *executionContext) _NFT_rarity(ctx context.Context, field graphql.Colle
 		Object:     "NFT",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Rarity, nil
+		return ec.resolvers.NFT().Rarity(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4355,15 +4356,25 @@ func (ec *executionContext) _NFT(ctx context.Context, sel ast.SelectionSet, obj 
 				atomic.AddUint32(&invalids, 1)
 			}
 		case "rarity":
+			field := field
+
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._NFT_rarity(ctx, field, obj)
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._NFT_rarity(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
 			}
 
-			out.Values[i] = innerFunc(ctx)
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
 
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
+			})
 		case "trait_rarities":
 			field := field
 
