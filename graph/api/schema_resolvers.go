@@ -57,21 +57,20 @@ func (r *nFTServer) Rarity(ctx context.Context, obj *api.NFT) (float64, error) {
 	// Rarity returns the rarity of the NFT. Rarity is calculated by
 	// multiplying the rarity of each of the NFT traits.
 
-	// FIXME: Rarity field is implemented using a resolver that gets called IF
-	// the field is requested. However, rarity is also needed in other cases,
-	// such as sorting NFTs by rarity.
-	// In that case, having the rarity not as a field but as a resolver means that we
-	// might have to calculate the value of the field twice - once if the field is
-	// required, and the second time for sorting. Since calculating rarity means
-	// doing database queries, this means we will be doing the same database
-	// queries multiple times.
+	// If we have already fetched and calculated NFT rarity, we're done.
+	rarity, cached := obj.GetCachedRarity()
+	if cached {
+		return rarity, nil
+	}
 
+	// Fetch trait information.
 	traits, err := r.Server.nftTraits(obj.ID)
 	if err != nil {
 		return 0, errRetrieveTraitsFailed
 	}
 
-	rarity := calcRarity(traits)
+	// Cache the trait information.
+	obj.CacheTraits(traits)
 
 	return rarity, nil
 }
@@ -80,7 +79,24 @@ func (r *nFTServer) TraitRarities(ctx context.Context, obj *api.NFT) ([]*api.Tra
 	// TraitRarities returns, for each trait of the NFT, the portion of NFTs
 	// in that collections that have that trait with that value.
 
-	return r.Server.nftTraits(obj.ID)
+	// If we have already fetched trait information, we're done.
+	traits, cached := obj.GetCachedTraits()
+	if cached {
+		return traits, nil
+	}
+
+	// Fetch trait information.
+	traits, err := r.Server.nftTraits(obj.ID)
+	if err != nil {
+		r.logError(err)
+
+		return nil, errRetrieveTraitsFailed
+	}
+
+	// Cache the trait information.
+	obj.CacheTraits(traits)
+
+	return traits, nil
 }
 
 func (r *nFTServer) Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error) {

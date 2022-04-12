@@ -60,19 +60,23 @@ func (s *Server) nfts(owner *string, collection *string, rarityMin *float64, ord
 	if orderBy.Field == api.NFTOrderFieldRarity {
 
 		out := make([]*api.NFT, 0, len(nfts))
-		rarities := make([]float64, 0, len(nfts))
 
 		for _, nft := range nfts {
 			nft := nft
 
-			// Get rarity information for individual traits.
-			traits, err := s.nftTraits(nft.ID)
-			if err != nil {
-				return nil, fmt.Errorf("could not retrieve trait for an NFT: %w", err)
-			}
+			rarity, cached := nft.GetCachedRarity()
+			if !cached {
+				// Get trait information.
+				traits, err := s.nftTraits(nft.ID)
+				if err != nil {
+					return nil, fmt.Errorf("could not retrieve traits for NFT: %w", err)
+				}
 
-			// Get rarity for the NFT as a whole.
-			rarity := calcRarity(traits)
+				// Cache the trait/rarity information for potential later use.
+				nft.CacheTraits(traits)
+
+				rarity, _ = nft.GetCachedRarity()
+			}
 
 			// If the NFT is below the rarity threshold, skip it.
 			if rarityMin != nil && rarity < *rarityMin {
@@ -81,13 +85,17 @@ func (s *Server) nfts(owner *string, collection *string, rarityMin *float64, ord
 
 			// Include the NFT in the result set.
 			out = append(out, nft)
-			rarities = append(rarities, rarity)
 		}
 
 		// FIXME: Better performance can be achieved by inserting to a slice
 		// in a way that it remains sorted along the way.
 		sort.Slice(out, func(i, j int) bool {
-			return rarities[i] < rarities[j]
+			ri, _ := out[i].GetCachedRarity()
+			rj, _ := out[j].GetCachedRarity()
+			if orderBy.Direction == api.OrderDirectionAsc {
+				return ri < rj
+			}
+			return ri > rj
 		})
 
 		nfts = out
