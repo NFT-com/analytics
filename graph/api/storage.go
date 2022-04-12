@@ -12,6 +12,7 @@ type Storage interface {
 	NFTByTokenID(chainID string, contract string, tokenID string) (*api.NFT, error)
 	NFTs(owner *string, collectionID *string, orderBy api.NFTOrder) ([]*api.NFT, error)
 	NFTTraitRatio(id string) ([]*api.TraitRatio, error)
+	NFTMissingTraitRatio(collectionID string, traits []string) ([]*api.TraitRatio, error)
 
 	Collection(id string) (*api.Collection, error)
 	CollectionByContract(chainID string, contract string) (*api.Collection, error)

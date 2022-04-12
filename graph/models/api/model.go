@@ -91,8 +91,10 @@ func (n *NFT) GetCachedRarity() (float64, bool) {
 
 // Trait represents a single NFT trait.
 type Trait struct {
-	Type  string `json:"Type"`
-	Value string `json:"Value"`
+	Type string `json:"type"`
+	// FIXME: This should be *string so we can send NULL values for NFTs that don't have a
+	// specific trait.
+	Value string `json:"value"`
 }
 
 // Trait ratio represents the ratio of NFTs in a collection with this specific trait.

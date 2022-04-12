@@ -64,7 +64,7 @@ func (r *nFTServer) Rarity(ctx context.Context, obj *api.NFT) (float64, error) {
 	}
 
 	// Fetch trait information.
-	traits, err := r.Server.nftTraits(obj.ID)
+	traits, err := r.Server.nftTraits(obj)
 	if err != nil {
 		return 0, errRetrieveTraitsFailed
 	}
@@ -86,7 +86,7 @@ func (r *nFTServer) TraitRarities(ctx context.Context, obj *api.NFT) ([]*api.Tra
 	}
 
 	// Fetch trait information.
-	traits, err := r.Server.nftTraits(obj.ID)
+	traits, err := r.Server.nftTraits(obj)
 	if err != nil {
 		r.logError(err)
 

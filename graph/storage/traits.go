@@ -49,3 +49,41 @@ func (s *Storage) NFTTraitRatio(id string) ([]*api.TraitRatio, error) {
 
 	return out, nil
 }
+
+// NFTMissingTraitRatio determines what is the probability that an NFT does NOT have a specific trait.
+// It will accept a list of traits that an NFT has, and see what other traits can be found in a certain
+// collection.
+func (s *Storage) NFTMissingTraitRatio(collectionID string, foundTraits []string) ([]*api.TraitRatio, error) {
+
+	// FIXME: The select might be a subquery
+	db := s.db.
+		Table("traits_collections tc").
+		Select("name, 1 - COUNT(DISTINCT(nft))::NUMERIC / (SELECT COUNT(*)::NUMERIC FROM nfts WHERE collection = ?) as ratio",
+			collectionID,
+		).Where("name not in (?)", foundTraits).
+		Where("tc.collection = ?", collectionID).
+		Group("name")
+
+	var traits []traitRatio
+	err := db.Find(&traits).Error
+	if err != nil {
+		return nil, fmt.Errorf("could not calculate missing trait rarity: %w", err)
+	}
+
+	// Translate the query result to the expected format.
+	out := make([]*api.TraitRatio, 0, len(traits))
+	for _, t := range traits {
+
+		trait := api.TraitRatio{
+			Trait: api.Trait{
+				Type:  t.Name,
+				Value: t.Value,
+			},
+			Ratio: t.Ratio,
+		}
+
+		out = append(out, &trait)
+	}
+
+	return out, nil
+}

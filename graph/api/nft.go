@@ -67,7 +67,7 @@ func (s *Server) nfts(owner *string, collection *string, rarityMax *float64, ord
 			rarity, cached := nft.GetCachedRarity()
 			if !cached {
 				// Get trait information.
-				traits, err := s.nftTraits(nft.ID)
+				traits, err := s.nftTraits(nft)
 				if err != nil {
 					return nil, fmt.Errorf("could not retrieve traits for NFT: %w", err)
 				}
