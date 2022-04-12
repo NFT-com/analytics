@@ -56,18 +56,22 @@ func (r *marketplaceServer) Collections(ctx context.Context, obj *api.Marketplac
 func (r *nFTServer) Rarity(ctx context.Context, obj *api.NFT) (float64, error) {
 	// Rarity returns the rarity of the NFT. Rarity is calculated by
 	// multiplying the rarity of each of the NFT traits.
-	// For example, if NFT has two traits that are present in 50% of
-	// NFTs in a collection, the rarity will be calculated as 0.5*0.5 = 0.25.
+
+	// FIXME: Rarity field is implemented using a resolver that gets called IF
+	// the field is requested. However, rarity is also needed in other cases,
+	// such as sorting NFTs by rarity.
+	// In that case, having the rarity not as a field but as a resolver means that we
+	// might have to calculate the value of the field twice - once if the field is
+	// required, and the second time for sorting. Since calculating rarity means
+	// doing database queries, this means we will be doing the same database
+	// queries multiple times.
 
 	traits, err := r.Server.nftTraits(obj.ID)
 	if err != nil {
 		return 0, errRetrieveTraitsFailed
 	}
 
-	rarity := 1.0
-	for _, trait := range traits {
-		rarity = rarity * trait.Ratio
-	}
+	rarity := calcRarity(traits)
 
 	return rarity, nil
 }

@@ -10,6 +10,10 @@ import (
 	"github.com/NFT-com/graph-api/graph/models/api"
 )
 
+const (
+	creationTimeColumnName = "created_at"
+)
+
 // NFT retrieves a single NFT based on the ID.
 func (s *Storage) NFT(id string) (*api.NFT, error) {
 
@@ -60,7 +64,7 @@ func (s *Storage) NFTByTokenID(chainID string, contract string, tokenID string) 
 }
 
 // NFTs retrieves a list of NFTs fitting the specified criteria.
-func (s *Storage) NFTs(owner *string, collectionID *string, rarityMin *float64, orderBy api.NFTOrder) ([]*api.NFT, error) {
+func (s *Storage) NFTs(owner *string, collectionID *string, orderBy api.NFTOrder) ([]*api.NFT, error) {
 
 	// Apply explicit query filters - the token owner and collection ID.
 	query := api.NFT{}
@@ -72,50 +76,17 @@ func (s *Storage) NFTs(owner *string, collectionID *string, rarityMin *float64, 
 	}
 	db := s.db.Where(query)
 
-	// Add the rarity threshold condition.
-	if rarityMin != nil {
-		db = db.Where("rarity >= ?", rarityMin)
+	// Set `orderBy` if applicable - only for creation time we can directly use the DB sorting.
+	if orderBy.Field == api.NFTOrderFieldCreationTime {
+		orderClause := fmt.Sprintf("%s %s", creationTimeColumnName, orderBy.Direction)
+		db = db.Order(orderClause)
 	}
-
-	orderClause, err := formatNFTOrderBy(orderBy)
-	if err != nil {
-		return nil, fmt.Errorf("could not prepare order clause: %w", err)
-	}
-
-	db = db.Order(orderClause)
 
 	var nfts []*api.NFT
-	err = db.Find(&nfts).Error
+	err := db.Find(&nfts).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve nfts: %w", err)
 	}
 
 	return nfts, nil
-}
-
-const (
-	rarityColumnName       = "rarity"
-	creationTimeColumnName = "created_at"
-)
-
-func formatNFTOrderBy(clause api.NFTOrder) (string, error) {
-
-	var field string
-
-	switch clause.Field {
-
-	case api.NFTOrderFieldRarity:
-		field = rarityColumnName
-
-	case api.NFTOrderFieldCreationTime:
-		field = creationTimeColumnName
-
-	// FIXME: Remove when sorting by value becomes possible.
-	default:
-		return "", errors.New("unsupported sorting option")
-	}
-
-	formatted := fmt.Sprintf("%s %s", field, clause.Direction)
-
-	return formatted, nil
 }
