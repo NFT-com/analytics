@@ -59,6 +59,9 @@ func (n *NFT) CacheTraits(traits []*TraitRatio) {
 
 	n.cachedRatios = traits
 
+	// Calculate rarity of an NFT by multiplying the ratios of individual traits.
+	// For example, if NFT has two traits that are present in 50% of
+	// NFTs in a collection, the rarity will be calculated as 0.5*0.5 = 0.25.
 	rarity := 1.0
 	for _, trait := range traits {
 		rarity = rarity * trait.Ratio

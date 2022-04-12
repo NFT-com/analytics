@@ -96,7 +96,7 @@ type ComplexityRoot struct {
 		Collections         func(childComplexity int, chain *string, orderBy *api.CollectionOrder) int
 		Nft                 func(childComplexity int, id string) int
 		NftByTokenID        func(childComplexity int, chainID string, contract string, tokenID string) int
-		Nfts                func(childComplexity int, owner *string, collection *string, rarityMin *float64, orderBy *api.NFTOrder) int
+		Nfts                func(childComplexity int, owner *string, collection *string, rarityMax *float64, orderBy *api.NFTOrder) int
 	}
 
 	Trait struct {
@@ -133,7 +133,7 @@ type QueryResolver interface {
 	Chains(ctx context.Context) ([]*api.Chain, error)
 	Nft(ctx context.Context, id string) (*api.NFT, error)
 	NftByTokenID(ctx context.Context, chainID string, contract string, tokenID string) (*api.NFT, error)
-	Nfts(ctx context.Context, owner *string, collection *string, rarityMin *float64, orderBy *api.NFTOrder) ([]*api.NFT, error)
+	Nfts(ctx context.Context, owner *string, collection *string, rarityMax *float64, orderBy *api.NFTOrder) ([]*api.NFT, error)
 	Collection(ctx context.Context, id string) (*api.Collection, error)
 	CollectionByAddress(ctx context.Context, chainID string, contract string) (*api.Collection, error)
 	Collections(ctx context.Context, chain *string, orderBy *api.CollectionOrder) ([]*api.Collection, error)
@@ -453,16 +453,16 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Nfts(childComplexity, args["owner"].(*string), args["collection"].(*string), args["rarityMin"].(*float64), args["orderBy"].(*api.NFTOrder)), true
+		return e.complexity.Query.Nfts(childComplexity, args["owner"].(*string), args["collection"].(*string), args["rarityMax"].(*float64), args["orderBy"].(*api.NFTOrder)), true
 
-	case "Trait.Type":
+	case "Trait.type":
 		if e.complexity.Trait.Type == nil {
 			break
 		}
 
 		return e.complexity.Trait.Type(childComplexity), true
 
-	case "Trait.Value":
+	case "Trait.value":
 		if e.complexity.Trait.Value == nil {
 			break
 		}
@@ -787,12 +787,12 @@ type Trait {
     """
     Trait type.
     """
-    Type: String!
+    type: String!
 
     """
     Trait value.
     """
-    Value: String!
+    value: String!
 }
 
 """
@@ -910,9 +910,9 @@ type Query {
         collection: ID
 
         """
-        Minimum rarity score.
+        Maximum rarity value.
         """
-        rarityMin: Float
+        rarityMax: Float
         
         """
         Ordering options for the returned NFTs.
@@ -1131,14 +1131,14 @@ func (ec *executionContext) field_Query_nfts_args(ctx context.Context, rawArgs m
 	}
 	args["collection"] = arg1
 	var arg2 *float64
-	if tmp, ok := rawArgs["rarityMin"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rarityMin"))
+	if tmp, ok := rawArgs["rarityMax"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rarityMax"))
 		arg2, err = ec.unmarshalOFloat2ᚖfloat64(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["rarityMin"] = arg2
+	args["rarityMax"] = arg2
 	var arg3 *api.NFTOrder
 	if tmp, ok := rawArgs["orderBy"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
@@ -2377,7 +2377,7 @@ func (ec *executionContext) _Query_nfts(ctx context.Context, field graphql.Colle
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Nfts(rctx, args["owner"].(*string), args["collection"].(*string), args["rarityMin"].(*float64), args["orderBy"].(*api.NFTOrder))
+		return ec.resolvers.Query().Nfts(rctx, args["owner"].(*string), args["collection"].(*string), args["rarityMax"].(*float64), args["orderBy"].(*api.NFTOrder))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2579,7 +2579,7 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Trait_Type(ctx context.Context, field graphql.CollectedField, obj *api.Trait) (ret graphql.Marshaler) {
+func (ec *executionContext) _Trait_type(ctx context.Context, field graphql.CollectedField, obj *api.Trait) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -2614,7 +2614,7 @@ func (ec *executionContext) _Trait_Type(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Trait_Value(ctx context.Context, field graphql.CollectedField, obj *api.Trait) (ret graphql.Marshaler) {
+func (ec *executionContext) _Trait_value(ctx context.Context, field graphql.CollectedField, obj *api.Trait) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4637,9 +4637,9 @@ func (ec *executionContext) _Trait(ctx context.Context, sel ast.SelectionSet, ob
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Trait")
-		case "Type":
+		case "type":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Trait_Type(ctx, field, obj)
+				return ec._Trait_type(ctx, field, obj)
 			}
 
 			out.Values[i] = innerFunc(ctx)
@@ -4647,9 +4647,9 @@ func (ec *executionContext) _Trait(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "Value":
+		case "value":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Trait_Value(ctx, field, obj)
+				return ec._Trait_value(ctx, field, obj)
 			}
 
 			out.Values[i] = innerFunc(ctx)

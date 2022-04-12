@@ -129,7 +129,7 @@ func (r *queryServer) NftByTokenID(ctx context.Context, chainID string, contract
 	return r.Server.getNFTByTokenID(chainID, contract, tokenID)
 }
 
-func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *string, rarityMin *float64, orderBy *api.NFTOrder) ([]*api.NFT, error) {
+func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *string, rarityMax *float64, orderBy *api.NFTOrder) ([]*api.NFT, error) {
 	// Nfts implements the `nfts` GraphQL query.
 
 	// FIXME: remove the validation of the sorting mode when all modes become supported
@@ -145,7 +145,7 @@ func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *strin
 
 	// NOTE: Ordering parameter is a pointer but gets initialized to the default value by the middleware.
 
-	return r.Server.nfts(owner, collection, rarityMin, *orderBy)
+	return r.Server.nfts(owner, collection, rarityMax, *orderBy)
 }
 
 func (r *queryServer) Collection(ctx context.Context, id string) (*api.Collection, error) {

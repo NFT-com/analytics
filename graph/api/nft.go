@@ -38,7 +38,7 @@ func (s *Server) getNFTByTokenID(chainID string, contract string, tokenID string
 }
 
 // nfts returns a list of NFTs fitting the search criteria.
-func (s *Server) nfts(owner *string, collection *string, rarityMin *float64, orderBy api.NFTOrder) ([]*api.NFT, error) {
+func (s *Server) nfts(owner *string, collection *string, rarityMax *float64, orderBy api.NFTOrder) ([]*api.NFT, error) {
 
 	nfts, err := s.storage.NFTs(owner, collection, orderBy)
 	if err != nil {
@@ -49,8 +49,8 @@ func (s *Server) nfts(owner *string, collection *string, rarityMin *float64, ord
 		if collection != nil {
 			log = log.Str("collection", *collection)
 		}
-		if rarityMin != nil {
-			log = log.Float64("min_rarity", *rarityMin)
+		if rarityMax != nil {
+			log = log.Float64("max_rarity", *rarityMax)
 		}
 		log.Msg("could not retrieve nfts")
 		return nil, errRetrieveNFTFailed
@@ -78,8 +78,8 @@ func (s *Server) nfts(owner *string, collection *string, rarityMin *float64, ord
 				rarity, _ = nft.GetCachedRarity()
 			}
 
-			// If the NFT is below the rarity threshold, skip it.
-			if rarityMin != nil && rarity < *rarityMin {
+			// If the NFT is above the rarity threshold, skip it.
+			if rarityMax != nil && rarity > *rarityMax {
 				continue
 			}
 
@@ -102,18 +102,4 @@ func (s *Server) nfts(owner *string, collection *string, rarityMin *float64, ord
 	}
 
 	return nfts, nil
-}
-
-// calcRarity calculates the rarity of an NFT by multiplying the
-// ratios of individual traits.
-// For example, if NFT has two traits that are present in 50% of
-// NFTs in a collection, the rarity will be calculated as 0.5*0.5 = 0.25.
-func calcRarity(traits []*api.TraitRatio) float64 {
-
-	rarity := 1.0
-	for _, trait := range traits {
-		rarity = rarity * trait.Ratio
-	}
-
-	return rarity
 }

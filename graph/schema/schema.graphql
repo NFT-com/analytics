@@ -252,12 +252,12 @@ type Trait {
     """
     Trait type.
     """
-    Type: String!
+    type: String!
 
     """
     Trait value.
     """
-    Value: String!
+    value: String!
 }
 
 """
@@ -375,9 +375,9 @@ type Query {
         collection: ID
 
         """
-        Minimum rarity score.
+        Maximum rarity value.
         """
-        rarityMin: Float
+        rarityMax: Float
         
         """
         Ordering options for the returned NFTs.
