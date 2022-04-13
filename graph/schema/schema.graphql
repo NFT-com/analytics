@@ -234,7 +234,7 @@ type NFT {
     rarity: Float!
 
     """
-    Ratio for each of the NFT traits indicating how rare they are.
+    Distribution ratio for each of the NFT traits indicating how rare they are.
     """
     trait_rarities: [TraitRatio!]
 
@@ -270,7 +270,7 @@ type TraitRatio {
     trait: Trait!
 
     """
-    Ratio of this trait.
+    Distribution ratio of this trait.
     """
     ratio: Float!
 }
