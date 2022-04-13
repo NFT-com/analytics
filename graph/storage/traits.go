@@ -55,7 +55,6 @@ func (s *Storage) NFTTraitRatio(id string) ([]*api.TraitRatio, error) {
 // collection.
 func (s *Storage) NFTMissingTraitRatio(collectionID string, foundTraits []string) ([]*api.TraitRatio, error) {
 
-	// FIXME: The select might be a subquery
 	db := s.db.
 		Table("traits_collections tc").
 		Select("name, 1 - COUNT(DISTINCT(nft))::NUMERIC / (SELECT COUNT(*)::NUMERIC FROM nfts WHERE collection = ?) as ratio",
