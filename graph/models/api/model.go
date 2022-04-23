@@ -41,7 +41,7 @@ type NFT struct {
 	Owner       string `gorm:"column:owner" json:"owner"`
 	Collection  string `gorm:"column:collection" json:"-"`
 
-	// Fields related to caching rarity values. `Lock` is used to cachemu the struct
+	// Fields related to caching rarity values. `cachemu` is used to lock the struct
 	// for access since the GraphQL resolvers are invoked from different goroutines.
 	// `Cached` is used as a simple check if the values were prefetched.
 	cachemu      sync.Mutex    `gorm:"-" json:"-"`

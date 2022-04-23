@@ -75,6 +75,8 @@ func (r *nFTServer) Rarity(ctx context.Context, obj *api.NFT) (float64, error) {
 	return rarity, nil
 }
 
+// TODO: User may request traits only, and not require calculating the actual trait distribution.
+// https://github.com/NFT-com/graph-api/issues/17
 func (r *nFTServer) TraitRarities(ctx context.Context, obj *api.NFT) ([]*api.TraitRatio, error) {
 	// TraitRarities returns, for each trait of the NFT, the portion of NFTs
 	// in that collection that have that trait with that value.
