@@ -209,6 +209,21 @@ type NFT {
     tokenID: String!
 
     """
+    Name of the NFT.
+    """
+    name: String
+
+    """
+    URL of an image for the NFT.
+    """
+    image_url: String
+
+    """
+    Description of the NFT.
+    """
+    description: String
+
+    """
     Address of the account that owns the NFT.
     """
     owner: Address!
@@ -219,9 +234,45 @@ type NFT {
     rarity: Float!
 
     """
+    Distribution ratio for each of the NFT traits indicating how rare they are.
+    """
+    trait_rarities: [TraitRatio!]
+
+    """
     Collection this NFT is part of.
     """
     collection: Collection!
+}
+
+
+"""
+Trait represents a single NFT trait.
+"""
+type Trait {
+    """
+    Trait type.
+    """
+    type: String!
+
+    """
+    Trait value.
+    """
+    value: String!
+}
+
+"""
+Trait ratio represents the ratio of NFTs in a collection with this specific trait.
+"""
+type TraitRatio {
+    """
+    Trait for which the ratio is calculated.
+    """
+    trait: Trait!
+
+    """
+    Distribution ratio of this trait.
+    """
+    ratio: Float!
 }
 
 """
@@ -324,9 +375,9 @@ type Query {
         collection: ID
 
         """
-        Minimum rarity score.
+        Maximum rarity value.
         """
-        rarityMin: Float
+        rarityMax: Float
         
         """
         Ordering options for the returned NFTs.

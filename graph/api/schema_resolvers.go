@@ -53,6 +53,54 @@ func (r *marketplaceServer) Collections(ctx context.Context, obj *api.Marketplac
 	return r.Server.marketplaceCollections(obj.ID)
 }
 
+func (r *nFTServer) Rarity(ctx context.Context, obj *api.NFT) (float64, error) {
+	// Rarity returns the rarity of the NFT. Rarity is calculated by
+	// multiplying the rarity of each of the NFT traits.
+
+	// If we have already fetched and calculated NFT rarity, we're done.
+	rarity, cached := obj.GetCachedRarity()
+	if cached {
+		return rarity, nil
+	}
+
+	// Fetch trait information.
+	traits, err := r.Server.nftTraits(obj)
+	if err != nil {
+		return 0, errRetrieveTraitsFailed
+	}
+
+	// Cache the trait information.
+	obj.CacheTraits(traits)
+
+	return rarity, nil
+}
+
+// TODO: User may request traits only, and not require calculating the actual trait distribution.
+// https://github.com/NFT-com/graph-api/issues/17
+func (r *nFTServer) TraitRarities(ctx context.Context, obj *api.NFT) ([]*api.TraitRatio, error) {
+	// TraitRarities returns, for each trait of the NFT, the portion of NFTs
+	// in that collection that have that trait with that value.
+
+	// If we have already fetched trait information, we're done.
+	traits, cached := obj.GetCachedTraits()
+	if cached {
+		return traits, nil
+	}
+
+	// Fetch trait information.
+	traits, err := r.Server.nftTraits(obj)
+	if err != nil {
+		r.logError(err)
+
+		return nil, errRetrieveTraitsFailed
+	}
+
+	// Cache the trait information.
+	obj.CacheTraits(traits)
+
+	return traits, nil
+}
+
 func (r *nFTServer) Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error) {
 	// Collection handles expanding the Collection object within an NFT object.
 
@@ -83,7 +131,7 @@ func (r *queryServer) NftByTokenID(ctx context.Context, chainID string, contract
 	return r.Server.getNFTByTokenID(chainID, contract, tokenID)
 }
 
-func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *string, rarityMin *float64, orderBy *api.NFTOrder) ([]*api.NFT, error) {
+func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *string, rarityMax *float64, orderBy *api.NFTOrder) ([]*api.NFT, error) {
 	// Nfts implements the `nfts` GraphQL query.
 
 	// FIXME: remove the validation of the sorting mode when all modes become supported
@@ -99,7 +147,7 @@ func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *strin
 
 	// NOTE: Ordering parameter is a pointer but gets initialized to the default value by the middleware.
 
-	return r.Server.nfts(owner, collection, rarityMin, *orderBy)
+	return r.Server.nfts(owner, collection, rarityMax, *orderBy)
 }
 
 func (r *queryServer) Collection(ctx context.Context, id string) (*api.Collection, error) {
