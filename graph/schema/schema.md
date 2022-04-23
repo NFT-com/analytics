@@ -245,11 +245,6 @@ Collection represents a group of NFTs that share the same smart contract.
 			<td>URL of an image for the collection.</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top"><strong>token_uri</strong></td>
-			<td valign="top"><a href="#string">String</a>!</td>
-			<td>Base URI for the tokens from the collection, directing to e.g. a JSON file with token metadata.</td>
-		</tr>
-		<tr>
 			<td colspan="2" valign="top"><strong>chain</strong></td>
 			<td valign="top"><a href="#chain">Chain</a>!</td>
 			<td>Chain on which collection resides on.</td>
@@ -347,6 +342,11 @@ NFT represents a single Non-Fungible Token.
 			<td colspan="2" valign="top"><strong>image_url</strong></td>
 			<td valign="top"><a href="#string">String</a></td>
 			<td>URL of an image for the NFT.</td>
+      <tr>
+        <td colspan="2" valign="top"><strong>uri</strong></td>
+        <td valign="top"><a href="#string">String</a>!</td>
+        <td>URI directing to e.g. a JSON file with token metadata.</td>
+      </tr>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>description</strong></td>
