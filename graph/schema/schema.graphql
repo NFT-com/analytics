@@ -124,11 +124,6 @@ type Collection {
     image_url: String
 
     """
-    Base URI for the tokens from the collection, directing to e.g. a JSON file with token metadata.
-    """
-    token_uri: String!
-
-    """
     Chain on which collection resides on.
     """
     chain: Chain!
@@ -217,6 +212,11 @@ type NFT {
     URL of an image for the NFT.
     """
     image_url: String
+
+    """
+    URI directing to e.g. a JSON file with token metadata.
+    """
+    uri: String!
 
     """
     Description of the NFT.

@@ -36,6 +36,7 @@ type NFT struct {
 	ID          string `gorm:"column:id" json:"id"`
 	Name        string `gorm:"column:name" json:"name,omitempty"`
 	ImageURL    string `gorm:"column:image" json:"image_url,omitempty"`
+	URI         string `gorm:"column:uri" json:"uri,omitempty"`
 	Description string `gorm:"column:description" json:"description,omitempty"`
 	TokenID     string `gorm:"column:token_id" json:"tokenID"`
 	Owner       string `gorm:"column:owner" json:"owner"`

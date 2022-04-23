@@ -63,7 +63,6 @@ type ComplexityRoot struct {
 		Marketplaces func(childComplexity int) int
 		Name         func(childComplexity int) int
 		Nfts         func(childComplexity int) int
-		TokenURI     func(childComplexity int) int
 		Website      func(childComplexity int) int
 	}
 
@@ -86,6 +85,7 @@ type ComplexityRoot struct {
 		Rarity        func(childComplexity int) int
 		TokenID       func(childComplexity int) int
 		TraitRarities func(childComplexity int) int
+		URI           func(childComplexity int) int
 	}
 
 	Query struct {
@@ -245,13 +245,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Collection.Nfts(childComplexity), true
 
-	case "Collection.token_uri":
-		if e.complexity.Collection.TokenURI == nil {
-			break
-		}
-
-		return e.complexity.Collection.TokenURI(childComplexity), true
-
 	case "Collection.website":
 		if e.complexity.Collection.Website == nil {
 			break
@@ -363,6 +356,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.NFT.TraitRarities(childComplexity), true
+
+	case "NFT.uri":
+		if e.complexity.NFT.URI == nil {
+			break
+		}
+
+		return e.complexity.NFT.URI(childComplexity), true
 
 	case "Query.chain":
 		if e.complexity.Query.Chain == nil {
@@ -659,11 +659,6 @@ type Collection {
     image_url: String
 
     """
-    Base URI for the tokens from the collection, directing to e.g. a JSON file with token metadata.
-    """
-    token_uri: String!
-
-    """
     Chain on which collection resides on.
     """
     chain: Chain!
@@ -754,6 +749,11 @@ type NFT {
     image_url: String
 
     """
+    URI directing to e.g. a JSON file with token metadata.
+    """
+    uri: String!
+
+    """
     Description of the NFT.
     """
     description: String
@@ -769,7 +769,7 @@ type NFT {
     rarity: Float!
 
     """
-    Ratio for each of the NFT traits indicating how rare they are.
+    Distribution ratio for each of the NFT traits indicating how rare they are.
     """
     trait_rarities: [TraitRatio!]
 
@@ -805,7 +805,7 @@ type TraitRatio {
     trait: Trait!
 
     """
-    Ratio of this trait.
+    Distribution ratio of this trait.
     """
     ratio: Float!
 }
@@ -1562,41 +1562,6 @@ func (ec *executionContext) _Collection_image_url(ctx context.Context, field gra
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Collection_token_uri(ctx context.Context, field graphql.CollectedField, obj *api.Collection) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Collection",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TokenURI, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Collection_chain(ctx context.Context, field graphql.CollectedField, obj *api.Collection) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -2032,6 +1997,41 @@ func (ec *executionContext) _NFT_image_url(ctx context.Context, field graphql.Co
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _NFT_uri(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "NFT",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URI, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _NFT_description(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
@@ -4124,16 +4124,6 @@ func (ec *executionContext) _Collection(ctx context.Context, sel ast.SelectionSe
 
 			out.Values[i] = innerFunc(ctx)
 
-		case "token_uri":
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Collection_token_uri(ctx, field, obj)
-			}
-
-			out.Values[i] = innerFunc(ctx)
-
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "chain":
 			field := field
 
@@ -4338,6 +4328,16 @@ func (ec *executionContext) _NFT(ctx context.Context, sel ast.SelectionSet, obj 
 
 			out.Values[i] = innerFunc(ctx)
 
+		case "uri":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._NFT_uri(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "description":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._NFT_description(ctx, field, obj)
