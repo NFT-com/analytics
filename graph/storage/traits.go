@@ -51,7 +51,7 @@ func (s *Storage) NFTTraitRatio(id string) ([]*api.TraitRatio, error) {
 }
 
 // NFTMissingTraitRatio determines what is the probability that an NFT does NOT have a specific trait.
-// It will accept a list of traits that an NFT has, and see what other traits can be found in a certain
+// It accepts a list of traits that an NFT has, and sees what other traits can be found in a certain
 // collection.
 func (s *Storage) NFTMissingTraitRatio(collectionID string, foundTraits []string) ([]*api.TraitRatio, error) {
 

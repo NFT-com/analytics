@@ -60,7 +60,6 @@ func (s *Server) nfts(owner *string, collection *string, rarityMax *float64, ord
 	if orderBy.Field == api.NFTOrderFieldRarity {
 
 		out := make([]*api.NFT, 0, len(nfts))
-
 		for _, nft := range nfts {
 			nft := nft
 

@@ -77,7 +77,7 @@ func (r *nFTServer) Rarity(ctx context.Context, obj *api.NFT) (float64, error) {
 
 func (r *nFTServer) TraitRarities(ctx context.Context, obj *api.NFT) ([]*api.TraitRatio, error) {
 	// TraitRarities returns, for each trait of the NFT, the portion of NFTs
-	// in that collections that have that trait with that value.
+	// in that collection that have that trait with that value.
 
 	// If we have already fetched trait information, we're done.
 	traits, cached := obj.GetCachedTraits()
