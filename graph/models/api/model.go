@@ -45,15 +45,15 @@ type NFT struct {
 	// Fields related to caching rarity values. `cachemu` is used to lock the struct
 	// for access since the GraphQL resolvers are invoked from different goroutines.
 	// `Cached` is used as a simple check if the values were prefetched.
-	cachemu      sync.Mutex    `gorm:"-" json:"-"`
-	cached       bool          `gorm:"-" json:"-"`
-	cachedRarity float64       `gorm:"-" json:"-"`
-	cachedRatios []*TraitRatio `gorm:"-" json:"-"`
+	cachemu      sync.Mutex `gorm:"-" json:"-"`
+	cached       bool       `gorm:"-" json:"-"`
+	cachedRarity float64    `gorm:"-" json:"-"`
+	cachedRatios []*Trait   `gorm:"-" json:"-"`
 }
 
 // CacheTraits stores the current traits, their ratios/distribution and the resulting
 // NFT rarity, so that they can be retrieved later.
-func (n *NFT) CacheTraits(traits []*TraitRatio) {
+func (n *NFT) CacheTraits(traits []*Trait) {
 
 	n.cachemu.Lock()
 	defer n.cachemu.Unlock()
@@ -65,7 +65,7 @@ func (n *NFT) CacheTraits(traits []*TraitRatio) {
 	// NFTs in a collection, the rarity is 0.5*0.5 = 0.25.
 	rarity := 1.0
 	for _, trait := range traits {
-		rarity = rarity * trait.Ratio
+		rarity = rarity * trait.Rarity
 	}
 
 	n.cachedRarity = rarity
@@ -74,7 +74,7 @@ func (n *NFT) CacheTraits(traits []*TraitRatio) {
 
 // GetCachedTraits retrieves the trait information from cache, as well as a boolean
 // indicating if they were set or not.
-func (n *NFT) GetCachedTraits() ([]*TraitRatio, bool) {
+func (n *NFT) GetCachedTraits() ([]*Trait, bool) {
 	n.cachemu.Lock()
 	defer n.cachemu.Unlock()
 
@@ -94,12 +94,7 @@ func (n *NFT) GetCachedRarity() (float64, bool) {
 // NOTE: `Value` can be an empty string if it represents a trait that the NFT does not have
 // (for example when displaying distribution ratio of a rare trait).
 type Trait struct {
-	Type  string `json:"type"`
-	Value string `json:"value"`
-}
-
-// Trait ratio represents the ratio of NFTs in a collection with this specific trait.
-type TraitRatio struct {
-	Trait Trait   `json:"trait"`
-	Ratio float64 `json:"ratio"`
+	Type   string  `json:"type"`
+	Value  string  `json:"value"`
+	Rarity float64 `json:"rarity"`
 }

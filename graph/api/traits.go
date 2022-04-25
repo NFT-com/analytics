@@ -4,10 +4,10 @@ import (
 	"github.com/NFT-com/graph-api/graph/models/api"
 )
 
-func (s *Server) nftTraits(nft *api.NFT) ([]*api.TraitRatio, error) {
+func (s *Server) nftTraits(nft *api.NFT) ([]*api.Trait, error) {
 
 	// Get trait information for the current NFT.
-	traits, err := s.storage.NFTTraitRatio(nft.ID)
+	traits, err := s.storage.NFTTraits(nft.ID)
 	if err != nil {
 		s.logError(err).
 			Str("nft", nft.ID).
@@ -17,7 +17,7 @@ func (s *Server) nftTraits(nft *api.NFT) ([]*api.TraitRatio, error) {
 
 	foundTraits := make([]string, 0, len(traits))
 	for _, trait := range traits {
-		foundTraits = append(foundTraits, trait.Trait.Type)
+		foundTraits = append(foundTraits, trait.Type)
 	}
 
 	missingTraits, err := s.storage.NFTMissingTraitRatio(nft.Collection, foundTraits)

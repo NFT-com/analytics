@@ -17,10 +17,10 @@ type traitRatio struct {
 	Ratio float64 `gorm:"column:ratio"`
 }
 
-// NFTTraitRatio retrieves a list of traits that the specified NFT has,
+// NFTTraits retrieves a list of traits that the specified NFT has,
 // along with the ratio describing how many NFTs from that collection
 // have the specific trait name/value combination.
-func (s *Storage) NFTTraitRatio(id string) ([]*api.TraitRatio, error) {
+func (s *Storage) NFTTraits(id string) ([]*api.Trait, error) {
 
 	// Prepare the SQL statement.
 	query := fmt.Sprintf("SELECT * FROM %s(?)", traitRatioFunctionName)
@@ -33,15 +33,13 @@ func (s *Storage) NFTTraitRatio(id string) ([]*api.TraitRatio, error) {
 	}
 
 	// Translate the query result to the expected format.
-	out := make([]*api.TraitRatio, 0, len(traits))
+	out := make([]*api.Trait, 0, len(traits))
 	for _, t := range traits {
 
-		trait := api.TraitRatio{
-			Trait: api.Trait{
-				Type:  t.Name,
-				Value: t.Value,
-			},
-			Ratio: t.Ratio,
+		trait := api.Trait{
+			Type:   t.Name,
+			Value:  t.Value,
+			Rarity: t.Ratio,
 		}
 
 		out = append(out, &trait)
@@ -53,7 +51,7 @@ func (s *Storage) NFTTraitRatio(id string) ([]*api.TraitRatio, error) {
 // NFTMissingTraitRatio determines what is the probability that an NFT does NOT have a specific trait.
 // It accepts a list of traits that an NFT has, and sees what other traits can be found in a certain
 // collection.
-func (s *Storage) NFTMissingTraitRatio(collectionID string, foundTraits []string) ([]*api.TraitRatio, error) {
+func (s *Storage) NFTMissingTraitRatio(collectionID string, foundTraits []string) ([]*api.Trait, error) {
 
 	db := s.db.
 		Table("traits_collections tc").
@@ -70,15 +68,13 @@ func (s *Storage) NFTMissingTraitRatio(collectionID string, foundTraits []string
 	}
 
 	// Translate the query result to the expected format.
-	out := make([]*api.TraitRatio, 0, len(traits))
+	out := make([]*api.Trait, 0, len(traits))
 	for _, t := range traits {
 
-		trait := api.TraitRatio{
-			Trait: api.Trait{
-				Type:  t.Name,
-				Value: t.Value,
-			},
-			Ratio: t.Ratio,
+		trait := api.Trait{
+			Type:   t.Name,
+			Value:  t.Value,
+			Rarity: t.Ratio,
 		}
 
 		out = append(out, &trait)
