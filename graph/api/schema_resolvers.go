@@ -72,6 +72,9 @@ func (r *nFTServer) Rarity(ctx context.Context, obj *api.NFT) (float64, error) {
 	// Cache the trait information.
 	obj.CacheTraits(traits)
 
+	// Retrieve updated rarity.
+	rarity, _ = obj.GetCachedRarity()
+
 	return rarity, nil
 }
 
