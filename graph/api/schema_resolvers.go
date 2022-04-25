@@ -7,6 +7,8 @@ import (
 	"context"
 	"errors"
 
+	"github.com/99designs/gqlgen/graphql"
+
 	"github.com/NFT-com/graph-api/graph/generated"
 	"github.com/NFT-com/graph-api/graph/models/api"
 )
@@ -63,17 +65,15 @@ func (r *nFTServer) Rarity(ctx context.Context, obj *api.NFT) (float64, error) {
 		return rarity, nil
 	}
 
-	// Fetch trait information.
-	traits, err := r.Server.nftTraits(obj)
+	// Fetch trait information (with rarity).
+	traits, err := r.Server.nftTraits(obj, true)
 	if err != nil {
 		return 0, errRetrieveTraitsFailed
 	}
 
-	// Cache the trait information.
-	obj.CacheTraits(traits)
-
-	// Retrieve updated rarity.
-	rarity, _ = obj.GetCachedRarity()
+	// Cache the NFT rarity.
+	rarity = calcRarity(traits)
+	obj.CacheRarity(rarity)
 
 	return rarity, nil
 }
@@ -83,25 +83,32 @@ func (r *nFTServer) Traits(ctx context.Context, obj *api.NFT) ([]*api.Trait, err
 	// the portion of NFTs in that collection that have that trait
 	// with that value.
 
-	// TODO: User may request traits only, and not require calculating the actual trait distribution.
-	// https://github.com/NFT-com/graph-api/issues/17
+	// FIXME: Better to still cache traits nonetheless.
 
-	// If we have already fetched trait information, we're done.
-	traits, cached := obj.GetCachedTraits()
-	if cached {
-		return traits, nil
+	// Check whether the rarity metric is requested.
+	wantRarity := false
+
+	fields := graphql.CollectFieldsCtx(ctx, nil)
+	for _, field := range fields {
+		if field.Name == traitRarityField {
+			wantRarity = true
+			break
+		}
 	}
 
 	// Fetch trait information.
-	traits, err := r.Server.nftTraits(obj)
+	traits, err := r.Server.nftTraits(obj, wantRarity)
 	if err != nil {
 		r.logError(err)
 
 		return nil, errRetrieveTraitsFailed
 	}
 
-	// Cache the trait information.
-	obj.CacheTraits(traits)
+	// If we have rarity information includeds, cache it.
+	if wantRarity {
+		rarity := calcRarity(traits)
+		obj.CacheRarity(rarity)
+	}
 
 	return traits, nil
 }

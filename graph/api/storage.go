@@ -11,7 +11,7 @@ type Storage interface {
 	NFT(id string) (*api.NFT, error)
 	NFTByTokenID(chainID string, contract string, tokenID string) (*api.NFT, error)
 	NFTs(owner *string, collectionID *string, orderBy api.NFTOrder) ([]*api.NFT, error)
-	NFTTraits(id string) ([]*api.Trait, error)
+	NFTTraits(id string, calculateRarity bool) ([]*api.Trait, error)
 	NFTMissingTraitRatio(collectionID string, traits []string) ([]*api.Trait, error)
 
 	Collection(id string) (*api.Collection, error)
