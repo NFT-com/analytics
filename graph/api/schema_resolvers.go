@@ -71,9 +71,10 @@ func (r *nFTServer) Rarity(ctx context.Context, obj *api.NFT) (float64, error) {
 		return 0, errRetrieveTraitsFailed
 	}
 
-	// Cache the NFT rarity.
-	rarity = calcRarity(traits)
-	obj.CacheRarity(rarity)
+	// Cache the NFT traits.
+	obj.CacheTraits(traits)
+	// Retrieve updated rarity.
+	rarity, _ = obj.GetCachedRarity()
 
 	return rarity, nil
 }
@@ -82,8 +83,6 @@ func (r *nFTServer) Traits(ctx context.Context, obj *api.NFT) ([]*api.Trait, err
 	// Traits returns the NFT traits, as well as the rarity metric -
 	// the portion of NFTs in that collection that have that trait
 	// with that value.
-
-	// FIXME: Better to still cache traits nonetheless.
 
 	// Check whether the rarity metric is requested.
 	wantRarity := false
@@ -104,10 +103,9 @@ func (r *nFTServer) Traits(ctx context.Context, obj *api.NFT) ([]*api.Trait, err
 		return nil, errRetrieveTraitsFailed
 	}
 
-	// If we have rarity information includeds, cache it.
+	// If we have trait rarity information included, cache it.
 	if wantRarity {
-		rarity := calcRarity(traits)
-		obj.CacheRarity(rarity)
+		obj.CacheTraits(traits)
 	}
 
 	return traits, nil

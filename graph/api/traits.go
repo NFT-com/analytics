@@ -43,16 +43,3 @@ func (s *Server) nftTraits(nft *api.NFT, wantRarity bool) ([]*api.Trait, error) 
 
 	return traits, nil
 }
-
-func calcRarity(traits []*api.Trait) float64 {
-
-	// Calculate rarity of an NFT by multiplying the ratios of individual traits.
-	// For example, if NFT has two traits that are present in 50% of
-	// NFTs in a collection, the rarity is 0.5*0.5 = 0.25.
-	rarity := 1.0
-	for _, trait := range traits {
-		rarity = rarity * trait.Rarity
-	}
-
-	return rarity
-}

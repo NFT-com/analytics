@@ -72,8 +72,9 @@ func (s *Server) nfts(owner *string, collection *string, rarityMax *float64, ord
 				}
 
 				// Cache the trait/rarity information for potential later use.
-				rarity = calcRarity(traits)
-				nft.CacheRarity(rarity)
+				nft.CacheTraits(traits)
+
+				rarity, _ = nft.GetCachedRarity()
 			}
 
 			// If the NFT is above the rarity threshold, skip it.
