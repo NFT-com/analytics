@@ -32,6 +32,9 @@ const (
 
 	// Default event batch size.
 	defaultBatchSize = 100
+
+	defaultDBMaxConnections  = 70
+	defaultDBIdleConnections = 20
 )
 
 func main() {
@@ -53,12 +56,16 @@ func run() error {
 		flagDatabase           string
 		flagLogLevel           string
 		flagEnableQueryLogging bool
+		flagDBConnections      int
+		flagDBIdleConnections  int
 	)
 
 	pflag.StringVarP(&flagBind, "bind", "b", ":8080", "bind address for serving requests")
 	pflag.UintVarP(&flagBatchSize, "batch-size", "s", defaultBatchSize, "default limit for number of events returned in a single call")
 	pflag.StringVarP(&flagDatabase, "database", "d", "", "database address")
 	pflag.StringVarP(&flagLogLevel, "log-level", "l", "info", "log level")
+	pflag.IntVar(&flagDBConnections, "db-connection-limit", defaultDBMaxConnections, "maximum number of database connections, -1 for unlimited")
+	pflag.IntVar(&flagDBIdleConnections, "db-idle-connection-limit", defaultDBIdleConnections, "maximum number of idle connections")
 	pflag.BoolVar(&flagEnableQueryLogging, "enable-query-logging", true, "enable logging of database queries")
 
 	pflag.Parse()
@@ -92,6 +99,13 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("could not connect to database: %w", err)
 	}
+	// Limit the number of database connections.
+	sqlDB, err := db.DB()
+	if err != nil {
+		return fmt.Errorf("could not get database connection: %w", err)
+	}
+	sqlDB.SetMaxOpenConns(flagDBConnections)
+	sqlDB.SetMaxIdleConns(flagDBIdleConnections)
 
 	// Initialize storage component.
 	storage := storage.New(db, storage.WithBatchSize(flagBatchSize))
