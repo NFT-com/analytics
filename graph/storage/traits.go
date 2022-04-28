@@ -10,50 +10,47 @@ const (
 	traitRatioFunctionName = `traits_ratio`
 )
 
-// traitRatio represents the trait ratio function query result.
-type traitRatio struct {
-	Name  string  `gorm:"column:name"`
-	Value string  `gorm:"column:value"`
-	Ratio float64 `gorm:"column:ratio"`
-}
-
-// NFTTraitRatio retrieves a list of traits that the specified NFT has,
+// NFTTraits retrieves a list of traits that the specified NFT has,
 // along with the ratio describing how many NFTs from that collection
 // have the specific trait name/value combination.
-func (s *Storage) NFTTraitRatio(id string) ([]*api.TraitRatio, error) {
+func (s *Storage) NFTTraits(id string, calculateRarity bool) ([]*api.Trait, error) {
+
+	if calculateRarity {
+		return s.nftTraitRarity(id)
+	}
+
+	var traits []*api.Trait
+	err := s.db.
+		Select("*").
+		Table("traits").
+		Where("nft = ?", id).
+		Find(&traits).Error
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve traits: %w", err)
+	}
+
+	return traits, nil
+}
+
+func (s *Storage) nftTraitRarity(id string) ([]*api.Trait, error) {
 
 	// Prepare the SQL statement.
 	query := fmt.Sprintf("SELECT * FROM %s(?)", traitRatioFunctionName)
 
 	// Execute the SQL query.
-	var traits []traitRatio
+	var traits []*api.Trait
 	err := s.db.Raw(query, id).Find(&traits).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve trait data: %w", err)
 	}
 
-	// Translate the query result to the expected format.
-	out := make([]*api.TraitRatio, 0, len(traits))
-	for _, t := range traits {
-
-		trait := api.TraitRatio{
-			Trait: api.Trait{
-				Type:  t.Name,
-				Value: t.Value,
-			},
-			Ratio: t.Ratio,
-		}
-
-		out = append(out, &trait)
-	}
-
-	return out, nil
+	return traits, nil
 }
 
 // NFTMissingTraitRatio determines what is the probability that an NFT does NOT have a specific trait.
 // It accepts a list of traits that an NFT has, and sees what other traits can be found in a certain
 // collection.
-func (s *Storage) NFTMissingTraitRatio(collectionID string, foundTraits []string) ([]*api.TraitRatio, error) {
+func (s *Storage) NFTMissingTraitRatio(collectionID string, foundTraits []string) ([]*api.Trait, error) {
 
 	db := s.db.
 		Table("traits_collections tc").
@@ -63,26 +60,11 @@ func (s *Storage) NFTMissingTraitRatio(collectionID string, foundTraits []string
 		Where("tc.collection = ?", collectionID).
 		Group("name")
 
-	var traits []traitRatio
+	var traits []*api.Trait
 	err := db.Find(&traits).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not calculate missing trait rarity: %w", err)
 	}
 
-	// Translate the query result to the expected format.
-	out := make([]*api.TraitRatio, 0, len(traits))
-	for _, t := range traits {
-
-		trait := api.TraitRatio{
-			Trait: api.Trait{
-				Type:  t.Name,
-				Value: t.Value,
-			},
-			Ratio: t.Ratio,
-		}
-
-		out = append(out, &trait)
-	}
-
-	return out, nil
+	return traits, nil
 }

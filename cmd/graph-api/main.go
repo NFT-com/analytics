@@ -32,6 +32,9 @@ import (
 const (
 	defaultPlaygroundPath  = "/"
 	defaultGraphQLEndpoint = "/graphql"
+
+	defaultDBMaxConnections  = 70
+	defaultDBIdleConnections = 20
 )
 
 func main() {
@@ -52,6 +55,8 @@ func run() error {
 		flagBind               string
 		flagDatabase           string
 		flagLogLevel           string
+		flagDBConnections      int
+		flagDBIdleConnections  int
 		flagPlayground         string
 		flagComplexityLimit    int
 		flagEnablePlayground   bool
@@ -63,6 +68,8 @@ func run() error {
 	pflag.StringVarP(&flagDatabase, "database", "d", "", "database address")
 	pflag.StringVarP(&flagLogLevel, "log-level", "l", "info", "log level")
 	pflag.StringVarP(&flagPlayground, "playground-path", "p", defaultPlaygroundPath, "path for GraphQL playground")
+	pflag.IntVar(&flagDBConnections, "db-connection-limit", defaultDBMaxConnections, "maximum number of database connections, -1 for unlimited")
+	pflag.IntVar(&flagDBIdleConnections, "db-idle-connection-limit", defaultDBIdleConnections, "maximum number of idle connections")
 	pflag.IntVar(&flagComplexityLimit, "query-complexity", 0, "GraphQL query complexity limit")
 	pflag.BoolVar(&flagEnablePlayground, "enable-playground", false, "enable GraphQL playground")
 	pflag.BoolVar(&flagEnableQueryLogging, "enable-query-logging", true, "enable logging of database queries")
@@ -98,6 +105,13 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("could not connect to database: %w", err)
 	}
+	// Limit the number of database connections.
+	sqlDB, err := db.DB()
+	if err != nil {
+		return fmt.Errorf("could not get database connection: %w", err)
+	}
+	sqlDB.SetMaxOpenConns(flagDBConnections)
+	sqlDB.SetMaxIdleConns(flagDBIdleConnections)
 
 	storage := storage.New(db)
 	apiServer := api.NewServer(storage, log)

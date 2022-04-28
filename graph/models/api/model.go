@@ -42,43 +42,26 @@ type NFT struct {
 	Owner       string `gorm:"column:owner" json:"owner"`
 	Collection  string `gorm:"column:collection" json:"-"`
 
-	// Fields related to caching rarity values. `cachemu` is used to lock the struct
+	// Fields related to caching trait and rarity values. `cachemu` is used to lock the struct
 	// for access since the GraphQL resolvers are invoked from different goroutines.
-	// `Cached` is used as a simple check if the values were prefetched.
-	cachemu      sync.Mutex    `gorm:"-" json:"-"`
-	cached       bool          `gorm:"-" json:"-"`
-	cachedRarity float64       `gorm:"-" json:"-"`
-	cachedRatios []*TraitRatio `gorm:"-" json:"-"`
+	// `cached` is used as a simple check if the values were prefetched.
+	// Rarity is derived from trait rarity so it could also be recalculated on the fly
+	// and perhaps not even cached.
+	cachemu      sync.Mutex `gorm:"-" json:"-"`
+	cached       bool       `gorm:"-" json:"-"`
+	cachedRarity float64    `gorm:"-" json:"-"`
+	cachedTraits []*Trait   `gorm:"-" json:"-"`
 }
 
-// CacheTraits stores the current traits, their ratios/distribution and the resulting
-// NFT rarity, so that they can be retrieved later.
-func (n *NFT) CacheTraits(traits []*TraitRatio) {
-
+// CacheTraits caches the trait information so it can be retrieved later
+// without doing expensive rarity recomputation.
+func (n *NFT) CacheTraits(traits []*Trait) {
 	n.cachemu.Lock()
 	defer n.cachemu.Unlock()
 
-	n.cachedRatios = traits
-
-	// Calculate rarity of an NFT by multiplying the ratios of individual traits.
-	// For example, if NFT has two traits that are present in 50% of
-	// NFTs in a collection, the rarity is 0.5*0.5 = 0.25.
-	rarity := 1.0
-	for _, trait := range traits {
-		rarity = rarity * trait.Ratio
-	}
-
-	n.cachedRarity = rarity
+	n.cachedTraits = traits
+	n.cachedRarity = calcRarity(traits)
 	n.cached = true
-}
-
-// GetCachedTraits retrieves the trait information from cache, as well as a boolean
-// indicating if they were set or not.
-func (n *NFT) GetCachedTraits() ([]*TraitRatio, bool) {
-	n.cachemu.Lock()
-	defer n.cachemu.Unlock()
-
-	return n.cachedRatios, n.cached
 }
 
 // GetCachedRarity retrieves the NFT rarity information from cache, as well as a boolean
@@ -90,16 +73,33 @@ func (n *NFT) GetCachedRarity() (float64, bool) {
 	return n.cachedRarity, n.cached
 }
 
+// GetCachedTraits retrieves the traits rarity information from cache, as well as a boolean
+// indicating if it was set or not.
+func (n *NFT) GetCachedTraits() ([]*Trait, bool) {
+	n.cachemu.Lock()
+	defer n.cachemu.Unlock()
+
+	return n.cachedTraits, n.cached
+}
+
+func calcRarity(traits []*Trait) float64 {
+
+	// Calculate rarity of an NFT by multiplying the ratios of individual traits.
+	// For example, if NFT has two traits that are present in 50% of
+	// NFTs in a collection, the rarity is 0.5*0.5 = 0.25.
+	rarity := 1.0
+	for _, trait := range traits {
+		rarity = rarity * trait.Rarity
+	}
+
+	return rarity
+}
+
 // Trait represents a single NFT trait.
 // NOTE: `Value` can be an empty string if it represents a trait that the NFT does not have
 // (for example when displaying distribution ratio of a rare trait).
 type Trait struct {
-	Type  string `json:"type"`
-	Value string `json:"value"`
-}
-
-// Trait ratio represents the ratio of NFTs in a collection with this specific trait.
-type TraitRatio struct {
-	Trait Trait   `json:"trait"`
-	Ratio float64 `json:"ratio"`
+	Type   string  `json:"type" gorm:"column:name"`
+	Value  string  `json:"value" gorm:"column:value"`
+	Rarity float64 `json:"rarity" gorm:"column:ratio"`
 }

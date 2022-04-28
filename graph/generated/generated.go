@@ -76,16 +76,16 @@ type ComplexityRoot struct {
 	}
 
 	NFT struct {
-		Collection    func(childComplexity int) int
-		Description   func(childComplexity int) int
-		ID            func(childComplexity int) int
-		ImageURL      func(childComplexity int) int
-		Name          func(childComplexity int) int
-		Owner         func(childComplexity int) int
-		Rarity        func(childComplexity int) int
-		TokenID       func(childComplexity int) int
-		TraitRarities func(childComplexity int) int
-		URI           func(childComplexity int) int
+		Collection  func(childComplexity int) int
+		Description func(childComplexity int) int
+		ID          func(childComplexity int) int
+		ImageURL    func(childComplexity int) int
+		Name        func(childComplexity int) int
+		Owner       func(childComplexity int) int
+		Rarity      func(childComplexity int) int
+		TokenID     func(childComplexity int) int
+		Traits      func(childComplexity int) int
+		URI         func(childComplexity int) int
 	}
 
 	Query struct {
@@ -100,13 +100,9 @@ type ComplexityRoot struct {
 	}
 
 	Trait struct {
-		Type  func(childComplexity int) int
-		Value func(childComplexity int) int
-	}
-
-	TraitRatio struct {
-		Ratio func(childComplexity int) int
-		Trait func(childComplexity int) int
+		Rarity func(childComplexity int) int
+		Type   func(childComplexity int) int
+		Value  func(childComplexity int) int
 	}
 }
 
@@ -125,7 +121,7 @@ type MarketplaceResolver interface {
 }
 type NFTResolver interface {
 	Rarity(ctx context.Context, obj *api.NFT) (float64, error)
-	TraitRarities(ctx context.Context, obj *api.NFT) ([]*api.TraitRatio, error)
+	Traits(ctx context.Context, obj *api.NFT) ([]*api.Trait, error)
 	Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error)
 }
 type QueryResolver interface {
@@ -350,12 +346,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.NFT.TokenID(childComplexity), true
 
-	case "NFT.trait_rarities":
-		if e.complexity.NFT.TraitRarities == nil {
+	case "NFT.traits":
+		if e.complexity.NFT.Traits == nil {
 			break
 		}
 
-		return e.complexity.NFT.TraitRarities(childComplexity), true
+		return e.complexity.NFT.Traits(childComplexity), true
 
 	case "NFT.uri":
 		if e.complexity.NFT.URI == nil {
@@ -455,6 +451,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Nfts(childComplexity, args["owner"].(*string), args["collection"].(*string), args["rarityMax"].(*float64), args["orderBy"].(*api.NFTOrder)), true
 
+	case "Trait.rarity":
+		if e.complexity.Trait.Rarity == nil {
+			break
+		}
+
+		return e.complexity.Trait.Rarity(childComplexity), true
+
 	case "Trait.type":
 		if e.complexity.Trait.Type == nil {
 			break
@@ -468,20 +471,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Trait.Value(childComplexity), true
-
-	case "TraitRatio.ratio":
-		if e.complexity.TraitRatio.Ratio == nil {
-			break
-		}
-
-		return e.complexity.TraitRatio.Ratio(childComplexity), true
-
-	case "TraitRatio.trait":
-		if e.complexity.TraitRatio.Trait == nil {
-			break
-		}
-
-		return e.complexity.TraitRatio.Trait(childComplexity), true
 
 	}
 	return 0, false
@@ -769,9 +758,9 @@ type NFT {
     rarity: Float!
 
     """
-    Distribution ratio for each of the NFT traits indicating how rare they are.
+    Traits contains a list of attributes of the NFT.
     """
-    trait_rarities: [TraitRatio!]
+    traits: [Trait!]
 
     """
     Collection this NFT is part of.
@@ -793,21 +782,11 @@ type Trait {
     Trait value.
     """
     value: String!
-}
-
-"""
-Trait ratio represents the ratio of NFTs in a collection with this specific trait.
-"""
-type TraitRatio {
-    """
-    Trait for which the ratio is calculated.
-    """
-    trait: Trait!
 
     """
-    Distribution ratio of this trait.
+    Trait rarity represents the ratio of NFTs in a collection with this specific trait.
     """
-    ratio: Float!
+    rarity: Float!
 }
 
 """
@@ -2136,7 +2115,7 @@ func (ec *executionContext) _NFT_rarity(ctx context.Context, field graphql.Colle
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _NFT_trait_rarities(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
+func (ec *executionContext) _NFT_traits(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -2154,7 +2133,7 @@ func (ec *executionContext) _NFT_trait_rarities(ctx context.Context, field graph
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.NFT().TraitRarities(rctx, obj)
+		return ec.resolvers.NFT().Traits(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2163,9 +2142,9 @@ func (ec *executionContext) _NFT_trait_rarities(ctx context.Context, field graph
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*api.TraitRatio)
+	res := resTmp.([]*api.Trait)
 	fc.Result = res
-	return ec.marshalOTraitRatio2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTraitRatioᚄ(ctx, field.Selections, res)
+	return ec.marshalOTrait2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTraitᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _NFT_collection(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
@@ -2649,7 +2628,7 @@ func (ec *executionContext) _Trait_value(ctx context.Context, field graphql.Coll
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _TraitRatio_trait(ctx context.Context, field graphql.CollectedField, obj *api.TraitRatio) (ret graphql.Marshaler) {
+func (ec *executionContext) _Trait_rarity(ctx context.Context, field graphql.CollectedField, obj *api.Trait) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -2657,7 +2636,7 @@ func (ec *executionContext) _TraitRatio_trait(ctx context.Context, field graphql
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "TraitRatio",
+		Object:     "Trait",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -2667,42 +2646,7 @@ func (ec *executionContext) _TraitRatio_trait(ctx context.Context, field graphql
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Trait, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(api.Trait)
-	fc.Result = res
-	return ec.marshalNTrait2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTrait(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _TraitRatio_ratio(ctx context.Context, field graphql.CollectedField, obj *api.TraitRatio) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "TraitRatio",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Ratio, nil
+		return obj.Rarity, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4375,7 +4319,7 @@ func (ec *executionContext) _NFT(ctx context.Context, sel ast.SelectionSet, obj 
 				return innerFunc(ctx)
 
 			})
-		case "trait_rarities":
+		case "traits":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -4384,7 +4328,7 @@ func (ec *executionContext) _NFT(ctx context.Context, sel ast.SelectionSet, obj 
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._NFT_trait_rarities(ctx, field, obj)
+				res = ec._NFT_traits(ctx, field, obj)
 				return res
 			}
 
@@ -4657,40 +4601,9 @@ func (ec *executionContext) _Trait(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var traitRatioImplementors = []string{"TraitRatio"}
-
-func (ec *executionContext) _TraitRatio(ctx context.Context, sel ast.SelectionSet, obj *api.TraitRatio) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, traitRatioImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("TraitRatio")
-		case "trait":
+		case "rarity":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._TraitRatio_trait(ctx, field, obj)
-			}
-
-			out.Values[i] = innerFunc(ctx)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "ratio":
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._TraitRatio_ratio(ctx, field, obj)
+				return ec._Trait_rarity(ctx, field, obj)
 			}
 
 			out.Values[i] = innerFunc(ctx)
@@ -5329,18 +5242,14 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) marshalNTrait2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTrait(ctx context.Context, sel ast.SelectionSet, v api.Trait) graphql.Marshaler {
-	return ec._Trait(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNTraitRatio2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTraitRatio(ctx context.Context, sel ast.SelectionSet, v *api.TraitRatio) graphql.Marshaler {
+func (ec *executionContext) marshalNTrait2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTrait(ctx context.Context, sel ast.SelectionSet, v *api.Trait) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
 		}
 		return graphql.Null
 	}
-	return ec._TraitRatio(ctx, sel, v)
+	return ec._Trait(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
@@ -5921,7 +5830,7 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) marshalOTraitRatio2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTraitRatioᚄ(ctx context.Context, sel ast.SelectionSet, v []*api.TraitRatio) graphql.Marshaler {
+func (ec *executionContext) marshalOTrait2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTraitᚄ(ctx context.Context, sel ast.SelectionSet, v []*api.Trait) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -5948,7 +5857,7 @@ func (ec *executionContext) marshalOTraitRatio2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNTraitRatio2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTraitRatio(ctx, sel, v[i])
+			ret[i] = ec.marshalNTrait2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTrait(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)

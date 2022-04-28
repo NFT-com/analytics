@@ -234,9 +234,9 @@ type NFT {
     rarity: Float!
 
     """
-    Distribution ratio for each of the NFT traits indicating how rare they are.
+    Traits contains a list of attributes of the NFT.
     """
-    trait_rarities: [TraitRatio!]
+    traits: [Trait!]
 
     """
     Collection this NFT is part of.
@@ -258,21 +258,11 @@ type Trait {
     Trait value.
     """
     value: String!
-}
-
-"""
-Trait ratio represents the ratio of NFTs in a collection with this specific trait.
-"""
-type TraitRatio {
-    """
-    Trait for which the ratio is calculated.
-    """
-    trait: Trait!
 
     """
-    Distribution ratio of this trait.
+    Trait rarity represents the ratio of NFTs in a collection with this specific trait.
     """
-    ratio: Float!
+    rarity: Float!
 }
 
 """

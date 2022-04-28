@@ -11,7 +11,6 @@
     * [Marketplace](#marketplace)
     * [NFT](#nft)
 	* [Trait](#trait)
-    * [TraitRatio](#traitratio)
   * [Inputs](#inputs)
     * [CollectionOrder](#collectionorder)
     * [NFTOrder](#nftorder)
@@ -364,10 +363,10 @@ NFT represents a single Non-Fungible Token.
 			<td>Rarity score for the NFT.</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top"><strong>trait_rarities</strong></td>
-			<td valign="top">[<a href="#traitratio">TraitRatio</a>!]</td>
-			<td>Distribution ratio for each of the NFT traits indicating how rare they are.</td>
-			</tr>
+			<td colspan="2" valign="top"><strong>traits</strong></td>
+			<td valign="top">[<a href="#trait">Trait</a>!]</td>
+			<td>Traits contains a list of attributes of the NFT.</td>
+		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>collection</strong></td>
 			<td valign="top"><a href="#collection">Collection</a>!</td>
@@ -400,36 +399,13 @@ Trait represents a single NFT trait.
 			<td valign="top"><a href="#string">String</a>!</td>
 			<td>Trait value.</td>
 		</tr>
-	</tbody>
-</table>
-
-### TraitRatio
-
-Trait ratio represents the ratio of NFTs in a collection with this specific trait.
-
-<table>
-	<thead>
 		<tr>
-			<th align="left">Field</th>
-			<th align="right">Argument</th>
-			<th align="left">Type</th>
-			<th align="left">Description</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td colspan="2" valign="top"><strong>trait</strong></td>
-			<td valign="top"><a href="#trait">Trait</a>!</td>
-			<td>Trait for which the ratio is calculated.</td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top"><strong>ratio</strong></td>
+			<td colspan="2" valign="top"><strong>rarity</strong></td>
 			<td valign="top"><a href="#float">Float</a>!</td>
-			<td>Distribution ratio of this trait.</td>
+			<td>Trait rarity represents the ratio of NFTs in a collection with this specific trait.</td>
 		</tr>
 	</tbody>
 </table>
-
 
 ## Inputs
 
