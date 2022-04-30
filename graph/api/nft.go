@@ -56,7 +56,7 @@ func (s *Server) getNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, err
 
 	// If we do not need rarity, just fetch the traits for this NFT.
 	if !needRarity {
-		traits, err := s.storage.NFTTraits(nft.ID, false)
+		traits, err := s.storage.NFTTraits(nft.ID)
 		if err != nil {
 			s.logError(err).Str("id", nft.ID).Msg("could not retrieve traits")
 			return nil, errRetrieveTraitsFailed
@@ -80,7 +80,7 @@ func (s *Server) getNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, err
 		return nil, errRetrieveTraitsFailed
 	}
 
-	stats := extractTraitStats(traits)
+	stats := traits.stats()
 	rarity, traitRarity := calcTraitCollectionRarity(size, stats, nft.Traits)
 
 	nft.Rarity = rarity
@@ -96,6 +96,8 @@ func (s *Server) getNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, err
 
 // nfts returns a list of NFTs fitting the search criteria.
 func (s *Server) nfts(owner *string, collection *string, rarityMax *float64, orderBy api.NFTOrder) ([]*api.NFT, error) {
+
+	// FIXME: Change rarity handling here.
 
 	nfts, err := s.storage.NFTs(owner, collection, orderBy)
 	if err != nil {

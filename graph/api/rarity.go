@@ -14,7 +14,7 @@ type traitStats struct {
 	knownTraits map[string]uint
 }
 
-func extractTraitStats(traits map[string][]*api.Trait) traitStats {
+func (ct collectionTraits) stats() traitStats {
 
 	stats := traitStats{
 		occurrences: make(map[string]uint),
@@ -24,7 +24,7 @@ func extractTraitStats(traits map[string][]*api.Trait) traitStats {
 	// Go through all traits found and count number of ocurrence of
 	// each individual trait type/value combo, as well as how many times
 	// was each trait type seen.
-	for _, traitList := range traits {
+	for _, traitList := range ct {
 
 		// We want to keep track of how many NFTs have a certain trait.
 		// However, if there's an NFT that has the same trait twice,

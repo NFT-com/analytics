@@ -80,8 +80,7 @@ func (s *Server) processCollection(ctx context.Context, id string) (*api.Collect
 	}
 
 	// Crunch the data and determine trait frequency.
-	stats := extractTraitStats(traits)
-
+	stats := traits.stats()
 	stats.Print()
 
 	// Total number of NFTs in a collection, in relation to which we're calculating frequency.
