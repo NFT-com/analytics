@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/NFT-com/graph-api/graph/models/api"
 )
@@ -60,7 +59,7 @@ func (s *Server) processCollection(ctx context.Context, id string) (*api.Collect
 	needRarity := includeRarity || includeTraitRarity
 
 	// If we do not need traits nor rarity, we're done.
-	if !includeTraits && !includeRarity {
+	if !includeTraits && !needRarity {
 		return collection, nil
 	}
 
@@ -91,69 +90,14 @@ func (s *Server) processCollection(ctx context.Context, id string) (*api.Collect
 	// Calculate trait rarity.
 	for _, nft := range collection.NFTs {
 
-		nftRarity := 1.0
+		rarity, traitRarity := calcTraitCollectionRarity(uint(total), stats, nft.Traits)
 
-		// Keep track of all traits we found.
-		foundTraits := make(map[string]struct{})
-
-		// For each trait, see how many times that trait with that value occurred in the collection.
-		// Divide the number of occurrences with the total number of NFTs to see how frequent that trait is.
-		for _, trait := range nft.Traits {
-
-			foundTraits[trait.Type] = struct{}{}
-
-			key := formatTraitKey(trait)
-			occurences := stats.occurrences[key]
-
-			traitRarity := float64(occurences) / float64(total)
-			trait.Rarity = traitRarity
-
-			s.log.Debug().
-				Str("nft", nft.ID).
-				Int("total_nfts", total).
-				Str("trait", fmt.Sprintf("%s:%s", trait.Type, trait.Value)).
-				Uint("trait_occurrences", occurences).
-				Float64("trait_rarity", traitRarity).
-				Msg("calculated trait rarity")
-
-			nftRarity = nftRarity * traitRarity
+		nft.Rarity = rarity
+		// Set this only if individual trait rarity is requested, since it includes
+		// traits not necessarily found in this NFT.
+		if includeTraitRarity {
+			nft.Traits = traitRarity
 		}
-
-		// Go through traits for this NFT. For all traits that are missing,
-		// calculate the probability that that trait is missing.
-		for trait, count := range stats.presentTraits {
-
-			// Does this NFT have this known trait?
-			_, have := foundTraits[trait]
-			if have {
-				continue
-			}
-
-			// What is the probability that an NFT does not have this trait?
-			// If there's a 100 NFTs in a collection and only one has this trait,
-			// the probability is (100 - 1)/100 = 99%
-			rarity := float64(uint(total)-count) / float64(total)
-
-			missing := api.Trait{
-				Type:   trait,
-				Value:  "",
-				Rarity: rarity,
-			}
-
-			s.log.Debug().
-				Str("nft", nft.ID).
-				Str("trait", trait).
-				Float64("rarity", rarity).
-				Uint("seen_how_often", count).
-				Msg("NFT is missing a known trait")
-
-			nft.Traits = append(nft.Traits, &missing)
-
-			// Update the overall NFT rarity.
-			nftRarity = nftRarity * rarity
-		}
-
-		nft.Rarity = nftRarity
 	}
 
 	return collection, nil

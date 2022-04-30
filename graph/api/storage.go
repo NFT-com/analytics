@@ -20,6 +20,7 @@ type Storage interface {
 	Collections(chain *string, orderBy api.CollectionOrder) ([]*api.Collection, error)
 	CollectionsByChain(chainID string) ([]*api.Collection, error)
 	CollectionTraits(collectionID string) ([]*api.Trait, error)
+	CollectionSize(id string) (uint, error)
 
 	MarketplaceCollections(marketplaceID string) ([]*api.Collection, error)
 	MarketplaceChains(marketplaceID string) ([]*api.Chain, error)
