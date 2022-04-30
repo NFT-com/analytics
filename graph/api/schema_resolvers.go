@@ -7,8 +7,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/99designs/gqlgen/graphql"
-
 	"github.com/NFT-com/graph-api/graph/generated"
 	"github.com/NFT-com/graph-api/graph/models/api"
 )
@@ -37,12 +35,6 @@ func (r *collectionServer) Marketplaces(ctx context.Context, obj *api.Collection
 	return r.Server.collectionsListings(obj.ID)
 }
 
-func (r *collectionServer) Nfts(ctx context.Context, obj *api.Collection) ([]*api.NFT, error) {
-	// Nfts handles expanding the list of NFTs within a Collection object.
-
-	return r.Server.getCollectionNFTs(obj.ID)
-}
-
 func (r *marketplaceServer) Chains(ctx context.Context, obj *api.Marketplace) ([]*api.Chain, error) {
 	// Chains handles expanding the list of Chains within a Marketplace object.
 
@@ -55,66 +47,13 @@ func (r *marketplaceServer) Collections(ctx context.Context, obj *api.Marketplac
 	return r.Server.marketplaceCollections(obj.ID)
 }
 
-func (r *nFTServer) Rarity(ctx context.Context, obj *api.NFT) (float64, error) {
-	// Rarity returns the rarity of the NFT. Rarity is calculated by
-	// multiplying the rarity of each of the NFT traits.
-
-	// If we have already fetched and calculated NFT rarity, we're done.
-	rarity, cached := obj.GetCachedRarity()
-	if cached {
-		return rarity, nil
-	}
-
-	// Fetch trait information (with rarity).
-	traits, err := r.Server.nftTraits(obj, true)
-	if err != nil {
-		return 0, errRetrieveTraitsFailed
-	}
-
-	// Cache the NFT traits.
-	obj.CacheTraits(traits)
-	// Retrieve updated rarity.
-	rarity, _ = obj.GetCachedRarity()
-
-	return rarity, nil
-}
-
-func (r *nFTServer) Traits(ctx context.Context, obj *api.NFT) ([]*api.Trait, error) {
-	// Traits returns the NFT traits, as well as the rarity metric -
-	// the portion of NFTs in that collection that have that trait
-	// with that value.
-
-	// Check whether the rarity metric is requested.
-	wantRarity := false
-
-	fields := graphql.CollectFieldsCtx(ctx, nil)
-	for _, field := range fields {
-		if field.Name == traitRarityField {
-			wantRarity = true
-			break
-		}
-	}
-
-	// Fetch trait information.
-	traits, err := r.Server.nftTraits(obj, wantRarity)
-	if err != nil {
-		r.logError(err)
-
-		return nil, errRetrieveTraitsFailed
-	}
-
-	// If we have trait rarity information included, cache it.
-	if wantRarity {
-		obj.CacheTraits(traits)
-	}
-
-	return traits, nil
-}
-
 func (r *nFTServer) Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error) {
 	// Collection handles expanding the Collection object within an NFT object.
 
-	return r.Server.getCollection(obj.Collection)
+	// FIXME: Test what happens if you go:
+	// collection => nft => collection => nfts
+	// what will the `isRequestedField` say in the second collection request?
+	return r.Server.processCollection(ctx, obj.Collection)
 }
 
 func (r *queryServer) Chain(ctx context.Context, id string) (*api.Chain, error) {
@@ -163,7 +102,7 @@ func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *strin
 func (r *queryServer) Collection(ctx context.Context, id string) (*api.Collection, error) {
 	// Collection implements the `collection` GraphQL query.
 
-	return r.Server.getCollection(id)
+	return r.Server.processCollection(ctx, id)
 }
 
 func (r *queryServer) CollectionByAddress(ctx context.Context, chainID string, contract string) (*api.Collection, error) {

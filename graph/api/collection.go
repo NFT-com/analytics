@@ -1,8 +1,163 @@
 package api
 
 import (
+	"context"
+	"fmt"
+
 	"github.com/NFT-com/graph-api/graph/models/api"
 )
+
+// processCollection is the workhorse function that will do all of the heavy lifting for
+// the collection queries. Contrary to the `getCollection` request that only retrieves
+// the collection from storage, `processCollection` will (if required) fetch all NFTs
+// from that collection (similar to how dataloaders would), but will also retrieve
+// required data for rarity calculation.
+func (s *Server) processCollection(ctx context.Context, id string) (*api.Collection, error) {
+
+	query := getQuerySelection(ctx)
+
+	// Does this query require retrieving the list of NFTs?
+	includeNFTs := query.isSelected(nftField)
+
+	s.log.Debug().
+		Str("id", id).
+		Bool("include_nfs", includeNFTs).
+		Msg("processing collection request")
+
+	collection, err := s.getCollection(id)
+	if err != nil {
+		return nil, errRetrieveCollectionFailed
+	}
+
+	// If we don't need the list of NFTs, we're done.
+	if !includeNFTs {
+		return collection, nil
+	}
+
+	// Retrieve the list of NFTs.
+	nfts, err := s.getCollectionNFTs(id)
+	if err != nil {
+		return nil, errRetrieveNFTFailed
+	}
+
+	s.log.Debug().
+		Str("id", id).
+		Int("collection_size", len(nfts)).
+		Msg("retrieved list of collection nfts")
+
+	collection.NFTs = nfts
+
+	includeTraits := query.isSelected(formatField(nftField, traitField))
+	includeTraitRarity := query.isSelected(formatField(nftField, traitField, rarityField))
+	includeRarity := query.isSelected(formatField(nftField, rarityField))
+
+	s.log.Debug().
+		Bool("include_rarity", includeRarity).
+		Bool("include_traits", includeTraits).
+		Bool("include_trait_rarity", includeTraitRarity).
+		Msg("NFT information requested")
+
+	needRarity := includeRarity || includeTraitRarity
+
+	// If we do not need traits nor rarity, we're done.
+	if !includeTraits && !includeRarity {
+		return collection, nil
+	}
+
+	traits, err := s.getTraitsForCollection(id)
+	if err != nil {
+		return nil, errRetrieveTraitsFailed
+	}
+
+	// Link traits to corresponding NFT.
+	for _, nft := range collection.NFTs {
+		nft.Traits = traits[nft.ID]
+	}
+
+	// If we need traits but not rarity information, just fetch trait information
+	// and link them to correct NFTs.
+	if includeTraits && !needRarity {
+		return collection, nil
+	}
+
+	// Crunch the data and determine trait frequency.
+	stats := extractTraitStats(traits)
+
+	stats.Print()
+
+	// Total number of NFTs in a collection, in relation to which we're calculating frequency.
+	total := len(collection.NFTs)
+
+	// Calculate trait rarity.
+	for _, nft := range collection.NFTs {
+
+		nftRarity := 1.0
+
+		// Keep track of all traits we found.
+		foundTraits := make(map[string]struct{})
+
+		// For each trait, see how many times that trait with that value occurred in the collection.
+		// Divide the number of occurrences with the total number of NFTs to see how frequent that trait is.
+		for _, trait := range nft.Traits {
+
+			foundTraits[trait.Type] = struct{}{}
+
+			key := formatTraitKey(trait)
+			occurences := stats.occurrences[key]
+
+			traitRarity := float64(occurences) / float64(total)
+			trait.Rarity = traitRarity
+
+			s.log.Debug().
+				Str("nft", nft.ID).
+				Int("total_nfts", total).
+				Str("trait", fmt.Sprintf("%s:%s", trait.Type, trait.Value)).
+				Uint("trait_occurrences", occurences).
+				Float64("trait_rarity", traitRarity).
+				Msg("calculated trait rarity")
+
+			nftRarity = nftRarity * traitRarity
+		}
+
+		// Go through traits for this NFT. For all traits that are missing,
+		// calculate the probability that that trait is missing.
+		for trait, count := range stats.presentTraits {
+
+			// Does this NFT have this known trait?
+			_, have := foundTraits[trait]
+			if have {
+				continue
+			}
+
+			// What is the probability that an NFT does not have this trait?
+			// If there's a 100 NFTs in a collection and only one has this trait,
+			// the probability is (100 - 1)/100 = 99%
+			rarity := float64(uint(total)-count) / float64(total)
+
+			missing := api.Trait{
+				Type:   trait,
+				Value:  "",
+				Rarity: rarity,
+			}
+
+			s.log.Debug().
+				Str("nft", nft.ID).
+				Str("trait", trait).
+				Float64("rarity", rarity).
+				Uint("seen_how_often", count).
+				Msg("NFT is missing a known trait")
+
+			nft.Traits = append(nft.Traits, &missing)
+
+			// Update the overall NFT rarity.
+			nftRarity = nftRarity * rarity
+		}
+
+		nft.Rarity = nftRarity
+	}
+
+	return collection, nil
+}
 
 // getCollection returns a single collection based on its ID.
 func (s *Server) getCollection(id string) (*api.Collection, error) {
