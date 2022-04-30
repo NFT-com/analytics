@@ -1,13 +1,14 @@
 package api
 
 import (
+	"context"
 	"sort"
 
 	"github.com/NFT-com/graph-api/graph/models/api"
 )
 
 // getNFT returns a single NFT based on its ID.
-func (s *Server) getNFT(id string) (*api.NFT, error) {
+func (s *Server) getNFT(ctx context.Context, id string) (*api.NFT, error) {
 
 	nft, err := s.storage.NFT(id)
 	if err != nil {
@@ -17,11 +18,11 @@ func (s *Server) getNFT(id string) (*api.NFT, error) {
 		return nil, errRetrieveNFTFailed
 	}
 
-	return nft, nil
+	return s.getNFTDetails(ctx, nft)
 }
 
 // getNFTByTokenID returns a single NFT based on the combination of chainID, contract address and token ID.
-func (s *Server) getNFTByTokenID(chainID string, contract string, tokenID string) (*api.NFT, error) {
+func (s *Server) getNFTByTokenID(ctx context.Context, chainID string, contract string, tokenID string) (*api.NFT, error) {
 
 	nft, err := s.storage.NFTByTokenID(chainID, contract, tokenID)
 	if err != nil {
@@ -31,6 +32,63 @@ func (s *Server) getNFTByTokenID(chainID string, contract string, tokenID string
 			Str("token_id", tokenID).
 			Msg("could not retrieve nft")
 		return nil, errRetrieveNFTFailed
+	}
+
+	return s.getNFTDetails(ctx, nft)
+}
+
+// getNFTDetails will retrieve the NFT rarity and/or trait information.
+func (s *Server) getNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, error) {
+
+	// Get the list of selected fields to know how much information to return/calculate.
+	query := getQuerySelection(ctx)
+
+	includeTraits := query.isSelected(formatField(traitField))
+	includeTraitRarity := query.isSelected(formatField(traitField, rarityField))
+	includeRarity := query.isSelected(formatField(rarityField))
+
+	needRarity := includeRarity || includeTraitRarity
+
+	// If we do not need traits nor rarity, we're done.
+	if !includeTraits && !needRarity {
+		return nft, nil
+	}
+
+	// If we do not need rarity, just fetch the traits for this NFT.
+	if !needRarity {
+		traits, err := s.storage.NFTTraits(nft.ID, false)
+		if err != nil {
+			s.logError(err).Str("id", nft.ID).Msg("could not retrieve traits")
+			return nil, errRetrieveTraitsFailed
+		}
+
+		nft.Traits = traits
+		return nft, nil
+	}
+
+	// Get traits and calculate rarity.
+	traits, err := s.getTraitsForCollection(nft.Collection)
+	if err != nil {
+		return nil, errRetrieveTraitsFailed
+	}
+	nft.Traits = traits[nft.ID]
+
+	// Get the size of this collection.
+	size, err := s.storage.CollectionSize(nft.Collection)
+	if err != nil {
+		s.logError(err).Str("collection", nft.Collection).Msg("could not retrieve collection size")
+		return nil, errRetrieveTraitsFailed
+	}
+
+	stats := extractTraitStats(traits)
+	rarity, traitRarity := calcTraitCollectionRarity(size, stats, nft.Traits)
+
+	nft.Rarity = rarity
+
+	// Returned traits include traits missing for this NFT.
+	// Only set them if individual trait rarity is requested.
+	if includeTraitRarity {
+		nft.Traits = traitRarity
 	}
 
 	return nft, nil

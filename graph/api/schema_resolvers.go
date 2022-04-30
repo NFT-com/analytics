@@ -71,13 +71,13 @@ func (r *queryServer) Chains(ctx context.Context) ([]*api.Chain, error) {
 func (r *queryServer) Nft(ctx context.Context, id string) (*api.NFT, error) {
 	// Nft implements the `nft` GraphQL query.
 
-	return r.Server.getNFT(id)
+	return r.Server.getNFT(ctx, id)
 }
 
 func (r *queryServer) NftByTokenID(ctx context.Context, chainID string, contract string, tokenID string) (*api.NFT, error) {
 	// NftByTokenID implements the `nftByTokenID` GraphQL query.
 
-	return r.Server.getNFTByTokenID(chainID, contract, tokenID)
+	return r.Server.getNFTByTokenID(ctx, chainID, contract, tokenID)
 }
 
 func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *string, rarityMax *float64, orderBy *api.NFTOrder) ([]*api.NFT, error) {

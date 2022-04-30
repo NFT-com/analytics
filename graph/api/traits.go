@@ -40,6 +40,7 @@ func (s *Server) nftTraits(nft *api.NFT, wantRarity bool) ([]*api.Trait, error) 
 	return traits, nil
 }
 
+// FIXME: Create a type instead of using map[string][]*api.Trait
 func (s *Server) getTraitsForCollection(collectionID string) (map[string][]*api.Trait, error) {
 
 	// Get traits for collection.

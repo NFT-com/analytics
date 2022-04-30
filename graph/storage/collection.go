@@ -114,6 +114,22 @@ func (s *Storage) CollectionsByChain(chainID string) ([]*api.Collection, error) 
 	return collections, nil
 }
 
+// CollectionSize returns the number of NFTs in a collection.
+func (s *Storage) CollectionSize(collectionID string) (uint, error) {
+
+	var count int64
+	err := s.db.Table("nfts").Where("collection = ?", collectionID).Count(&count).Error
+	if err != nil {
+		return 0, fmt.Errorf("could not retrieve collection size: %w", err)
+	}
+
+	if count < 0 {
+		return 0, fmt.Errorf("unexpected collection size (got: %d)", count)
+	}
+
+	return uint(count), nil
+}
+
 func formatCollectionOrderBy(clause api.CollectionOrder) (string, error) {
 
 	var field string
