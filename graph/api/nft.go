@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"sort"
 
 	"github.com/NFT-com/graph-api/graph/models/api"
@@ -63,19 +62,8 @@ func (s *Server) nfts(owner *string, collection *string, rarityMax *float64, ord
 		for _, nft := range nfts {
 			nft := nft
 
-			rarity, cached := nft.GetCachedRarity()
-			if !cached {
-				// Get trait information.
-				traits, err := s.nftTraits(nft, true)
-				if err != nil {
-					return nil, fmt.Errorf("could not retrieve traits for NFT: %w", err)
-				}
-
-				// Cache the trait/rarity information for potential later use.
-				nft.CacheTraits(traits)
-
-				rarity, _ = nft.GetCachedRarity()
-			}
+			// FIXME: Retrieve rarity for NFT.
+			rarity := 1.0
 
 			// If the NFT is above the rarity threshold, skip it.
 			if rarityMax != nil && rarity > *rarityMax {
@@ -89,8 +77,8 @@ func (s *Server) nfts(owner *string, collection *string, rarityMax *float64, ord
 		// FIXME: Better performance can be achieved by inserting to a slice
 		// in a way that it remains sorted along the way.
 		sort.Slice(out, func(i, j int) bool {
-			ri, _ := out[i].GetCachedRarity()
-			rj, _ := out[j].GetCachedRarity()
+			ri := out[i].Rarity
+			rj := out[j].Rarity
 			if orderBy.Direction == api.OrderDirectionAsc {
 				return ri < rj
 			}
