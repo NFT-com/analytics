@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/NFT-com/graph-api/graph/models/api"
+	"github.com/NFT-com/graph-api/graph/query"
 )
 
 // getNFT returns a single NFT based on its ID.
@@ -40,11 +41,11 @@ func (s *Server) getNFTByTokenID(ctx context.Context, chainID string, contract s
 func (s *Server) getNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, error) {
 
 	// Get the list of selected fields to know how much information to return/calculate.
-	query := getQuerySelection(ctx)
+	sel := query.GetSelection(ctx)
 
-	includeTraits := query.isSelected(formatField(traitField))
-	includeTraitRarity := query.isSelected(formatField(traitField, rarityField))
-	includeRarity := query.isSelected(formatField(rarityField))
+	includeTraits := sel.Has(query.FieldPath(traitField))
+	includeTraitRarity := sel.Has(query.FieldPath(traitField, rarityField))
+	includeRarity := sel.Has(query.FieldPath(rarityField))
 
 	needRarity := includeRarity || includeTraitRarity
 
@@ -113,11 +114,11 @@ func (s *Server) nfts(ctx context.Context, owner *string, collection *string, ra
 	}
 
 	// Get the list of selected fields to know how much information to return/calculate.
-	query := getQuerySelection(ctx)
+	sel := query.GetSelection(ctx)
 
-	includeTraits := query.isSelected(formatField(traitField))
-	includeTraitRarity := query.isSelected(formatField(traitField, rarityField))
-	includeRarity := query.isSelected(formatField(rarityField))
+	includeTraits := sel.Has(query.FieldPath(traitField))
+	includeTraitRarity := sel.Has(query.FieldPath(traitField, rarityField))
+	includeRarity := sel.Has(query.FieldPath(rarityField))
 
 	needRarity := includeRarity || includeTraitRarity
 
