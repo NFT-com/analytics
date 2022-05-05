@@ -35,6 +35,7 @@ const (
 
 	defaultDBMaxConnections  = 70
 	defaultDBIdleConnections = 20
+	defaultNFTSearchLimit    = 1000
 )
 
 func main() {
@@ -59,6 +60,7 @@ func run() error {
 		flagDBIdleConnections  int
 		flagPlayground         string
 		flagComplexityLimit    int
+		flagSearchLimit        uint
 		flagEnablePlayground   bool
 		flagEnableQueryLogging bool
 	)
@@ -71,6 +73,7 @@ func run() error {
 	pflag.IntVar(&flagDBConnections, "db-connection-limit", defaultDBMaxConnections, "maximum number of database connections, -1 for unlimited")
 	pflag.IntVar(&flagDBIdleConnections, "db-idle-connection-limit", defaultDBIdleConnections, "maximum number of idle connections")
 	pflag.IntVar(&flagComplexityLimit, "query-complexity", 0, "GraphQL query complexity limit")
+	pflag.UintVar(&flagSearchLimit, "search-limit", defaultNFTSearchLimit, "maximum number of results returned from the NFT search query")
 	pflag.BoolVar(&flagEnablePlayground, "enable-playground", false, "enable GraphQL playground")
 	pflag.BoolVar(&flagEnableQueryLogging, "enable-query-logging", true, "enable logging of database queries")
 
@@ -114,7 +117,11 @@ func run() error {
 	sqlDB.SetMaxIdleConns(flagDBIdleConnections)
 
 	storage := storage.New(db)
-	apiServer := api.NewServer(storage, log)
+	apiServer := api.NewServer(
+		storage,
+		log,
+		api.WithSearchLimit(flagSearchLimit),
+	)
 	cfg := generated.Config{
 		Resolvers: apiServer,
 	}
