@@ -64,7 +64,7 @@ func (s *Storage) NFTByTokenID(chainID string, contract string, tokenID string) 
 }
 
 // NFTs retrieves a list of NFTs fitting the specified criteria.
-func (s *Storage) NFTs(owner *string, collectionID *string, orderBy api.NFTOrder) ([]*api.NFT, error) {
+func (s *Storage) NFTs(owner *string, collectionID *string, orderBy api.NFTOrder, limit uint) ([]*api.NFT, error) {
 
 	// Apply explicit query filters - the token owner and collection ID.
 	query := api.NFT{}
@@ -80,6 +80,10 @@ func (s *Storage) NFTs(owner *string, collectionID *string, orderBy api.NFTOrder
 	if orderBy.Field == api.NFTOrderFieldCreationTime {
 		orderClause := fmt.Sprintf("%s %s", creationTimeColumnName, orderBy.Direction)
 		db = db.Order(orderClause)
+	}
+
+	if limit > 0 {
+		db = db.Limit(int(limit))
 	}
 
 	var nfts []*api.NFT

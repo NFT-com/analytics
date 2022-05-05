@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"sort"
 
 	"github.com/NFT-com/graph-api/graph/models/api"
 )
@@ -95,11 +94,11 @@ func (s *Server) getNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, err
 }
 
 // nfts returns a list of NFTs fitting the search criteria.
-func (s *Server) nfts(owner *string, collection *string, rarityMax *float64, orderBy api.NFTOrder) ([]*api.NFT, error) {
+func (s *Server) nfts(ctx context.Context, owner *string, collection *string, rarityMax *float64, orderBy api.NFTOrder) ([]*api.NFT, error) {
 
-	// FIXME: Change rarity handling here.
+	// FIXME: Add rarity handling.
 
-	nfts, err := s.storage.NFTs(owner, collection, orderBy)
+	nfts, err := s.storage.NFTs(owner, collection, orderBy, s.searchLimit)
 	if err != nil {
 		log := s.logError(err)
 		if owner != nil {
@@ -113,39 +112,6 @@ func (s *Server) nfts(owner *string, collection *string, rarityMax *float64, ord
 		}
 		log.Msg("could not retrieve nfts")
 		return nil, errRetrieveNFTFailed
-	}
-
-	// Sort NFTs by rarity if needed.
-	if orderBy.Field == api.NFTOrderFieldRarity {
-
-		out := make([]*api.NFT, 0, len(nfts))
-		for _, nft := range nfts {
-			nft := nft
-
-			// FIXME: Retrieve rarity for NFT.
-			rarity := 1.0
-
-			// If the NFT is above the rarity threshold, skip it.
-			if rarityMax != nil && rarity > *rarityMax {
-				continue
-			}
-
-			// Include the NFT in the result set.
-			out = append(out, nft)
-		}
-
-		// FIXME: Better performance can be achieved by inserting to a slice
-		// in a way that it remains sorted along the way.
-		sort.Slice(out, func(i, j int) bool {
-			ri := out[i].Rarity
-			rj := out[j].Rarity
-			if orderBy.Direction == api.OrderDirectionAsc {
-				return ri < rj
-			}
-			return ri > rj
-		})
-
-		nfts = out
 	}
 
 	return nfts, nil

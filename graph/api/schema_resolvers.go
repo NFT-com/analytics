@@ -86,17 +86,16 @@ func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *strin
 	// FIXME: remove the validation of the sorting mode when all modes become supported
 	switch orderBy.Field {
 
-	case api.NFTOrderFieldValue:
+	case api.NFTOrderFieldValue, api.NFTOrderFieldRarity:
 		return nil, errors.New("TBD: sorting mode not supported")
 
 	// supported sorting mode(s)
 	case api.NFTOrderFieldCreationTime:
-	case api.NFTOrderFieldRarity:
 	}
 
 	// NOTE: Ordering parameter is a pointer but gets initialized to the default value by the middleware.
 
-	return r.Server.nfts(owner, collection, rarityMax, *orderBy)
+	return r.Server.nfts(ctx, owner, collection, rarityMax, *orderBy)
 }
 
 func (r *queryServer) Collection(ctx context.Context, id string) (*api.Collection, error) {
