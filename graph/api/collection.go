@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/NFT-com/graph-api/graph/models/api"
+	"github.com/NFT-com/graph-api/graph/query"
 )
 
 // processCollection is the workhorse function that will do all of the heavy lifting for
@@ -13,10 +14,10 @@ import (
 // required data for rarity calculation.
 func (s *Server) processCollection(ctx context.Context, id string) (*api.Collection, error) {
 
-	query := getQuerySelection(ctx)
+	sel := query.GetSelection(ctx)
 
 	// Does this query require retrieving the list of NFTs?
-	includeNFTs := query.isSelected(nftField)
+	includeNFTs := sel.Has(nftField)
 
 	s.log.Debug().
 		Str("id", id).
@@ -46,9 +47,9 @@ func (s *Server) processCollection(ctx context.Context, id string) (*api.Collect
 
 	collection.NFTs = nfts
 
-	includeTraits := query.isSelected(formatField(nftField, traitField))
-	includeTraitRarity := query.isSelected(formatField(nftField, traitField, rarityField))
-	includeRarity := query.isSelected(formatField(nftField, rarityField))
+	includeTraits := sel.Has(query.FieldPath(nftField, traitField))
+	includeTraitRarity := sel.Has(query.FieldPath(nftField, traitField, rarityField))
+	includeRarity := sel.Has(query.FieldPath(nftField, rarityField))
 
 	s.log.Debug().
 		Bool("include_rarity", includeRarity).

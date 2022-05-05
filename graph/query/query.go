@@ -1,4 +1,4 @@
-package api
+package query
 
 import (
 	"context"
@@ -6,18 +6,16 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 )
 
-// querySelection represents the selection set for a query.
-// Top-level fields will be shown by name, while nested fields will be shown as `parent.field`.
-type querySelection struct {
+// Selection represents the selection set for a query. Top-level fields are
+// shown by name, while nested fields are shown as `parent.field`.
+type Selection struct {
 	fields map[string]struct{}
 }
 
-func (q querySelection) isSelected(name string) bool {
-	_, ok := q.fields[name]
-	return ok
-}
-
-func getQuerySelection(ctx context.Context) querySelection {
+// GetSelection returns the selection set from a query. The provided context
+// MUST be a context provided by the `gqlgen` framework, containing an operation
+// context.
+func GetSelection(ctx context.Context) Selection {
 
 	op := graphql.GetOperationContext(ctx)
 	collected := graphql.CollectFieldsCtx(ctx, nil)
@@ -31,19 +29,26 @@ func getQuerySelection(ctx context.Context) querySelection {
 		fieldMap[field] = struct{}{}
 	}
 
-	qs := querySelection{
+	s := Selection{
 		fields: fieldMap,
 	}
 
-	return qs
+	return s
 }
 
+// Has returns true if the specified field is found in the selection set.
+func (s *Selection) Has(name string) bool {
+	_, ok := s.fields[name]
+	return ok
+}
+
+// getNestedSelection returns the selected fields, prefixed with their parent path.
 func getNestedSelection(ctx *graphql.OperationContext, fields []graphql.CollectedField, prefix string) []string {
 
 	requested := make([]string, 0)
 
 	for _, field := range fields {
-		name := formatField(prefix, field.Name)
+		name := FieldPath(prefix, field.Name)
 		requested = append(requested, name)
 
 		collected := graphql.CollectFields(ctx, field.Selections, nil)
@@ -53,7 +58,8 @@ func getNestedSelection(ctx *graphql.OperationContext, fields []graphql.Collecte
 	return requested
 }
 
-func formatField(fields ...string) string {
+// FieldPath returns the selection path for the field, based on provided path components.
+func FieldPath(fields ...string) string {
 
 	if len(fields) == 0 {
 		return ""
@@ -63,10 +69,10 @@ func formatField(fields ...string) string {
 		fields = fields[1:]
 	}
 
-	out := fields[0]
+	path := fields[0]
 	for _, field := range fields[1:] {
-		out += "." + field
+		path += "." + field
 	}
 
-	return out
+	return path
 }
