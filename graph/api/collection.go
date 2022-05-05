@@ -81,8 +81,7 @@ func (s *Server) processCollection(ctx context.Context, id string) (*api.Collect
 	}
 
 	// Crunch the data and determine trait frequency.
-	stats := traits.stats()
-	stats.Print()
+	stats := traits.CalculateStats()
 
 	// Total number of NFTs in a collection, in relation to which we're calculating frequency.
 	total := len(collection.NFTs)
@@ -90,7 +89,7 @@ func (s *Server) processCollection(ctx context.Context, id string) (*api.Collect
 	// Calculate trait rarity.
 	for _, nft := range collection.NFTs {
 
-		rarity, traitRarity := calcTraitCollectionRarity(uint(total), stats, nft.Traits)
+		rarity, traitRarity := stats.CalculateRarity(uint(total), nft.Traits)
 
 		nft.Rarity = rarity
 		// Set this only if individual trait rarity is requested, since it includes

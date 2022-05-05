@@ -5,6 +5,7 @@ import (
 
 	"github.com/NFT-com/graph-api/graph/models/api"
 	"github.com/NFT-com/graph-api/graph/query"
+	"github.com/NFT-com/graph-api/graph/stats/collection"
 )
 
 // getNFT returns a single NFT based on its ID.
@@ -80,8 +81,8 @@ func (s *Server) getNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, err
 		return nil, errRetrieveTraitsFailed
 	}
 
-	stats := traits.stats()
-	rarity, traitRarity := calcTraitCollectionRarity(size, stats, nft.Traits)
+	stats := traits.CalculateStats()
+	rarity, traitRarity := stats.CalculateRarity(size, nft.Traits)
 
 	nft.Rarity = rarity
 
@@ -95,16 +96,16 @@ func (s *Server) getNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, err
 }
 
 // nfts returns a list of NFTs fitting the search criteria.
-func (s *Server) nfts(ctx context.Context, owner *string, collection *string, rarityMax *float64, orderBy api.NFTOrder) ([]*api.NFT, error) {
+func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, rarityMax *float64, orderBy api.NFTOrder) ([]*api.NFT, error) {
 
-	nfts, err := s.storage.NFTs(owner, collection, orderBy, s.searchLimit)
+	nfts, err := s.storage.NFTs(owner, collectionID, orderBy, s.searchLimit)
 	if err != nil {
 		log := s.logError(err)
 		if owner != nil {
 			log = log.Str("owner", *owner)
 		}
-		if collection != nil {
-			log = log.Str("collection", *collection)
+		if collectionID != nil {
+			log = log.Str("collection", *collectionID)
 		}
 		if rarityMax != nil {
 			log = log.Float64("max_rarity", *rarityMax)
@@ -131,7 +132,7 @@ func (s *Server) nfts(ctx context.Context, owner *string, collection *string, ra
 	if includeTraits && !needRarity {
 
 		// Map collection ID to collection traits.
-		traits := make(map[string]collectionTraits)
+		traits := make(map[string]collection.TraitMap)
 
 		for _, nft := range nfts {
 			// Lookup traits for this collection.
@@ -156,8 +157,8 @@ func (s *Server) nfts(ctx context.Context, owner *string, collection *string, ra
 	// We need rarity calculations.
 
 	// Cache traits and stats for each of the collections.
-	traits := make(map[string]collectionTraits)
-	stats := make(map[string]traitStats)
+	traits := make(map[string]collection.TraitMap)
+	stats := make(map[string]collection.Stats)
 	sizes := make(map[string]uint)
 
 	for _, nft := range nfts {
@@ -178,7 +179,7 @@ func (s *Server) nfts(ctx context.Context, owner *string, collection *string, ra
 			}
 
 			traits[nft.Collection] = tc
-			st := tc.stats()
+			st := tc.CalculateStats()
 			stats[nft.Collection] = st
 			sizes[nft.Collection] = size
 
@@ -186,7 +187,7 @@ func (s *Server) nfts(ctx context.Context, owner *string, collection *string, ra
 		}
 
 		nft.Traits = traits[nft.Collection][nft.ID]
-		rarity, traitRarity := calcTraitCollectionRarity(sizes[nft.Collection], cstats, nft.Traits)
+		rarity, traitRarity := cstats.CalculateRarity(sizes[nft.Collection], nft.Traits)
 		nft.Rarity = rarity
 		if includeTraitRarity {
 			nft.Traits = traitRarity
