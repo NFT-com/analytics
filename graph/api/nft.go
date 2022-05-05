@@ -96,8 +96,6 @@ func (s *Server) getNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, err
 // nfts returns a list of NFTs fitting the search criteria.
 func (s *Server) nfts(ctx context.Context, owner *string, collection *string, rarityMax *float64, orderBy api.NFTOrder) ([]*api.NFT, error) {
 
-	// FIXME: Add rarity handling.
-
 	nfts, err := s.storage.NFTs(owner, collection, orderBy, s.searchLimit)
 	if err != nil {
 		log := s.logError(err)
@@ -112,6 +110,86 @@ func (s *Server) nfts(ctx context.Context, owner *string, collection *string, ra
 		}
 		log.Msg("could not retrieve nfts")
 		return nil, errRetrieveNFTFailed
+	}
+
+	// Get the list of selected fields to know how much information to return/calculate.
+	query := getQuerySelection(ctx)
+
+	includeTraits := query.isSelected(formatField(traitField))
+	includeTraitRarity := query.isSelected(formatField(traitField, rarityField))
+	includeRarity := query.isSelected(formatField(rarityField))
+
+	needRarity := includeRarity || includeTraitRarity
+
+	// If we do not need traits nor rarity, we're done.
+	if !includeTraits && !needRarity {
+		return nfts, nil
+	}
+
+	// We only need traits and no rarity stats.
+	if includeTraits && !needRarity {
+
+		// Map collection ID to collection traits.
+		traits := make(map[string]collectionTraits)
+
+		for _, nft := range nfts {
+			// Lookup traits for this collection.
+			// If we don't have them already cached, fetch them now.
+			ctraits, ok := traits[nft.Collection]
+			if !ok {
+				tc, err := s.getTraitsForCollection(nft.Collection)
+				if err != nil {
+					s.logError(err).Str("collection", nft.Collection).Msg("could not retrieve traits for collection")
+					return nil, errRetrieveTraitsFailed
+				}
+				traits[nft.Collection] = tc
+				ctraits = tc
+			}
+
+			nft.Traits = ctraits[nft.ID]
+		}
+
+		return nfts, nil
+	}
+
+	// We need rarity calculations.
+
+	// Cache traits and stats for each of the collections.
+	traits := make(map[string]collectionTraits)
+	stats := make(map[string]traitStats)
+	sizes := make(map[string]uint)
+
+	for _, nft := range nfts {
+		// Lookup stats for this collection.
+		// If we don't have them already cached, fetch them now, calculate stats and cache them.
+		cstats, ok := stats[nft.Collection]
+		if !ok {
+			tc, err := s.getTraitsForCollection(nft.Collection)
+			if err != nil {
+				s.logError(err).Str("collection", nft.Collection).Msg("could not retrieve traits for collection")
+				return nil, errRetrieveTraitsFailed
+			}
+
+			size, err := s.storage.CollectionSize(nft.Collection)
+			if err != nil {
+				s.logError(err).Str("collection", nft.Collection).Msg("could not retrieve collection size")
+				return nil, errRetrieveTraitsFailed
+			}
+
+			traits[nft.Collection] = tc
+			st := tc.stats()
+			stats[nft.Collection] = st
+			sizes[nft.Collection] = size
+
+			cstats = st
+		}
+
+		nft.Traits = traits[nft.Collection][nft.ID]
+		rarity, traitRarity := calcTraitCollectionRarity(sizes[nft.Collection], cstats, nft.Traits)
+		nft.Rarity = rarity
+		if includeTraitRarity {
+			nft.Traits = traitRarity
+		}
 	}
 
 	return nfts, nil
