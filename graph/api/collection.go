@@ -39,6 +39,7 @@ func (s *Server) getCollectionByContract(ctx context.Context, chainID string, co
 // getCollectionDetails is the workhorse function that will do all of the heavy lifting for
 // the collection queries. If required, it fetches all NFTs from that collection
 // (similar to how dataloaders would), but also retrieves traits and deals with rarity calculation.
+// NOTE: This function modifies the provided collection in-place.
 func (s *Server) getCollectionDetails(ctx context.Context, collection *api.Collection) (*api.Collection, error) {
 
 	sel := query.GetSelection(ctx)
