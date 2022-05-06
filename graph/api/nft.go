@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/NFT-com/graph-api/graph/models/api"
-	"github.com/NFT-com/graph-api/graph/query"
 	"github.com/NFT-com/graph-api/graph/stats/collection"
 )
 
@@ -41,22 +40,16 @@ func (s *Server) getNFTByTokenID(ctx context.Context, chainID string, contract s
 // getNFTDetails will retrieve the NFT rarity and/or trait information.
 func (s *Server) getNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, error) {
 
-	// Get the list of selected fields to know how much information to return/calculate.
-	sel := query.GetSelection(ctx)
-
-	includeTraits := sel.Has(query.FieldPath(traitField))
-	includeTraitRarity := sel.Has(query.FieldPath(traitField, rarityField))
-	includeRarity := sel.Has(query.FieldPath(rarityField))
-
-	needRarity := includeRarity || includeTraitRarity
+	// Parse the query to know how much information to return/calculate.
+	req := parseNFTQuery(ctx)
 
 	// If we do not need traits nor rarity, we're done.
-	if !includeTraits && !needRarity {
+	if !req.traits && !req.needRarity() {
 		return nft, nil
 	}
 
 	// If we do not need rarity, just fetch the traits for this NFT.
-	if !needRarity {
+	if !req.needRarity() {
 		traits, err := s.storage.NFTTraits(nft.ID)
 		if err != nil {
 			s.logError(err).Str("id", nft.ID).Msg("could not retrieve traits")
@@ -88,7 +81,7 @@ func (s *Server) getNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, err
 
 	// Returned traits include traits missing for this NFT.
 	// Only set them if individual trait rarity is requested.
-	if includeTraitRarity {
+	if req.traitRarity {
 		nft.Traits = traitRarity
 	}
 
@@ -114,22 +107,16 @@ func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, 
 		return nil, errRetrieveNFTFailed
 	}
 
-	// Get the list of selected fields to know how much information to return/calculate.
-	sel := query.GetSelection(ctx)
-
-	includeTraits := sel.Has(query.FieldPath(traitField))
-	includeTraitRarity := sel.Has(query.FieldPath(traitField, rarityField))
-	includeRarity := sel.Has(query.FieldPath(rarityField))
-
-	needRarity := includeRarity || includeTraitRarity
+	// Parse the query to know how much information to return/calculate.
+	req := parseNFTQuery(ctx)
 
 	// If we do not need traits nor rarity, we're done.
-	if !includeTraits && !needRarity {
+	if !req.traits && !req.needRarity() {
 		return nfts, nil
 	}
 
 	// We only need traits and no rarity stats.
-	if includeTraits && !needRarity {
+	if !req.needRarity() {
 
 		// Map collection ID to collection traits.
 		traits := make(map[string]collection.TraitMap)
@@ -189,7 +176,7 @@ func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, 
 		nft.Traits = traits[nft.Collection][nft.ID]
 		rarity, traitRarity := cstats.CalculateRarity(sizes[nft.Collection], nft.Traits)
 		nft.Rarity = rarity
-		if includeTraitRarity {
+		if req.traitRarity {
 			nft.Traits = traitRarity
 		}
 	}

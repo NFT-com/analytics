@@ -1,8 +1,6 @@
 package collection
 
 import (
-	"fmt"
-
 	"github.com/NFT-com/graph-api/graph/models/api"
 )
 
@@ -52,18 +50,4 @@ func (t TraitMap) CalculateStats() Stats {
 
 func formatTraitKey(trait *api.Trait) string {
 	return trait.Type + ":" + trait.Value
-}
-
-// Print is a debug helper, displaying the trait distribution as well as all known traits.
-// FIXME: Remove when all things settle.
-func (t Stats) Print() {
-	fmt.Printf("occurrences\n")
-	for trait, count := range t.Occurrences {
-		fmt.Printf("\t%v - %d\n", trait, count)
-	}
-
-	fmt.Printf("present traits\n")
-	for trait, count := range t.KnownTraits {
-		fmt.Printf("\t%v - %d\n", trait, count)
-	}
 }
