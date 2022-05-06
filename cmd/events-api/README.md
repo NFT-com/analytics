@@ -1,12 +1,11 @@
 # Events API
 
 Events API serves information about NFT related events ocurring on the blockchain.
-Events fall into one of four categories:
-- mints
+Events fall into one of two categories:
 - transfers
 - sales
-- burns
 
+Mint and burn events are special subcategories of transfer events.
 For more information about the API schema see [the API documentation](/events/API.md).
 
 ## Usage

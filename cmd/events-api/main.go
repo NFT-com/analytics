@@ -25,9 +25,7 @@ import (
 
 const (
 	// Server endpoints.
-	mintEndpoint     = "/mints/"
 	transferEndpoint = "/transfers/"
-	burnEndpoint     = "/burns/"
 	saleEndpoint     = "/sales/"
 
 	// Default event batch size.
@@ -124,10 +122,8 @@ func run() error {
 	server.Use(lecho.Middleware(lecho.Config{Logger: slog}))
 
 	// Initialize routes.
-	server.GET(mintEndpoint, api.Mint)
 	server.GET(transferEndpoint, api.Transfer)
 	server.GET(saleEndpoint, api.Sale)
-	server.GET(burnEndpoint, api.Burn)
 
 	// This section launches the main executing components in their own
 	// goroutine, so they can run concurrently. Afterwards, we wait for an
