@@ -1,11 +1,13 @@
 package api
 
 import (
+	"context"
+
 	"github.com/NFT-com/graph-api/graph/models/api"
 )
 
 // marketplaceCollections returns a list of collections on a specified marketplace.
-func (s *Server) marketplaceCollections(marketplaceID string) ([]*api.Collection, error) {
+func (s *Server) marketplaceCollections(ctx context.Context, marketplaceID string) ([]*api.Collection, error) {
 
 	collections, err := s.storage.MarketplaceCollections(marketplaceID)
 	if err != nil {
@@ -13,6 +15,14 @@ func (s *Server) marketplaceCollections(marketplaceID string) ([]*api.Collection
 			Str("marketplace", marketplaceID).
 			Msg("could not retrieve collections for marketplace")
 		return nil, errRetrieveCollectionFailed
+	}
+
+	for _, collection := range collections {
+		collection, err = s.getCollectionDetails(ctx, collection)
+		if err != nil {
+			s.logError(err).Str("id", collection.ID).Msg("retrieving collection details failed")
+			return nil, errRetrieveCollectionFailed
+		}
 	}
 
 	return collections, nil

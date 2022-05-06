@@ -7,12 +7,39 @@ import (
 	"github.com/NFT-com/graph-api/graph/query"
 )
 
-// processCollection is the workhorse function that will do all of the heavy lifting for
-// the collection queries. Contrary to the `getCollection` request that only retrieves
-// the collection from storage, `processCollection` will (if required) fetch all NFTs
-// from that collection (similar to how dataloaders would), but will also retrieve
-// required data for rarity calculation.
-func (s *Server) processCollection(ctx context.Context, id string) (*api.Collection, error) {
+// getCollection returns a single collection based on its ID.
+func (s *Server) getCollection(ctx context.Context, id string) (*api.Collection, error) {
+
+	collection, err := s.storage.Collection(id)
+	if err != nil {
+		s.logError(err).
+			Str("id", id).
+			Msg("could not retrieve collection")
+		return nil, errRetrieveCollectionFailed
+	}
+
+	return s.getCollectionDetails(ctx, collection)
+}
+
+// getCollectionByContract returns a single collection for the specified chain, given its contract address.
+func (s *Server) getCollectionByContract(ctx context.Context, chainID string, contract string) (*api.Collection, error) {
+
+	collection, err := s.storage.CollectionByContract(chainID, contract)
+	if err != nil {
+		s.logError(err).
+			Str("chain", chainID).
+			Str("contract", contract).
+			Msg("could not retrieve collection")
+		return nil, errRetrieveCollectionFailed
+	}
+
+	return s.getCollectionDetails(ctx, collection)
+}
+
+// getCollectionDetails is the workhorse function that will do all of the heavy lifting for
+// the collection queries. If required, it fetches all NFTs from that collection
+// (similar to how dataloaders would), but also retrieves traits and deals with rarity calculation.
+func (s *Server) getCollectionDetails(ctx context.Context, collection *api.Collection) (*api.Collection, error) {
 
 	sel := query.GetSelection(ctx)
 
@@ -20,14 +47,9 @@ func (s *Server) processCollection(ctx context.Context, id string) (*api.Collect
 	includeNFTs := sel.Has(nftField)
 
 	s.log.Debug().
-		Str("id", id).
+		Str("id", collection.ID).
 		Bool("include_nfs", includeNFTs).
 		Msg("processing collection request")
-
-	collection, err := s.getCollection(id)
-	if err != nil {
-		return nil, errRetrieveCollectionFailed
-	}
 
 	// If we don't need the list of NFTs, we're done.
 	if !includeNFTs {
@@ -35,36 +57,38 @@ func (s *Server) processCollection(ctx context.Context, id string) (*api.Collect
 	}
 
 	// Retrieve the list of NFTs.
-	nfts, err := s.getCollectionNFTs(id)
+	nfts, err := s.getCollectionNFTs(collection.ID)
 	if err != nil {
 		return nil, errRetrieveNFTFailed
 	}
 
 	s.log.Debug().
-		Str("id", id).
+		Str("id", collection.ID).
 		Int("collection_size", len(nfts)).
 		Msg("retrieved list of collection nfts")
 
 	collection.NFTs = nfts
 
-	includeTraits := sel.Has(query.FieldPath(nftField, traitField))
-	includeTraitRarity := sel.Has(query.FieldPath(nftField, traitField, rarityField))
-	includeRarity := sel.Has(query.FieldPath(nftField, rarityField))
+	// Parse the NFT query.
+	cfg := nftQueryConfig{
+		traitPath:       query.FieldPath(nftField, traitField),
+		traitRarityPath: query.FieldPath(nftField, traitField, rarityField),
+		rarityPath:      query.FieldPath(nftField, rarityField),
+	}
+	req := parseNFTQueryWithConfig(cfg, ctx)
 
 	s.log.Debug().
-		Bool("include_rarity", includeRarity).
-		Bool("include_traits", includeTraits).
-		Bool("include_trait_rarity", includeTraitRarity).
+		Bool("include_rarity", req.rarity).
+		Bool("include_traits", req.traits).
+		Bool("include_trait_rarity", req.traitRarity).
 		Msg("NFT information requested")
 
-	needRarity := includeRarity || includeTraitRarity
-
 	// If we do not need traits nor rarity, we're done.
-	if !includeTraits && !needRarity {
+	if !req.traits && !req.needRarity() {
 		return collection, nil
 	}
 
-	traits, err := s.getTraitsForCollection(id)
+	traits, err := s.getTraitsForCollection(collection.ID)
 	if err != nil {
 		return nil, errRetrieveTraitsFailed
 	}
@@ -76,7 +100,7 @@ func (s *Server) processCollection(ctx context.Context, id string) (*api.Collect
 
 	// If we need traits but not rarity information, just fetch trait information
 	// and link them to correct NFTs.
-	if includeTraits && !needRarity {
+	if !req.needRarity() {
 		return collection, nil
 	}
 
@@ -94,38 +118,9 @@ func (s *Server) processCollection(ctx context.Context, id string) (*api.Collect
 		nft.Rarity = rarity
 		// Set this only if individual trait rarity is requested, since it includes
 		// traits not necessarily found in this NFT.
-		if includeTraitRarity {
+		if req.traitRarity {
 			nft.Traits = traitRarity
 		}
-	}
-
-	return collection, nil
-}
-
-// getCollection returns a single collection based on its ID.
-func (s *Server) getCollection(id string) (*api.Collection, error) {
-
-	collection, err := s.storage.Collection(id)
-	if err != nil {
-		s.logError(err).
-			Str("id", id).
-			Msg("could not retrieve collection")
-		return nil, errRetrieveCollectionFailed
-	}
-
-	return collection, nil
-}
-
-// getCollectionByContract returns a single collection for the specified chain, given its contract address.
-func (s *Server) getCollectionByContract(chainID string, contract string) (*api.Collection, error) {
-
-	collection, err := s.storage.CollectionByContract(chainID, contract)
-	if err != nil {
-		s.logError(err).
-			Str("chain", chainID).
-			Str("contract", contract).
-			Msg("could not retrieve collection")
-		return nil, errRetrieveCollectionFailed
 	}
 
 	return collection, nil
@@ -146,7 +141,7 @@ func (s *Server) getCollectionNFTs(collectionID string) ([]*api.NFT, error) {
 }
 
 // collections returns a list of collections according to the specified search criteria and sorting options.
-func (s *Server) collections(chain *string, orderBy api.CollectionOrder) ([]*api.Collection, error) {
+func (s *Server) collections(ctx context.Context, chain *string, orderBy api.CollectionOrder) ([]*api.Collection, error) {
 
 	collections, err := s.storage.Collections(chain, orderBy)
 	if err != nil {
@@ -158,11 +153,19 @@ func (s *Server) collections(chain *string, orderBy api.CollectionOrder) ([]*api
 		return nil, errRetrieveCollectionFailed
 	}
 
+	for _, collection := range collections {
+		collection, err = s.getCollectionDetails(ctx, collection)
+		if err != nil {
+			s.logError(err).Str("id", collection.ID).Msg("retrieving collection details failed")
+			return nil, errRetrieveCollectionFailed
+		}
+	}
+
 	return collections, nil
 }
 
 // collectionsByChain returns a list of collections on a given chain.
-func (s *Server) collectionsByChain(chainID string) ([]*api.Collection, error) {
+func (s *Server) collectionsByChain(ctx context.Context, chainID string) ([]*api.Collection, error) {
 
 	collections, err := s.storage.CollectionsByChain(chainID)
 	if err != nil {
@@ -170,6 +173,14 @@ func (s *Server) collectionsByChain(chainID string) ([]*api.Collection, error) {
 			Str("chain", chainID).
 			Msg("could not retrieve collections for a chain")
 		return nil, errRetrieveCollectionFailed
+	}
+
+	for _, collection := range collections {
+		collection, err = s.getCollectionDetails(ctx, collection)
+		if err != nil {
+			s.logError(err).Str("id", collection.ID).Msg("retrieving collection details failed")
+			return nil, errRetrieveCollectionFailed
+		}
 	}
 
 	return collections, nil

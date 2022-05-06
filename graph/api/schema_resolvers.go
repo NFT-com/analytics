@@ -20,7 +20,7 @@ func (r *chainServer) Marketplaces(ctx context.Context, obj *api.Chain) ([]*api.
 func (r *chainServer) Collections(ctx context.Context, obj *api.Chain) ([]*api.Collection, error) {
 	// Collections handles expanding the list of Collections within a Chain object.
 
-	return r.Server.collectionsByChain(obj.ID)
+	return r.Server.collectionsByChain(ctx, obj.ID)
 }
 
 func (r *collectionServer) Chain(ctx context.Context, obj *api.Collection) (*api.Chain, error) {
@@ -44,16 +44,13 @@ func (r *marketplaceServer) Chains(ctx context.Context, obj *api.Marketplace) ([
 func (r *marketplaceServer) Collections(ctx context.Context, obj *api.Marketplace) ([]*api.Collection, error) {
 	// Collections handles expanding the list of Collections within a Marketplace object.
 
-	return r.Server.marketplaceCollections(obj.ID)
+	return r.Server.marketplaceCollections(ctx, obj.ID)
 }
 
 func (r *nFTServer) Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error) {
 	// Collection handles expanding the Collection object within an NFT object.
 
-	// FIXME: Test what happens if you go:
-	// collection => nft => collection => nfts
-	// what will the `isRequestedField` say in the second collection request?
-	return r.Server.processCollection(ctx, obj.Collection)
+	return r.Server.getCollection(ctx, obj.Collection)
 }
 
 func (r *queryServer) Chain(ctx context.Context, id string) (*api.Chain, error) {
@@ -101,13 +98,13 @@ func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *strin
 func (r *queryServer) Collection(ctx context.Context, id string) (*api.Collection, error) {
 	// Collection implements the `collection` GraphQL query.
 
-	return r.Server.processCollection(ctx, id)
+	return r.Server.getCollection(ctx, id)
 }
 
 func (r *queryServer) CollectionByAddress(ctx context.Context, chainID string, contract string) (*api.Collection, error) {
 	// CollectionByAddress implements the `collectionByAddress` GraphQL query.
 
-	return r.Server.getCollectionByContract(chainID, contract)
+	return r.Server.getCollectionByContract(ctx, chainID, contract)
 }
 
 func (r *queryServer) Collections(ctx context.Context, chain *string, orderBy *api.CollectionOrder) ([]*api.Collection, error) {
@@ -123,7 +120,7 @@ func (r *queryServer) Collections(ctx context.Context, chain *string, orderBy *a
 	case api.CollectionOrderFieldCreationTime:
 	}
 
-	return r.Server.collections(chain, *orderBy)
+	return r.Server.collections(ctx, chain, *orderBy)
 }
 
 // Chain returns generated.ChainResolver implementation.
