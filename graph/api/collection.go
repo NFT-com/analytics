@@ -18,6 +18,13 @@ func (s *Server) getCollection(ctx context.Context, id string) (*api.Collection,
 		return nil, errRetrieveCollectionFailed
 	}
 
+	// Does this query require retrieving the list of NFTs?
+	sel := query.GetSelection(ctx)
+	includeNFTs := sel.Has(nftField)
+	if !includeNFTs {
+		return collection, nil
+	}
+
 	return s.getCollectionDetails(ctx, collection)
 }
 
@@ -33,29 +40,21 @@ func (s *Server) getCollectionByContract(ctx context.Context, chainID string, co
 		return nil, errRetrieveCollectionFailed
 	}
 
+	// Does this query require retrieving the list of NFTs?
+	sel := query.GetSelection(ctx)
+	includeNFTs := sel.Has(nftField)
+	if !includeNFTs {
+		return collection, nil
+	}
+
 	return s.getCollectionDetails(ctx, collection)
 }
 
 // getCollectionDetails is the workhorse function that will do all of the heavy lifting for
-// the collection queries. If required, it fetches all NFTs from that collection
+// the collection queries. It fetches all NFTs from that collection
 // (similar to how dataloaders would), but also retrieves traits and deals with rarity calculation.
 // NOTE: This function modifies the provided collection in-place.
 func (s *Server) getCollectionDetails(ctx context.Context, collection *api.Collection) (*api.Collection, error) {
-
-	sel := query.GetSelection(ctx)
-
-	// Does this query require retrieving the list of NFTs?
-	includeNFTs := sel.Has(nftField)
-
-	s.log.Debug().
-		Str("id", collection.ID).
-		Bool("include_nfs", includeNFTs).
-		Msg("processing collection request")
-
-	// If we don't need the list of NFTs, we're done.
-	if !includeNFTs {
-		return collection, nil
-	}
 
 	// Retrieve the list of NFTs.
 	nfts, err := s.getCollectionNFTs(collection.ID)
