@@ -10,6 +10,10 @@ import (
 	"github.com/NFT-com/graph-api/graph/models/api"
 )
 
+const (
+	startHeightColumnName = "start_height"
+)
+
 // Collection retrieves a single collection from its ID.
 func (s *Storage) Collection(id string) (*api.Collection, error) {
 
@@ -121,7 +125,7 @@ func (s *Storage) CollectionSize(collectionID string) (uint, error) {
 	}
 
 	var count int64
-	err := s.db.Where(&query).Count(&count).Error
+	err := s.db.Model(&api.NFT{}).Where(&query).Count(&count).Error
 	if err != nil {
 		return 0, fmt.Errorf("could not retrieve collection size: %w", err)
 	}
@@ -140,7 +144,7 @@ func formatCollectionOrderBy(clause api.CollectionOrder) (string, error) {
 	switch clause.Field {
 
 	case api.CollectionOrderFieldCreationTime:
-		field = creationTimeColumnName
+		field = startHeightColumnName
 
 	// FIXME: Remove when sorting by value becomes possible.
 	default:
