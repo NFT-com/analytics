@@ -6,10 +6,10 @@
 
   * [Query](#query)
   * [Objects](#objects)
-    * [Chain](#chain)
     * [Collection](#collection)
     * [Marketplace](#marketplace)
     * [NFT](#nft)
+    * [Network](#network)
 	* [Trait](#trait)
   * [Inputs](#inputs)
     * [CollectionOrder](#collectionorder)
@@ -43,19 +43,19 @@ The query root of NFT.com GraphQL interface.
 	</thead>
 	<tbody>
 		<tr>
-			<td colspan="2" valign="top"><strong>chain</strong></td>
-			<td valign="top"><a href="#chain">Chain</a></td>
-			<td>Get a single chain.</td>
+			<td colspan="2" valign="top"><strong>network</strong></td>
+			<td valign="top"><a href="#network">Network</a></td>
+			<td>Get a single network.</td>
 		</tr>
 		<tr>
 			<td colspan="2" align="right" valign="top">id</td>
 			<td valign="top"><a href="#id">ID</a>!</td>
-			<td>ID of the Chain.</td>
+			<td>ID of the Network.</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top"><strong>chains</strong></td>
-			<td valign="top">[<a href="#chain">Chain</a>!]</td>
-			<td>List chains.</td>
+			<td colspan="2" valign="top"><strong>networks</strong></td>
+			<td valign="top">[<a href="#network">Network</a>!]</td>
+			<td>List networks.</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>nft</strong></td>
@@ -73,9 +73,9 @@ The query root of NFT.com GraphQL interface.
 			<td>Get a single NFT by its token ID.</td>
 		</tr>
 		<tr>
-			<td colspan="2" align="right" valign="top">chainID</td>
+			<td colspan="2" align="right" valign="top">network_id</td>
 			<td valign="top"><a href="#id">ID</a>!</td>
-			<td>Chain ID.</td>
+			<td>Network ID.</td>
 		</tr>
 		<tr>
 			<td colspan="2" align="right" valign="top">contract</td>
@@ -128,9 +128,9 @@ The query root of NFT.com GraphQL interface.
 			<td>Get a single collection by address.</td>
 		</tr>
 		<tr>
-			<td colspan="2" align="right" valign="top">chainID</td>
+			<td colspan="2" align="right" valign="top">network_id</td>
 			<td valign="top"><a href="#id">ID</a>!</td>
-			<td>Chain ID.</td>
+			<td>Network ID.</td>
 		</tr>
 		<tr>
 			<td colspan="2" align="right" valign="top">contract</td>
@@ -143,9 +143,9 @@ The query root of NFT.com GraphQL interface.
 			<td>Lookup collections based on specified criteria.</td>
 		</tr>
 		<tr>
-			<td colspan="2" align="right" valign="top">chain</td>
+			<td colspan="2" align="right" valign="top">network_id</td>
 			<td valign="top"><a href="#id">ID</a></td>
-			<td>ID of the chain that the collection is on.</td>
+			<td>ID of the network that the collection is on.</td>
 		</tr>
 		<tr>
 			<td colspan="2" align="right" valign="top">orderBy</td>
@@ -156,48 +156,6 @@ The query root of NFT.com GraphQL interface.
 </table>
 
 ## Objects
-
-### Chain
-
-Chain represents the chain and its networks.
-
-<table>
-	<thead>
-		<tr>
-			<th align="left">Field</th>
-			<th align="right">Argument</th>
-			<th align="left">Type</th>
-			<th align="left">Description</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td colspan="2" valign="top"><strong>id</strong></td>
-			<td valign="top"><a href="#id">ID</a>!</td>
-			<td>Chain ID.</td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top"><strong>name</strong></td>
-			<td valign="top"><a href="#string">String</a>!</td>
-			<td>Name of the chain, e.g. `Ethereum`.</td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top"><strong>description</strong></td>
-			<td valign="top"><a href="#string">String</a>!</td>
-			<td>Description of the chain.</td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top"><strong>marketplaces</strong></td>
-			<td valign="top">[<a href="#marketplace">Marketplace</a>!]</td>
-			<td>Marketplaces on this chain.</td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top"><strong>collections</strong></td>
-			<td valign="top">[<a href="#collection">Collection</a>!]</td>
-			<td>Collections found on this chain.</td>
-		</tr>
-	</tbody>
-</table>
 
 ### Collection
 
@@ -244,9 +202,9 @@ Collection represents a group of NFTs that share the same smart contract.
 			<td>URL of an image for the collection.</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top"><strong>chain</strong></td>
-			<td valign="top"><a href="#chain">Chain</a>!</td>
-			<td>Chain on which collection resides on.</td>
+			<td colspan="2" valign="top"><strong>network</strong></td>
+			<td valign="top"><a href="#network">Network</a>!</td>
+			<td>Network on which collection resides on.</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>marketplaces</strong></td>
@@ -296,9 +254,9 @@ Marketplace represents a single NFT marketplace (e.g. Opensea, DefiKingdoms).
 			<td>Marketplace website.</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top"><strong>chains</strong></td>
-			<td valign="top">[<a href="#chain">Chain</a>!]!</td>
-			<td>Chains the marketplace operates on.</td>
+			<td colspan="2" valign="top"><strong>networks</strong></td>
+			<td valign="top">[<a href="#network">Network</a>!]!</td>
+			<td>Networks the marketplace operates on.</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>collections</strong></td>
@@ -328,7 +286,7 @@ NFT represents a single Non-Fungible Token.
 			<td>NFT ID.</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top"><strong>tokenID</strong></td>
+			<td colspan="2" valign="top"><strong>token_id</strong></td>
 			<td valign="top"><a href="#string">String</a>!</td>
 			<td>Token ID, as found on the blockchain.</td>
 		</tr>
@@ -375,6 +333,48 @@ NFT represents a single Non-Fungible Token.
 	</tbody>
 </table>
 
+### Network
+
+Network represents the chain and its networks.
+
+<table>
+	<thead>
+		<tr>
+			<th align="left">Field</th>
+			<th align="right">Argument</th>
+			<th align="left">Type</th>
+			<th align="left">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="2" valign="top"><strong>id</strong></td>
+			<td valign="top"><a href="#id">ID</a>!</td>
+			<td>Network ID.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>name</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>Name of the network, e.g. `Ethereum`.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>description</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>Description of the network.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>marketplaces</strong></td>
+			<td valign="top">[<a href="#marketplace">Marketplace</a>!]</td>
+			<td>Marketplaces on this network.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>collections</strong></td>
+			<td valign="top">[<a href="#collection">Collection</a>!]</td>
+			<td>Collections found on this network.</td>
+		</tr>
+	</tbody>
+</table>
+
 ### Trait
 
 Trait represents a single NFT trait.
@@ -390,9 +390,9 @@ Trait represents a single NFT trait.
 	</thead>
 	<tbody>
 		<tr>
-			<td colspan="2" valign="top"><strong>type</strong></td>
+			<td colspan="2" valign="top"><strong>name</strong></td>
 			<td valign="top"><a href="#string">String</a>!</td>
-			<td>Trait type.</td>
+			<td>Trait name.</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>value</strong></td>
