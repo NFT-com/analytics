@@ -28,30 +28,30 @@ func (s *Server) marketplaceCollections(ctx context.Context, marketplaceID strin
 	return collections, nil
 }
 
-// marketplacesByChain returns a list of marketplaces on a specified chain.
-func (s *Server) marketplacesByChain(chainID string) ([]*api.Marketplace, error) {
+// marketplacesByNetwork returns a list of marketplaces on a specified network.
+func (s *Server) marketplacesByNetwork(networkID string) ([]*api.Marketplace, error) {
 
-	marketplaces, err := s.storage.MarketplacesByChain(chainID)
+	marketplaces, err := s.storage.MarketplacesByNetwork(networkID)
 	if err != nil {
 		s.logError(err).
-			Str("chain", chainID).
-			Msg("could not retrieve marketplaces for chain")
+			Str("network", networkID).
+			Msg("could not retrieve marketplaces for network")
 		return nil, errRetrieveMarketplaceFailed
 	}
 
 	return marketplaces, nil
 }
 
-// marketplaceChains returns a list of chains that collections listed on a marketplace reside on.
-func (s *Server) marketplaceChains(marketplaceID string) ([]*api.Chain, error) {
+// marketplaceNetworks returns a list of networks that collections listed on a marketplace reside on.
+func (s *Server) marketplaceNetworks(marketplaceID string) ([]*api.Network, error) {
 
-	chains, err := s.storage.MarketplaceChains(marketplaceID)
+	networks, err := s.storage.MarketplaceNetworks(marketplaceID)
 	if err != nil {
 		s.logError(err).
 			Str("marketplace", marketplaceID).
-			Msg("could not retrieve chains for marketplace")
-		return nil, errRetrieveChainFailed
+			Msg("could not retrieve networks for marketplace")
+		return nil, errRetrieveNetworkFailed
 	}
 
-	return chains, nil
+	return networks, nil
 }

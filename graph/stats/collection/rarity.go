@@ -25,7 +25,7 @@ func (s *Stats) CalculateRarity(total uint, traits []*api.Trait) (float64, []*ap
 	// Divide the number of occurrences with the collection size to see how frequent that trait is.
 	for _, trait := range traits {
 
-		found[trait.Type] = struct{}{}
+		found[trait.Name] = struct{}{}
 
 		key := formatTraitKey(trait)
 		occurrences := s.Occurrences[key]
@@ -33,7 +33,7 @@ func (s *Stats) CalculateRarity(total uint, traits []*api.Trait) (float64, []*ap
 		rarity := float64(occurrences) / float64(total)
 
 		t := api.Trait{
-			Type:   trait.Type,
+			Name:   trait.Name,
 			Value:  trait.Value,
 			Rarity: rarity,
 		}
@@ -60,7 +60,7 @@ func (s *Stats) CalculateRarity(total uint, traits []*api.Trait) (float64, []*ap
 		rarity := float64(total-count) / float64(total)
 
 		missing := api.Trait{
-			Type:   trait,
+			Name:   trait,
 			Value:  "",
 			Rarity: rarity,
 		}

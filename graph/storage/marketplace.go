@@ -14,7 +14,6 @@ import (
 func (s *Storage) MarketplacesForCollection(collectionID string) ([]*api.Marketplace, error) {
 
 	var marketplaces []*api.Marketplace
-
 	err := s.db.
 		Table("marketplaces m").
 		Select("m.*").
@@ -34,7 +33,6 @@ func (s *Storage) MarketplacesForCollection(collectionID string) ([]*api.Marketp
 func (s *Storage) MarketplaceCollections(marketplaceID string) ([]*api.Collection, error) {
 
 	var collections []*api.Collection
-
 	err := s.db.
 		Table("marketplaces m").
 		Select("c.*").
@@ -50,17 +48,16 @@ func (s *Storage) MarketplaceCollections(marketplaceID string) ([]*api.Collectio
 	return collections, nil
 }
 
-// MarketplacesByChain retrieves a list of marketplaces on a specified Chain.
-func (s *Storage) MarketplacesByChain(chainID string) ([]*api.Marketplace, error) {
+// MarketplacesByNetwork retrieves a list of marketplaces on a specified network.
+func (s *Storage) MarketplacesByNetwork(networkID string) ([]*api.Marketplace, error) {
 
 	var marketplaces []*api.Marketplace
-
 	err := s.db.
 		Table("marketplaces m").
 		Select("DISTINCT m.*").
 		Joins("INNER JOIN marketplaces_collections mc ON m.id = mc.marketplace_id").
 		Joins("INNER JOIN collections c ON mc.collection_id = c.id").
-		Where("c.chain_id = ?", chainID).
+		Where("c.network_id = ?", networkID).
 		Find(&marketplaces).
 		Error
 	if err != nil {
@@ -70,24 +67,23 @@ func (s *Storage) MarketplacesByChain(chainID string) ([]*api.Marketplace, error
 	return marketplaces, nil
 }
 
-// MarketplaceChains retrieves all chains that the marketplace supports.
-func (s *Storage) MarketplaceChains(marketplaceID string) ([]*api.Chain, error) {
+// MarketplaceNetworks retrieves all networks that the marketplace supports.
+func (s *Storage) MarketplaceNetworks(marketplaceID string) ([]*api.Network, error) {
 
-	var chains []*api.Chain
-
+	var networks []*api.Network
 	selection := s.db.
 		Table("marketplaces_collections mc").
-		Select("DISTINCT c.chain_id").
+		Select("DISTINCT c.network_id").
 		Joins("INNER JOIN collections c ON mc.collection_id = c.id").
 		Where("mc.marketplace_id = ?", marketplaceID)
 
 	err := s.db.
 		Where("id IN (?)", selection).
-		Find(&chains).
+		Find(&networks).
 		Error
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve chains: %w", err)
+		return nil, fmt.Errorf("could not retrieve networks: %w", err)
 	}
 
-	return chains, nil
+	return networks, nil
 }

@@ -1,7 +1,7 @@
 package api
 
-// Chain represents the chain and its networks.
-type Chain struct {
+// Network represents the chain and its networks.
+type Network struct {
 	ID          string `gorm:"column:id" json:"id"`
 	Name        string `gorm:"column:name" json:"name"`
 	Description string `gorm:"column:description" json:"description"`
@@ -12,11 +12,11 @@ type Collection struct {
 	ID          string `gorm:"column:id" json:"id"`
 	Name        string `gorm:"column:name" json:"name"`
 	Description string `gorm:"column:description" json:"description"`
-	Address     string `gorm:"column:address" json:"address"`
+	Address     string `gorm:"column:contract_address" json:"address"`
 	Website     string `gorm:"column:website" json:"website"`
 	ImageURL    string `gorm:"column:image_url" json:"image_url"`
 	NFTs        []*NFT `gorm:"-" json:"nfts"`
-	ChainID     string `gorm:"column:chain_id" json:"-"`
+	NetworkID   string `gorm:"column:network_id" json:"-"`
 }
 
 // Marketplace represents a single NFT marketplace (e.g. Opensea, DefiKingdoms).
@@ -34,9 +34,9 @@ type NFT struct {
 	ImageURL    string   `gorm:"column:image" json:"image_url,omitempty"`
 	URI         string   `gorm:"column:uri" json:"uri,omitempty"`
 	Description string   `gorm:"column:description" json:"description,omitempty"`
-	TokenID     string   `gorm:"column:token_id" json:"tokenID"`
+	TokenID     string   `gorm:"column:token_id" json:"token_id"`
 	Owner       string   `gorm:"column:owner" json:"owner"`
-	Collection  string   `gorm:"column:collection" json:"-"`
+	Collection  string   `gorm:"column:collection_id" json:"-"`
 	Traits      []*Trait `gorm:"-" json:"traits,omitempty"`
 	Rarity      float64  `gorm:"-" json:"rarity,omitempty"`
 }
@@ -45,8 +45,10 @@ type NFT struct {
 // NOTE: `Value` can be an empty string if it represents a trait that the NFT does not have
 // (for example when displaying distribution ratio of a rare trait).
 type Trait struct {
-	Type   string  `gorm:"column:name" json:"type"`
+	Name   string  `gorm:"column:name" json:"name"`
 	Value  string  `gorm:"column:value" json:"value"`
-	Rarity float64 `gorm:"column:ratio" json:"rarity"`
-	NFT    string  `gorm:"column:nft" json:"-"`
+	NFT    string  `gorm:"column:nft_id" json:"-"`
+	Rarity float64 `gorm:"-" json:"rarity"`
+
+	// TODO: Add trait type.
 }

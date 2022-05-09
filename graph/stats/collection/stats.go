@@ -35,7 +35,7 @@ func (t TraitMap) CalculateStats() Stats {
 			key := formatTraitKey(trait)
 			s.Occurrences[key]++
 
-			distinct[trait.Type] = struct{}{}
+			distinct[trait.Name] = struct{}{}
 		}
 
 		// Add all distinct trait types to the trait type counter.
@@ -48,5 +48,5 @@ func (t TraitMap) CalculateStats() Stats {
 }
 
 func formatTraitKey(trait *api.Trait) string {
-	return trait.Type + ":" + trait.Value
+	return trait.Name + ":" + trait.Value
 }
