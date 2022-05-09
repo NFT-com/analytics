@@ -7,7 +7,7 @@ import (
 // TraitMap represents a map of collection traits, mapping NFT IDs to NFT traits.
 type TraitMap map[string][]*api.Trait
 
-// NewTraitMap will create a new collection trait map from the list of NFT traits.
+// NewTraitMap creates a new collection trait map from the list of NFT traits.
 func NewTraitMap(list []*api.Trait) TraitMap {
 
 	traits := make(map[string][]*api.Trait)

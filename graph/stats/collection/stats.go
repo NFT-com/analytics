@@ -22,7 +22,7 @@ func (t TraitMap) CalculateStats() Stats {
 		KnownTraits: make(map[string]uint),
 	}
 
-	// Go through all traits found and count number of ocurrence of
+	// Go through all traits found and count number of occurrences of
 	// each individual trait type/value combo, as well as how many times
 	// was each trait type seen.
 	for _, traits := range t {
@@ -31,7 +31,6 @@ func (t TraitMap) CalculateStats() Stats {
 		// However, if there's an NFT that has the same trait twice,
 		// we don't want to count that.
 		distinct := make(map[string]struct{})
-
 		for _, trait := range traits {
 			key := formatTraitKey(trait)
 			s.Occurrences[key]++

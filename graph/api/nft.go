@@ -37,7 +37,7 @@ func (s *Server) getNFTByTokenID(ctx context.Context, chainID string, contract s
 	return s.getNFTDetails(ctx, nft)
 }
 
-// getNFTDetails will retrieve the NFT rarity and/or trait information.
+// getNFTDetails retrieves the NFT rarity and/or trait information.
 func (s *Server) getNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, error) {
 
 	// Parse the query to know how much information to return/calculate.

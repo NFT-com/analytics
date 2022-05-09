@@ -65,7 +65,7 @@ func (s *Server) getCollectionDetails(ctx context.Context, collection *api.Colle
 	s.log.Debug().
 		Str("id", collection.ID).
 		Int("collection_size", len(nfts)).
-		Msg("retrieved list of collection nfts")
+		Msg("retrieved list of nfts for collection")
 
 	collection.NFTs = nfts
 

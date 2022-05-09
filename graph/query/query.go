@@ -2,6 +2,7 @@ package query
 
 import (
 	"context"
+	"strings"
 
 	"github.com/99designs/gqlgen/graphql"
 )
@@ -61,18 +62,6 @@ func getNestedSelection(ctx *graphql.OperationContext, fields []graphql.Collecte
 // FieldPath returns the selection path for the field, based on provided path components.
 func FieldPath(fields ...string) string {
 
-	if len(fields) == 0 {
-		return ""
-	}
-
-	if fields[0] == "" {
-		fields = fields[1:]
-	}
-
-	path := fields[0]
-	for _, field := range fields[1:] {
-		path += "." + field
-	}
-
+	path := strings.Join(fields, ".")
 	return path
 }
