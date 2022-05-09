@@ -44,6 +44,6 @@ func parseNFTQueryWithConfig(cfg nftQueryConfig, ctx context.Context) *nftQuery 
 	return &query
 }
 
-func (q *nftQuery) needRarity() bool {
+func (q nftQuery) needRarity() bool {
 	return q.traitRarity || q.rarity
 }

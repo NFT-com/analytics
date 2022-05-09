@@ -22,9 +22,7 @@ func NewTraitMap(list []*api.Trait) TraitMap {
 			continue
 		}
 
-		nftTraits := make([]*api.Trait, 0)
-		nftTraits = append(nftTraits, trait)
-		traits[trait.NFT] = nftTraits
+		traits[trait.NFT] = []*api.Trait{trait}
 	}
 
 	return traits
