@@ -21,13 +21,13 @@ func (s *Server) getNFT(ctx context.Context, id string) (*api.NFT, error) {
 	return s.getNFTDetails(ctx, nft)
 }
 
-// getNFTByTokenID returns a single NFT based on the combination of chainID, contract address and token ID.
-func (s *Server) getNFTByTokenID(ctx context.Context, chainID string, contract string, tokenID string) (*api.NFT, error) {
+// getNFTByTokenID returns a single NFT based on the combination of networkID, contract address and token ID.
+func (s *Server) getNFTByTokenID(ctx context.Context, networkID string, contract string, tokenID string) (*api.NFT, error) {
 
-	nft, err := s.storage.NFTByTokenID(chainID, contract, tokenID)
+	nft, err := s.storage.NFTByTokenID(networkID, contract, tokenID)
 	if err != nil {
 		s.logError(err).
-			Str("chain", chainID).
+			Str("network", networkID).
 			Str("contract", contract).
 			Str("token_id", tokenID).
 			Msg("could not retrieve nft")

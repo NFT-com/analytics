@@ -11,22 +11,10 @@ import (
 	"github.com/NFT-com/graph-api/graph/models/api"
 )
 
-func (r *chainServer) Marketplaces(ctx context.Context, obj *api.Chain) ([]*api.Marketplace, error) {
-	// Marketplaces handles expanding the list of Marketplaces within a Chain object.
+func (r *collectionServer) Network(ctx context.Context, obj *api.Collection) (*api.Network, error) {
+	// Network handles expanding the Network object within a Collection object.
 
-	return r.Server.marketplacesByChain(obj.ID)
-}
-
-func (r *chainServer) Collections(ctx context.Context, obj *api.Chain) ([]*api.Collection, error) {
-	// Collections handles expanding the list of Collections within a Chain object.
-
-	return r.Server.collectionsByChain(ctx, obj.ID)
-}
-
-func (r *collectionServer) Chain(ctx context.Context, obj *api.Collection) (*api.Chain, error) {
-	// Chain handles expanding the Chain object within a Collection object.
-
-	return r.Server.getChain(obj.ChainID)
+	return r.Server.getNetwork(obj.NetworkID)
 }
 
 func (r *collectionServer) Marketplaces(ctx context.Context, obj *api.Collection) ([]*api.Marketplace, error) {
@@ -35,10 +23,10 @@ func (r *collectionServer) Marketplaces(ctx context.Context, obj *api.Collection
 	return r.Server.collectionsListings(obj.ID)
 }
 
-func (r *marketplaceServer) Chains(ctx context.Context, obj *api.Marketplace) ([]*api.Chain, error) {
-	// Chains handles expanding the list of Chains within a Marketplace object.
+func (r *marketplaceServer) Networks(ctx context.Context, obj *api.Marketplace) ([]*api.Network, error) {
+	// Networks handles expanding the list of Networks within a Marketplace object.
 
-	return r.Server.marketplaceChains(obj.ID)
+	return r.Server.marketplaceNetworks(obj.ID)
 }
 
 func (r *marketplaceServer) Collections(ctx context.Context, obj *api.Marketplace) ([]*api.Collection, error) {
@@ -53,16 +41,28 @@ func (r *nFTServer) Collection(ctx context.Context, obj *api.NFT) (*api.Collecti
 	return r.Server.getCollection(ctx, obj.Collection)
 }
 
-func (r *queryServer) Chain(ctx context.Context, id string) (*api.Chain, error) {
-	// Chain implements the `chain` GraphQL query
+func (r *networkServer) Marketplaces(ctx context.Context, obj *api.Network) ([]*api.Marketplace, error) {
+	// Marketplaces handles expanding the list of Marketplaces within a Network object.
 
-	return r.Server.getChain(id)
+	return r.Server.marketplacesByNetwork(obj.ID)
 }
 
-func (r *queryServer) Chains(ctx context.Context) ([]*api.Chain, error) {
-	// Chains implements the `chains` GraphQL query.
+func (r *networkServer) Collections(ctx context.Context, obj *api.Network) ([]*api.Collection, error) {
+	// Collections handles expanding the list of Collections within a Network object.
 
-	return r.Server.chains()
+	return r.Server.collectionsByNetwork(ctx, obj.ID)
+}
+
+func (r *queryServer) Network(ctx context.Context, id string) (*api.Network, error) {
+	// Network implements the `network` GraphQL query
+
+	return r.Server.getNetwork(id)
+}
+
+func (r *queryServer) Networks(ctx context.Context) ([]*api.Network, error) {
+	// Networks implements the `networks` GraphQL query.
+
+	return r.Server.networks()
 }
 
 func (r *queryServer) Nft(ctx context.Context, id string) (*api.NFT, error) {
@@ -71,10 +71,10 @@ func (r *queryServer) Nft(ctx context.Context, id string) (*api.NFT, error) {
 	return r.Server.getNFT(ctx, id)
 }
 
-func (r *queryServer) NftByTokenID(ctx context.Context, chainID string, contract string, tokenID string) (*api.NFT, error) {
+func (r *queryServer) NftByTokenID(ctx context.Context, networkID string, contract string, tokenID string) (*api.NFT, error) {
 	// NftByTokenID implements the `nftByTokenID` GraphQL query.
 
-	return r.Server.getNFTByTokenID(ctx, chainID, contract, tokenID)
+	return r.Server.getNFTByTokenID(ctx, networkID, contract, tokenID)
 }
 
 func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *string, rarityMax *float64, orderBy *api.NFTOrder) ([]*api.NFT, error) {
@@ -101,13 +101,13 @@ func (r *queryServer) Collection(ctx context.Context, id string) (*api.Collectio
 	return r.Server.getCollection(ctx, id)
 }
 
-func (r *queryServer) CollectionByAddress(ctx context.Context, chainID string, contract string) (*api.Collection, error) {
+func (r *queryServer) CollectionByAddress(ctx context.Context, networkID string, contract string) (*api.Collection, error) {
 	// CollectionByAddress implements the `collectionByAddress` GraphQL query.
 
-	return r.Server.getCollectionByContract(ctx, chainID, contract)
+	return r.Server.getCollectionByContract(ctx, networkID, contract)
 }
 
-func (r *queryServer) Collections(ctx context.Context, chain *string, orderBy *api.CollectionOrder) ([]*api.Collection, error) {
+func (r *queryServer) Collections(ctx context.Context, networkID *string, orderBy *api.CollectionOrder) ([]*api.Collection, error) {
 	// Collections implements the `collections` GraphQL query.
 
 	switch orderBy.Field {
@@ -120,11 +120,8 @@ func (r *queryServer) Collections(ctx context.Context, chain *string, orderBy *a
 	case api.CollectionOrderFieldCreationTime:
 	}
 
-	return r.Server.collections(ctx, chain, *orderBy)
+	return r.Server.collections(ctx, networkID, *orderBy)
 }
-
-// Chain returns generated.ChainResolver implementation.
-func (r *Server) Chain() generated.ChainResolver { return &chainServer{r} }
 
 // Collection returns generated.CollectionResolver implementation.
 func (r *Server) Collection() generated.CollectionResolver { return &collectionServer{r} }
@@ -135,11 +132,14 @@ func (r *Server) Marketplace() generated.MarketplaceResolver { return &marketpla
 // NFT returns generated.NFTResolver implementation.
 func (r *Server) NFT() generated.NFTResolver { return &nFTServer{r} }
 
+// Network returns generated.NetworkResolver implementation.
+func (r *Server) Network() generated.NetworkResolver { return &networkServer{r} }
+
 // Query returns generated.QueryResolver implementation.
 func (r *Server) Query() generated.QueryResolver { return &queryServer{r} }
 
-type chainServer struct{ *Server }
 type collectionServer struct{ *Server }
 type marketplaceServer struct{ *Server }
 type nFTServer struct{ *Server }
+type networkServer struct{ *Server }
 type queryServer struct{ *Server }

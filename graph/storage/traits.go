@@ -7,14 +7,14 @@ import (
 )
 
 // NFTTraits retrieves a list of traits of that NFT.
-func (s *Storage) NFTTraits(id string) ([]*api.Trait, error) {
+func (s *Storage) NFTTraits(nftID string) ([]*api.Trait, error) {
+
+	query := api.Trait{
+		NFT: nftID,
+	}
 
 	var traits []*api.Trait
-	err := s.db.
-		Select("*").
-		Table("traits").
-		Where("nft = ?", id).
-		Find(&traits).Error
+	err := s.db.Where(query).Find(&traits).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve traits: %w", err)
 	}
@@ -28,10 +28,10 @@ func (s *Storage) CollectionTraits(collectionID string) ([]*api.Trait, error) {
 	var traits []*api.Trait
 	err := s.db.
 		Table("traits_collections").
-		Where("collection = ?", collectionID).
+		Where("collection_id = ?", collectionID).
 		Find(&traits).Error
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve NFT traits: %w", err)
+		return nil, fmt.Errorf("could not retrieve traits for collections: %w", err)
 	}
 
 	return traits, nil

@@ -21,13 +21,13 @@ func (s *Server) getCollection(ctx context.Context, id string) (*api.Collection,
 	return s.getCollectionDetails(ctx, collection)
 }
 
-// getCollectionByContract returns a single collection for the specified chain, given its contract address.
-func (s *Server) getCollectionByContract(ctx context.Context, chainID string, contract string) (*api.Collection, error) {
+// getCollectionByContract returns a single collection for the specified network, given its contract address.
+func (s *Server) getCollectionByContract(ctx context.Context, networkID string, contract string) (*api.Collection, error) {
 
-	collection, err := s.storage.CollectionByContract(chainID, contract)
+	collection, err := s.storage.CollectionByContract(networkID, contract)
 	if err != nil {
 		s.logError(err).
-			Str("chain", chainID).
+			Str("network", networkID).
 			Str("contract", contract).
 			Msg("could not retrieve collection")
 		return nil, errRetrieveCollectionFailed
@@ -142,13 +142,13 @@ func (s *Server) getCollectionNFTs(collectionID string) ([]*api.NFT, error) {
 }
 
 // collections returns a list of collections according to the specified search criteria and sorting options.
-func (s *Server) collections(ctx context.Context, chain *string, orderBy api.CollectionOrder) ([]*api.Collection, error) {
+func (s *Server) collections(ctx context.Context, network *string, orderBy api.CollectionOrder) ([]*api.Collection, error) {
 
-	collections, err := s.storage.Collections(chain, orderBy)
+	collections, err := s.storage.Collections(network, orderBy)
 	if err != nil {
 		log := s.logError(err)
-		if chain != nil {
-			log = log.Str("chain", *chain)
+		if network != nil {
+			log = log.Str("network", *network)
 		}
 		log.Msg("could not retrieve collections")
 		return nil, errRetrieveCollectionFailed
@@ -165,14 +165,14 @@ func (s *Server) collections(ctx context.Context, chain *string, orderBy api.Col
 	return collections, nil
 }
 
-// collectionsByChain returns a list of collections on a given chain.
-func (s *Server) collectionsByChain(ctx context.Context, chainID string) ([]*api.Collection, error) {
+// collectionsByNetwork returns a list of collections on a given network.
+func (s *Server) collectionsByNetwork(ctx context.Context, networkID string) ([]*api.Collection, error) {
 
-	collections, err := s.storage.CollectionsByChain(chainID)
+	collections, err := s.storage.CollectionsByNetwork(networkID)
 	if err != nil {
 		s.logError(err).
-			Str("chain", chainID).
-			Msg("could not retrieve collections for a chain")
+			Str("network", networkID).
+			Msg("could not retrieve collections for a network")
 		return nil, errRetrieveCollectionFailed
 	}
 
