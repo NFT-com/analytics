@@ -19,8 +19,8 @@ type TransferSelector struct {
 	TokenSelector
 
 	Transaction string `query:"transaction"`
-	From        string `query:"from"`
-	To          string `query:"to"`
+	Sender      string `query:"sender"`
+	Receiver    string `query:"receiver"`
 }
 
 // SaleSelector contains all of the supported query parameters for filtering
@@ -28,9 +28,10 @@ type TransferSelector struct {
 type SaleSelector struct {
 	TimeSelector
 	BlockSelector
+	TokenSelector
 
-	Transaction string `query:"transaction"`
 	Marketplace string `query:"marketplace"`
+	Transaction string `query:"transaction"`
 	Seller      string `query:"seller"`
 	Buyer       string `query:"buyer"`
 	Price       string `query:"price"`
@@ -48,6 +49,7 @@ type BurnSelector struct {
 
 // TokenSelector allows selecting a specific token.
 type TokenSelector struct {
+	Chain      string `query:"chain"`
 	Collection string `query:"collection"`
 	TokenID    string `query:"token_id"`
 }

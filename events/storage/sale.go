@@ -17,10 +17,13 @@ import (
 func (s *Storage) Sales(selector events.SaleSelector, token string) ([]events.Sale, string, error) {
 
 	query := events.Sale{
-		Marketplace: selector.Marketplace,
-		Transaction: selector.Transaction,
-		Seller:      selector.Seller,
-		Buyer:       selector.Buyer,
+		ChainID:            selector.Chain,
+		CollectionAddress:  selector.Collection,
+		TokenID:            selector.TokenID,
+		MarketplaceAddress: selector.Marketplace,
+		Transaction:        selector.Transaction,
+		Seller:             selector.Seller,
+		Buyer:              selector.Buyer,
 	}
 
 	// NOTE: This function creates a query with a limit of `batchSize + 1` to avoid unnecessary queries.

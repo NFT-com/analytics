@@ -16,7 +16,7 @@ func (s *Storage) createQuery(query interface{}, token string, conditions ...con
 
 	db := s.db.
 		Where(query).
-		Order("block DESC").
+		Order("block_number DESC").
 		Order("event_index DESC")
 
 	// If there's a token provided, unpack it and use it
@@ -30,9 +30,9 @@ func (s *Storage) createQuery(query interface{}, token string, conditions ...con
 		// If this is a continued iteration, request earlier events in the same block
 		// and earlier blocks.
 		db = db.Where(
-			s.db.Where("block < ?", blockNo),
+			s.db.Where("block_number < ?", blockNo),
 		).Or(
-			s.db.Where("block = ?", blockNo).Where("event_index < ?", eventIndex),
+			s.db.Where("block_number = ?", blockNo).Where("event_index < ?", eventIndex),
 		)
 	}
 
@@ -80,11 +80,11 @@ func withBlockRangeFilter(selector events.BlockSelector) conditionSetFunc {
 
 		// Set start block condition.
 		if selector.BlockStart != "" {
-			db = db.Where("block >= ?", selector.BlockStart)
+			db = db.Where("block_number >= ?", selector.BlockStart)
 		}
 		// Set end block condition.
 		if selector.BlockEnd != "" {
-			db = db.Where("block <= ?", selector.BlockEnd)
+			db = db.Where("block_number <= ?", selector.BlockEnd)
 		}
 
 		return db

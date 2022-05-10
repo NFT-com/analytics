@@ -15,11 +15,12 @@ func (s *Storage) Transfers(selector events.TransferSelector, token string) ([]e
 
 	// Initialize the query variable.
 	query := events.Transfer{
-		Collection:  selector.Collection,
-		Transaction: selector.Transaction,
-		TokenID:     selector.TokenID,
-		From:        selector.From,
-		To:          selector.To,
+		ChainID:           selector.Chain,
+		CollectionAddress: selector.Collection,
+		TokenID:           selector.TokenID,
+		Transaction:       selector.Transaction,
+		Sender:            selector.Sender,
+		Receiver:          selector.Receiver,
 	}
 
 	// Create the database query.
