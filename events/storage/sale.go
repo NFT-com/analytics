@@ -39,7 +39,7 @@ func (s *Storage) Sales(selector events.SaleSelector, token string) ([]events.Sa
 	}
 
 	if selector.Price != "" {
-		db = db.Where("price >= ?", selector.Price)
+		db = db.Where("trade_price >= ?", selector.Price)
 	}
 
 	var sales []events.Sale
