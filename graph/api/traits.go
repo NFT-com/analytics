@@ -16,7 +16,7 @@ func (s *Server) getTraitsForCollection(collectionID string) (collection.TraitMa
 	}
 
 	// Create a trait map for this collection.
-	traits := collection.NewTraitMap(list)
+	traits := collection.CreateTraitMap(list)
 
 	return traits, nil
 }
