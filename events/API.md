@@ -8,26 +8,10 @@ Events are served in a reverse chronological order, meaning most recent events a
 In order to have greater flexibility since different event types can require different filters, event listing is done using multiple endpoints.
 Supported endpoints are:
 
-- `/mints/`
 - `/transfers/`
-- `/burns/`
 - `/sales/`
 
 Listing all events for a single NFT is done by issuing requests to individual endpoints and merging the results.
-
-### Mints
-
-Listing mint events is done by issuing a `GET` request to the `/mints/` endpoint.
-The following filters are available for mint events:
-
-- `collection` — UUID of the collection
-- `token_id` — Non-Fungible Token ID, as seen on the chain
-- `transaction` — transaction ID
-- `start` — start time in RFC3339 format (inclusive)
-- `end` — end time in RFC3339 format (inclusive)
-- `block_start` — string representation of the block number in decimal format (inclusive)
-- `block_end` — string representation of the block number in decimal format (inclusive)
-- `owner` — address of the token owner
 
 ### Transfers
 
@@ -36,26 +20,13 @@ The following filters are available for transfer events:
 
 - `collection` — UUID of the collection
 - `token_id` — Non-Fungible Token ID, as seen on the chain
--- `transaction` — transaction ID
+- `transaction` — transaction ID
 - `start` — start time in RFC3339 format (inclusive)
 - `end` — end time in RFC3339 format (inclusive)
 - `block_start` — string representation of the block number in decimal format (inclusive)
 - `block_end` — string representation of the block number in decimal format (inclusive)
 - `from` — address of the token sender
 - `to` — address of the token receiver 
-
-### Burns
-
-Listing burn events is done by issuing a `GET` request to the `/burns/` endpoint.
-The following filters are available for burn events:
-
-- `collection` — UUID of the collection
-- `token_id` — Non-Fungible Token ID, as seen on the chain
-- `transaction` — transaction ID
-- `start` — start time in RFC3339 format (inclusive)
-- `end` — end time in RFC3339 format (inclusive)
-- `block_start` — string representation of the block number in decimal format (inclusive)
-- `block_end` — string representation of the block number in decimal format (inclusive)
 
 ### Sales
 
