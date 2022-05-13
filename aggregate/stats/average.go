@@ -1,13 +1,18 @@
 package stats
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
 )
 
-func (s *Stats) Average(collectionID string, from time.Time, to time.Time) ([]datapoint.Average, error) {
+func (s *Stats) Average(chainID uint, collectionAddress string, from time.Time, to time.Time) ([]datapoint.Average, error) {
+
+	if collectionAddress != "" {
+		return nil, errors.New("collection addresss is required")
+	}
 
 	// NOTE: The query in this function is VERY similar to the market cap query,
 	// with the difference that it averages the prices instead of adding them.
@@ -16,13 +21,11 @@ func (s *Stats) Average(collectionID string, from time.Time, to time.Time) ([]da
 	// Prices with the lowest rank (closer to 1) will be the most recent ones.
 	// The query has a date threshold to consider only prices up to a date.
 	latestPriceQuery := s.db.
-		Table("sales_collections").
-		Select("sales_collections.*, row_number() OVER (PARTITION BY nft ORDER BY emitted_at DESC) AS rank").
+		Table("sales").
+		Select("sales.*, row_number() OVER (PARTITION BY token_id ORDER BY emitted_at DESC) AS rank").
+		Where("chain_id = ? ", chainID).
+		Where("collection = ?", collectionAddress).
 		Where("emitted_at <= d.date")
-
-	if collectionID != "" {
-		latestPriceQuery = latestPriceQuery.Where("collection = ?", collectionID)
-	}
 
 	// Averaging query will return the average of all of the freshest prices for
 	// NFTs in a collection. The query leverages the "latest price" query as a subquery
@@ -31,7 +34,7 @@ func (s *Stats) Average(collectionID string, from time.Time, to time.Time) ([]da
 	// in the specified date range.
 	avgQuery := s.db.
 		Table("(?) s", latestPriceQuery).
-		Select("AVG(price) AS average, d.date").
+		Select("AVG(trade_price) AS average, d.date").
 		Where("rank = 1")
 
 	// Delta query shows the average prices, as well as the difference between the previous

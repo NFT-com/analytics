@@ -8,26 +8,27 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
 )
 
-func (s *Stats) Sales(collectionID string, marketplaceID string, from time.Time, to time.Time) ([]datapoint.Sale, error) {
+func (s *Stats) Sales(chainID uint, collectionAddress string, marketplaceAddress string, from time.Time, to time.Time) ([]datapoint.Sale, error) {
 
-	// Either collection or marketplace ID is required.
-	if collectionID == "" && marketplaceID == "" {
-		return nil, errors.New("collection or marketplace ID is required")
+	// Either collection or marketplace address is required.
+	if collectionAddress == "" && marketplaceAddress == "" {
+		return nil, errors.New("collection or marketplace address is required")
 	}
 
 	countQuery := s.db.
-		Table("sales_collections, generate_series(?, ?, interval '1 day') AS date",
+		Table("sales, generate_series(?, ?, interval '1 day') AS date",
 			from.Format(timeFormat),
 			to.Format(timeFormat)).
 		Select("COUNT(*) AS count, date").
+		Where("chain_id = ?", chainID).
 		Where("emitted_at <= date").
 		Group("date")
 
-	if collectionID != "" {
-		countQuery = countQuery.Where("collection = ?", collectionID)
+	if collectionAddress != "" {
+		countQuery = countQuery.Where("collection_address = ?", collectionAddress)
 	}
-	if marketplaceID != "" {
-		countQuery = countQuery.Where("marketplace = ?", marketplaceID)
+	if marketplaceAddress != "" {
+		countQuery = countQuery.Where("marketplace_address = ?", marketplaceAddress)
 	}
 
 	deltaQuery := s.db.

@@ -10,21 +10,21 @@ import (
 
 // FIXME: Add comments for exported functions.
 
-func (s *Stats) Floor(collectionID string, from time.Time, to time.Time) ([]datapoint.Floor, error) {
+func (s *Stats) Floor(chainID uint, collectionAddress string, from time.Time, to time.Time) ([]datapoint.Floor, error) {
 
-	if collectionID == "" {
+	if collectionAddress == "" {
 		return nil, errors.New("collection ID is required")
 	}
 
 	intervalQuery := s.db.
-		Table("sales_collections, LATERAL generate_series(?, ?, INTERVAL '1 day') AS start_date",
+		Table("sales, LATERAL generate_series(?, ?, INTERVAL '1 day') AS start_date",
 			from.Format(timeFormat),
 			to.Format(timeFormat)).
 		Select([]string{
-			"sales_collections.*",
+			"sales.*",
 			"start_date",
 			"start_date + interval '1 day' AS end_date"}).
-		Where("collection = ?", collectionID)
+		Where("collection_address = ?", collectionAddress)
 
 	seriesQuery := s.db.
 		Table("(?) s", intervalQuery).
@@ -34,7 +34,7 @@ func (s *Stats) Floor(collectionID string, from time.Time, to time.Time) ([]data
 
 	query := s.db.
 		Table("(?) st", seriesQuery).
-		Select("MIN(st.price) AS floor, st.start_date, st.end_date").
+		Select("MIN(st.trade_price) AS floor, st.start_date, st.end_date").
 		Group("start_date").
 		Group("end_date").
 		Order("start_date DESC")
