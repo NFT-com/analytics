@@ -49,7 +49,13 @@ func getNestedSelection(ctx *graphql.OperationContext, fields []graphql.Collecte
 	requested := make([]string, 0)
 
 	for _, field := range fields {
-		name := FieldPath(prefix, field.Name)
+		var name string
+		if prefix != "" {
+			name = FieldPath(prefix, field.Name)
+		} else {
+			name = FieldPath(field.Name)
+		}
+
 		requested = append(requested, name)
 
 		collected := graphql.CollectFields(ctx, field.Selections, nil)
