@@ -9,26 +9,27 @@ import (
 )
 
 // MarketCap returns the market cap for the collection in the given time range.
-func (s *Stats) MarketCap(collectionID string, marketplaceID string, from time.Time, to time.Time) ([]datapoint.MarketCap, error) {
+func (s *Stats) MarketCap(chainID uint, collectionAddress string, marketplaceAddress string, from time.Time, to time.Time) ([]datapoint.MarketCap, error) {
 
-	// Either collection or marketplace ID is required.
-	if collectionID == "" && marketplaceID == "" {
-		return nil, errors.New("collection or marketplace ID is required")
+	// Either collection or marketplace address is required.
+	if collectionAddress == "" && marketplaceAddress == "" {
+		return nil, errors.New("collection or marketplace address is required")
 	}
 
 	// Latest price query will return prices per NFT ranked by freshness.
 	// Prices with the lowest rank (closer to 1) will be the most recent ones.
 	// The query has a date threshold to consider only prices up to a date.
 	latestPriceQuery := s.db.
-		Table("sales_collections").
-		Select("sales_collections.*, row_number() OVER (PARTITION BY nft ORDER BY emitted_at DESC) AS rank").
-		Where("emitted_at <= d.date")
+		Table("sales").
+		Select("sales.*, row_number() OVER (PARTITION BY token_id ORDER BY emitted_at DESC) AS rank").
+		Where("emitted_at <= d.date").
+		Where("chain_id = ? ", chainID)
 
-	if collectionID != "" {
-		latestPriceQuery = latestPriceQuery.Where("collection = ?", collectionID)
+	if collectionAddress != "" {
+		latestPriceQuery = latestPriceQuery.Where("collection_address = ?", collectionAddress)
 	}
-	if marketplaceID != "" {
-		latestPriceQuery = latestPriceQuery.Where("marketplace = ?", marketplaceID)
+	if marketplaceAddress != "" {
+		latestPriceQuery = latestPriceQuery.Where("marketplace_address = ?", marketplaceAddress)
 	}
 
 	// Summarize query will return the sum of all of the freshest prices for
@@ -38,8 +39,8 @@ func (s *Stats) MarketCap(collectionID string, marketplaceID string, from time.T
 	// in the specified date range.
 	sumQuery := s.db.
 		Table("(?) s", latestPriceQuery).
-		Select("SUM(price) AS total, d.date").
-		Where("rank = 1")
+		Select("SUM(trade_price) AS total, d.date").
+		Where("s.rank = 1")
 
 	// Market cap query calculates the actual market cap for each date in the
 	// specified date range. It also calculates the change from the previous date.
