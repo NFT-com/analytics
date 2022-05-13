@@ -7,8 +7,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/99designs/gqlgen/graphql"
-
 	"github.com/NFT-com/graph-api/graph/generated"
 	"github.com/NFT-com/graph-api/graph/models/api"
 )
@@ -22,7 +20,7 @@ func (r *chainServer) Marketplaces(ctx context.Context, obj *api.Chain) ([]*api.
 func (r *chainServer) Collections(ctx context.Context, obj *api.Chain) ([]*api.Collection, error) {
 	// Collections handles expanding the list of Collections within a Chain object.
 
-	return r.Server.collectionsByChain(obj.ID)
+	return r.Server.collectionsByChain(ctx, obj.ID)
 }
 
 func (r *collectionServer) Chain(ctx context.Context, obj *api.Collection) (*api.Chain, error) {
@@ -37,12 +35,6 @@ func (r *collectionServer) Marketplaces(ctx context.Context, obj *api.Collection
 	return r.Server.collectionsListings(obj.ID)
 }
 
-func (r *collectionServer) Nfts(ctx context.Context, obj *api.Collection) ([]*api.NFT, error) {
-	// Nfts handles expanding the list of NFTs within a Collection object.
-
-	return r.Server.getCollectionNFTs(obj.ID)
-}
-
 func (r *marketplaceServer) Chains(ctx context.Context, obj *api.Marketplace) ([]*api.Chain, error) {
 	// Chains handles expanding the list of Chains within a Marketplace object.
 
@@ -52,69 +44,13 @@ func (r *marketplaceServer) Chains(ctx context.Context, obj *api.Marketplace) ([
 func (r *marketplaceServer) Collections(ctx context.Context, obj *api.Marketplace) ([]*api.Collection, error) {
 	// Collections handles expanding the list of Collections within a Marketplace object.
 
-	return r.Server.marketplaceCollections(obj.ID)
-}
-
-func (r *nFTServer) Rarity(ctx context.Context, obj *api.NFT) (float64, error) {
-	// Rarity returns the rarity of the NFT. Rarity is calculated by
-	// multiplying the rarity of each of the NFT traits.
-
-	// If we have already fetched and calculated NFT rarity, we're done.
-	rarity, cached := obj.GetCachedRarity()
-	if cached {
-		return rarity, nil
-	}
-
-	// Fetch trait information (with rarity).
-	traits, err := r.Server.nftTraits(obj, true)
-	if err != nil {
-		return 0, errRetrieveTraitsFailed
-	}
-
-	// Cache the NFT traits.
-	obj.CacheTraits(traits)
-	// Retrieve updated rarity.
-	rarity, _ = obj.GetCachedRarity()
-
-	return rarity, nil
-}
-
-func (r *nFTServer) Traits(ctx context.Context, obj *api.NFT) ([]*api.Trait, error) {
-	// Traits returns the NFT traits, as well as the rarity metric -
-	// the portion of NFTs in that collection that have that trait
-	// with that value.
-
-	// Check whether the rarity metric is requested.
-	wantRarity := false
-
-	fields := graphql.CollectFieldsCtx(ctx, nil)
-	for _, field := range fields {
-		if field.Name == traitRarityField {
-			wantRarity = true
-			break
-		}
-	}
-
-	// Fetch trait information.
-	traits, err := r.Server.nftTraits(obj, wantRarity)
-	if err != nil {
-		r.logError(err)
-
-		return nil, errRetrieveTraitsFailed
-	}
-
-	// If we have trait rarity information included, cache it.
-	if wantRarity {
-		obj.CacheTraits(traits)
-	}
-
-	return traits, nil
+	return r.Server.marketplaceCollections(ctx, obj.ID)
 }
 
 func (r *nFTServer) Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error) {
 	// Collection handles expanding the Collection object within an NFT object.
 
-	return r.Server.getCollection(obj.Collection)
+	return r.Server.getCollection(ctx, obj.Collection)
 }
 
 func (r *queryServer) Chain(ctx context.Context, id string) (*api.Chain, error) {
@@ -132,13 +68,13 @@ func (r *queryServer) Chains(ctx context.Context) ([]*api.Chain, error) {
 func (r *queryServer) Nft(ctx context.Context, id string) (*api.NFT, error) {
 	// Nft implements the `nft` GraphQL query.
 
-	return r.Server.getNFT(id)
+	return r.Server.getNFT(ctx, id)
 }
 
 func (r *queryServer) NftByTokenID(ctx context.Context, chainID string, contract string, tokenID string) (*api.NFT, error) {
 	// NftByTokenID implements the `nftByTokenID` GraphQL query.
 
-	return r.Server.getNFTByTokenID(chainID, contract, tokenID)
+	return r.Server.getNFTByTokenID(ctx, chainID, contract, tokenID)
 }
 
 func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *string, rarityMax *float64, orderBy *api.NFTOrder) ([]*api.NFT, error) {
@@ -147,29 +83,28 @@ func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *strin
 	// FIXME: remove the validation of the sorting mode when all modes become supported
 	switch orderBy.Field {
 
-	case api.NFTOrderFieldValue:
+	case api.NFTOrderFieldValue, api.NFTOrderFieldRarity:
 		return nil, errors.New("TBD: sorting mode not supported")
 
 	// supported sorting mode(s)
 	case api.NFTOrderFieldCreationTime:
-	case api.NFTOrderFieldRarity:
 	}
 
 	// NOTE: Ordering parameter is a pointer but gets initialized to the default value by the middleware.
 
-	return r.Server.nfts(owner, collection, rarityMax, *orderBy)
+	return r.Server.nfts(ctx, owner, collection, rarityMax, *orderBy)
 }
 
 func (r *queryServer) Collection(ctx context.Context, id string) (*api.Collection, error) {
 	// Collection implements the `collection` GraphQL query.
 
-	return r.Server.getCollection(id)
+	return r.Server.getCollection(ctx, id)
 }
 
 func (r *queryServer) CollectionByAddress(ctx context.Context, chainID string, contract string) (*api.Collection, error) {
 	// CollectionByAddress implements the `collectionByAddress` GraphQL query.
 
-	return r.Server.getCollectionByContract(chainID, contract)
+	return r.Server.getCollectionByContract(ctx, chainID, contract)
 }
 
 func (r *queryServer) Collections(ctx context.Context, chain *string, orderBy *api.CollectionOrder) ([]*api.Collection, error) {
@@ -185,7 +120,7 @@ func (r *queryServer) Collections(ctx context.Context, chain *string, orderBy *a
 	case api.CollectionOrderFieldCreationTime:
 	}
 
-	return r.Server.collections(chain, *orderBy)
+	return r.Server.collections(ctx, chain, *orderBy)
 }
 
 // Chain returns generated.ChainResolver implementation.

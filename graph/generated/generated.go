@@ -61,8 +61,8 @@ type ComplexityRoot struct {
 		ID           func(childComplexity int) int
 		ImageURL     func(childComplexity int) int
 		Marketplaces func(childComplexity int) int
+		NFTs         func(childComplexity int) int
 		Name         func(childComplexity int) int
-		Nfts         func(childComplexity int) int
 		Website      func(childComplexity int) int
 	}
 
@@ -113,15 +113,12 @@ type ChainResolver interface {
 type CollectionResolver interface {
 	Chain(ctx context.Context, obj *api.Collection) (*api.Chain, error)
 	Marketplaces(ctx context.Context, obj *api.Collection) ([]*api.Marketplace, error)
-	Nfts(ctx context.Context, obj *api.Collection) ([]*api.NFT, error)
 }
 type MarketplaceResolver interface {
 	Chains(ctx context.Context, obj *api.Marketplace) ([]*api.Chain, error)
 	Collections(ctx context.Context, obj *api.Marketplace) ([]*api.Collection, error)
 }
 type NFTResolver interface {
-	Rarity(ctx context.Context, obj *api.NFT) (float64, error)
-	Traits(ctx context.Context, obj *api.NFT) ([]*api.Trait, error)
 	Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error)
 }
 type QueryResolver interface {
@@ -227,19 +224,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Collection.Marketplaces(childComplexity), true
 
+	case "Collection.nfts":
+		if e.complexity.Collection.NFTs == nil {
+			break
+		}
+
+		return e.complexity.Collection.NFTs(childComplexity), true
+
 	case "Collection.name":
 		if e.complexity.Collection.Name == nil {
 			break
 		}
 
 		return e.complexity.Collection.Name(childComplexity), true
-
-	case "Collection.nfts":
-		if e.complexity.Collection.Nfts == nil {
-			break
-		}
-
-		return e.complexity.Collection.Nfts(childComplexity), true
 
 	case "Collection.website":
 		if e.complexity.Collection.Website == nil {
@@ -1619,14 +1616,14 @@ func (ec *executionContext) _Collection_nfts(ctx context.Context, field graphql.
 		Object:     "Collection",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Collection().Nfts(rctx, obj)
+		return obj.NFTs, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2091,14 +2088,14 @@ func (ec *executionContext) _NFT_rarity(ctx context.Context, field graphql.Colle
 		Object:     "NFT",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.NFT().Rarity(rctx, obj)
+		return obj.Rarity, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2126,14 +2123,14 @@ func (ec *executionContext) _NFT_traits(ctx context.Context, field graphql.Colle
 		Object:     "NFT",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.NFT().Traits(rctx, obj)
+		return obj.Traits, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4106,22 +4103,12 @@ func (ec *executionContext) _Collection(ctx context.Context, sel ast.SelectionSe
 
 			})
 		case "nfts":
-			field := field
-
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Collection_nfts(ctx, field, obj)
-				return res
+				return ec._Collection_nfts(ctx, field, obj)
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			out.Values[i] = innerFunc(ctx)
 
-			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4300,42 +4287,22 @@ func (ec *executionContext) _NFT(ctx context.Context, sel ast.SelectionSet, obj 
 				atomic.AddUint32(&invalids, 1)
 			}
 		case "rarity":
-			field := field
-
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._NFT_rarity(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
+				return ec._NFT_rarity(ctx, field, obj)
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			out.Values[i] = innerFunc(ctx)
 
-			})
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "traits":
-			field := field
-
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._NFT_traits(ctx, field, obj)
-				return res
+				return ec._NFT_traits(ctx, field, obj)
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			out.Values[i] = innerFunc(ctx)
 
-			})
 		case "collection":
 			field := field
 

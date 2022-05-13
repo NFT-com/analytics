@@ -35,6 +35,7 @@ const (
 
 	defaultDBMaxConnections  = 70
 	defaultDBIdleConnections = 20
+	defaultNFTSearchLimit    = 1000
 )
 
 func main() {
@@ -57,22 +58,24 @@ func run() error {
 		flagLogLevel           string
 		flagDBConnections      int
 		flagDBIdleConnections  int
+		flagEnableQueryLogging bool
+		flagEnablePlayground   bool
 		flagPlayground         string
 		flagComplexityLimit    int
-		flagEnablePlayground   bool
-		flagEnableQueryLogging bool
+		flagSearchLimit        uint
 	)
 
 	pflag.StringVarP(&flagAggregationAPI, "aggregation-api", "a", "", "URL of the Aggregation API")
 	pflag.StringVarP(&flagBind, "bind", "b", ":8080", "bind address for serving requests")
 	pflag.StringVarP(&flagDatabase, "database", "d", "", "database address")
 	pflag.StringVarP(&flagLogLevel, "log-level", "l", "info", "log level")
-	pflag.StringVarP(&flagPlayground, "playground-path", "p", defaultPlaygroundPath, "path for GraphQL playground")
 	pflag.IntVar(&flagDBConnections, "db-connection-limit", defaultDBMaxConnections, "maximum number of database connections, -1 for unlimited")
 	pflag.IntVar(&flagDBIdleConnections, "db-idle-connection-limit", defaultDBIdleConnections, "maximum number of idle connections")
-	pflag.IntVar(&flagComplexityLimit, "query-complexity", 0, "GraphQL query complexity limit")
 	pflag.BoolVar(&flagEnablePlayground, "enable-playground", false, "enable GraphQL playground")
 	pflag.BoolVar(&flagEnableQueryLogging, "enable-query-logging", true, "enable logging of database queries")
+	pflag.StringVar(&flagPlayground, "playground-path", defaultPlaygroundPath, "path for GraphQL playground")
+	pflag.IntVar(&flagComplexityLimit, "query-complexity", 0, "GraphQL query complexity limit")
+	pflag.UintVar(&flagSearchLimit, "search-limit", defaultNFTSearchLimit, "maximum number of results returned from the NFT search query")
 
 	pflag.Parse()
 
@@ -114,7 +117,11 @@ func run() error {
 	sqlDB.SetMaxIdleConns(flagDBIdleConnections)
 
 	storage := storage.New(db)
-	apiServer := api.NewServer(storage, log)
+	apiServer := api.NewServer(
+		storage,
+		log,
+		api.WithSearchLimit(flagSearchLimit),
+	)
 	cfg := generated.Config{
 		Resolvers: apiServer,
 	}
