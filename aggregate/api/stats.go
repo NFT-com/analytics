@@ -7,13 +7,19 @@ import (
 )
 
 type Stats interface {
-	Volume(collectionID string, marketplaceID string, from time.Time, to time.Time) ([]datapoint.Volume, error)
-	MarketCap(collectionID string, marketplaceID string, from time.Time, to time.Time) ([]datapoint.MarketCap, error)
-	Sales(collectionID string, marketplaceID string, from time.Time, to time.Time) ([]datapoint.Sale, error)
-	Floor(collectionID string, from time.Time, to time.Time) ([]datapoint.Floor, error)
-	Average(collectionID string, from time.Time, to time.Time) ([]datapoint.Average, error)
-	Count(collectionID string, from time.Time, to time.Time) ([]datapoint.Count, error)
-	MarketplaceUsers(marketplaceID string, from time.Time, to time.Time) ([]datapoint.Users, error)
-	NFTPrice(nftID string, from time.Time, to time.Time) ([]datapoint.Price, error)
-	NFTAveragePrice(nftID string) (datapoint.Average, error)
+	// FIXME: These are all Collection-only queries at the moment. Soon they may be collection+marketplace again.
+	// Collection statistics.
+	CollectionVolume(chainID uint, collectionAddress string, from time.Time, to time.Time) ([]datapoint.Volume, error)
+	CollectionMarketCap(chainID uint, collectionAddress string, from time.Time, to time.Time) ([]datapoint.MarketCap, error)
+	CollectionSales(chainID uint, collectionAddress string, from time.Time, to time.Time) ([]datapoint.Sale, error)
+	CollectionFloor(chainID uint, collectionAddress string, from time.Time, to time.Time) ([]datapoint.Floor, error)
+	CollectionAverage(chainID uint, collectionAddress string, from time.Time, to time.Time) ([]datapoint.Average, error)
+	CollectionCount(chainID uint, collectionAddress string, from time.Time, to time.Time) ([]datapoint.Count, error)
+
+	// NFT statistics.
+	NFTPrice(chainID uint, collectionAddress string, tokenID string, from time.Time, to time.Time) ([]datapoint.Price, error)
+	NFTAveragePrice(chainID uint, collectionAddress string, tokenID string) (datapoint.Average, error)
+
+	// Marketplace statistics.
+	// MarketplaceUsers(chainID uint, marketplaceAddress string, from time.Time, to time.Time) ([]datapoint.Users, error)
 }
