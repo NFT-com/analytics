@@ -1,8 +1,8 @@
 package api
 
 import (
+	"errors"
 	"net/http"
-	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -10,33 +10,29 @@ import (
 // CollectionMarketCap handles the request for the market cap for a collection.
 func (a *API) CollectionMarketCap(ctx echo.Context) error {
 
+	// Unpack the request.
 	var req apiRequest
 	err := ctx.Bind(&req)
 	if err != nil {
 		return bindError(err)
 	}
 
-	return a.marketCap(ctx, req.ID, "", req.From.time(), req.To.time())
-}
-
-// MarketplaceMarketCap handles the request for the market cap for a marketplace.
-func (a *API) MarketplaceMarketCap(ctx echo.Context) error {
-
-	var req apiRequest
-	err := ctx.Bind(&req)
+	// Lookup chain ID and contract address for the collection.
+	chainID, address, err := a.lookupCollection(req.ID)
 	if err != nil {
-		return bindError(err)
+		return apiError(err)
 	}
 
-	return a.marketCap(ctx, "", req.ID, req.From.time(), req.To.time())
-}
-
-func (a *API) marketCap(ctx echo.Context, collectionID string, marketplaceID string, from time.Time, to time.Time) error {
-
-	cap, err := a.stats.MarketCap(collectionID, marketplaceID, from, to)
+	// Retrieve the collection market cap.
+	cap, err := a.stats.CollectionMarketCap(chainID, address, req.From.time(), req.To.time())
 	if err != nil {
 		return apiError(err)
 	}
 
 	return ctx.JSON(http.StatusOK, cap)
+}
+
+// MarketplaceMarketCap handles the request for the market cap for a marketplace.
+func (a *API) MarketplaceMarketCap(ctx echo.Context) error {
+	return errors.New("TBD: Not implemented")
 }

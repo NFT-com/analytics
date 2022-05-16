@@ -1,18 +1,16 @@
 package stats
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
 	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
 )
 
-func (s *Stats) Average(chainID uint, collectionAddress string, from time.Time, to time.Time) ([]datapoint.Average, error) {
-
-	if collectionAddress != "" {
-		return nil, errors.New("collection addresss is required")
-	}
+// CollectionAverage returns the average price for the collection NFT in the given interval.
+// Average is calculating by taking the latest price for all NFTs in the collection at the
+// given point in time and averaging them.
+func (s *Stats) CollectionAverage(chainID uint, collectionAddress string, from time.Time, to time.Time) ([]datapoint.Average, error) {
 
 	// NOTE: The query in this function is VERY similar to the market cap query,
 	// with the difference that it averages the prices instead of adding them.

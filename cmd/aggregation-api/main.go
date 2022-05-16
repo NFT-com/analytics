@@ -21,6 +21,7 @@ import (
 
 	"github.com/NFT-com/graph-api/aggregate/api"
 	"github.com/NFT-com/graph-api/aggregate/stats"
+	"github.com/NFT-com/graph-api/aggregate/storage"
 )
 
 // Endpoint paths.
@@ -91,7 +92,9 @@ func run() error {
 
 	stats := stats.New(db)
 
-	api := api.New(stats, log)
+	storage := storage.New(db)
+
+	api := api.New(stats, storage, log)
 
 	// Initialize Echo Web Server.
 	server := echo.New()
@@ -102,6 +105,9 @@ func run() error {
 	slog := lecho.From(log)
 	server.Logger = lecho.From(log)
 	server.Use(lecho.Middleware(lecho.Config{Logger: slog}))
+
+	// FIXME: Marketplace will have chainID+address combinations,
+	// not a single thing.
 
 	// Initialize routes.
 	server.GET("/collection/:id/volume", api.CollectionVolume)

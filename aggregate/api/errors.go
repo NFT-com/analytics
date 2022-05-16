@@ -1,9 +1,14 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+)
+
+var (
+	ErrRecordNotFound = errors.New("record not found")
 )
 
 // TODO: Improve error handling - some errors need not be relayed to the user.

@@ -1,21 +1,15 @@
 package stats
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
 	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
 )
 
-// Volume returns the total value of all trades fitting the specified criteria in the given interval.
+// CollectionVolume returns the total value of all trades in this collection in the given interval.
 // Volume for a point in time is calculated as a sum of all sales made until (and including) that moment.
-func (s *Stats) Volume(chainID uint, collectionAddress string, marketplaceAddress string, from time.Time, to time.Time) ([]datapoint.Volume, error) {
-
-	// Either collection or marketplace address is required.
-	if collectionAddress == "" && marketplaceAddress == "" {
-		return nil, errors.New("collection or marketplace address is required")
-	}
+func (s *Stats) CollectionVolume(chainID uint, collectionAddress string, from time.Time, to time.Time) ([]datapoint.Volume, error) {
 
 	// FIXME: Use 'timestamp without time zone' for 'generate_series', slight performance improvement
 
@@ -26,15 +20,9 @@ func (s *Stats) Volume(chainID uint, collectionAddress string, marketplaceAddres
 			from.Format(timeFormat),
 			to.Format(timeFormat)).
 		Where("chain_id = ?", chainID).
+		Where("collection_address = ?", collectionAddress).
 		Where("emitted_at <= date").
 		Group("date")
-
-	if collectionAddress != "" {
-		sumQuery = sumQuery.Where("collection_address = ?", collectionAddress)
-	}
-	if marketplaceAddress != "" {
-		sumQuery = sumQuery.Where("marketplace_address = ?", marketplaceAddress)
-	}
 
 	// Determine the difference from the previous data point.
 	seriesQuery := s.db.

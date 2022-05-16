@@ -1,9 +1,9 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -11,34 +11,30 @@ import (
 // CollectionVolume handles the request for the trading volume for a collection.
 func (a *API) CollectionVolume(ctx echo.Context) error {
 
+	// Unpack the request.
 	var req apiRequest
 	err := ctx.Bind(&req)
 	if err != nil {
 		return bindError(err)
 	}
 
-	return a.volume(ctx, req.ID, "", req.From.time(), req.To.time())
-}
-
-// MarketplaceVolume handles the request for the trading volume for a marketplace.
-func (a *API) MarketplaceVolume(ctx echo.Context) error {
-
-	var req apiRequest
-	err := ctx.Bind(&req)
+	// Lookup chain ID and contract address for the collection.
+	chainID, address, err := a.lookupCollection(req.ID)
 	if err != nil {
-		return bindError(err)
+		return apiError(err)
 	}
 
-	return a.volume(ctx, "", req.ID, req.From.time(), req.To.time())
-}
-
-func (a *API) volume(ctx echo.Context, collectionID string, marketplaceID string, from time.Time, to time.Time) error {
-
-	volume, err := a.stats.Volume(collectionID, marketplaceID, from, to)
+	// Retrieve collection volume.
+	volume, err := a.stats.CollectionVolume(chainID, address, req.From.time(), req.To.time())
 	if err != nil {
 		err := fmt.Errorf("could not get volume data: %w", err)
 		return apiError(err)
 	}
 
 	return ctx.JSON(http.StatusOK, volume)
+}
+
+// MarketplaceVolume handles the request for the trading volume for a marketplace.
+func (a *API) MarketplaceVolume(ctx echo.Context) error {
+	return errors.New("TBD: Not implemented")
 }

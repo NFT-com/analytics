@@ -1,7 +1,6 @@
 package stats
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
@@ -10,11 +9,9 @@ import (
 
 // FIXME: Add comments for exported functions.
 
-func (s *Stats) Floor(chainID uint, collectionAddress string, from time.Time, to time.Time) ([]datapoint.Floor, error) {
-
-	if collectionAddress == "" {
-		return nil, errors.New("collection ID is required")
-	}
+// CollectionFloor returns the floor price for the collection in the given interval.
+// Floor price is the lowest price for an NFT in that collection on the given point in time.s
+func (s *Stats) CollectionFloor(chainID uint, collectionAddress string, from time.Time, to time.Time) ([]datapoint.Floor, error) {
 
 	intervalQuery := s.db.
 		Table("sales, LATERAL generate_series(?, ?, INTERVAL '1 day') AS start_date",
