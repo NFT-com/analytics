@@ -1,10 +1,7 @@
 package storage
 
 import (
-	"errors"
 	"fmt"
-
-	"gorm.io/gorm"
 
 	aggregate "github.com/NFT-com/graph-api/aggregate/api"
 )
@@ -12,19 +9,23 @@ import (
 // CollectionAddress returns the chain ID and contract address for a collection
 func (s *Storage) CollectionAddress(id string) (uint, string, error) {
 
-	var address collectionAddress
+	// FIXME: Check - using `First` uses wrong table name
+
+	var address []collectionAddress
 	err := s.db.
 		Table("collections c, networks n").
 		Select("n.chain_id, c.contract_address").
 		Where("c.id = ?", id).
 		Where("n.id = c.network_id").
-		First(&address).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return 0, "", aggregate.ErrRecordNotFound
-	}
+		Limit(1).
+		Find(&address).Error
 	if err != nil {
 		return 0, "", fmt.Errorf("could not retrieve collection address: %w", err)
 	}
 
-	return address.ChainID, address.Address, nil
+	if len(address) == 0 {
+		return 0, "", aggregate.ErrRecordNotFound
+	}
+
+	return address[0].ChainID, address[0].Address, nil
 }

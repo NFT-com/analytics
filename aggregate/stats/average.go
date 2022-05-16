@@ -22,7 +22,7 @@ func (s *Stats) CollectionAverage(chainID uint, collectionAddress string, from t
 		Table("sales").
 		Select("sales.*, row_number() OVER (PARTITION BY token_id ORDER BY emitted_at DESC) AS rank").
 		Where("chain_id = ? ", chainID).
-		Where("collection = ?", collectionAddress).
+		Where("collection_address = ?", collectionAddress).
 		Where("emitted_at <= d.date")
 
 	// Averaging query will return the average of all of the freshest prices for

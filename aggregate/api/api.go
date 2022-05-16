@@ -22,6 +22,8 @@ func New(stats Stats, lookup Lookup, log zerolog.Logger) *API {
 		stats:  stats,
 		lookup: lookup,
 		log:    log,
+
+		collectionCache: make(map[string]collectionAddress),
 	}
 
 	return &api
