@@ -10,7 +10,8 @@ import (
 // Collection returns the chain ID and contract address for a collection
 func (s *Storage) Collection(id string) (identifier.Address, error) {
 
-	// FIXME: Check - using `First` uses wrong table name?
+	// Note: Using `Find` with a limit of 1 instead of `First` because the generated SQL
+	// uses the wrong table name otherwise.
 
 	var address []collectionAddress
 	err := s.db.
@@ -23,7 +24,6 @@ func (s *Storage) Collection(id string) (identifier.Address, error) {
 	if err != nil {
 		return identifier.Address{}, fmt.Errorf("could not retrieve collection address: %w", err)
 	}
-
 	if len(address) == 0 {
 		return identifier.Address{}, aggregate.ErrRecordNotFound
 	}

@@ -53,7 +53,7 @@ func (a *API) lookupNFT(id string) (identifier.NFT, error) {
 
 	nft, err := a.lookup.NFT(id)
 	if err != nil {
-		return identifier.NFT{}, fmt.Errorf("could not lookup collection: %w", err)
+		return identifier.NFT{}, fmt.Errorf("could not lookup NFT: %w", err)
 	}
 
 	// FIXME: Add caching.

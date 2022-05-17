@@ -49,7 +49,7 @@ type Users struct {
 // NOTE: This is the only data type that uses the actual time instead
 // of the date.
 type Price struct {
-	Price string    `json:"price" gorm:"column:price"`
+	Price string    `json:"price" gorm:"column:trade_price"`
 	Time  time.Time `json:"emitted_at" gorm:"column:emitted_at"`
 }
 
