@@ -40,7 +40,5 @@ func (s *Storage) NFT(id string) (identifier.NFT, error) {
 		TokenID:    nft.TokenID,
 	}
 
-	fmt.Printf("%+#v\n", nftAddress)
-
 	return nftAddress, nil
 }
