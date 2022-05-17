@@ -19,13 +19,13 @@ func (a *API) CollectionVolume(ctx echo.Context) error {
 	}
 
 	// Lookup chain ID and contract address for the collection.
-	chainID, address, err := a.lookupCollection(req.ID)
+	address, err := a.lookupCollection(req.ID)
 	if err != nil {
 		return apiError(err)
 	}
 
 	// Retrieve collection volume.
-	volume, err := a.stats.CollectionVolume(chainID, address, req.From.time(), req.To.time())
+	volume, err := a.stats.CollectionVolume(address, req.From.time(), req.To.time())
 	if err != nil {
 		err := fmt.Errorf("could not get volume data: %w", err)
 		return apiError(err)

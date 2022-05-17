@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/rs/zerolog"
+
+	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
 // API provides the Aggregation API functionality.
@@ -12,7 +14,7 @@ type API struct {
 	lookup Lookup
 	log    zerolog.Logger
 
-	collectionCache map[string]collectionAddress
+	collectionCache map[string]identifier.Address
 }
 
 // New creates a new API handler.
@@ -23,31 +25,38 @@ func New(stats Stats, lookup Lookup, log zerolog.Logger) *API {
 		lookup: lookup,
 		log:    log,
 
-		collectionCache: make(map[string]collectionAddress),
+		collectionCache: make(map[string]identifier.Address),
 	}
 
 	return &api
 }
 
-func (a *API) lookupCollection(id string) (uint, string, error) {
+func (a *API) lookupCollection(id string) (identifier.Address, error) {
 
 	address, ok := a.collectionCache[id]
 	if ok {
-		return address.chainID, address.contractAddress, nil
+		return address, nil
 	}
 
-	chainID, contractAddress, err := a.lookup.CollectionAddress(id)
+	address, err := a.lookup.Collection(id)
 	if err != nil {
-		return 0, "", fmt.Errorf("could not lookup collection: %w", err)
-	}
-
-	address = collectionAddress{
-		chainID:         chainID,
-		contractAddress: contractAddress,
+		return identifier.Address{}, fmt.Errorf("could not lookup collection: %w", err)
 	}
 
 	// FIXME: Add a mutex to sync this.
 	a.collectionCache[id] = address
 
-	return chainID, contractAddress, nil
+	return address, nil
+}
+
+func (a *API) lookupNFT(id string) (identifier.NFT, error) {
+
+	nft, err := a.lookup.NFT(id)
+	if err != nil {
+		return identifier.NFT{}, fmt.Errorf("could not lookup collection: %w", err)
+	}
+
+	// FIXME: Add caching.
+
+	return nft, nil
 }

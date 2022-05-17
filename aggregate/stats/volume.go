@@ -5,11 +5,12 @@ import (
 	"time"
 
 	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
+	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
 // CollectionVolume returns the total value of all trades in this collection in the given interval.
 // Volume for a point in time is calculated as a sum of all sales made until (and including) that moment.
-func (s *Stats) CollectionVolume(chainID uint, collectionAddress string, from time.Time, to time.Time) ([]datapoint.Volume, error) {
+func (s *Stats) CollectionVolume(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error) {
 
 	// FIXME: Use 'timestamp without time zone' for 'generate_series', slight performance improvement
 
@@ -19,8 +20,8 @@ func (s *Stats) CollectionVolume(chainID uint, collectionAddress string, from ti
 		Table("sales, LATERAL generate_series(?, ?, INTERVAL '1 day') AS date",
 			from.Format(timeFormat),
 			to.Format(timeFormat)).
-		Where("chain_id = ?", chainID).
-		Where("collection_address = ?", collectionAddress).
+		Where("chain_id = ?", address.ChainID).
+		Where("collection_address = ?", address.Address).
 		Where("emitted_at <= date").
 		Group("date")
 

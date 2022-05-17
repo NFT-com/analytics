@@ -5,12 +5,13 @@ import (
 	"time"
 
 	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
+	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
 // CollectionAverage returns the average price for the collection NFT in the given interval.
 // Average is calculating by taking the latest price for all NFTs in the collection at the
 // given point in time and averaging them.
-func (s *Stats) CollectionAverage(chainID uint, collectionAddress string, from time.Time, to time.Time) ([]datapoint.Average, error) {
+func (s *Stats) CollectionAverage(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Average, error) {
 
 	// NOTE: The query in this function is VERY similar to the market cap query,
 	// with the difference that it averages the prices instead of adding them.
@@ -21,8 +22,8 @@ func (s *Stats) CollectionAverage(chainID uint, collectionAddress string, from t
 	latestPriceQuery := s.db.
 		Table("sales").
 		Select("sales.*, row_number() OVER (PARTITION BY token_id ORDER BY emitted_at DESC) AS rank").
-		Where("chain_id = ? ", chainID).
-		Where("collection_address = ?", collectionAddress).
+		Where("chain_id = ? ", address.ChainID).
+		Where("collection_address = ?", address.Address).
 		Where("emitted_at <= d.date")
 
 	// Averaging query will return the average of all of the freshest prices for

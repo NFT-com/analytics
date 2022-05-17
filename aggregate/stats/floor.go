@@ -5,13 +5,14 @@ import (
 	"time"
 
 	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
+	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
 // FIXME: Add comments for exported functions.
 
 // CollectionFloor returns the floor price for the collection in the given interval.
 // Floor price is the lowest price for an NFT in that collection on the given point in time.s
-func (s *Stats) CollectionFloor(chainID uint, collectionAddress string, from time.Time, to time.Time) ([]datapoint.Floor, error) {
+func (s *Stats) CollectionFloor(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Floor, error) {
 
 	intervalQuery := s.db.
 		Table("sales, LATERAL generate_series(?, ?, INTERVAL '1 day') AS start_date",
@@ -21,7 +22,8 @@ func (s *Stats) CollectionFloor(chainID uint, collectionAddress string, from tim
 			"sales.*",
 			"start_date",
 			"start_date + interval '1 day' AS end_date"}).
-		Where("collection_address = ?", collectionAddress)
+		Where("chain_id = ?", address.ChainID).
+		Where("collection_address = ?", address.Address)
 
 	seriesQuery := s.db.
 		Table("(?) s", intervalQuery).

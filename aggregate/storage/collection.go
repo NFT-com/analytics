@@ -4,12 +4,13 @@ import (
 	"fmt"
 
 	aggregate "github.com/NFT-com/graph-api/aggregate/api"
+	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
-// CollectionAddress returns the chain ID and contract address for a collection
-func (s *Storage) CollectionAddress(id string) (uint, string, error) {
+// Collection returns the chain ID and contract address for a collection
+func (s *Storage) Collection(id string) (identifier.Address, error) {
 
-	// FIXME: Check - using `First` uses wrong table name
+	// FIXME: Check - using `First` uses wrong table name?
 
 	var address []collectionAddress
 	err := s.db.
@@ -20,12 +21,17 @@ func (s *Storage) CollectionAddress(id string) (uint, string, error) {
 		Limit(1).
 		Find(&address).Error
 	if err != nil {
-		return 0, "", fmt.Errorf("could not retrieve collection address: %w", err)
+		return identifier.Address{}, fmt.Errorf("could not retrieve collection address: %w", err)
 	}
 
 	if len(address) == 0 {
-		return 0, "", aggregate.ErrRecordNotFound
+		return identifier.Address{}, aggregate.ErrRecordNotFound
 	}
 
-	return address[0].ChainID, address[0].Address, nil
+	out := identifier.Address{
+		ChainID: address[0].ChainID,
+		Address: address[0].Address,
+	}
+
+	return out, nil
 }

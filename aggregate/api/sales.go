@@ -18,13 +18,13 @@ func (a *API) CollectionSales(ctx echo.Context) error {
 	}
 
 	// Lookup chain ID and contract address for the collection.
-	chainID, address, err := a.lookupCollection(req.ID)
+	address, err := a.lookupCollection(req.ID)
 	if err != nil {
 		return apiError(err)
 	}
 
 	// Retrieve number of sales for the collection.
-	sales, err := a.stats.CollectionSales(chainID, address, req.From.time(), req.To.time())
+	sales, err := a.stats.CollectionSales(address, req.From.time(), req.To.time())
 	if err != nil {
 		return apiError(err)
 	}
