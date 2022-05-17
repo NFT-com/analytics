@@ -8,17 +8,13 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
-const (
-	zeroAddress = "0x0000000000000000000000000000000000000000"
-)
-
 // FIXME: Make this work now after mints and burns are removed.
 func (s *Stats) CollectionCount(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Count, error) {
 
 	mintsQuery := s.db.
 		Table("transfers").
 		Select("COUNT(*)").
-		Where("sender_address = ?", zeroAddress).
+		Where("sender_address = ?", identifier.ZeroAddress).
 		Where("chain_id = ?", address.ChainID).
 		Where("collection_address = ?", address.Address).
 		Where("emitted_at <= date")
@@ -26,7 +22,7 @@ func (s *Stats) CollectionCount(address identifier.Address, from time.Time, to t
 	burnsQuery := s.db.
 		Table("transfers").
 		Select("COUNT(*)").
-		Where("receiver_address = ?", zeroAddress).
+		Where("receiver_address = ?", identifier.ZeroAddress).
 		Where("chain_id = ?", address.ChainID).
 		Where("collection_address = ?", address.Address).
 		Where("emitted_at <= date")
