@@ -5,10 +5,11 @@ import (
 	"time"
 
 	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
+	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
 // CollectionMarketCap returns the market cap for the collection in the given time range.
-func (s *Stats) CollectionMarketCap(chainID uint, collectionAddress string, from time.Time, to time.Time) ([]datapoint.MarketCap, error) {
+func (s *Stats) CollectionMarketCap(address identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error) {
 
 	// Latest price query will return prices per NFT ranked by freshness.
 	// Prices with the lowest rank (closer to 1) will be the most recent ones.
@@ -17,8 +18,8 @@ func (s *Stats) CollectionMarketCap(chainID uint, collectionAddress string, from
 		Table("sales").
 		Select("sales.*, row_number() OVER (PARTITION BY token_id ORDER BY emitted_at DESC) AS rank").
 		Where("emitted_at <= d.date").
-		Where("chain_id = ? ", chainID).
-		Where("collection_address = ?", collectionAddress)
+		Where("chain_id = ? ", address.ChainID).
+		Where("collection_address = ?", address.Address)
 
 	// Summarize query will return the sum of all of the freshest prices for
 	// NFTs in a collection. The query leverages the "latest price" query as a subquery

@@ -18,13 +18,13 @@ func (a *API) CollectionCount(ctx echo.Context) error {
 	}
 
 	// Lookup chain ID and contract address for the collection.
-	chainID, address, err := a.lookupCollection(req.ID)
+	address, err := a.lookupCollection(req.ID)
 	if err != nil {
 		return apiError(err)
 	}
 
 	// Retrieve the number of NFTs in the collection.
-	count, err := a.stats.CollectionCount(chainID, address, req.From.time(), req.To.time())
+	count, err := a.stats.CollectionCount(address, req.From.time(), req.To.time())
 	if err != nil {
 		return apiError(fmt.Errorf("could not retrieve NFT count: %w", err))
 	}

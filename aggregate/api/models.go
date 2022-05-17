@@ -36,8 +36,3 @@ func (b *rangeBound) UnmarshalParam(param string) error {
 func (b rangeBound) time() time.Time {
 	return time.Time(b)
 }
-
-type collectionAddress struct {
-	chainID         uint
-	contractAddress string
-}

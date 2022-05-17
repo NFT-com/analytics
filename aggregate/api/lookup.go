@@ -1,6 +1,11 @@
 package api
 
+import (
+	"github.com/NFT-com/graph-api/aggregate/models/identifier"
+)
+
 // Lookup provides collection and marketplace address lookup based on the ID.
 type Lookup interface {
-	CollectionAddress(id string) (chainID uint, contractAddress string, err error)
+	Collection(id string) (identifier.Address, error)
+	NFT(id string) (identifier.NFT, error)
 }

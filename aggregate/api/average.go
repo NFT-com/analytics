@@ -18,13 +18,13 @@ func (a *API) CollectionAverage(ctx echo.Context) error {
 	}
 
 	// Lookup chain ID and contract address for the collection.
-	chainID, address, err := a.lookupCollection(req.ID)
+	address, err := a.lookupCollection(req.ID)
 	if err != nil {
 		return apiError(err)
 	}
 
 	// Retrieve collection average value.
-	avg, err := a.stats.CollectionAverage(chainID, address, req.From.time(), req.To.time())
+	avg, err := a.stats.CollectionAverage(address, req.From.time(), req.To.time())
 	if err != nil {
 		err := fmt.Errorf("could not retrieve collection average price: %w", err)
 		return apiError(err)

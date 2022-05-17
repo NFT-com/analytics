@@ -18,13 +18,13 @@ func (a *API) CollectionMarketCap(ctx echo.Context) error {
 	}
 
 	// Lookup chain ID and contract address for the collection.
-	chainID, address, err := a.lookupCollection(req.ID)
+	address, err := a.lookupCollection(req.ID)
 	if err != nil {
 		return apiError(err)
 	}
 
 	// Retrieve the collection market cap.
-	cap, err := a.stats.CollectionMarketCap(chainID, address, req.From.time(), req.To.time())
+	cap, err := a.stats.CollectionMarketCap(address, req.From.time(), req.To.time())
 	if err != nil {
 		return apiError(err)
 	}
