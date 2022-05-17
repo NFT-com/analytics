@@ -18,7 +18,7 @@ func (s *Stats) NFTPrice(nft identifier.NFT, from time.Time, to time.Time) ([]da
 
 	query := s.db.
 		Table("sales").
-		Select("price, emitted_at").
+		Select("trade_price, emitted_at").
 		Where("chain_id = ?", nft.Collection.ChainID).
 		Where("collection_address = ?", nft.Collection.Address).
 		Where("token_id = ?", nft.TokenID).
