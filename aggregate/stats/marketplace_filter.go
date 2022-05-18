@@ -9,8 +9,9 @@ import (
 // appropriate `WHERE` clauses to the SQL query.
 func (s *Stats) createMarketplaceFilter(addresses []identifier.Address) *gorm.DB {
 
+	// Return an empty condition.
 	if len(addresses) == 0 {
-		return nil
+		return s.db
 	}
 
 	mdb := s.db.Where("chain_id = ? AND marketplace_address = ?",
