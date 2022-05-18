@@ -8,9 +8,19 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
-// CollectionVolume returns the total value of all trades in this collection in the given interval.
+// CollectionVolume returns the total value of all trades in specified collection in the given interval.
 // Volume for a point in time is calculated as a sum of all sales made until (and including) that moment.
 func (s *Stats) CollectionVolume(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error) {
+	return s.volume(&address, nil, from, to)
+}
+
+// MarketplaceVolume returns the total value of all trades in specified marketplace in the given interval.
+// Volume for a point in time is calculated as a sum of all sales made until (and including) that moment.
+func (s *Stats) MarketplaceVolume(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error) {
+	return s.volume(nil, addresses, from, to)
+}
+
+func (s *Stats) volume(collectionAddress *identifier.Address, marketplaceAddresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error) {
 
 	// FIXME: Use 'timestamp without time zone' for 'generate_series', slight performance improvement
 
@@ -20,10 +30,20 @@ func (s *Stats) CollectionVolume(address identifier.Address, from time.Time, to 
 		Table("sales, LATERAL generate_series(?, ?, INTERVAL '1 day') AS date",
 			from.Format(timeFormat),
 			to.Format(timeFormat)).
-		Where("chain_id = ?", address.ChainID).
-		Where("collection_address = ?", address.Address).
 		Where("emitted_at <= date").
 		Group("date")
+
+	// Set collection filter if needed.
+	if collectionAddress != nil {
+		collectionFilter := s.createCollectionFilter(*collectionAddress)
+		sumQuery.Where(collectionFilter)
+	}
+
+	// Set marketplace filter if needed.
+	if len(marketplaceAddresses) > 0 {
+		marketplaceFilter := s.createMarketplaceFilter(marketplaceAddresses)
+		sumQuery.Where(marketplaceFilter)
+	}
 
 	// Determine the difference from the previous data point.
 	seriesQuery := s.db.
