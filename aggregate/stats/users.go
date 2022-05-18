@@ -5,20 +5,37 @@ import (
 	"time"
 
 	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
+	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
-func (s *Stats) MarketplaceUsers(marketplaceID string, from time.Time, to time.Time) ([]datapoint.Users, error) {
+func (s *Stats) MarketplaceUserCount(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Users, error) {
+
+	marketplaceFilter := s.createMarketplaceFilter(addresses)
+
+	// Select all fitting sellers on a marketplace.
+	sellersQuery := s.db.
+		Table("sales").
+		Select("seller_address AS acc").
+		Where("emitted_at <= date").
+		Where(marketplaceFilter)
+
+	// Select all fitting buyers on a marketplace.
+	buyersQuery := s.db.
+		Table("sales").
+		Select("buyer_address AS acc").
+		Where("emitted_at <= date").
+		Where(marketplaceFilter)
 
 	// Count query calculates the number of unique users for events in a time span.
+	// NOTE: SQL union removes duplicates by default.
 	countQuery := s.db.
-		Table("generate_series(?, ?, interval '1 day' ) AS date, "+
-			"LATERAL ( (SELECT seller AS acc FROM sales_collections WHERE marketplace = ? AND emitted_at <= date) UNION"+
-			"(SELECT buyer AS acc FROM sales_collections WHERE marketplace = ? AND emitted_at <= date ) ) users",
+		Table("generate_series(?, ?, interval '1 day') as date, "+
+			"LATERAL (( ? ) UNION (?)) users",
 			from.Format(timeFormat),
 			to.Format(timeFormat),
-			marketplaceID,
-			marketplaceID,
-		).Select("COUNT(users.*) AS count, date").
+			sellersQuery,
+			buyersQuery).
+		Select("COUNT (users.*) AS count, date").
 		Group("date")
 
 	// Delta query will show the number of unique users, along with the change from the previous data point.
@@ -39,6 +56,5 @@ func (s *Stats) MarketplaceUsers(marketplaceID string, from time.Time, to time.T
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve number of users: %w", err)
 	}
-
 	return out, nil
 }

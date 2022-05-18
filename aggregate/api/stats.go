@@ -17,6 +17,11 @@ type Stats interface {
 	CollectionAverage(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Average, error)
 	CollectionCount(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Count, error)
 
+	// MarketplaceVolume(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error)
+	// MarketplaceMarketCap(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error)
+	// MarketplaceSales(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error)
+	MarketplaceUserCount(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Users, error)
+
 	// NFT statistics.
 	NFTPrice(address identifier.NFT, from time.Time, to time.Time) ([]datapoint.Price, error)
 	NFTAveragePrice(address identifier.NFT) (datapoint.Average, error)

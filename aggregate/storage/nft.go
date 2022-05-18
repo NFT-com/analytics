@@ -7,6 +7,7 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
+// NFT returns the identifier of the specified NFT.
 func (s *Storage) NFT(id string) (identifier.NFT, error) {
 
 	// Note: Using `Find` with a limit of 1 instead of `First` because the generated SQL
