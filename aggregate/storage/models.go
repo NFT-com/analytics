@@ -1,8 +1,8 @@
 package storage
 
-type collectionAddress struct {
-	ChainID uint   `gorm:"column:chain_id"`
-	Address string `gorm:"column:contract_address"`
+type networkAddress struct {
+	ChainID         uint   `gorm:"column:chain_id"`
+	ContractAddress string `gorm:"column:contract_address"`
 }
 
 type nftIdentifier struct {

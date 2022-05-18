@@ -56,7 +56,20 @@ func (a *API) lookupNFT(id string) (identifier.NFT, error) {
 		return identifier.NFT{}, fmt.Errorf("could not lookup NFT: %w", err)
 	}
 
-	// FIXME: Add caching.
+	// FIXME: Add caching. Though, due to the amount of NFTs, it may not be feasible
+	// to cache ALL NFT IDs. Instad, perhaps handle them by group.
 
 	return nft, nil
+}
+
+func (a *API) lookupMarketplace(id string) ([]identifier.Address, error) {
+
+	addresses, err := a.lookup.Marketplace(id)
+	if err != nil {
+		return nil, fmt.Errorf("could not lookup marketplace: %w", err)
+	}
+
+	// FIXME: Add caching.
+
+	return addresses, nil
 }

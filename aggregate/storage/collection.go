@@ -7,13 +7,13 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
-// Collection returns the chain ID and contract address for a collection
+// Collection returns the address of the specified collection.
 func (s *Storage) Collection(id string) (identifier.Address, error) {
 
 	// Note: Using `Find` with a limit of 1 instead of `First` because the generated SQL
 	// uses the wrong table name otherwise.
 
-	var address []collectionAddress
+	var address []networkAddress
 	err := s.db.
 		Table("collections c, networks n").
 		Select("n.chain_id, c.contract_address").
@@ -30,7 +30,7 @@ func (s *Storage) Collection(id string) (identifier.Address, error) {
 
 	out := identifier.Address{
 		ChainID: address[0].ChainID,
-		Address: address[0].Address,
+		Address: address[0].ContractAddress,
 	}
 
 	return out, nil
