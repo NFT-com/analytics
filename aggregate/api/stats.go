@@ -19,7 +19,7 @@ type Stats interface {
 
 	// MarketplaceVolume(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error)
 	// MarketplaceMarketCap(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error)
-	// MarketplaceSales(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error)
+	MarketplaceSales(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error)
 	MarketplaceUserCount(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Users, error)
 
 	// NFT statistics.
