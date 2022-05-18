@@ -26,3 +26,14 @@ func (s *Stats) createMarketplaceFilter(addresses []identifier.Address) *gorm.DB
 
 	return mdb
 }
+
+// createCollectionFilter accepts a collection address and adds the appropriate `WHERE` clause to the
+// SQL query.
+func (s Stats) createCollectionFilter(address identifier.Address) *gorm.DB {
+
+	cdb := s.db.
+		Where("chain_id = ?", address.ChainID).
+		Where("collection_address = ?", address.Address)
+
+	return cdb
+}
