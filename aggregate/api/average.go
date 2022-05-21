@@ -24,7 +24,7 @@ func (a *API) CollectionAverageHistory(ctx echo.Context) error {
 	}
 
 	// Retrieve collection average value.
-	avg, err := a.stats.CollectionAverage(address, req.From.time(), req.To.time())
+	avg, err := a.stats.CollectionAverageHistory(address, req.From.time(), req.To.time())
 	if err != nil {
 		err := fmt.Errorf("could not retrieve collection average price: %w", err)
 		return apiError(err)

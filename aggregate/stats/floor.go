@@ -8,11 +8,9 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
-// FIXME: Add comments for exported functions.
-
-// CollectionFloor returns the floor price for the collection in the given interval.
+// CollectionFloorHistory returns the floor price for the collection in the given interval.
 // Floor price is the lowest price for an NFT in that collection on the given point in time.s
-func (s *Stats) CollectionFloor(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Floor, error) {
+func (s *Stats) CollectionFloorHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Floor, error) {
 
 	intervalQuery := s.db.
 		Table("sales, LATERAL generate_series(?, ?, INTERVAL '1 day') AS start_date",

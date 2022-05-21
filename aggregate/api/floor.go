@@ -22,7 +22,7 @@ func (a *API) CollectionFloorHistory(ctx echo.Context) error {
 		return apiError(err)
 	}
 
-	floor, err := a.stats.CollectionFloor(address, req.From.time(), req.To.time())
+	floor, err := a.stats.CollectionFloorHistory(address, req.From.time(), req.To.time())
 	if err != nil {
 		return apiError(err)
 	}

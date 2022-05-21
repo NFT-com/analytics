@@ -22,7 +22,7 @@ func (a *API) MarketplaceUsersHistory(ctx echo.Context) error {
 		return apiError(err)
 	}
 
-	users, err := a.stats.MarketplaceUserCount(addresses, req.From.time(), req.To.time())
+	users, err := a.stats.MarketplaceUserCountHistory(addresses, req.From.time(), req.To.time())
 	if err != nil {
 		return apiError(err)
 	}

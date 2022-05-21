@@ -9,20 +9,20 @@ import (
 
 type Stats interface {
 	// Collection statistics.
-	CollectionVolume(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error)
-	CollectionMarketCap(address identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error)
-	CollectionSales(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error)
-	CollectionFloor(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Floor, error)
-	CollectionAverage(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Average, error)
-	CollectionCount(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Count, error)
+	CollectionVolumeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error)
+	CollectionMarketCapHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error)
+	CollectionSalesHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error)
+	CollectionFloorHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Floor, error)
+	CollectionAverageHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Average, error)
+	CollectionCountHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Count, error)
 
 	// Marketplace statistics.
-	MarketplaceVolume(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error)
-	MarketplaceMarketCap(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error)
-	MarketplaceSales(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error)
-	MarketplaceUserCount(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Users, error)
+	MarketplaceVolumeHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error)
+	MarketplaceMarketCapHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error)
+	MarketplaceSalesHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error)
+	MarketplaceUserCountHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Users, error)
 
 	// NFT statistics.
-	NFTPrice(address identifier.NFT, from time.Time, to time.Time) ([]datapoint.Price, error)
-	NFTAveragePrice(address identifier.NFT) (datapoint.Average, error)
+	NFTPriceHistory(address identifier.NFT, from time.Time, to time.Time) ([]datapoint.Price, error)
+	NFTAveragePriceHistory(address identifier.NFT) (datapoint.Average, error)
 }

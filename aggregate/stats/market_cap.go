@@ -8,12 +8,13 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
-// CollectionMarketCap returns the market cap for the collection in the given time range.
-func (s *Stats) CollectionMarketCap(address identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error) {
+// CollectionMarketCapHistory returns the market cap for the collection in the given time range.
+func (s *Stats) CollectionMarketCapHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error) {
 	return s.marketCap(&address, nil, from, to)
 }
 
-func (s *Stats) MarketplaceMarketCap(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error) {
+// MarketplaceMarketCapHistory returns the market cap for the marketplace in the given time range.
+func (s *Stats) MarketplaceMarketCapHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error) {
 	return s.marketCap(nil, addresses, from, to)
 }
 
