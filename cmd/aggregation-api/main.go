@@ -13,8 +13,9 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/pflag"
-	gormzerolog "github.com/wei840222/gorm-zerolog"
 	"github.com/ziflex/lecho/v2"
+
+	gormzerolog "github.com/wei840222/gorm-zerolog"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -39,7 +40,8 @@ func run() error {
 
 	var (
 		flagBind               string
-		flagDatabase           string
+		flagGraphDatabase      string
+		flagEventsDatabase     string
 		flagLogLevel           string
 		flagEnableQueryLogging bool
 	)
@@ -47,7 +49,8 @@ func run() error {
 	// FIXME: Add database connection limit.
 
 	pflag.StringVarP(&flagBind, "bind", "b", ":8080", "bind address for serving requests")
-	pflag.StringVarP(&flagDatabase, "database", "d", "", "database address")
+	pflag.StringVarP(&flagEventsDatabase, "events-database", "e", "", "events database address")
+	pflag.StringVarP(&flagGraphDatabase, "graph-database", "g", "", "graph database address")
 	pflag.StringVarP(&flagLogLevel, "log-level", "l", "info", "log level")
 	pflag.BoolVar(&flagEnableQueryLogging, "enable-query-logging", true, "enable logging of database queries")
 
@@ -71,18 +74,26 @@ func run() error {
 		dblog = logger.Default.LogMode(logger.Silent)
 	}
 
+	// Connect to the Events database.
 	dbCfg := gorm.Config{
 		Logger: dblog,
 	}
-	db, err := gorm.Open(postgres.Open(flagDatabase), &dbCfg)
+	eventsDB, err := gorm.Open(postgres.Open(flagEventsDatabase), &dbCfg)
 	if err != nil {
 		return fmt.Errorf("could not connect to database: %w", err)
 	}
+	// Create stats handler.
+	stats := stats.New(eventsDB)
 
-	stats := stats.New(db)
+	// Connect to the Graph database.
+	graphDB, err := gorm.Open(postgres.Open(flagGraphDatabase), &dbCfg)
+	if err != nil {
+		return fmt.Errorf("could not connect to graph database: %w", err)
+	}
+	// Create lookup handler.
+	lookup := lookup.New(graphDB)
 
-	lookup := lookup.New(db)
-
+	// Create the API.
 	api := api.New(stats, lookup, log)
 
 	// Initialize Echo Web Server.
@@ -94,9 +105,6 @@ func run() error {
 	slog := lecho.From(log)
 	server.Logger = lecho.From(log)
 	server.Use(lecho.Middleware(lecho.Config{Logger: slog}))
-
-	// FIXME: Marketplace will have chainID+address combinations,
-	// not a single thing.
 
 	// Initialize routes.
 	server.GET("/collection/:id/volume/history", api.CollectionVolumeHistory)
