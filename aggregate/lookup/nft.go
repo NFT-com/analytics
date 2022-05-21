@@ -1,4 +1,4 @@
-package storage
+package lookup
 
 import (
 	"fmt"
@@ -8,13 +8,13 @@ import (
 )
 
 // NFT returns the identifier of the specified NFT.
-func (s *Storage) NFT(id string) (identifier.NFT, error) {
+func (l *Lookup) NFT(id string) (identifier.NFT, error) {
 
 	// Note: Using `Find` with a limit of 1 instead of `First` because the generated SQL
 	// uses the wrong table name otherwise.
 
 	var nfts []nftIdentifier
-	err := s.db.
+	err := l.db.
 		Table("nfts n, collections c, networks").
 		Select("networks.chain_id, c.contract_address, n.token_id").
 		Where("n.id = ?", id).
