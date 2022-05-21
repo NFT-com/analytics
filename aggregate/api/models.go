@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+// FIXME: Look into a custom binder for this struct.
+
 // apiRequest describes the typical API request with an
 // ID - path parameter, and a (from, to] date range specified
 // via query parameters.
