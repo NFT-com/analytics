@@ -1,31 +1,15 @@
 package api
 
 import (
-	"net/http"
+	"errors"
 
 	"github.com/labstack/echo/v4"
 )
 
-// CollectionFloorHistory handles the request for floor price for a collection.
-func (a *API) CollectionFloorHistory(ctx echo.Context) error {
+// FIXME: Think about this - the floor price for the entirety of the collection lifetime?
+// Does that make sense?
 
-	// Unpack the request.
-	var req apiRequest
-	err := ctx.Bind(&req)
-	if err != nil {
-		return bindError(err)
-	}
-
-	// Lookup chain ID and contract address for the collection.
-	address, err := a.lookupCollection(req.ID)
-	if err != nil {
-		return apiError(err)
-	}
-
-	floor, err := a.stats.CollectionFloorHistory(address, req.From.time(), req.To.time())
-	if err != nil {
-		return apiError(err)
-	}
-
-	return ctx.JSON(http.StatusOK, floor)
+// CollectionFloor handles the request for the floor price for NFTs in a collection.
+func (a *API) CollectionFloor(ctx echo.Context) error {
+	return errors.New("TBD: Not implemented")
 }

@@ -107,23 +107,41 @@ func run() error {
 	server.Use(lecho.Middleware(lecho.Config{Logger: slog}))
 
 	// Initialize routes.
+
+	// Collection stats - current.
+	server.GET("/collection/:id/volume", api.CollectionVolume)
+	server.GET("/collection/:id/market_cap", api.CollectionMarketCap)
+	server.GET("/collection/:id/sales", api.CollectionSales)
+	server.GET("/collection/:id/count", api.CollectionCount)
+	server.GET("/collection/:id/average", api.CollectionAverage)
+	server.GET("/collection/:id/floor", api.CollectionFloor)
+
+	// Collection stats - historic.
 	server.GET("/collection/:id/volume/history", api.CollectionVolumeHistory)
-	server.GET("/marketplace/:id/volume/history", api.MarketplaceVolumeHistory)
-
 	server.GET("/collection/:id/market_cap/history", api.CollectionMarketCapHistory)
-	server.GET("/marketplace/:id/market_cap/history", api.MarketplaceMarketCapHistory)
-
 	server.GET("/collection/:id/sales/history", api.CollectionSalesHistory)
-	server.GET("/marketplace/:id/sales/history", api.MarketplaceSalesHistory)
-
 	server.GET("/collection/:id/count/history", api.CollectionCountHistory)
-	server.GET("/marketplace/:id/users/history", api.MarketplaceUsersHistory)
-
 	server.GET("/collection/:id/average/history", api.CollectionAverageHistory)
 	server.GET("/collection/:id/floor/history", api.CollectionFloorHistory)
 
+	// Marketplace stats - current.
+	server.GET("/marketplace/:id/volume", api.MarketplaceVolume)
+	server.GET("/marketplace/:id/market_cap", api.MarketplaceMarketCap)
+	server.GET("/marketplace/:id/sales", api.MarketplaceSales)
+	server.GET("/marketplace/:id/users", api.MarketplaceUsers)
+
+	// Marketplace stats - historic.
+	server.GET("/marketplace/:id/volume/history", api.MarketplaceVolumeHistory)
+	server.GET("/marketplace/:id/market_cap/history", api.MarketplaceMarketCapHistory)
+	server.GET("/marketplace/:id/sales/history", api.MarketplaceSalesHistory)
+	server.GET("/marketplace/:id/users/history", api.MarketplaceUsersHistory)
+
+	// NFT stats - current.
+	server.GET("/nft/:id/price", api.NFTPrice)
+	server.GET("/nft/:id/average/current", api.NFTAveragePrice)
+
+	// NFT stats - historic.
 	server.GET("/nft/:id/price/history", api.NFTPriceHistory)
-	server.GET("/nft/:id/average/history", api.NFTAveragePrice)
 
 	// This section launches the main executing components in their own
 	// goroutine, so they can run concurrently. Afterwards, we wait for an
