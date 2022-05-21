@@ -110,23 +110,23 @@ func run() error {
 	// not a single thing.
 
 	// Initialize routes.
-	server.GET("/collection/:id/volume", api.CollectionVolume)
-	server.GET("/marketplace/:id/volume", api.MarketplaceVolume)
+	server.GET("/collection/:id/volume/history", api.CollectionVolumeHistory)
+	server.GET("/marketplace/:id/volume/history", api.MarketplaceVolumeHistory)
 
-	server.GET("/collection/:id/market_cap", api.CollectionMarketCap)
-	server.GET("/marketplace/:id/market_cap", api.MarketplaceMarketCap)
+	server.GET("/collection/:id/market_cap/history", api.CollectionMarketCapHistory)
+	server.GET("/marketplace/:id/market_cap/history", api.MarketplaceMarketCapHistory)
 
-	server.GET("/collection/:id/sales", api.CollectionSales)
-	server.GET("/marketplace/:id/sales", api.MarketplaceSales)
+	server.GET("/collection/:id/sales/history", api.CollectionSalesHistory)
+	server.GET("/marketplace/:id/sales/history", api.MarketplaceSalesHistory)
 
-	server.GET("/collection/:id/count", api.CollectionCount)
-	server.GET("/marketplace/:id/users", api.MarketplaceUsers)
+	server.GET("/collection/:id/count/history", api.CollectionCountHistory)
+	server.GET("/marketplace/:id/users/history", api.MarketplaceUsersHistory)
 
-	server.GET("/collection/:id/average", api.CollectionAverage)
-	server.GET("/collection/:id/floor", api.CollectionFloor)
+	server.GET("/collection/:id/average/history", api.CollectionAverageHistory)
+	server.GET("/collection/:id/floor/history", api.CollectionFloorHistory)
 
-	server.GET("/nft/:id/price", api.NFTPrice)
-	server.GET("/nft/:id/average", api.NFTAveragePrice)
+	server.GET("/nft/:id/price/history", api.NFTPriceHistory)
+	server.GET("/nft/:id/average/history", api.NFTAveragePrice)
 
 	// This section launches the main executing components in their own
 	// goroutine, so they can run concurrently. Afterwards, we wait for an

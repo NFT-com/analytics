@@ -7,8 +7,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// CollectionVolume handles the request for the trading volume for a collection.
-func (a *API) CollectionVolume(ctx echo.Context) error {
+// CollectionVolumeHistory handles the request for the trading volume for a collection.
+func (a *API) CollectionVolumeHistory(ctx echo.Context) error {
 
 	// Unpack the request.
 	var req apiRequest
@@ -33,8 +33,8 @@ func (a *API) CollectionVolume(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, volume)
 }
 
-// MarketplaceVolume handles the request for the trading volume for a marketplace.
-func (a *API) MarketplaceVolume(ctx echo.Context) error {
+// MarketplaceVolumeHistory handles the request for the trading volume for a marketplace.
+func (a *API) MarketplaceVolumeHistory(ctx echo.Context) error {
 
 	// Unpack the request.
 	var req apiRequest

@@ -7,8 +7,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// CollectionCount handles the request for number of NFTs in a collection.
-func (a *API) CollectionCount(ctx echo.Context) error {
+// CollectionCountHistory handles the request for number of NFTs in a collection.
+func (a *API) CollectionCountHistory(ctx echo.Context) error {
 
 	// Unpack the request.
 	var req apiRequest

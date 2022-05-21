@@ -6,8 +6,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// CollectionFloor handles the request for floor price for a collection.
-func (a *API) CollectionFloor(ctx echo.Context) error {
+// CollectionFloorHistory handles the request for floor price for a collection.
+func (a *API) CollectionFloorHistory(ctx echo.Context) error {
 
 	// Unpack the request.
 	var req apiRequest
