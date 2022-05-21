@@ -10,16 +10,34 @@ import (
 
 // CollectionMarketCap returns the market cap for the collection in the given time range.
 func (s *Stats) CollectionMarketCap(address identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error) {
+	return s.marketCap(&address, nil, from, to)
+}
+
+func (s *Stats) MarketplaceMarketCap(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error) {
+	return s.marketCap(nil, addresses, from, to)
+}
+
+func (s *Stats) marketCap(collectionAddress *identifier.Address, marketplaceAddresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error) {
 
 	// Latest price query will return prices per NFT ranked by freshness.
 	// Prices with the lowest rank (closer to 1) will be the most recent ones.
 	// The query has a date threshold to consider only prices up to a date.
 	latestPriceQuery := s.db.
 		Table("sales").
-		Select("sales.*, row_number() OVER (PARTITION BY token_id ORDER BY emitted_at DESC) AS rank").
-		Where("emitted_at <= d.date").
-		Where("chain_id = ? ", address.ChainID).
-		Where("collection_address = ?", address.Address)
+		Select("sales.*, row_number() OVER (PARTITION BY chain_id, collection_address, token_id ORDER BY emitted_at DESC) AS rank").
+		Where("emitted_at <= d.date")
+
+	// Set collection filter if needed.
+	if collectionAddress != nil {
+		collectionFilter := s.createCollectionFilter(*collectionAddress)
+		latestPriceQuery.Where(collectionFilter)
+	}
+
+	// Set marketplace filter if needed.
+	if len(marketplaceAddresses) > 0 {
+		marketplaceFilter := s.createMarketplaceFilter(marketplaceAddresses)
+		latestPriceQuery.Where(marketplaceFilter)
+	}
 
 	// Summarize query will return the sum of all of the freshest prices for
 	// NFTs in a collection. The query leverages the "latest price" query as a subquery
