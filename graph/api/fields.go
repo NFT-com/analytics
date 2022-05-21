@@ -3,8 +3,17 @@ package api
 // These are some of the specific (expensive) fields for which we want to know
 // whether they were requested before retrieving.
 const (
-	fieldRarity = "rarity"
-	fieldTraits = "traits"
-	fieldOwners = "owners"
-	fieldNFTs   = "nfts"
+	// NFT fields.
+	fieldRarity       = "rarity"
+	fieldTraits       = "traits"
+	fieldOwners       = "owners"
+	fieldPrice        = "trading_price"
+	fieldAveragePrice = "average_price"
+
+	// Collection and marketplace fields.
+	fieldNFTs      = "nfts"
+	fieldVolume    = "volume"
+	fieldMarketCap = "market_cap"
+	fieldSales     = "sales"
+	fieldUsers     = "users"
 )

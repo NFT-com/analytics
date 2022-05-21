@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"strings"
@@ -24,6 +25,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/playground"
 
+	"github.com/NFT-com/analytics/graph/aggregate"
 	"github.com/NFT-com/analytics/graph/api"
 	"github.com/NFT-com/analytics/graph/generated"
 	"github.com/NFT-com/analytics/graph/storage"
@@ -116,10 +118,19 @@ func run() error {
 	sqlDB.SetMaxOpenConns(flagDBConnections)
 	sqlDB.SetMaxIdleConns(flagDBIdleConnections)
 
+	// Initialize the aggregation API client.
+	apiURL, err := url.Parse(flagAggregationAPI)
+	if err != nil {
+		return fmt.Errorf("could not parse aggregation API URL: %w", err)
+	}
+
+	aggregationAPI := aggregate.New(log, *apiURL)
+
 	storage := storage.New(db)
 	apiServer := api.NewServer(
 		log,
 		storage,
+		aggregationAPI,
 		api.WithSearchLimit(flagSearchLimit),
 	)
 	cfg := generated.Config{

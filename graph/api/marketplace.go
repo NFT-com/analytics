@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/NFT-com/analytics/graph/models/api"
 )
@@ -17,11 +18,14 @@ func (s *Server) marketplaceCollections(ctx context.Context, marketplaceID strin
 		return nil, errRetrieveCollectionFailed
 	}
 
+	// Parse the collection query.
+	query := parseCollectionQuery(ctx)
+
 	for _, collection := range collections {
-		collection, err = s.expandCollectionDetails(ctx, collection)
+		// Get collection details, as needed.
+		err = s.expandCollectionDetails(query, collection)
 		if err != nil {
-			s.logError(err).Str("id", collection.ID).Msg("retrieving collection details failed")
-			return nil, errRetrieveCollectionFailed
+			return nil, fmt.Errorf("could not expand collection details (id: %v): %w", collection.ID, err)
 		}
 	}
 
@@ -29,7 +33,7 @@ func (s *Server) marketplaceCollections(ctx context.Context, marketplaceID strin
 }
 
 // marketplacesByNetwork returns a list of marketplaces on a specified network.
-func (s *Server) marketplacesByNetwork(networkID string) ([]*api.Marketplace, error) {
+func (s *Server) marketplacesByNetwork(ctx context.Context, networkID string) ([]*api.Marketplace, error) {
 
 	marketplaces, err := s.storage.MarketplacesByNetwork(networkID)
 	if err != nil {
@@ -37,6 +41,26 @@ func (s *Server) marketplacesByNetwork(networkID string) ([]*api.Marketplace, er
 			Str("network", networkID).
 			Msg("could not retrieve marketplaces for network")
 		return nil, errRetrieveMarketplaceFailed
+	}
+
+	// Parse the collection query to see if we need any stats.
+	query := parseMarketplaceQuery(ctx)
+
+	// If we don't need any stats, just return the data we have.
+	if !query.NeedStats() {
+		return marketplaces, nil
+	}
+
+	// Retrieve any statistics from the aggregation API.
+	for _, marketplace := range marketplaces {
+		err = s.expandMarketplaceStats(query, marketplace)
+		if err != nil {
+			// Continue even if stats could not be retrieved (e.g. API was unavailable).
+			s.log.Error().
+				Err(err).
+				Str("id", marketplace.ID).
+				Msg("could not retrieve marketplace stats")
+		}
 	}
 
 	return marketplaces, nil
