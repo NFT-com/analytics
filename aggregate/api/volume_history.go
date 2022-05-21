@@ -24,7 +24,7 @@ func (a *API) CollectionVolumeHistory(ctx echo.Context) error {
 	}
 
 	// Retrieve collection volume.
-	volume, err := a.stats.CollectionVolumeHistory(address, req.From.time(), req.To.time())
+	volume, err := a.stats.CollectionVolumeHistory(address, req.From, req.To)
 	if err != nil {
 		err := fmt.Errorf("could not get volume data: %w", err)
 		return apiError(err)
@@ -50,7 +50,7 @@ func (a *API) MarketplaceVolumeHistory(ctx echo.Context) error {
 	}
 
 	// Retrieve marketplace volume.
-	volume, err := a.stats.MarketplaceVolumeHistory(addresses, req.From.time(), req.To.time())
+	volume, err := a.stats.MarketplaceVolumeHistory(addresses, req.From, req.To)
 	if err != nil {
 		err := fmt.Errorf("could not get volume data: %w", err)
 		return apiError(err)

@@ -19,7 +19,7 @@ func bindError(err error) *echo.HTTPError {
 	return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 }
 
-// apiError is used when something went wrong during request processing - e.g. the events couldn't
+// apiError is used when something went wrong during request processing - e.g. something couldn't
 // be retrieved from the database.
 func apiError(err error) *echo.HTTPError {
 	return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
