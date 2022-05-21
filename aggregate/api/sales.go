@@ -23,7 +23,7 @@ func (a *API) CollectionSalesHistory(ctx echo.Context) error {
 	}
 
 	// Retrieve number of sales for the collection.
-	sales, err := a.stats.CollectionSales(address, req.From.time(), req.To.time())
+	sales, err := a.stats.CollectionSalesHistory(address, req.From.time(), req.To.time())
 	if err != nil {
 		return apiError(err)
 	}
@@ -48,7 +48,7 @@ func (a *API) MarketplaceSalesHistory(ctx echo.Context) error {
 	}
 
 	// Retrieve number of sales for the collection.
-	sales, err := a.stats.MarketplaceSales(addresses, req.From.time(), req.To.time())
+	sales, err := a.stats.MarketplaceSalesHistory(addresses, req.From.time(), req.To.time())
 	if err != nil {
 		return apiError(err)
 	}

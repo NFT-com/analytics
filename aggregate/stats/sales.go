@@ -8,15 +8,15 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
-// CollectionSales returns the number of sales in this collection in the given interval.
+// CollectionSalesHistory returns the number of sales in this collection in the given interval.
 // For each data point, the number returned indicates the total number of sales up to (and including) that date.
-func (s *Stats) CollectionSales(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error) {
+func (s *Stats) CollectionSalesHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error) {
 	return s.sales(&address, nil, from, to)
 }
 
-// MarketplaceSales returns the number of sales on this marketplace in the given interval.
+// MarketplaceSalesHistory returns the number of sales on this marketplace in the given interval.
 // For each data point, the number returned indicates the total number of sales up to (and including) that date.
-func (s *Stats) MarketplaceSales(marketplaceAddresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error) {
+func (s *Stats) MarketplaceSalesHistory(marketplaceAddresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error) {
 	return s.sales(nil, marketplaceAddresses, from, to)
 }
 

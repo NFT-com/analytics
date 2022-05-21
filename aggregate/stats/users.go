@@ -8,7 +8,8 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
-func (s *Stats) MarketplaceUserCount(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Users, error) {
+// MarketplaceUserCountHistory returns the number of unique active users on the marketplace in the specified date range.
+func (s *Stats) MarketplaceUserCountHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Users, error) {
 
 	marketplaceFilter := s.createMarketplaceFilter(addresses)
 

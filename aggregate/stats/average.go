@@ -8,10 +8,10 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
-// CollectionAverage returns the average price for the collection NFT in the given interval.
+// CollectionAverageHistory returns the average price for the collection NFT in the given interval.
 // Average is calculating by taking the latest price for all NFTs in the collection at the
 // given point in time and averaging them.
-func (s *Stats) CollectionAverage(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Average, error) {
+func (s *Stats) CollectionAverageHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Average, error) {
 
 	// NOTE: The query in this function is VERY similar to the market cap query,
 	// with the difference that it averages the prices instead of adding them.

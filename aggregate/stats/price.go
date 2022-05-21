@@ -8,10 +8,8 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
-// FIXME: Think about the approach for NFT-price - use the per-day method?
-
-// NFTPrice returns the historic prices of an NFT.
-func (s *Stats) NFTPrice(nft identifier.NFT, from time.Time, to time.Time) ([]datapoint.Price, error) {
+// NFTPriceHistory returns the historic prices of an NFT.
+func (s *Stats) NFTPriceHistory(nft identifier.NFT, from time.Time, to time.Time) ([]datapoint.Price, error) {
 
 	// NOTE: This query will not return prices for the NFT if there were no sales
 	// in the specified date range, unlike all other queries.
@@ -35,8 +33,8 @@ func (s *Stats) NFTPrice(nft identifier.NFT, from time.Time, to time.Time) ([]da
 	return out, nil
 }
 
-// NFTAveragePrice returns the all-time average price.
-func (s *Stats) NFTAveragePrice(nft identifier.NFT) (datapoint.Average, error) {
+// NFTAveragePriceHistory returns the all-time average price.
+func (s *Stats) NFTAveragePriceHistory(nft identifier.NFT) (datapoint.Average, error) {
 
 	query := s.db.
 		Table("sales").

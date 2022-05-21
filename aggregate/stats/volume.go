@@ -8,15 +8,15 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
-// CollectionVolume returns the total value of all trades in specified collection in the given interval.
+// CollectionVolumeHistory returns the total value of all trades in specified collection in the given interval.
 // Volume for a point in time is calculated as a sum of all sales made until (and including) that moment.
-func (s *Stats) CollectionVolume(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error) {
+func (s *Stats) CollectionVolumeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error) {
 	return s.volume(&address, nil, from, to)
 }
 
-// MarketplaceVolume returns the total value of all trades in specified marketplace in the given interval.
+// MarketplaceVolumeHistory returns the total value of all trades in specified marketplace in the given interval.
 // Volume for a point in time is calculated as a sum of all sales made until (and including) that moment.
-func (s *Stats) MarketplaceVolume(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error) {
+func (s *Stats) MarketplaceVolumeHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error) {
 	return s.volume(nil, addresses, from, to)
 }
 
