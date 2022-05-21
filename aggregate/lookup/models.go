@@ -1,4 +1,4 @@
-package storage
+package lookup
 
 type networkAddress struct {
 	ChainID         uint   `gorm:"column:chain_id"`

@@ -1,4 +1,4 @@
-package storage
+package lookup
 
 import (
 	"fmt"
@@ -8,13 +8,13 @@ import (
 )
 
 // Collection returns the address of the specified collection.
-func (s *Storage) Collection(id string) (identifier.Address, error) {
+func (l *Lookup) Collection(id string) (identifier.Address, error) {
 
 	// Note: Using `Find` with a limit of 1 instead of `First` because the generated SQL
 	// uses the wrong table name otherwise.
 
 	var address []networkAddress
-	err := s.db.
+	err := l.db.
 		Table("collections c, networks n").
 		Select("n.chain_id, c.contract_address").
 		Where("c.id = ?", id).

@@ -1,4 +1,4 @@
-package storage
+package lookup
 
 import (
 	"fmt"
@@ -8,9 +8,9 @@ import (
 )
 
 // Marketplace returns the list of addresses for the specified marketplace.
-func (s *Storage) Marketplace(id string) ([]identifier.Address, error) {
+func (l *Lookup) Marketplace(id string) ([]identifier.Address, error) {
 
-	query := s.db.
+	query := l.db.
 		Table("marketplaces m").
 		Joins("INNER JOIN networks_marketplaces nm ON nm.marketplace_id = m.id").
 		Joins("INNER JOIN networks n ON nm.network_id = n.id").

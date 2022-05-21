@@ -20,19 +20,8 @@ import (
 	"gorm.io/gorm/logger"
 
 	"github.com/NFT-com/graph-api/aggregate/api"
+	"github.com/NFT-com/graph-api/aggregate/lookup"
 	"github.com/NFT-com/graph-api/aggregate/stats"
-	"github.com/NFT-com/graph-api/aggregate/storage"
-)
-
-// Endpoint paths.
-// FIXME: Revisit when implemented
-const (
-	marketCapEndpoint = "/market_cap"
-	volumeEndpoint    = "/volume"
-	floorEndpoint     = "/floor"
-	averageEndpoint   = "/average"
-	salesEndpoint     = "/sale_count"
-	nftEndpoint       = "/nft_count"
 )
 
 func main() {
@@ -92,9 +81,9 @@ func run() error {
 
 	stats := stats.New(db)
 
-	storage := storage.New(db)
+	lookup := lookup.New(db)
 
-	api := api.New(stats, storage, log)
+	api := api.New(stats, lookup, log)
 
 	// Initialize Echo Web Server.
 	server := echo.New()
