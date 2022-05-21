@@ -10,6 +10,7 @@ import (
 // CollectionVolume handles the request for the trading volume for a collection.
 func (a *API) CollectionVolume(ctx echo.Context) error {
 
+	// Unpack and validate request.
 	request, err := a.unpackCollectionRequest(ctx)
 	if err != nil {
 		return err

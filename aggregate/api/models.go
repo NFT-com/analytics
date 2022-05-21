@@ -15,10 +15,20 @@ type apiRequest struct {
 	To   time.Time `query:"to" validate:"datetime=2006-01-02,gtfield=From"`
 }
 
+// FIXME: Fix these fugly comments.
+
 // collectionRequest describes the API request for a collection metric
 // in the interim format.
 type collectionRequest struct {
 	address identifier.Address
 	from    time.Time
 	to      time.Time
+}
+
+// marketplaceRequest describes the API request for a marketplace metric
+// in the interim format.
+type marketplaceRequest struct {
+	addresses []identifier.Address
+	from      time.Time
+	to        time.Time
 }

@@ -10,21 +10,14 @@ import (
 // CollectionMarketCapHistory handles the request for the market cap for a collection.
 func (a *API) CollectionMarketCapHistory(ctx echo.Context) error {
 
-	// Unpack the request.
-	var req apiRequest
-	err := ctx.Bind(&req)
+	// Unpack and validate request.
+	request, err := a.unpackCollectionRequest(ctx)
 	if err != nil {
-		return bindError(err)
-	}
-
-	// Lookup chain ID and contract address for the collection.
-	address, err := a.lookupCollection(req.ID)
-	if err != nil {
-		return apiError(err)
+		return err
 	}
 
 	// Retrieve the collection market cap.
-	cap, err := a.stats.CollectionMarketCapHistory(address, req.From, req.To)
+	cap, err := a.stats.CollectionMarketCapHistory(request.address, request.from, request.to)
 	if err != nil {
 		return apiError(err)
 	}
@@ -35,21 +28,14 @@ func (a *API) CollectionMarketCapHistory(ctx echo.Context) error {
 // MarketplaceMarketCapHistory handles the request for the market cap for a marketplace.
 func (a *API) MarketplaceMarketCapHistory(ctx echo.Context) error {
 
-	// Unpack the request.
-	var req apiRequest
-	err := ctx.Bind(&req)
+	// Unpack and validate request
+	request, err := a.unpackMarketplaceRequest(ctx)
 	if err != nil {
-		return bindError(err)
-	}
-
-	// Lookup chain ID and contract addresses for the marketplace.
-	addresses, err := a.lookupMarketplace(req.ID)
-	if err != nil {
-		return apiError(err)
+		return err
 	}
 
 	// Retrieve marketplace market cap.
-	cap, err := a.stats.MarketplaceMarketCapHistory(addresses, req.From, req.To)
+	cap, err := a.stats.MarketplaceMarketCapHistory(request.addresses, request.from, request.to)
 	if err != nil {
 		err := fmt.Errorf("could not get market cap data: %w", err)
 		return apiError(err)

@@ -38,6 +38,36 @@ func (a *API) unpackCollectionRequest(ctx echo.Context) (*collectionRequest, err
 	return out, nil
 }
 
+func (a *API) unpackMarketplaceRequest(ctx echo.Context) (*marketplaceRequest, error) {
+
+	// Unpack the request.
+	var request apiRequest
+	err := ctx.Bind(&request)
+	if err != nil {
+		return nil, bindError(err)
+	}
+
+	// Validate the request data.
+	err = a.validate.Struct(&request)
+	if err != nil {
+		return nil, bindError(err)
+	}
+
+	// Lookup marketplace addresses.
+	addresses, err := a.lookupMarketplace(request.ID)
+	if err != nil {
+		return nil, apiError(err)
+	}
+
+	out := &marketplaceRequest{
+		addresses: addresses,
+		from:      request.From,
+		to:        request.To,
+	}
+
+	return out, nil
+}
+
 func (a *API) lookupCollection(id string) (identifier.Address, error) {
 
 	address, ok := a.collectionCache[id]
