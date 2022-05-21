@@ -24,7 +24,7 @@ func (a *API) CollectionCountHistory(ctx echo.Context) error {
 	}
 
 	// Retrieve the number of NFTs in the collection.
-	count, err := a.stats.CollectionCountHistory(address, req.From.time(), req.To.time())
+	count, err := a.stats.CollectionCountHistory(address, req.From, req.To)
 	if err != nil {
 		return apiError(fmt.Errorf("could not retrieve NFT count: %w", err))
 	}
