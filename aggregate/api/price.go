@@ -6,8 +6,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// NFTPrice handles the request for retrieving historic prices of an NFT.
-func (a *API) NFTPrice(ctx echo.Context) error {
+// NFTPriceHistory handles the request for retrieving historic prices of an NFT.
+func (a *API) NFTPriceHistory(ctx echo.Context) error {
 
 	// Unpack the request.
 	var req apiRequest

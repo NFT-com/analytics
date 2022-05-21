@@ -6,8 +6,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// CollectionSales handles the request for number of sales for a collection.
-func (a *API) CollectionSales(ctx echo.Context) error {
+// CollectionSalesHistory handles the request for number of sales for a collection.
+func (a *API) CollectionSalesHistory(ctx echo.Context) error {
 
 	// Unpack the request.
 	var req apiRequest
@@ -31,8 +31,8 @@ func (a *API) CollectionSales(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, sales)
 }
 
-// MarketplaceSales handles the request for number of sales for a marketplace.
-func (a *API) MarketplaceSales(ctx echo.Context) error {
+// MarketplaceSalesHistory handles the request for number of sales for a marketplace.
+func (a *API) MarketplaceSalesHistory(ctx echo.Context) error {
 
 	// Unpack the request.
 	var req apiRequest

@@ -6,8 +6,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// MarketplaceUsers handles the request for number of active users on a marketplace.
-func (a *API) MarketplaceUsers(ctx echo.Context) error {
+// MarketplaceUsersHistory handles the request for number of active users on a marketplace.
+func (a *API) MarketplaceUsersHistory(ctx echo.Context) error {
 
 	// Unpack the request.
 	var req apiRequest
