@@ -9,20 +9,13 @@ import (
 // CollectionFloorHistory handles the request for floor price for a collection.
 func (a *API) CollectionFloorHistory(ctx echo.Context) error {
 
-	// Unpack the request.
-	var req apiRequest
-	err := ctx.Bind(&req)
+	// Unpack and validate request.
+	request, err := a.unpackCollectionRequest(ctx)
 	if err != nil {
-		return bindError(err)
+		return err
 	}
 
-	// Lookup chain ID and contract address for the collection.
-	address, err := a.lookupCollection(req.ID)
-	if err != nil {
-		return apiError(err)
-	}
-
-	floor, err := a.stats.CollectionFloorHistory(address, req.From, req.To)
+	floor, err := a.stats.CollectionFloorHistory(request.address, request.from, request.to)
 	if err != nil {
 		return apiError(err)
 	}

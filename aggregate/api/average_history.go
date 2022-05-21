@@ -10,21 +10,14 @@ import (
 // CollectionAverageHistory handles the request for the average price for NFTs in a collection.
 func (a *API) CollectionAverageHistory(ctx echo.Context) error {
 
-	// Unpack the request.
-	var req apiRequest
-	err := ctx.Bind(&req)
+	// Unpack and validate request.
+	request, err := a.unpackCollectionRequest(ctx)
 	if err != nil {
-		return bindError(err)
-	}
-
-	// Lookup chain ID and contract address for the collection.
-	address, err := a.lookupCollection(req.ID)
-	if err != nil {
-		return apiError(err)
+		return err
 	}
 
 	// Retrieve collection average value.
-	avg, err := a.stats.CollectionAverageHistory(address, req.From, req.To)
+	avg, err := a.stats.CollectionAverageHistory(request.address, request.from, request.to)
 	if err != nil {
 		err := fmt.Errorf("could not retrieve collection average price: %w", err)
 		return apiError(err)

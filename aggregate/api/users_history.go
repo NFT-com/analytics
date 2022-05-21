@@ -9,20 +9,13 @@ import (
 // MarketplaceUsersHistory handles the request for number of active users on a marketplace.
 func (a *API) MarketplaceUsersHistory(ctx echo.Context) error {
 
-	// Unpack the request.
-	var req apiRequest
-	err := ctx.Bind(&req)
+	// Unpack and validate request
+	request, err := a.unpackMarketplaceRequest(ctx)
 	if err != nil {
-		return bindError(err)
+		return err
 	}
 
-	// Lookup chain ID and contract address for the marketplace.
-	addresses, err := a.lookupMarketplace(req.ID)
-	if err != nil {
-		return apiError(err)
-	}
-
-	users, err := a.stats.MarketplaceUserCountHistory(addresses, req.From, req.To)
+	users, err := a.stats.MarketplaceUserCountHistory(request.addresses, request.from, request.to)
 	if err != nil {
 		return apiError(err)
 	}

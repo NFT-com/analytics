@@ -10,21 +10,14 @@ import (
 // CollectionVolumeHistory handles the request for the trading volume for a collection.
 func (a *API) CollectionVolumeHistory(ctx echo.Context) error {
 
-	// Unpack the request.
-	var req apiRequest
-	err := ctx.Bind(&req)
+	// Unpack and validate request.
+	request, err := a.unpackCollectionRequest(ctx)
 	if err != nil {
-		return bindError(err)
-	}
-
-	// Lookup chain ID and contract address for the collection.
-	address, err := a.lookupCollection(req.ID)
-	if err != nil {
-		return apiError(err)
+		return err
 	}
 
 	// Retrieve collection volume.
-	volume, err := a.stats.CollectionVolumeHistory(address, req.From, req.To)
+	volume, err := a.stats.CollectionVolumeHistory(request.address, request.from, request.to)
 	if err != nil {
 		err := fmt.Errorf("could not get volume data: %w", err)
 		return apiError(err)
@@ -36,21 +29,14 @@ func (a *API) CollectionVolumeHistory(ctx echo.Context) error {
 // MarketplaceVolumeHistory handles the request for the trading volume for a marketplace.
 func (a *API) MarketplaceVolumeHistory(ctx echo.Context) error {
 
-	// Unpack the request.
-	var req apiRequest
-	err := ctx.Bind(&req)
+	// Unpack and validate request
+	request, err := a.unpackMarketplaceRequest(ctx)
 	if err != nil {
-		return bindError(err)
-	}
-
-	// Lookup chain ID and contract addresses for the marketplace.
-	addresses, err := a.lookupMarketplace(req.ID)
-	if err != nil {
-		return apiError(err)
+		return err
 	}
 
 	// Retrieve marketplace volume.
-	volume, err := a.stats.MarketplaceVolumeHistory(addresses, req.From, req.To)
+	volume, err := a.stats.MarketplaceVolumeHistory(request.addresses, request.from, request.to)
 	if err != nil {
 		err := fmt.Errorf("could not get volume data: %w", err)
 		return apiError(err)

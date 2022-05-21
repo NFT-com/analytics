@@ -10,21 +10,14 @@ import (
 // CollectionCountHistory handles the request for number of NFTs in a collection.
 func (a *API) CollectionCountHistory(ctx echo.Context) error {
 
-	// Unpack the request.
-	var req apiRequest
-	err := ctx.Bind(&req)
+	// Unpack and validate request.
+	request, err := a.unpackCollectionRequest(ctx)
 	if err != nil {
-		return bindError(err)
-	}
-
-	// Lookup chain ID and contract address for the collection.
-	address, err := a.lookupCollection(req.ID)
-	if err != nil {
-		return apiError(err)
+		return err
 	}
 
 	// Retrieve the number of NFTs in the collection.
-	count, err := a.stats.CollectionCountHistory(address, req.From, req.To)
+	count, err := a.stats.CollectionCountHistory(request.address, request.from, request.to)
 	if err != nil {
 		return apiError(fmt.Errorf("could not retrieve NFT count: %w", err))
 	}
