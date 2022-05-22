@@ -8,20 +8,20 @@ import (
 
 // Volume represents the trading volume for a given category (e.g. collection or a marketplace).
 type Volume struct {
-	Total string    `json:"total" gorm:"column:total"`
-	Date  time.Time `json:"date,omitempty" gorm:"column:date"`
+	Total string     `json:"total" gorm:"column:total"`
+	Date  *time.Time `json:"date,omitempty" gorm:"column:date"`
 }
 
 // MarketCap represents the total market cap of a given entity (collection or a marketplace).
 type MarketCap struct {
-	Total string    `json:"total" gorm:"column:total"`
-	Date  time.Time `json:"date,omitempty" gorm:"column:date"`
+	Total string     `json:"total" gorm:"column:total"`
+	Date  *time.Time `json:"date,omitempty" gorm:"column:date"`
 }
 
 // Sale represents the number of sales for a given category (e.g. collection or a marketplace).
 type Sale struct {
-	Count string    `json:"count" gorm:"column:count"`
-	Date  time.Time `json:"date" gorm:"column:date"`
+	Count string     `json:"count" gorm:"column:count"`
+	Date  *time.Time `json:"date,omitempty" gorm:"column:date"`
 }
 
 // Floor represents the minimum price for an NFT in a collection.
@@ -41,21 +41,21 @@ type Average struct {
 
 // Users represents the number of unique users on a marketplace.
 type Users struct {
-	Count uint64    `json:"count" gorm:"column:count"`
-	Date  time.Time `json:"date" gorm:"column:date"`
+	Count uint64     `json:"count" gorm:"column:count"`
+	Date  *time.Time `json:"date,omitempty" gorm:"column:date"`
 }
 
 // Price represents the price of an NFT.
 // NOTE: This is the only data type that uses the actual time instead
 // of the date.
 type Price struct {
-	Price string    `json:"price" gorm:"column:trade_price"`
-	Time  time.Time `json:"emitted_at" gorm:"column:emitted_at"`
+	Price string     `json:"price" gorm:"column:trade_price"`
+	Time  *time.Time `json:"emitted_at,omitempty" gorm:"column:emitted_at"`
 }
 
 // Count represents the total number of NFTs in a collection.
 type Count struct {
-	Mints uint64    `json:"mints" gorm:"column:mints"`
-	Burns uint64    `json:"burns" gorm:"column:burns"`
-	Date  time.Time `json:"date" gorm:"column:date"`
+	Mints uint64     `json:"mints" gorm:"column:mints"`
+	Burns uint64     `json:"burns" gorm:"column:burns"`
+	Date  *time.Time `json:"date,omitempty" gorm:"column:date"`
 }

@@ -7,6 +7,31 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
+// collectionRequest describes the intermediate format for the API request
+// for a collection metric, the collection ID translated to a collection address.
+type collectionRequest struct {
+	address identifier.Address
+	from    time.Time
+	to      time.Time
+}
+
+// marketplaceRequest describes the intermediate format for the API request
+// for a marketplace metric, the marketplace ID translated to a list of
+// marketplace addresses.
+type marketplaceRequest struct {
+	addresses []identifier.Address
+	from      time.Time
+	to        time.Time
+}
+
+// nftRequest describes the intermediate format for the API request for an
+// NFT metric, the NFT ID translated to an NFT identifier.
+type nftRequest struct {
+	id   identifier.NFT
+	from time.Time
+	to   time.Time
+}
+
 // apiRequest describes the raw API request with an
 // ID - path parameter, and a (from, to] date range specified
 // via query parameters.
@@ -37,22 +62,4 @@ func (b *rangeBound) UnmarshalParam(param string) error {
 
 func (b rangeBound) time() time.Time {
 	return time.Time(b)
-}
-
-// FIXME: Fix these fugly comments.
-
-// collectionRequest describes the API request for a collection metric
-// in the interim format.
-type collectionRequest struct {
-	address identifier.Address
-	from    time.Time
-	to      time.Time
-}
-
-// marketplaceRequest describes the API request for a marketplace metric
-// in the interim format.
-type marketplaceRequest struct {
-	addresses []identifier.Address
-	from      time.Time
-	to        time.Time
 }
