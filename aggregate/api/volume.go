@@ -16,8 +16,8 @@ func (a *API) CollectionVolume(ctx echo.Context) error {
 		return err
 	}
 
-	// FIXME: Temporary thing for testing, get current volume, not history.
-	volume, err := a.stats.CollectionVolumeHistory(request.address, request.from, request.to)
+	// Retrieve collection volume.
+	volume, err := a.stats.CollectionVolume(request.address)
 	if err != nil {
 		return apiError(err)
 	}

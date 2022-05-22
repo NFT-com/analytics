@@ -8,7 +8,12 @@ import (
 )
 
 type Stats interface {
-	// Collection statistics.
+
+	// Collection statistics - current.
+	CollectionVolume(address identifier.Address) (datapoint.Volume, error)
+	CollectionMarketCap(address identifier.Address) (datapoint.MarketCap, error)
+
+	// Collection statistics - history.
 	CollectionVolumeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error)
 	CollectionMarketCapHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error)
 	CollectionSalesHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error)

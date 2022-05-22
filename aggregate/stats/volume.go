@@ -8,6 +8,25 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
+// FIXME: This might be a good candidate to support batch requests.
+// CollectionVolume returns the total value of all trades for this collection.
+func (s *Stats) CollectionVolume(address identifier.Address) (datapoint.Volume, error) {
+
+	query := s.db.
+		Table("sales").
+		Select("SUM(trade_price) AS total").
+		Where("chain_id = ?", address.ChainID).
+		Where("collection_address = ?", address.Address)
+
+	var volume datapoint.Volume
+	err := query.Take(&volume).Error
+	if err != nil {
+		return datapoint.Volume{}, fmt.Errorf("could not retrieve collection volume: %w", err)
+	}
+
+	return volume, nil
+}
+
 // CollectionVolumeHistory returns the total value of all trades in specified collection in the given interval.
 // Volume for a point in time is calculated as a sum of all sales made until (and including) that moment.
 func (s *Stats) CollectionVolumeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error) {
