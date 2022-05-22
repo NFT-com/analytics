@@ -335,7 +335,8 @@ NFT represents a single Non-Fungible Token.
 
 ### Network
 
-Network represents the chain and its networks.
+Network represents the blockchains networks.
+Mainnet and testnets of a specific blockchain are distinct network objects.
 
 <table>
 	<thead>

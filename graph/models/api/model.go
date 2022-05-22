@@ -1,6 +1,7 @@
 package api
 
-// Network represents the chain and its networks.
+// Network represents the blockchains networks.
+// Mainnet and testnets of a specific blockchain are distinct network objects.
 type Network struct {
 	ID          string `gorm:"column:id" json:"id"`
 	Name        string `gorm:"column:name" json:"name"`
