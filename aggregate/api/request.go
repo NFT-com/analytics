@@ -17,6 +17,8 @@ func (a *API) unpackCollectionRequest(ctx echo.Context) (*collectionRequest, err
 		return nil, bindError(err)
 	}
 
+	// FIXME: With specific `rangeBound` types, validation offers very little added benefits.
+
 	// Validate request data.
 	err = a.validate.Struct(&request)
 	if err != nil {
@@ -31,8 +33,8 @@ func (a *API) unpackCollectionRequest(ctx echo.Context) (*collectionRequest, err
 
 	out := &collectionRequest{
 		address: address,
-		from:    request.From,
-		to:      request.To,
+		from:    request.From.time(),
+		to:      request.To.time(),
 	}
 
 	return out, nil
@@ -61,8 +63,8 @@ func (a *API) unpackMarketplaceRequest(ctx echo.Context) (*marketplaceRequest, e
 
 	out := &marketplaceRequest{
 		addresses: addresses,
-		from:      request.From,
-		to:        request.To,
+		from:      request.From.time(),
+		to:        request.To.time(),
 	}
 
 	return out, nil

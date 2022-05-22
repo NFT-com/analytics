@@ -23,7 +23,7 @@ func (a *API) NFTPriceHistory(ctx echo.Context) error {
 	}
 
 	// Retrieve NFT prices.
-	prices, err := a.stats.NFTPriceHistory(nft, req.From, req.To)
+	prices, err := a.stats.NFTPriceHistory(nft, req.From.time(), req.To.time())
 	if err != nil {
 		return apiError(err)
 	}

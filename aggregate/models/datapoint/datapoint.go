@@ -9,13 +9,13 @@ import (
 // Volume represents the trading volume for a given category (e.g. collection or a marketplace).
 type Volume struct {
 	Total string    `json:"total" gorm:"column:total"`
-	Date  time.Time `json:"date" gorm:"column:date"`
+	Date  time.Time `json:"date,omitempty" gorm:"column:date"`
 }
 
 // MarketCap represents the total market cap of a given entity (collection or a marketplace).
 type MarketCap struct {
 	Total string    `json:"total" gorm:"column:total"`
-	Date  time.Time `json:"date" gorm:"column:date"`
+	Date  time.Time `json:"date,omitempty" gorm:"column:date"`
 }
 
 // Sale represents the number of sales for a given category (e.g. collection or a marketplace).
