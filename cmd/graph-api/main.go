@@ -118,8 +118,8 @@ func run() error {
 
 	storage := storage.New(db)
 	apiServer := api.NewServer(
-		storage,
 		log,
+		storage,
 		api.WithSearchLimit(flagSearchLimit),
 	)
 	cfg := generated.Config{
