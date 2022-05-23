@@ -5,7 +5,7 @@ Events fall into one of two categories:
 - transfers
 - sales
 
-Mint and burn events are special subcategories of transfer events.
+Mint and burn events are special instances of transfer events.
 For more information about the API schema see [the API documentation](/events/API.md).
 
 ## Usage
