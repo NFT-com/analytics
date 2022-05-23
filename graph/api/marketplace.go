@@ -18,7 +18,7 @@ func (s *Server) marketplaceCollections(ctx context.Context, marketplaceID strin
 	}
 
 	for _, collection := range collections {
-		collection, err = s.getCollectionDetails(ctx, collection)
+		collection, err = s.expandCollectionDetails(ctx, collection)
 		if err != nil {
 			s.logError(err).Str("id", collection.ID).Msg("retrieving collection details failed")
 			return nil, errRetrieveCollectionFailed

@@ -25,7 +25,7 @@ func (s *Server) getCollection(ctx context.Context, id string) (*api.Collection,
 		return collection, nil
 	}
 
-	return s.getCollectionDetails(ctx, collection)
+	return s.expandCollectionDetails(ctx, collection)
 }
 
 // getCollectionByContract returns a single collection for the specified network, given its contract address.
@@ -47,14 +47,14 @@ func (s *Server) getCollectionByContract(ctx context.Context, networkID string, 
 		return collection, nil
 	}
 
-	return s.getCollectionDetails(ctx, collection)
+	return s.expandCollectionDetails(ctx, collection)
 }
 
-// getCollectionDetails is the workhorse function that will do all of the heavy lifting for
+// expandCollectionDetails is the workhorse function that will do all of the heavy lifting for
 // the collection queries. It fetches all NFTs from that collection
 // (similar to how dataloaders would), but also retrieves traits and deals with rarity calculation.
 // NOTE: This function modifies the provided collection in-place.
-func (s *Server) getCollectionDetails(ctx context.Context, collection *api.Collection) (*api.Collection, error) {
+func (s *Server) expandCollectionDetails(ctx context.Context, collection *api.Collection) (*api.Collection, error) {
 
 	// Retrieve the list of NFTs.
 	nfts, err := s.getCollectionNFTs(collection.ID)
@@ -154,7 +154,7 @@ func (s *Server) collections(ctx context.Context, network *string, orderBy api.C
 	}
 
 	for _, collection := range collections {
-		collection, err = s.getCollectionDetails(ctx, collection)
+		collection, err = s.expandCollectionDetails(ctx, collection)
 		if err != nil {
 			s.logError(err).Str("id", collection.ID).Msg("retrieving collection details failed")
 			return nil, errRetrieveCollectionFailed
@@ -176,7 +176,7 @@ func (s *Server) collectionsByNetwork(ctx context.Context, networkID string) ([]
 	}
 
 	for _, collection := range collections {
-		collection, err = s.getCollectionDetails(ctx, collection)
+		collection, err = s.expandCollectionDetails(ctx, collection)
 		if err != nil {
 			s.logError(err).Str("id", collection.ID).Msg("retrieving collection details failed")
 			return nil, errRetrieveCollectionFailed
