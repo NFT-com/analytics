@@ -18,7 +18,7 @@ func (s *Server) getNFT(ctx context.Context, id string) (*api.NFT, error) {
 		return nil, errRetrieveNFTFailed
 	}
 
-	return s.getNFTDetails(ctx, nft)
+	return s.expandNFTDetails(ctx, nft)
 }
 
 // getNFTByTokenID returns a single NFT based on the combination of networkID, contract address and token ID.
@@ -34,11 +34,11 @@ func (s *Server) getNFTByTokenID(ctx context.Context, networkID string, contract
 		return nil, errRetrieveNFTFailed
 	}
 
-	return s.getNFTDetails(ctx, nft)
+	return s.expandNFTDetails(ctx, nft)
 }
 
-// getNFTDetails retrieves the NFT rarity and/or trait information.
-func (s *Server) getNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, error) {
+// expandNFTDetails retrieves the NFT rarity and/or trait information.
+func (s *Server) expandNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, error) {
 
 	// Parse the query to know how much information to return/calculate.
 	req := parseNFTQuery(ctx)
