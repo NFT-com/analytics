@@ -51,4 +51,6 @@ type Trait struct {
 	Type   string  `gorm:"column:type" json:"type,omitempty"`
 	NFT    string  `gorm:"column:nft_id" json:"-"`
 	Rarity float64 `gorm:"-" json:"rarity"`
+	// TODO: Add trait type handling when implemented.
+	// https://github.com/NFT-com/analytics/issues/27
 }
