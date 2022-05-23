@@ -78,7 +78,7 @@ func (s *Server) getCollectionDetails(ctx context.Context, collection *api.Colle
 	req := parseNFTQueryWithConfig(cfg, ctx)
 
 	s.log.Debug().
-		Bool("include_rarity", req.rarity).
+		Bool("include_nft_rarity", req.nftRarity).
 		Bool("include_traits", req.traits).
 		Bool("include_trait_rarity", req.traitRarity).
 		Msg("NFT information requested")

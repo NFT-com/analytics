@@ -17,7 +17,7 @@ type nftQueryConfig struct {
 type nftQuery struct {
 	traits      bool
 	traitRarity bool
-	rarity      bool
+	nftRarity   bool
 }
 
 // parseNFTQuery parses the GraphQL query with the default configuration.
@@ -38,12 +38,12 @@ func parseNFTQueryWithConfig(cfg nftQueryConfig, ctx context.Context) *nftQuery 
 	query := nftQuery{
 		traits:      selection.Has(cfg.traitPath),
 		traitRarity: selection.Has(cfg.traitRarityPath),
-		rarity:      selection.Has(cfg.rarityPath),
+		nftRarity:   selection.Has(cfg.rarityPath),
 	}
 
 	return &query
 }
 
 func (q nftQuery) needRarity() bool {
-	return q.traitRarity || q.rarity
+	return q.traitRarity || q.nftRarity
 }
