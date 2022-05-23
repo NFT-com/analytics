@@ -8,12 +8,12 @@ import (
 // and calculates the individual trait rarity information. It returns the overall rarity
 // for such a trait combination, as well as the individual trait rarity info, which includes
 // missing traits.
-func (s *Stats) CalculateRarity(total uint, traits []*api.Trait) (float64, []*api.Trait) {
+func (s *Stats) CalculateRarity(total uint, traits []api.Trait) (float64, []api.Trait) {
 
 	// Traits populated with the rarity score.
 	// This list includes traits that are not in the original list of traits,
 	// but are known within this trait map (typically a collection).
-	out := make([]*api.Trait, 0, len(traits))
+	out := make([]api.Trait, 0, len(traits))
 
 	// Keep track of all traits we found.
 	found := make(map[string]struct{})
@@ -38,7 +38,7 @@ func (s *Stats) CalculateRarity(total uint, traits []*api.Trait) (float64, []*ap
 			Rarity: rarity,
 		}
 
-		out = append(out, &t)
+		out = append(out, t)
 
 		// Update the overall rarity.
 		overallRarity = overallRarity * rarity
@@ -65,7 +65,7 @@ func (s *Stats) CalculateRarity(total uint, traits []*api.Trait) (float64, []*ap
 			Rarity: rarity,
 		}
 
-		out = append(out, &missing)
+		out = append(out, missing)
 
 		// Update the overall rarity.
 		overallRarity = overallRarity * rarity

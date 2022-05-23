@@ -47,6 +47,6 @@ func (t TraitMap) CalculateStats() Stats {
 	return s
 }
 
-func formatTraitKey(trait *api.Trait) string {
+func formatTraitKey(trait api.Trait) string {
 	return trait.Name + ":" + trait.Value
 }
