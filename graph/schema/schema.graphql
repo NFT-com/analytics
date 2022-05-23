@@ -25,7 +25,7 @@ enum OrderDirection {
 }
 
 """
-Network represents the blockchains networks.
+Network represents the blockchain networks.
 Mainnet and testnets of a specific blockchain are distinct network objects.
 """
 type Network {
