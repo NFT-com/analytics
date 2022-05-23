@@ -22,7 +22,7 @@ func (s *Storage) createQuery(query interface{}, token string, conditions ...con
 	// If there's a token provided, unpack it and use it
 	// to determine the offset.
 	if token != "" {
-		blockNo, eventIndex, err := unpackToken(token)
+		height, eventIndex, err := unpackToken(token)
 		if err != nil {
 			return nil, fmt.Errorf("could not unpack event ID for query offset: %w", err)
 		}
@@ -30,9 +30,9 @@ func (s *Storage) createQuery(query interface{}, token string, conditions ...con
 		// If this is a continued iteration, request earlier events in the same block
 		// and earlier blocks.
 		db = db.Where(
-			s.db.Where("block_number < ?", blockNo),
+			s.db.Where("block_number < ?", height),
 		).Or(
-			s.db.Where("block_number = ?", blockNo).Where("event_index < ?", eventIndex),
+			s.db.Where("block_number = ?", height).Where("event_index < ?", eventIndex),
 		)
 	}
 
