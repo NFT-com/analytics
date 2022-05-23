@@ -8,6 +8,28 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
+// NFTPrice returns the current NFT price for an NFT.
+func (s *Stats) NFTPrice(nft identifier.NFT) (datapoint.Price, error) {
+
+	query := s.db.
+		Table("sales").
+		Select("trade_price").
+		Where("chain_id = ?", nft.Collection.ChainID).
+		Where("collection_address = ?", nft.Collection.Address).
+		Where("token_id = ?", nft.TokenID).
+		Order("emitted_at DESC").
+		Limit(1)
+
+	var price datapoint.Price
+	err := query.Take(&price).Error
+	if err != nil {
+		return datapoint.Price{}, fmt.Errorf("could not retrieve price: %w", err)
+	}
+
+	return price, nil
+
+}
+
 // NFTPriceHistory returns the historic prices of an NFT.
 func (s *Stats) NFTPriceHistory(nft identifier.NFT, from time.Time, to time.Time) ([]datapoint.Price, error) {
 

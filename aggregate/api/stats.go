@@ -27,7 +27,10 @@ type Stats interface {
 	MarketplaceSalesHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error)
 	MarketplaceUserCountHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Users, error)
 
-	// NFT statistics.
+	// NFT statistics - current.
+	NFTPrice(address identifier.NFT) (datapoint.Price, error)
+
+	// NFT statistics - history.
 	NFTPriceHistory(address identifier.NFT, from time.Time, to time.Time) ([]datapoint.Price, error)
 	NFTAveragePriceHistory(address identifier.NFT) (datapoint.Average, error)
 }
