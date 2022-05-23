@@ -46,7 +46,7 @@ func (s *Selection) Has(name string) bool {
 // getNestedSelection returns the selected fields, prefixed with their parent path.
 func getNestedSelection(ctx *graphql.OperationContext, fields []graphql.CollectedField, prefix string) []string {
 
-	requested := make([]string, 0)
+	var requested []string
 
 	for _, field := range fields {
 		var name string
