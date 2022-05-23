@@ -20,7 +20,7 @@ func (s *Server) getCollection(ctx context.Context, id string) (*api.Collection,
 
 	// Does this query require retrieving the list of NFTs?
 	sel := query.GetSelection(ctx)
-	includeNFTs := sel.Has(nftField)
+	includeNFTs := sel.Has(fieldNFTs)
 	if !includeNFTs {
 		return collection, nil
 	}
@@ -42,7 +42,7 @@ func (s *Server) getCollectionByContract(ctx context.Context, networkID string, 
 
 	// Does this query require retrieving the list of NFTs?
 	sel := query.GetSelection(ctx)
-	includeNFTs := sel.Has(nftField)
+	includeNFTs := sel.Has(fieldNFTs)
 	if !includeNFTs {
 		return collection, nil
 	}
@@ -71,9 +71,9 @@ func (s *Server) expandCollectionDetails(ctx context.Context, collection *api.Co
 
 	// Parse the NFT query.
 	cfg := nftQueryConfig{
-		traitPath:       query.FieldPath(nftField, traitField),
-		traitRarityPath: query.FieldPath(nftField, traitField, rarityField),
-		rarityPath:      query.FieldPath(nftField, rarityField),
+		traitPath:       query.FieldPath(fieldNFTs, fieldTraits),
+		traitRarityPath: query.FieldPath(fieldNFTs, fieldTraits, fieldRarity),
+		rarityPath:      query.FieldPath(fieldNFTs, fieldRarity),
 	}
 	req := parseNFTQueryWithConfig(cfg, ctx)
 

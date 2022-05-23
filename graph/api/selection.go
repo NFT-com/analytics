@@ -23,9 +23,9 @@ type nftQuery struct {
 // parseNFTQuery parses the GraphQL query with the default configuration.
 func parseNFTQuery(ctx context.Context) *nftQuery {
 	cfg := nftQueryConfig{
-		traitPath:       query.FieldPath(traitField),
-		traitRarityPath: query.FieldPath(traitField, rarityField),
-		rarityPath:      query.FieldPath(rarityField),
+		traitPath:       query.FieldPath(fieldTraits),
+		traitRarityPath: query.FieldPath(fieldTraits, fieldRarity),
+		rarityPath:      query.FieldPath(fieldRarity),
 	}
 	return parseNFTQueryWithConfig(cfg, ctx)
 }
