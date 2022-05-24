@@ -134,7 +134,9 @@ func run() error {
 	server.GET("/marketplace/:id/users/history", api.MarketplaceUsersHistory)
 
 	// NFT stats - current.
+	// FIXME: Consider obsoleting this.
 	server.GET("/nft/:id/price", api.NFTPrice)
+	server.POST("/nft/batch/price", api.NFTBatchPrice)
 
 	// NFT stats - historic.
 	server.GET("/nft/:id/average", api.NFTAveragePrice)

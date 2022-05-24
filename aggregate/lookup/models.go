@@ -6,6 +6,7 @@ type networkAddress struct {
 }
 
 type nftIdentifier struct {
+	ID      string `gorm:"column:id"`
 	ChainID uint   `gorm:"column:chain_id"`
 	Address string `gorm:"column:contract_address"`
 	TokenID string `gorm:"column:token_id"`
