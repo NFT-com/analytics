@@ -27,3 +27,8 @@ func (s *Stats) NFTPrice(nft identifier.NFT) (datapoint.Price, error) {
 
 	return price, nil
 }
+
+// NFTBatchPrice returns the list of prices for the specified NFTs.
+func (s *Stats) NFTBatchPrice(nfts []identifier.Address) (map[identifier.NFT]datapoint.Price, error) {
+	return nil, fmt.Errorf("TBD: Not implemented")
+}

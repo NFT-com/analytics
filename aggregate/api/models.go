@@ -41,6 +41,11 @@ type apiRequest struct {
 	To   rangeBound `query:"to"`
 }
 
+// batchRequest describes the API request with a list of IDs sent via POST request as JSON.
+type batchRequest struct {
+	IDs []string `json:"ids"`
+}
+
 // rangeBound is a thin wrapper around time.Time.
 // It implements a custom unmarshaller so that the time value and format
 // are immediately verified during the echo `Bind` call. That way
