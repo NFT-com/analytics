@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -9,15 +10,19 @@ import (
 // NFTPrice handles the request for retrieving historic prices of an NFT.
 func (a *API) NFTPrice(ctx echo.Context) error {
 
-	// Unpack and validate request.
-	request, err := a.unpackNFTRequest(ctx)
+	id := ctx.Param(idParam)
+
+	// Lookup NFT identifier.
+	nft, err := a.lookup.NFT(id)
 	if err != nil {
-		return err
+		err := fmt.Errorf("could not lookup NFT: %w", err)
+		return apiError(err)
 	}
 
 	// Retrieve NFT price.
-	price, err := a.stats.NFTPrice(request.id)
+	price, err := a.stats.NFTPrice(nft)
 	if err != nil {
+		err := fmt.Errorf("could not retrieve NFT price: %w", err)
 		return apiError(err)
 	}
 

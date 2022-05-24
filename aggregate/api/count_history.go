@@ -7,6 +7,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// FIXME: Rename all "collection count" occurrences to "collection size".
+
 // CollectionCountHistory handles the request for number of NFTs in a collection.
 func (a *API) CollectionCountHistory(ctx echo.Context) error {
 
@@ -19,7 +21,8 @@ func (a *API) CollectionCountHistory(ctx echo.Context) error {
 	// Retrieve the number of NFTs in the collection.
 	count, err := a.stats.CollectionCountHistory(request.address, request.from, request.to)
 	if err != nil {
-		return apiError(fmt.Errorf("could not retrieve NFT count: %w", err))
+		err := fmt.Errorf("could not retrieve NFT count: %w", err)
+		return apiError(err)
 	}
 
 	return ctx.JSON(http.StatusOK, count)

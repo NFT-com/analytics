@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -9,15 +10,17 @@ import (
 // CollectionSales handles the request for number of sales for a collection.
 func (a *API) CollectionSales(ctx echo.Context) error {
 
-	// Unpack and validate request.
-	request, err := a.unpackCollectionHistoryRequest(ctx)
-	if err != nil {
-		return err
-	}
+	id := ctx.Param(idParam)
 
-	// Retrieve number of sales for the collection.
-	sales, err := a.stats.CollectionSales(request.address)
+	// Lookup collection address.
+	address, err := a.lookupCollection(id)
 	if err != nil {
+		return apiError(err)
+	}
+	// Retrieve number of sales for the collection.
+	sales, err := a.stats.CollectionSales(address)
+	if err != nil {
+		err := fmt.Errorf("could not retrieve collection sales: %w", err)
 		return apiError(err)
 	}
 
@@ -27,15 +30,18 @@ func (a *API) CollectionSales(ctx echo.Context) error {
 // MarketplaceSales handles the request for number of sales for a marketplace.
 func (a *API) MarketplaceSales(ctx echo.Context) error {
 
-	// Unpack and validate request
-	request, err := a.unpackMarketplaceHistoryRequest(ctx)
+	id := ctx.Param(idParam)
+
+	// Lookup marketplace addresses.
+	addresses, err := a.lookupMarketplace(id)
 	if err != nil {
-		return err
+		return apiError(err)
 	}
 
 	// Retrieve number of sales for the marketplace.
-	sales, err := a.stats.MarketplaceSales(request.addresses)
+	sales, err := a.stats.MarketplaceSales(addresses)
 	if err != nil {
+		err := fmt.Errorf("could not retrieve marketplace sales: %w", err)
 		return apiError(err)
 	}
 

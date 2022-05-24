@@ -19,6 +19,7 @@ func (a *API) CollectionMarketCapHistory(ctx echo.Context) error {
 	// Retrieve the collection market cap.
 	cap, err := a.stats.CollectionMarketCapHistory(request.address, request.from, request.to)
 	if err != nil {
+		err := fmt.Errorf("could not get collection market cap data: %w", err)
 		return apiError(err)
 	}
 
@@ -37,7 +38,7 @@ func (a *API) MarketplaceMarketCapHistory(ctx echo.Context) error {
 	// Retrieve marketplace market cap.
 	cap, err := a.stats.MarketplaceMarketCapHistory(request.addresses, request.from, request.to)
 	if err != nil {
-		err := fmt.Errorf("could not get market cap data: %w", err)
+		err := fmt.Errorf("could not get marketplace market cap data: %w", err)
 		return apiError(err)
 	}
 
