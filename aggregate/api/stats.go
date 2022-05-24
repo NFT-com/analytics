@@ -12,6 +12,7 @@ type Stats interface {
 	// Collection statistics - current.
 	CollectionVolume(address identifier.Address) (datapoint.Volume, error)
 	CollectionMarketCap(address identifier.Address) (datapoint.MarketCap, error)
+	CollectionSales(address identifier.Address) (datapoint.Sale, error)
 
 	// Collection statistics - history.
 	CollectionVolumeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error)
@@ -21,7 +22,13 @@ type Stats interface {
 	CollectionAverageHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Average, error)
 	CollectionCountHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Count, error)
 
-	// Marketplace statistics.
+	// Marketplace statistics - current.
+	MarketplaceVolume(addresses []identifier.Address) (datapoint.Volume, error)
+	MarketplaceMarketCap(addresses []identifier.Address) (datapoint.MarketCap, error)
+	MarketplaceSales(addresses []identifier.Address) (datapoint.Sale, error)
+	MarketplaceUserCount(addresses []identifier.Address) (datapoint.Users, error)
+
+	// Marketplace statistics - history.
 	MarketplaceVolumeHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error)
 	MarketplaceMarketCapHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error)
 	MarketplaceSalesHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error)
