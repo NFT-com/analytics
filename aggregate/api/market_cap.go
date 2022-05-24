@@ -1,7 +1,6 @@
 package api
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -29,5 +28,18 @@ func (a *API) CollectionMarketCap(ctx echo.Context) error {
 
 // MarketplaceMarketCap handles the request for the market cap for a marketplace.
 func (a *API) MarketplaceMarketCap(ctx echo.Context) error {
-	return errors.New("TBD: Not implemented")
+
+	// Unpack and validate request.
+	request, err := a.unpackMarketplaceRequest(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Retrieve marketplace market cap info.
+	cap, err := a.stats.MarketplaceMarketCap(request.addresses)
+	if err != nil {
+		return apiError(err)
+	}
+
+	return ctx.JSON(http.StatusOK, cap)
 }

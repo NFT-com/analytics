@@ -1,7 +1,6 @@
 package api
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -27,5 +26,18 @@ func (a *API) CollectionVolume(ctx echo.Context) error {
 
 // MarketplaceVolume handles the request for the trading volume for a marketplace.
 func (a *API) MarketplaceVolume(ctx echo.Context) error {
-	return errors.New("TBD: Not implemented")
+
+	// Unpack and validate request.
+	request, err := a.unpackMarketplaceRequest(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Retrieve marketplace volume info.
+	volume, err := a.stats.MarketplaceVolume(request.addresses)
+	if err != nil {
+		return apiError(err)
+	}
+
+	return ctx.JSON(http.StatusOK, volume)
 }
