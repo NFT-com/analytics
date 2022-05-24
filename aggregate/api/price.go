@@ -42,7 +42,7 @@ func (a *API) NFTBatchPrice(ctx echo.Context) error {
 
 	// If we don't have any IDs provided, just return.
 	if len(request.IDs) == 0 {
-		return ctx.NoContent(http.StatusNoContent)
+		return ctx.NoContent(http.StatusOK)
 	}
 
 	// Lookup the list of NFT identifiers based on IDs.

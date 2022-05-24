@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// createMarketplaceFilter accepts a list of marketplace addresses and adds the
+// createMarketplaceFilter accepts a list of marketplace addresses and returns the
 // appropriate `WHERE` clauses to the SQL query.
 func (s *Stats) createMarketplaceFilter(addresses []identifier.Address) *gorm.DB {
 
@@ -27,8 +27,8 @@ func (s *Stats) createMarketplaceFilter(addresses []identifier.Address) *gorm.DB
 	return mdb
 }
 
-// createCollectionFilter accepts a collection address and adds the appropriate `WHERE` clause to the
-// SQL query.
+// createCollectionFilter accepts a collection address and returns the appropriate `WHERE`
+// clause to the SQL query.
 func (s Stats) createCollectionFilter(address identifier.Address) *gorm.DB {
 
 	cdb := s.db.
@@ -36,4 +36,34 @@ func (s Stats) createCollectionFilter(address identifier.Address) *gorm.DB {
 		Where("collection_address = ?", address.Address)
 
 	return cdb
+}
+
+// createNFTFilter accepts a list of NFT identifiers and returns the appropriate
+// `WHERE` clauses for the SQL query.
+func (s *Stats) createNFTFilter(nfts []identifier.NFT) *gorm.DB {
+
+	// Return an empty condition.
+	if len(nfts) == 0 {
+		return s.db
+	}
+
+	nft := nfts[0]
+
+	// Create the first condition.
+	filter := s.db.Where("chain_id = ? AND collection_address = ? AND token_id = ?",
+		nft.Collection.ChainID,
+		nft.Collection.Address,
+		nft.TokenID,
+	)
+
+	// Add the remaining conditions using an `OR`.
+	for _, nft := range nfts[1:] {
+		filter = filter.Or("chain_id = ? AND collection_address = ? AND token_id = ?",
+			nft.Collection.ChainID,
+			nft.Collection.Address,
+			nft.TokenID,
+		)
+	}
+
+	return filter
 }
