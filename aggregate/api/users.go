@@ -10,7 +10,7 @@ import (
 func (a *API) MarketplaceUsers(ctx echo.Context) error {
 
 	// Unpack and validate request.
-	request, err := a.unpackMarketplaceRequest(ctx)
+	request, err := a.unpackMarketplaceHistoryRequest(ctx)
 	if err != nil {
 		return err
 	}

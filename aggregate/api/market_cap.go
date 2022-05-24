@@ -12,7 +12,7 @@ func (a *API) CollectionMarketCap(ctx echo.Context) error {
 	// FIXME: Perhaps don't use the full structure for the request here?
 
 	// Unpack and validate request.
-	request, err := a.unpackCollectionRequest(ctx)
+	request, err := a.unpackCollectionHistoryRequest(ctx)
 	if err != nil {
 		return err
 	}
@@ -30,7 +30,7 @@ func (a *API) CollectionMarketCap(ctx echo.Context) error {
 func (a *API) MarketplaceMarketCap(ctx echo.Context) error {
 
 	// Unpack and validate request.
-	request, err := a.unpackMarketplaceRequest(ctx)
+	request, err := a.unpackMarketplaceHistoryRequest(ctx)
 	if err != nil {
 		return err
 	}

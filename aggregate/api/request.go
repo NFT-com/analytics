@@ -9,7 +9,7 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
-func (a *API) unpackCollectionRequest(ctx echo.Context) (*collectionRequest, error) {
+func (a *API) unpackCollectionHistoryRequest(ctx echo.Context) (*collectionRequest, error) {
 
 	// Unpack request.
 	var request apiRequest
@@ -38,7 +38,7 @@ func (a *API) unpackCollectionRequest(ctx echo.Context) (*collectionRequest, err
 	return out, nil
 }
 
-func (a *API) unpackMarketplaceRequest(ctx echo.Context) (*marketplaceRequest, error) {
+func (a *API) unpackMarketplaceHistoryRequest(ctx echo.Context) (*marketplaceRequest, error) {
 
 	// Unpack the request.
 	var request apiRequest
