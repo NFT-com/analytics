@@ -20,7 +20,7 @@ type Stats interface {
 	CollectionSalesHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error)
 	CollectionFloorHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Floor, error)
 	CollectionAverageHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Average, error)
-	CollectionCountHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Count, error)
+	CollectionSizeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Count, error)
 
 	// Marketplace statistics - current.
 	MarketplaceVolume(addresses []identifier.Address) (datapoint.Volume, error)
