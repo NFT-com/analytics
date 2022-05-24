@@ -11,7 +11,7 @@ import (
 func (a *API) CollectionMarketCapHistory(ctx echo.Context) error {
 
 	// Unpack and validate request.
-	request, err := a.unpackCollectionRequest(ctx)
+	request, err := a.unpackCollectionHistoryRequest(ctx)
 	if err != nil {
 		return err
 	}
@@ -29,7 +29,7 @@ func (a *API) CollectionMarketCapHistory(ctx echo.Context) error {
 func (a *API) MarketplaceMarketCapHistory(ctx echo.Context) error {
 
 	// Unpack and validate request
-	request, err := a.unpackMarketplaceRequest(ctx)
+	request, err := a.unpackMarketplaceHistoryRequest(ctx)
 	if err != nil {
 		return err
 	}

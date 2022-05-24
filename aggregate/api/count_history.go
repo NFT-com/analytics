@@ -11,7 +11,7 @@ import (
 func (a *API) CollectionCountHistory(ctx echo.Context) error {
 
 	// Unpack and validate request.
-	request, err := a.unpackCollectionRequest(ctx)
+	request, err := a.unpackCollectionHistoryRequest(ctx)
 	if err != nil {
 		return err
 	}
