@@ -1,17 +1,43 @@
 package api
 
 import (
-	"errors"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
 // CollectionSales handles the request for number of sales for a collection.
 func (a *API) CollectionSales(ctx echo.Context) error {
-	return errors.New("TBD: Not implemented")
+
+	// Unpack and validate request.
+	request, err := a.unpackCollectionRequest(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Retrieve number of sales for the collection.
+	sales, err := a.stats.CollectionSales(request.address)
+	if err != nil {
+		return apiError(err)
+	}
+
+	return ctx.JSON(http.StatusOK, sales)
 }
 
 // MarketplaceSales handles the request for number of sales for a marketplace.
 func (a *API) MarketplaceSales(ctx echo.Context) error {
-	return errors.New("TBD: Not implemented")
+
+	// Unpack and validate request
+	request, err := a.unpackMarketplaceRequest(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Retrieve number of sales for the marketplace.
+	sales, err := a.stats.MarketplaceSales(request.addresses)
+	if err != nil {
+		return apiError(err)
+	}
+
+	return ctx.JSON(http.StatusOK, sales)
 }
