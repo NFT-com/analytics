@@ -8,10 +8,10 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
-// CollectionCountHistory returns the number of NFTs in a collection during the specified time interval.
+// CollectionSizeHistory returns the number of NFTs in a collection during the specified time interval.
 // At the moment, collection size is determined by looking at transfer to and from the zero address, even
 // though in reality there are other known burn addresses.
-func (s *Stats) CollectionCountHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Count, error) {
+func (s *Stats) CollectionSizeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Count, error) {
 
 	mintsQuery := s.db.
 		Table("transfers").

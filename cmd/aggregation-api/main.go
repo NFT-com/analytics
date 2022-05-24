@@ -117,7 +117,7 @@ func run() error {
 	server.GET("/collection/:id/volume/history", api.CollectionVolumeHistory)
 	server.GET("/collection/:id/market_cap/history", api.CollectionMarketCapHistory)
 	server.GET("/collection/:id/sales/history", api.CollectionSalesHistory)
-	server.GET("/collection/:id/count/history", api.CollectionCountHistory)
+	server.GET("/collection/:id/size/history", api.CollectionSizeHistory)
 	server.GET("/collection/:id/average/history", api.CollectionAverageHistory)
 	server.GET("/collection/:id/floor/history", api.CollectionFloorHistory)
 
