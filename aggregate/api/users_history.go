@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -18,6 +19,7 @@ func (a *API) MarketplaceUsersHistory(ctx echo.Context) error {
 	// Retrieve marketplace user data.
 	users, err := a.stats.MarketplaceUserCountHistory(request.addresses, request.from, request.to)
 	if err != nil {
+		err := fmt.Errorf("could not retrieve marketplace user count history: %w", err)
 		return apiError(err)
 	}
 

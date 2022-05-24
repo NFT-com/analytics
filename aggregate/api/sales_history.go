@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -18,6 +19,7 @@ func (a *API) CollectionSalesHistory(ctx echo.Context) error {
 	// Retrieve number of sales for the collection.
 	sales, err := a.stats.CollectionSalesHistory(request.address, request.from, request.to)
 	if err != nil {
+		err := fmt.Errorf("could not retrieve collection sales history: %w", err)
 		return apiError(err)
 	}
 
@@ -36,6 +38,7 @@ func (a *API) MarketplaceSalesHistory(ctx echo.Context) error {
 	// Retrieve number of sales for the collection.
 	sales, err := a.stats.MarketplaceSalesHistory(request.addresses, request.from, request.to)
 	if err != nil {
+		err := fmt.Errorf("could not retrieve marketplace sales history: %w", err)
 		return apiError(err)
 	}
 

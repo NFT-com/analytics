@@ -9,16 +9,16 @@ import (
 // CollectionMarketCap handles the request for the market cap for a collection.
 func (a *API) CollectionMarketCap(ctx echo.Context) error {
 
-	// FIXME: Perhaps don't use the full structure for the request here?
+	id := ctx.Param(idParam)
 
-	// Unpack and validate request.
-	request, err := a.unpackCollectionHistoryRequest(ctx)
+	// Lookup collection address.
+	address, err := a.lookupCollection(id)
 	if err != nil {
-		return err
+		return apiError(err)
 	}
 
 	// Retrieve the collection market cap.
-	cap, err := a.stats.CollectionMarketCap(request.address)
+	cap, err := a.stats.CollectionMarketCap(address)
 	if err != nil {
 		return apiError(err)
 	}
@@ -29,14 +29,16 @@ func (a *API) CollectionMarketCap(ctx echo.Context) error {
 // MarketplaceMarketCap handles the request for the market cap for a marketplace.
 func (a *API) MarketplaceMarketCap(ctx echo.Context) error {
 
-	// Unpack and validate request.
-	request, err := a.unpackMarketplaceHistoryRequest(ctx)
+	id := ctx.Param(idParam)
+
+	// Lookup marketplace addresses.
+	addresses, err := a.lookupMarketplace(id)
 	if err != nil {
-		return err
+		return apiError(err)
 	}
 
 	// Retrieve marketplace market cap info.
-	cap, err := a.stats.MarketplaceMarketCap(request.addresses)
+	cap, err := a.stats.MarketplaceMarketCap(addresses)
 	if err != nil {
 		return apiError(err)
 	}
