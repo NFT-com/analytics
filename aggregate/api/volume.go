@@ -66,11 +66,9 @@ func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 
 	// Map the list of volumes back to the collection IDs.
 	var collectionVolumes []StatValue
-
 	for id, address := range addresses {
 
 		volume, ok := volumes[address]
-
 		// If a collection has not been traded before, there won't be any volume data.
 		if !ok {
 			a.log.Debug().Str("collection_id", id).Msg("no volume data for collection")

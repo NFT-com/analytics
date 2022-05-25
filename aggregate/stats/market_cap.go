@@ -35,6 +35,52 @@ func (s *Stats) CollectionMarketCap(address identifier.Address) (datapoint.Marke
 	return marketCap, nil
 }
 
+// CollectionMarketCaps returns the current market cap for the list of collections.
+func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[identifier.Address]datapoint.MarketCap, error) {
+
+	if len(addresses) == 0 {
+		return nil, fmt.Errorf("address list must be non-empty")
+	}
+
+	latestPriceQuery := s.db.
+		Table("sales").
+		Select("sales.*, row_number() OVER (PARTITION BY chain_id, collection_address, token_id ORDER BY emitted_at DESC) AS rank")
+
+	filter := s.createCollectionFilter(addresses)
+	latestPriceQuery = latestPriceQuery.Where(filter)
+
+	sumQuery := s.db.
+		Table("( ? ) c", latestPriceQuery).
+		Select("SUM(trade_price) AS total, chain_id, collection_address").
+		Where("c.rank = 1").
+		Group("chain_id, collection_address")
+
+	var caps []batchMarketCapResult
+	err := sumQuery.Find(&caps).Error
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve market caps: %w", err)
+	}
+
+	// Transform the list of market caps to a map.
+	capMap := make(map[identifier.Address]datapoint.MarketCap, len(caps))
+	for _, cap := range caps {
+
+		collection := identifier.Address{
+			ChainID: cap.ChainID,
+			Address: cap.CollectionAddress,
+		}
+
+		// MarketCap record.
+		c := datapoint.MarketCap{
+			Total: cap.Total,
+		}
+
+		capMap[collection] = c
+	}
+
+	return capMap, nil
+}
+
 // MarketplaceMarketCap returns the current market cap for the marketplace.
 func (s *Stats) MarketplaceMarketCap(addresses []identifier.Address) (datapoint.MarketCap, error) {
 
@@ -63,3 +109,8 @@ func (s *Stats) MarketplaceMarketCap(addresses []identifier.Address) (datapoint.
 
 	return marketCap, nil
 }
+
+/*
+	70709	1	'0x34d85c9CDeB23FA97cb08333b511ac86E1C4E258'
+	87149	1	'0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d'
+*/
