@@ -6,56 +6,51 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
-// FIXME: Create a single `createFilter` function with an enum indicating whether to use
-// collection or marketplace addresses for filtering.
+const (
+	FILTER_COLLECTION = iota + 1
+	FILTER_MARKETPLACE
+)
 
-// createMarketplaceFilter accepts a list of collection or marketplace aaddresses and returns the
-// appropriate `WHERE` clauses to the SQL query.
+func (s *Stats) createCollectionFilter(addresses []identifier.Address) *gorm.DB {
+	return s.createAddressFilter(addresses, FILTER_COLLECTION)
+}
+
 func (s *Stats) createMarketplaceFilter(addresses []identifier.Address) *gorm.DB {
+	return s.createAddressFilter(addresses, FILTER_MARKETPLACE)
+}
 
-	// Return an empty condition.
+// createAddressFilter accepts a list of addresses and returns the appropriate `WHERE` clauses
+// for the SQL query.
+func (s *Stats) createAddressFilter(addresses []identifier.Address, filterType int) *gorm.DB {
+
+	// Return an empty condition if we have no addresses.
 	if len(addresses) == 0 {
 		return s.db
 	}
 
-	mdb := s.db.Where("chain_id = ? AND marketplace_address = ?",
-		addresses[0].ChainID,
-		addresses[0].Address)
+	var condition string
 
-	for _, address := range addresses[1:] {
-		mdb = mdb.Or("chain_id = ? AND marketplace_address = ?",
-			address.ChainID,
-			address.Address)
-	}
+	// Set the SQL condition to use.
+	switch filterType {
+	case FILTER_COLLECTION:
+		condition = "chain_id = ? AND collection_address = ?"
+	case FILTER_MARKETPLACE:
+		condition = "chain_id = ? AND marketplace_address = ?"
 
-	return mdb
-}
-
-// createCollectionFilter accepts a list of collection addresses and returns the appropriate `WHERE`
-// clause to the SQL query.
-func (s Stats) createCollectionFilter(addresses []identifier.Address) *gorm.DB {
-
-	// Return an empty condition.
-	if len(addresses) == 0 {
+	// Invalid filter value, just return an empty condition.
+	default:
 		return s.db
 	}
 
 	// Create the first condition.
-	cdb := s.db.
-		Where("chain_id = ? AND collection_address = ?",
-			addresses[0].ChainID,
-			addresses[0].Address,
-		)
+	filter := s.db.Where(condition, addresses[0].ChainID, addresses[0].Address)
 
-	// Add the remaining conditions using an `OR`.
+	// Add any remaining conditions with an `OR`.
 	for _, address := range addresses[1:] {
-		cdb = cdb.Or("chain_id = ? AND collection_address = ?",
-			address.ChainID,
-			address.Address,
-		)
+		filter = filter.Or(condition, address.ChainID, address.Address)
 	}
 
-	return cdb
+	return filter
 }
 
 // createNFTFilter accepts a list of NFT identifiers and returns the appropriate
