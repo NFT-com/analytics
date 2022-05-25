@@ -66,7 +66,7 @@ func (a *API) NFTBatchPrice(ctx echo.Context) error {
 	}
 
 	// Map the list of prices back to the NFT IDs.
-	var nftPrices []NFTPrice
+	var nftPrices []StatValue
 	for id, address := range addresses {
 
 		price, ok := prices[address]
@@ -78,18 +78,16 @@ func (a *API) NFTBatchPrice(ctx echo.Context) error {
 		}
 
 		// Create the price record and add it to the list.
-
-		p := NFTPrice{
+		p := StatValue{
 			ID:    id,
-			Price: price.Price,
+			Value: price.Price,
 		}
-
 		nftPrices = append(nftPrices, p)
 	}
 
 	// Create the API response.
-	response := NFTPriceResponse{
-		Prices: nftPrices,
+	response := BatchResponse{
+		Data: nftPrices,
 	}
 
 	return ctx.JSON(http.StatusOK, response)

@@ -112,6 +112,7 @@ func run() error {
 	server.GET("/collection/:id/volume", api.CollectionVolume)
 	server.GET("/collection/:id/market_cap", api.CollectionMarketCap)
 	server.GET("/collection/:id/sales", api.CollectionSales)
+	server.POST("/collection/batch/volume", api.CollectionBatchVolume)
 
 	// Collection stats - historic.
 	server.GET("/collection/:id/volume/history", api.CollectionVolumeHistory)

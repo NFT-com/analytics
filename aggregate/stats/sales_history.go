@@ -34,7 +34,10 @@ func (s *Stats) salesHistory(collectionAddress *identifier.Address, marketplaceA
 
 	// Set collection filter if needed.
 	if collectionAddress != nil {
-		collectionFilter := s.createCollectionFilter(*collectionAddress)
+		list := []identifier.Address{
+			*collectionAddress,
+		}
+		collectionFilter := s.createCollectionFilter(list)
 		countQuery.Where(collectionFilter)
 	}
 

@@ -1,6 +1,7 @@
 package lookup
 
 type networkAddress struct {
+	ID              string `gorm:"column:id"`
 	ChainID         uint   `gorm:"column:chain_id"`
 	ContractAddress string `gorm:"column:contract_address"`
 }

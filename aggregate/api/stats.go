@@ -13,6 +13,7 @@ type Stats interface {
 	CollectionVolume(address identifier.Address) (datapoint.Volume, error)
 	CollectionMarketCap(address identifier.Address) (datapoint.MarketCap, error)
 	CollectionSales(address identifier.Address) (datapoint.Sale, error)
+	CollectionBatchVolumes(addresses []identifier.Address) (map[identifier.Address]datapoint.Volume, error)
 
 	// Collection statistics - history.
 	CollectionVolumeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error)

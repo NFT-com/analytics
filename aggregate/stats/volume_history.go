@@ -35,7 +35,10 @@ func (s *Stats) volumeHistory(collectionAddress *identifier.Address, marketplace
 
 	// Set collection filter if needed.
 	if collectionAddress != nil {
-		collectionFilter := s.createCollectionFilter(*collectionAddress)
+		list := []identifier.Address{
+			*collectionAddress,
+		}
+		collectionFilter := s.createCollectionFilter(list)
 		sumQuery.Where(collectionFilter)
 	}
 
