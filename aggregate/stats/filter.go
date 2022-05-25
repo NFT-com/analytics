@@ -1,11 +1,15 @@
 package stats
 
 import (
-	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 	"gorm.io/gorm"
+
+	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
-// createMarketplaceFilter accepts a list of marketplace addresses and returns the
+// FIXME: Create a single `createFilter` function with an enum indicating whether to use
+// collection or marketplace addresses for filtering.
+
+// createMarketplaceFilter accepts a list of collection or marketplace aaddresses and returns the
 // appropriate `WHERE` clauses to the SQL query.
 func (s *Stats) createMarketplaceFilter(addresses []identifier.Address) *gorm.DB {
 
@@ -27,13 +31,29 @@ func (s *Stats) createMarketplaceFilter(addresses []identifier.Address) *gorm.DB
 	return mdb
 }
 
-// createCollectionFilter accepts a collection address and returns the appropriate `WHERE`
+// createCollectionFilter accepts a list of collection addresses and returns the appropriate `WHERE`
 // clause to the SQL query.
-func (s Stats) createCollectionFilter(address identifier.Address) *gorm.DB {
+func (s Stats) createCollectionFilter(addresses []identifier.Address) *gorm.DB {
 
+	// Return an empty condition.
+	if len(addresses) == 0 {
+		return s.db
+	}
+
+	// Create the first condition.
 	cdb := s.db.
-		Where("chain_id = ?", address.ChainID).
-		Where("collection_address = ?", address.Address)
+		Where("chain_id = ? AND collection_address = ?",
+			addresses[0].ChainID,
+			addresses[0].Address,
+		)
+
+	// Add the remaining conditions using an `OR`.
+	for _, address := range addresses[1:] {
+		cdb = cdb.Or("chain_id = ? AND collection_address = ?",
+			address.ChainID,
+			address.Address,
+		)
+	}
 
 	return cdb
 }

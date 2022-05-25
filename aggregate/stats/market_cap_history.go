@@ -30,7 +30,11 @@ func (s *Stats) marketCapHistory(collectionAddress *identifier.Address, marketpl
 
 	// Set collection filter if needed.
 	if collectionAddress != nil {
-		collectionFilter := s.createCollectionFilter(*collectionAddress)
+
+		list := []identifier.Address{
+			*collectionAddress,
+		}
+		collectionFilter := s.createCollectionFilter(list)
 		latestPriceQuery.Where(collectionFilter)
 	}
 

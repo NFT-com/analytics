@@ -1,6 +1,7 @@
 package stats
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
@@ -25,6 +26,47 @@ func (s *Stats) CollectionVolume(address identifier.Address) (datapoint.Volume, 
 	}
 
 	return volume, nil
+}
+
+// CollectionBatchVolumes returns the list of volumes for each individual collection.
+func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[identifier.Address]datapoint.Volume, error) {
+
+	if len(addresses) == 0 {
+		return nil, errors.New("id list must be non-empty")
+	}
+
+	query := s.db.
+		Table("sales").
+		Select("SUM(trade_price) AS total, chain_id, collection_address").
+		Group("chain_id, collection_address")
+
+	filter := s.createCollectionFilter(addresses)
+	query = query.Where(filter)
+
+	var volumes []batchVolumeResult
+	err := query.Find(&volumes).Error
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve collection volumes: %w", err)
+	}
+
+	// Map the volumes to the collection identifier.
+	volumeMap := make(map[identifier.Address]datapoint.Volume, len(volumes))
+	for _, volume := range volumes {
+
+		collection := identifier.Address{
+			ChainID: volume.ChainID,
+			Address: volume.CollectionAddress,
+		}
+
+		// Volume record.
+		cv := datapoint.Volume{
+			Total: volume.Total,
+		}
+
+		volumeMap[collection] = cv
+	}
+
+	return volumeMap, nil
 }
 
 // MarketplaceVolume returns the total value of all trades for this marketplace.
