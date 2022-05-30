@@ -79,7 +79,7 @@ func (a *API) NFTBatchPrice(ctx echo.Context) error {
 		// Create the price record and add it to the list.
 		p := StatValue{
 			ID:    id,
-			Value: price.Price,
+			Value: price,
 		}
 		nftPrices = append(nftPrices, p)
 	}

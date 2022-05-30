@@ -78,7 +78,7 @@ func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 		// Create the volume record and add it to the list.
 		v := StatValue{
 			ID:    id,
-			Value: volume.Total,
+			Value: volume,
 		}
 
 		collectionVolumes = append(collectionVolumes, v)

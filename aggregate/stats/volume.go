@@ -29,7 +29,7 @@ func (s *Stats) CollectionVolume(address identifier.Address) (datapoint.Volume, 
 }
 
 // CollectionBatchVolumes returns the list of volumes for each individual collection.
-func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[identifier.Address]datapoint.Volume, error) {
+func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[identifier.Address]float64, error) {
 
 	if len(addresses) == 0 {
 		return nil, errors.New("id list must be non-empty")
@@ -50,7 +50,7 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 	}
 
 	// Map the volumes to the collection identifier.
-	volumeMap := make(map[identifier.Address]datapoint.Volume, len(volumes))
+	volumeMap := make(map[identifier.Address]float64, len(volumes))
 	for _, volume := range volumes {
 
 		collection := identifier.Address{
@@ -58,12 +58,7 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 			Address: volume.CollectionAddress,
 		}
 
-		// Volume record.
-		cv := datapoint.Volume{
-			Total: volume.Total,
-		}
-
-		volumeMap[collection] = cv
+		volumeMap[collection] = volume.Total
 	}
 
 	return volumeMap, nil
