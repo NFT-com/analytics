@@ -30,7 +30,7 @@ func (s *Stats) NFTPrice(nft identifier.NFT) (datapoint.Price, error) {
 }
 
 // NFTBatchPrice returns the list of prices for the specified NFTs.
-func (s *Stats) NFTBatchPrices(nfts []identifier.NFT) (map[identifier.NFT]datapoint.Price, error) {
+func (s *Stats) NFTBatchPrices(nfts []identifier.NFT) (map[identifier.NFT]float64, error) {
 
 	if len(nfts) == 0 {
 		return nil, errors.New("id list must be non-empty")
@@ -64,7 +64,7 @@ func (s *Stats) NFTBatchPrices(nfts []identifier.NFT) (map[identifier.NFT]datapo
 	}
 
 	// Transform the list of prices into a map, mapping the NFT identifier to the price point.
-	priceMap := make(map[identifier.NFT]datapoint.Price, len(nfts))
+	priceMap := make(map[identifier.NFT]float64, len(nfts))
 	for _, price := range prices {
 
 		// Create the NFT identifier.
@@ -77,12 +77,7 @@ func (s *Stats) NFTBatchPrices(nfts []identifier.NFT) (map[identifier.NFT]datapo
 			TokenID:    price.TokenID,
 		}
 
-		// Price record.
-		nftPrice := datapoint.Price{
-			Price: price.TradePrice,
-		}
-
-		priceMap[nft] = nftPrice
+		priceMap[nft] = price.TradePrice
 	}
 
 	return priceMap, nil

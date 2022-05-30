@@ -36,7 +36,7 @@ func (s *Stats) CollectionMarketCap(address identifier.Address) (datapoint.Marke
 }
 
 // CollectionMarketCaps returns the current market cap for the list of collections.
-func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[identifier.Address]datapoint.MarketCap, error) {
+func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[identifier.Address]float64, error) {
 
 	if len(addresses) == 0 {
 		return nil, fmt.Errorf("address list must be non-empty")
@@ -62,7 +62,7 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 	}
 
 	// Transform the list of market caps to a map.
-	capMap := make(map[identifier.Address]datapoint.MarketCap, len(caps))
+	capMap := make(map[identifier.Address]float64, len(caps))
 	for _, cap := range caps {
 
 		collection := identifier.Address{
@@ -70,12 +70,7 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 			Address: cap.CollectionAddress,
 		}
 
-		// MarketCap record.
-		c := datapoint.MarketCap{
-			Total: cap.Total,
-		}
-
-		capMap[collection] = c
+		capMap[collection] = cap.Total
 	}
 
 	return capMap, nil

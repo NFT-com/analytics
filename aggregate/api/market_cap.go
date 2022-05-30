@@ -77,7 +77,7 @@ func (a *API) CollectionBatchMarketCap(ctx echo.Context) error {
 		// Create the volume record and add it to the list.
 		v := StatValue{
 			ID:    id,
-			Value: cap.Total,
+			Value: cap,
 		}
 
 		marketCaps = append(marketCaps, v)
