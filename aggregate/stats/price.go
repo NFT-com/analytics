@@ -9,7 +9,7 @@ import (
 )
 
 // NFTPrice returns the current NFT price for an NFT.
-func (s *Stats) NFTPrice(nft identifier.NFT) (datapoint.Price, error) {
+func (s *Stats) NFTPrice(nft identifier.NFT) (float64, error) {
 
 	query := s.db.
 		Table("sales").
@@ -23,10 +23,10 @@ func (s *Stats) NFTPrice(nft identifier.NFT) (datapoint.Price, error) {
 	var price datapoint.Price
 	err := query.Take(&price).Error
 	if err != nil {
-		return datapoint.Price{}, fmt.Errorf("could not retrieve price: %w", err)
+		return 0, fmt.Errorf("could not retrieve price: %w", err)
 	}
 
-	return price, nil
+	return price.Price, nil
 }
 
 // NFTBatchPrice returns the list of prices for the specified NFTs.

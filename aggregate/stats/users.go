@@ -8,7 +8,7 @@ import (
 )
 
 // MarketplaceUserCount returns the total number of unique users for a marketplace.
-func (s *Stats) MarketplaceUserCount(addresses []identifier.Address) (datapoint.Users, error) {
+func (s *Stats) MarketplaceUserCount(addresses []identifier.Address) (uint64, error) {
 
 	marketplaceFilter := s.createMarketplaceFilter(addresses)
 
@@ -35,8 +35,8 @@ func (s *Stats) MarketplaceUserCount(addresses []identifier.Address) (datapoint.
 	var count datapoint.Users
 	err := query.Take(&count).Error
 	if err != nil {
-		return datapoint.Users{}, fmt.Errorf("could not retrieve user count: %w", err)
+		return 0, fmt.Errorf("could not retrieve user count: %w", err)
 	}
 
-	return count, nil
+	return count.Count, nil
 }

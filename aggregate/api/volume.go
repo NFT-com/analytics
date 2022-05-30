@@ -27,6 +27,8 @@ func (a *API) CollectionVolume(ctx echo.Context) error {
 		return apiError(err)
 	}
 
+	// FIXME: Add a specific API data type to return this, instead of just a flat float64.
+
 	return ctx.JSON(http.StatusOK, volume)
 }
 
