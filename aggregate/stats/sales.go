@@ -8,7 +8,7 @@ import (
 )
 
 // CollectionSales returns the total number of sales for a collection.
-func (s *Stats) CollectionSales(address identifier.Address) (datapoint.Sale, error) {
+func (s *Stats) CollectionSales(address identifier.Address) (uint64, error) {
 
 	query := s.db.
 		Table("sales").
@@ -19,14 +19,14 @@ func (s *Stats) CollectionSales(address identifier.Address) (datapoint.Sale, err
 	var count datapoint.Sale
 	err := query.Take(&count).Error
 	if err != nil {
-		return datapoint.Sale{}, fmt.Errorf("could not determine sale count for collection: %w", err)
+		return 0, fmt.Errorf("could not determine sale count for collection: %w", err)
 	}
 
-	return count, nil
+	return count.Count, nil
 }
 
 // MarketplaceSales returns the total number of sales for a marketplace.
-func (s *Stats) MarketplaceSales(addresses []identifier.Address) (datapoint.Sale, error) {
+func (s *Stats) MarketplaceSales(addresses []identifier.Address) (uint64, error) {
 
 	query := s.db.
 		Table("sales").
@@ -38,8 +38,8 @@ func (s *Stats) MarketplaceSales(addresses []identifier.Address) (datapoint.Sale
 	var count datapoint.Sale
 	err := query.Take(&count).Error
 	if err != nil {
-		return datapoint.Sale{}, fmt.Errorf("could not determine sale count for marketplace: %w", err)
+		return 0, fmt.Errorf("could not determine sale count for marketplace: %w", err)
 	}
 
-	return count, nil
+	return count.Count, nil
 }

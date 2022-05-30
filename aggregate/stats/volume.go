@@ -11,7 +11,7 @@ import (
 // FIXME: These might be good candidates to support batch requests.
 
 // CollectionVolume returns the total value of all trades for this collection.
-func (s *Stats) CollectionVolume(address identifier.Address) (datapoint.Volume, error) {
+func (s *Stats) CollectionVolume(address identifier.Address) (float64, error) {
 
 	query := s.db.
 		Table("sales").
@@ -22,10 +22,10 @@ func (s *Stats) CollectionVolume(address identifier.Address) (datapoint.Volume, 
 	var volume datapoint.Volume
 	err := query.Take(&volume).Error
 	if err != nil {
-		return datapoint.Volume{}, fmt.Errorf("could not retrieve collection volume: %w", err)
+		return 0, fmt.Errorf("could not retrieve collection volume: %w", err)
 	}
 
-	return volume, nil
+	return volume.Total, nil
 }
 
 // CollectionBatchVolumes returns the list of volumes for each individual collection.
@@ -65,7 +65,7 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 }
 
 // MarketplaceVolume returns the total value of all trades for this marketplace.
-func (s *Stats) MarketplaceVolume(addresses []identifier.Address) (datapoint.Volume, error) {
+func (s *Stats) MarketplaceVolume(addresses []identifier.Address) (float64, error) {
 
 	query := s.db.
 		Table("sales").
@@ -77,8 +77,8 @@ func (s *Stats) MarketplaceVolume(addresses []identifier.Address) (datapoint.Vol
 	var volume datapoint.Volume
 	err := query.Take(&volume).Error
 	if err != nil {
-		return datapoint.Volume{}, fmt.Errorf("could not retrieve marketplace volume: %w", err)
+		return 0, fmt.Errorf("could not retrieve marketplace volume: %w", err)
 	}
 
-	return volume, nil
+	return volume.Total, nil
 }

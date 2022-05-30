@@ -8,7 +8,7 @@ import (
 )
 
 // CollectionMarketCap returns the current market cap for the collection.
-func (s *Stats) CollectionMarketCap(address identifier.Address) (datapoint.MarketCap, error) {
+func (s *Stats) CollectionMarketCap(address identifier.Address) (float64, error) {
 
 	// Latest price query will return prices per NFT ranked by freshness.
 	// Prices with the lowest rank (closer to 1) will be the most recent ones.
@@ -29,10 +29,10 @@ func (s *Stats) CollectionMarketCap(address identifier.Address) (datapoint.Marke
 	var marketCap datapoint.MarketCap
 	err := sumQuery.Take(&marketCap).Error
 	if err != nil {
-		return datapoint.MarketCap{}, fmt.Errorf("could not retrieve market cap: %w", err)
+		return 0, fmt.Errorf("could not retrieve market cap: %w", err)
 	}
 
-	return marketCap, nil
+	return marketCap.Total, nil
 }
 
 // CollectionMarketCaps returns the current market cap for the list of collections.
@@ -77,7 +77,7 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 }
 
 // MarketplaceMarketCap returns the current market cap for the marketplace.
-func (s *Stats) MarketplaceMarketCap(addresses []identifier.Address) (datapoint.MarketCap, error) {
+func (s *Stats) MarketplaceMarketCap(addresses []identifier.Address) (float64, error) {
 
 	// Latest price query will return prices per NFT ranked by freshness.
 	// Prices with the lowest rank (closer to 1) will be the most recent ones.
@@ -99,13 +99,8 @@ func (s *Stats) MarketplaceMarketCap(addresses []identifier.Address) (datapoint.
 	var marketCap datapoint.MarketCap
 	err := sumQuery.Take(&marketCap).Error
 	if err != nil {
-		return datapoint.MarketCap{}, fmt.Errorf("could not retrieve market cap: %w", err)
+		return 0, fmt.Errorf("could not retrieve market cap: %w", err)
 	}
 
-	return marketCap, nil
+	return marketCap.Total, nil
 }
-
-/*
-	70709	1	'0x34d85c9CDeB23FA97cb08333b511ac86E1C4E258'
-	87149	1	'0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d'
-*/
