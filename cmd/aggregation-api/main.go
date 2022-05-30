@@ -25,6 +25,11 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/stats"
 )
 
+const (
+	defaultDBMaxConnections  = 70
+	defaultDBIdleConnections = 20
+)
+
 func main() {
 	err := run()
 	if err != nil {
@@ -44,15 +49,23 @@ func run() error {
 		flagEventsDatabase     string
 		flagLogLevel           string
 		flagEnableQueryLogging bool
-	)
 
-	// FIXME: Add database connection limit.
+		flagGraphDBConnections      int
+		flagGraphDBIdleConnections  int
+		flagEventsDBConnections     int
+		flagEventsDBIdleConnections int
+	)
 
 	pflag.StringVarP(&flagBind, "bind", "b", ":8080", "bind address for serving requests")
 	pflag.StringVarP(&flagEventsDatabase, "events-database", "e", "", "events database address")
 	pflag.StringVarP(&flagGraphDatabase, "graph-database", "g", "", "graph database address")
 	pflag.StringVarP(&flagLogLevel, "log-level", "l", "info", "log level")
 	pflag.BoolVar(&flagEnableQueryLogging, "enable-query-logging", true, "enable logging of database queries")
+
+	pflag.IntVar(&flagGraphDBConnections, "graph-db-connection-limit", defaultDBMaxConnections, "maximum number of connections to graph database, -1 for unlimited")
+	pflag.IntVar(&flagGraphDBIdleConnections, "graph-db-idle-connection-limit", defaultDBIdleConnections, "maximum number of idle connections to graph database")
+	pflag.IntVar(&flagEventsDBConnections, "events-db-connection-limit", defaultDBMaxConnections, "maximum number of connections to events database, -1 for unlimited")
+	pflag.IntVar(&flagEventsDBIdleConnections, "events-db-idle-connection-limit", defaultDBIdleConnections, "maximum number of idle connections to events database")
 
 	pflag.Parse()
 
@@ -82,6 +95,14 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("could not connect to database: %w", err)
 	}
+	// Limit the number of database connections to the events database.
+	edb, err := eventsDB.DB()
+	if err != nil {
+		return fmt.Errorf("could not get database connection for events DB: %w", err)
+	}
+	edb.SetMaxOpenConns(flagEventsDBConnections)
+	edb.SetMaxIdleConns(flagEventsDBIdleConnections)
+
 	// Create stats handler.
 	stats := stats.New(eventsDB)
 
@@ -90,6 +111,14 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("could not connect to graph database: %w", err)
 	}
+	// Limit the number of database connections to the graph database.
+	gdb, err := graphDB.DB()
+	if err != nil {
+		return fmt.Errorf("could not get database connection for graph DB: %w", err)
+	}
+	gdb.SetMaxOpenConns(flagGraphDBConnections)
+	gdb.SetMaxIdleConns(flagGraphDBIdleConnections)
+
 	// Create lookup handler.
 	lookup := lookup.New(graphDB)
 
@@ -136,7 +165,6 @@ func run() error {
 	server.GET("/marketplace/:id/users/history", api.MarketplaceUsersHistory)
 
 	// NFT stats - current.
-	// FIXME: Consider obsoleting this.
 	server.GET("/nft/:id/price", api.NFTPrice)
 	server.POST("/nft/batch/price", api.NFTBatchPrice)
 
