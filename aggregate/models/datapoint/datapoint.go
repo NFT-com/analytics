@@ -4,23 +4,21 @@ import (
 	"time"
 )
 
-// FIXME: Use big.Int variants instead of strings for numbers.
-
 // Volume represents the trading volume for a given category (e.g. collection or a marketplace).
 type Volume struct {
-	Total string     `json:"total" gorm:"column:total"`
+	Total float64    `json:"total" gorm:"column:total"`
 	Date  *time.Time `json:"date,omitempty" gorm:"column:date"`
 }
 
 // MarketCap represents the total market cap of a given entity (collection or a marketplace).
 type MarketCap struct {
-	Total string     `json:"total" gorm:"column:total"`
+	Total float64    `json:"total" gorm:"column:total"`
 	Date  *time.Time `json:"date,omitempty" gorm:"column:date"`
 }
 
 // Sale represents the number of sales for a given category (e.g. collection or a marketplace).
 type Sale struct {
-	Count string     `json:"count" gorm:"column:count"`
+	Count uint64     `json:"count" gorm:"column:count"`
 	Date  *time.Time `json:"date,omitempty" gorm:"column:date"`
 }
 
@@ -28,14 +26,14 @@ type Sale struct {
 // `Start` and `End` values denote the time span over which the
 // minimum trading price is calculated.
 type Floor struct {
-	Floor string `json:"floor" gorm:"column:floor"`
-	Start string `json:"start" gorm:"column:start_date"`
-	End   string `json:"end" gorm:"column:end_date"`
+	Floor float64 `json:"floor" gorm:"column:floor"`
+	Start string  `json:"start" gorm:"column:start_date"`
+	End   string  `json:"end" gorm:"column:end_date"`
 }
 
 // Average represents the average price of an NFT in a collection.
 type Average struct {
-	Average string     `json:"average" gorm:"column:average"`
+	Average float64    `json:"average" gorm:"column:average"`
 	Date    *time.Time `json:"date,omitempty" gorm:"column:date"`
 }
 
@@ -49,7 +47,7 @@ type Users struct {
 // NOTE: This is the only data type that uses the actual time instead
 // of the date.
 type Price struct {
-	Price string     `json:"price" gorm:"column:trade_price"`
+	Price float64    `json:"price" gorm:"column:trade_price"`
 	Time  *time.Time `json:"emitted_at,omitempty" gorm:"column:emitted_at"`
 }
 
