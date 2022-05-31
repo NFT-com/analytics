@@ -57,7 +57,7 @@ func (s *Stats) marketCapHistory(collectionAddress *identifier.Address, marketpl
 	// Market cap query calculates the actual market cap for each date in the
 	// specified date range. It also calculates the change from the previous date.
 	marketCapQuery := s.db.
-		Table("( SELECT generate_series(?, ?, interval '1 day') AS date ) d, LATERAL( ? ) st ",
+		Table("( SELECT generate_series(?::timestamp, ?::timestamp, interval '1 day') AS date ) d, LATERAL( ? ) st ",
 			from.Format(timeFormat),
 			to.Format(timeFormat),
 			sumQuery,

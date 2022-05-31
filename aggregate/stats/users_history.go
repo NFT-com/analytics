@@ -30,7 +30,7 @@ func (s *Stats) MarketplaceUserCountHistory(addresses []identifier.Address, from
 	// Count query calculates the number of unique users for events in a time span.
 	// NOTE: SQL union removes duplicates by default.
 	countQuery := s.db.
-		Table("generate_series(?, ?, interval '1 day') as date, "+
+		Table("generate_series(?::timestamp, ?::timestamp, interval '1 day') as date, "+
 			"LATERAL (( ? ) UNION (?)) users",
 			from.Format(timeFormat),
 			to.Format(timeFormat),

@@ -13,7 +13,7 @@ import (
 func (s *Stats) CollectionFloorHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Floor, error) {
 
 	intervalQuery := s.db.
-		Table("sales, LATERAL generate_series(?, ?, INTERVAL '1 day') AS start_date",
+		Table("sales, LATERAL generate_series(?::timestamp, ?::timestamp, INTERVAL '1 day') AS start_date",
 			from.Format(timeFormat),
 			to.Format(timeFormat)).
 		Select([]string{

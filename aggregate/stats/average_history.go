@@ -39,7 +39,7 @@ func (s *Stats) CollectionAverageHistory(address identifier.Address, from time.T
 	// Delta query shows the average prices, as well as the difference between the previous
 	// data point.
 	deltaQuery := s.db.
-		Table("( SELECT generate_series(?, ?, interval '1 day') AS date ) d, LATERAL( ? ) st ",
+		Table("( SELECT generate_series(?::timestamp, ?::timestamp, interval '1 day') AS date ) d, LATERAL( ? ) st ",
 			from.Format(timeFormat),
 			to.Format(timeFormat),
 			avgQuery,
