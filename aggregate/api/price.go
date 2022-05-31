@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/NFT-com/graph-api/aggregate/models/api"
+	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
@@ -29,7 +30,12 @@ func (a *API) NFTPrice(ctx echo.Context) error {
 		return apiError(err)
 	}
 
-	return ctx.JSON(http.StatusOK, price)
+	response := datapoint.Value{
+		ID:    id,
+		Value: price,
+	}
+
+	return ctx.JSON(http.StatusOK, response)
 }
 
 // NFTBatchPrice handles the request for retrieving current price for a batch of NFTs.
@@ -68,7 +74,7 @@ func (a *API) NFTBatchPrice(ctx echo.Context) error {
 	}
 
 	// Map the list of prices back to the NFT IDs.
-	var nftPrices []api.StatValue
+	var nftPrices []datapoint.Value
 	for id, address := range addresses {
 
 		price, ok := prices[address]
@@ -79,7 +85,7 @@ func (a *API) NFTBatchPrice(ctx echo.Context) error {
 		}
 
 		// Create the price record and add it to the list.
-		p := api.StatValue{
+		p := datapoint.Value{
 			ID:    id,
 			Value: price,
 		}

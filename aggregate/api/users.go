@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+
+	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
 )
 
 // MarketplaceUsers handles the request for number of active users on a marketplace.
@@ -25,5 +27,10 @@ func (a *API) MarketplaceUsers(ctx echo.Context) error {
 		return apiError(err)
 	}
 
-	return ctx.JSON(http.StatusOK, users)
+	response := datapoint.Value{
+		ID:    id,
+		Value: float64(users),
+	}
+
+	return ctx.JSON(http.StatusOK, response)
 }
