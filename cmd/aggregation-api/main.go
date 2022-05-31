@@ -122,8 +122,8 @@ func run() error {
 	// Create lookup handler.
 	lookup := lookup.New(graphDB)
 
-	// Create the API.
-	api := api.New(stats, lookup, log)
+	// Create the API server.
+	srv := api.New(stats, lookup, log)
 
 	// Initialize Echo Web Server.
 	server := echo.New()
@@ -138,39 +138,39 @@ func run() error {
 	// Initialize routes.
 
 	// Collection stats - current.
-	server.GET("/collection/:id/volume", api.CollectionVolume)
-	server.GET("/collection/:id/market_cap", api.CollectionMarketCap)
-	server.GET("/collection/:id/sales", api.CollectionSales)
-	server.POST("/collection/batch/volume", api.CollectionBatchVolume)
-	server.POST("/collection/batch/market_cap", api.CollectionBatchMarketCap)
+	server.GET("/collection/:id/volume", srv.CollectionVolume)
+	server.GET("/collection/:id/market_cap", srv.CollectionMarketCap)
+	server.GET("/collection/:id/sales", srv.CollectionSales)
+	server.POST("/collection/batch/volume", srv.CollectionBatchVolume)
+	server.POST("/collection/batch/market_cap", srv.CollectionBatchMarketCap)
 
 	// Collection stats - historic.
-	server.GET("/collection/:id/volume/history", api.CollectionVolumeHistory)
-	server.GET("/collection/:id/market_cap/history", api.CollectionMarketCapHistory)
-	server.GET("/collection/:id/sales/history", api.CollectionSalesHistory)
-	server.GET("/collection/:id/size/history", api.CollectionSizeHistory)
-	server.GET("/collection/:id/average/history", api.CollectionAverageHistory)
-	server.GET("/collection/:id/floor/history", api.CollectionFloorHistory)
+	server.GET("/collection/:id/volume/history", srv.CollectionStatHistory(api.COLLECTION_VOLUME))
+	server.GET("/collection/:id/market_cap/history", srv.CollectionStatHistory(api.COLLECTION_MARKET_CAP))
+	server.GET("/collection/:id/sales/history", srv.CollectionStatHistory(api.COLLECTION_SALES))
+	server.GET("/collection/:id/size/history", srv.CollectionStatHistory(api.COLLECTION_SIZE))
+	server.GET("/collection/:id/average/history", srv.CollectionStatHistory(api.COLLECTION_AVERAGE_PRICE))
+	server.GET("/collection/:id/floor/history", srv.CollectionStatHistory(api.COLLECTION_FLOOR_PRICE))
 
 	// Marketplace stats - current.
-	server.GET("/marketplace/:id/volume", api.MarketplaceVolume)
-	server.GET("/marketplace/:id/market_cap", api.MarketplaceMarketCap)
-	server.GET("/marketplace/:id/sales", api.MarketplaceSales)
-	server.GET("/marketplace/:id/users", api.MarketplaceUsers)
+	server.GET("/marketplace/:id/volume", srv.MarketplaceVolume)
+	server.GET("/marketplace/:id/market_cap", srv.MarketplaceMarketCap)
+	server.GET("/marketplace/:id/sales", srv.MarketplaceSales)
+	server.GET("/marketplace/:id/users", srv.MarketplaceUsers)
 
 	// Marketplace stats - historic.
-	server.GET("/marketplace/:id/volume/history", api.MarketplaceVolumeHistory)
-	server.GET("/marketplace/:id/market_cap/history", api.MarketplaceMarketCapHistory)
-	server.GET("/marketplace/:id/sales/history", api.MarketplaceSalesHistory)
-	server.GET("/marketplace/:id/users/history", api.MarketplaceUsersHistory)
+	server.GET("/marketplace/:id/volume/history", srv.MarketplaceVolumeHistory)
+	server.GET("/marketplace/:id/market_cap/history", srv.MarketplaceMarketCapHistory)
+	server.GET("/marketplace/:id/sales/history", srv.MarketplaceSalesHistory)
+	server.GET("/marketplace/:id/users/history", srv.MarketplaceUsersHistory)
 
 	// NFT stats - current.
-	server.GET("/nft/:id/price", api.NFTPrice)
-	server.POST("/nft/batch/price", api.NFTBatchPrice)
+	server.GET("/nft/:id/price", srv.NFTPrice)
+	server.POST("/nft/batch/price", srv.NFTBatchPrice)
 
 	// NFT stats - historic.
-	server.GET("/nft/:id/average", api.NFTAveragePrice)
-	server.GET("/nft/:id/price/history", api.NFTPriceHistory)
+	server.GET("/nft/:id/average", srv.NFTAveragePrice)
+	server.GET("/nft/:id/price/history", srv.NFTPriceHistory)
 
 	// This section launches the main executing components in their own
 	// goroutine, so they can run concurrently. Afterwards, we wait for an
