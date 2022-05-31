@@ -30,7 +30,7 @@ func (s *Stats) CollectionSizeHistory(address identifier.Address, from time.Time
 		Where("emitted_at <= date")
 
 	countQuery := s.db.
-		Table("generate_series(?, ?, INTERVAL '1 day') AS date",
+		Table("generate_series(?::timestamp, ?::timestamp, INTERVAL '1 day') AS date",
 			from.Format(timeFormat),
 			to.Format(timeFormat),
 		).

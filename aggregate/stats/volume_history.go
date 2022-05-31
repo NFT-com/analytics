@@ -22,12 +22,10 @@ func (s *Stats) MarketplaceVolumeHistory(addresses []identifier.Address, from ti
 
 func (s *Stats) volumeHistory(collectionAddress *identifier.Address, marketplaceAddresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error) {
 
-	// FIXME: Use 'timestamp without time zone' for 'generate_series', slight performance improvement
-
 	// Determine the total value of trades for each point in time.
 	sumQuery := s.db.
 		Select("SUM(trade_price) AS total, date").
-		Table("sales, LATERAL generate_series(?, ?, INTERVAL '1 day') AS date",
+		Table("sales, LATERAL generate_series(?::timestamp, ?::timestamp, INTERVAL '1 day') AS date",
 			from.Format(timeFormat),
 			to.Format(timeFormat)).
 		Where("emitted_at <= date").
