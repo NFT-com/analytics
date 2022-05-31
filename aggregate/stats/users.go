@@ -16,18 +16,16 @@ func (s *Stats) MarketplaceUserCount(addresses []identifier.Address) (uint64, er
 	sellersQuery := s.db.
 		Table("sales").
 		Select("seller_address AS acc").
-		Where("emitted_at <= date").
 		Where(marketplaceFilter)
 
 	// Select all fitting buyers on a marketplace.
 	buyersQuery := s.db.
 		Table("sales").
 		Select("buyer_address AS acc").
-		Where("emitted_at <= date").
 		Where(marketplaceFilter)
 
 	query := s.db.
-		Table("( ? ) UNION ( ? ) users",
+		Table("( ( ? ) UNION ( ? )) users",
 			sellersQuery,
 			buyersQuery).
 		Select("COUNT(users.*) AS count")
