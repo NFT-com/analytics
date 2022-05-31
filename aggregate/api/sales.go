@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
 	"github.com/labstack/echo/v4"
 )
 
@@ -24,7 +25,12 @@ func (a *API) CollectionSales(ctx echo.Context) error {
 		return apiError(err)
 	}
 
-	return ctx.JSON(http.StatusOK, sales)
+	response := datapoint.Value{
+		ID:    id,
+		Value: float64(sales),
+	}
+
+	return ctx.JSON(http.StatusOK, response)
 }
 
 // MarketplaceSales handles the request for number of sales for a marketplace.
@@ -45,5 +51,10 @@ func (a *API) MarketplaceSales(ctx echo.Context) error {
 		return apiError(err)
 	}
 
-	return ctx.JSON(http.StatusOK, sales)
+	response := datapoint.Value{
+		ID:    id,
+		Value: float64(sales),
+	}
+
+	return ctx.JSON(http.StatusOK, response)
 }

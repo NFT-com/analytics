@@ -4,6 +4,12 @@ import (
 	"time"
 )
 
+// Value represents the generic datatype for some stat.
+type Value struct {
+	ID    string  `json:"id,omitempty"`
+	Value float64 `json:"value,omitempty"`
+}
+
 // Volume represents the trading volume for a given category (e.g. collection or a marketplace).
 type Volume struct {
 	Total float64    `json:"total" gorm:"column:total"`

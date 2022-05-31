@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/NFT-com/graph-api/aggregate/models/api"
+	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
@@ -28,9 +29,12 @@ func (a *API) CollectionVolume(ctx echo.Context) error {
 		return apiError(err)
 	}
 
-	// FIXME: Add a specific API data type to return this, instead of just a flat float64.
+	response := datapoint.Value{
+		ID:    id,
+		Value: volume,
+	}
 
-	return ctx.JSON(http.StatusOK, volume)
+	return ctx.JSON(http.StatusOK, response)
 }
 
 // CollectionBatchVolume handles the request for trading volume for a batch of collections.
@@ -68,7 +72,7 @@ func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 	}
 
 	// Map the list of volumes back to the collection IDs.
-	var collectionVolumes []api.StatValue
+	var collectionVolumes []datapoint.Value
 	for id, address := range addresses {
 
 		volume, ok := volumes[address]
@@ -79,7 +83,7 @@ func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 		}
 
 		// Create the volume record and add it to the list.
-		v := api.StatValue{
+		v := datapoint.Value{
 			ID:    id,
 			Value: volume,
 		}
@@ -113,5 +117,10 @@ func (a *API) MarketplaceVolume(ctx echo.Context) error {
 		return apiError(err)
 	}
 
-	return ctx.JSON(http.StatusOK, volume)
+	response := datapoint.Value{
+		ID:    id,
+		Value: volume,
+	}
+
+	return ctx.JSON(http.StatusOK, response)
 }
