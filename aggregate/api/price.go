@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 	"github.com/labstack/echo/v4"
+
+	"github.com/NFT-com/graph-api/aggregate/models/api"
+	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
 // NFTPrice handles the request for retrieving current price of an NFT.
@@ -34,7 +36,7 @@ func (a *API) NFTPrice(ctx echo.Context) error {
 func (a *API) NFTBatchPrice(ctx echo.Context) error {
 
 	// Unpack the list of IDs.
-	var request batchRequest
+	var request api.BatchRequest
 	err := ctx.Bind(&request)
 	if err != nil {
 		return bindError(err)
@@ -66,7 +68,7 @@ func (a *API) NFTBatchPrice(ctx echo.Context) error {
 	}
 
 	// Map the list of prices back to the NFT IDs.
-	var nftPrices []StatValue
+	var nftPrices []api.StatValue
 	for id, address := range addresses {
 
 		price, ok := prices[address]
@@ -77,7 +79,7 @@ func (a *API) NFTBatchPrice(ctx echo.Context) error {
 		}
 
 		// Create the price record and add it to the list.
-		p := StatValue{
+		p := api.StatValue{
 			ID:    id,
 			Value: price,
 		}
@@ -85,7 +87,7 @@ func (a *API) NFTBatchPrice(ctx echo.Context) error {
 	}
 
 	// Create the API response.
-	response := BatchResponse{
+	response := api.BatchResponse{
 		Data: nftPrices,
 	}
 

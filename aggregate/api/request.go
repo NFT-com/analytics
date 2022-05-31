@@ -6,13 +6,14 @@ import (
 
 	"github.com/labstack/echo/v4"
 
+	"github.com/NFT-com/graph-api/aggregate/models/api"
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
 func (a *API) unpackCollectionHistoryRequest(ctx echo.Context) (*collectionRequest, error) {
 
 	// Unpack request.
-	var request apiRequest
+	var request api.Request
 	err := ctx.Bind(&request)
 	if err != nil {
 		return nil, bindError(err)
@@ -31,8 +32,8 @@ func (a *API) unpackCollectionHistoryRequest(ctx echo.Context) (*collectionReque
 
 	out := &collectionRequest{
 		address: address,
-		from:    request.From.time(),
-		to:      request.To.time(),
+		from:    request.From.Time(),
+		to:      request.To.Time(),
 	}
 
 	return out, nil
@@ -41,7 +42,7 @@ func (a *API) unpackCollectionHistoryRequest(ctx echo.Context) (*collectionReque
 func (a *API) unpackMarketplaceHistoryRequest(ctx echo.Context) (*marketplaceRequest, error) {
 
 	// Unpack the request.
-	var request apiRequest
+	var request api.Request
 	err := ctx.Bind(&request)
 	if err != nil {
 		return nil, bindError(err)
@@ -60,8 +61,8 @@ func (a *API) unpackMarketplaceHistoryRequest(ctx echo.Context) (*marketplaceReq
 
 	out := &marketplaceRequest{
 		addresses: addresses,
-		from:      request.From.time(),
-		to:        request.To.time(),
+		from:      request.From.Time(),
+		to:        request.To.Time(),
 	}
 
 	return out, nil
@@ -70,7 +71,7 @@ func (a *API) unpackMarketplaceHistoryRequest(ctx echo.Context) (*marketplaceReq
 func (a *API) unpackNFTRequest(ctx echo.Context) (*nftRequest, error) {
 
 	// Unpack request.
-	var request apiRequest
+	var request api.Request
 	err := ctx.Bind(&request)
 	if err != nil {
 		return nil, bindError(err)
@@ -89,8 +90,8 @@ func (a *API) unpackNFTRequest(ctx echo.Context) (*nftRequest, error) {
 
 	out := &nftRequest{
 		id:   nft,
-		from: request.From.time(),
-		to:   request.To.time(),
+		from: request.From.Time(),
+		to:   request.To.Time(),
 	}
 
 	return out, nil
