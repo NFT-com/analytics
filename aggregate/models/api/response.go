@@ -5,7 +5,7 @@ type BatchResponse struct {
 	Data []StatValue `json:"data,omitempty"`
 }
 
-// StatValue has the requested stat for an entity in a batch request.
+// StatValue has the requested stat for an entity (e.g. a collection or marketplace) in a batch request.
 type StatValue struct {
 	ID    string  `json:"id,omitempty"`
 	Value float64 `json:"value,omitempty"`

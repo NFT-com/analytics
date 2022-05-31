@@ -6,6 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
+	"github.com/NFT-com/graph-api/aggregate/models/api"
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
@@ -35,7 +36,7 @@ func (a *API) CollectionVolume(ctx echo.Context) error {
 // CollectionBatchVolume handles the request for trading volume for a batch of collections.
 func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 
-	var request batchRequest
+	var request api.BatchRequest
 	err := ctx.Bind(&request)
 	if err != nil {
 		return bindError(err)
@@ -67,7 +68,7 @@ func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 	}
 
 	// Map the list of volumes back to the collection IDs.
-	var collectionVolumes []StatValue
+	var collectionVolumes []api.StatValue
 	for id, address := range addresses {
 
 		volume, ok := volumes[address]
@@ -78,7 +79,7 @@ func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 		}
 
 		// Create the volume record and add it to the list.
-		v := StatValue{
+		v := api.StatValue{
 			ID:    id,
 			Value: volume,
 		}
@@ -87,7 +88,7 @@ func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 	}
 
 	// Create the API response.
-	response := BatchResponse{
+	response := api.BatchResponse{
 		Data: collectionVolumes,
 	}
 
