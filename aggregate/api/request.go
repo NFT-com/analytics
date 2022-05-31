@@ -96,11 +96,33 @@ func (a *API) unpackNFTRequest(ctx echo.Context) (*nftRequest, error) {
 	return out, nil
 }
 
+// lookupCollections is a helper function wrapping `lookupCollection`, operating on a list of collection IDs.
+func (a *API) lookupCollections(ids []string) (map[string]identifier.Address, error) {
+
+	addresses := make(map[string]identifier.Address, len(ids))
+	for _, id := range ids {
+
+		address, err := a.lookupCollection(id)
+		if err != nil {
+			return nil, fmt.Errorf("could not lookup collection: %w", err)
+		}
+
+		addresses[id] = address
+	}
+
+	return addresses, nil
+}
+
 func (a *API) lookupCollection(id string) (identifier.Address, error) {
 
-	address, ok := a.collectionCache[id]
+	addresses, ok := a.collections.get(id)
 	if ok {
-		return address, nil
+		// Just a safety check, we should never have more than one address for a collection ID.
+		if len(addresses) != 1 {
+			return identifier.Address{}, fmt.Errorf("unexpected number of collection addresses (have: %d)", len(addresses))
+		}
+
+		return addresses[0], nil
 	}
 
 	address, err := a.lookup.Collection(id)
@@ -108,20 +130,24 @@ func (a *API) lookupCollection(id string) (identifier.Address, error) {
 		return identifier.Address{}, fmt.Errorf("could not lookup collection: %w", err)
 	}
 
-	// FIXME: Add a mutex to sync this.
-	a.collectionCache[id] = address
+	a.collections.set(id, []identifier.Address{address})
 
 	return address, nil
 }
 
 func (a *API) lookupMarketplace(id string) ([]identifier.Address, error) {
 
+	addresses, ok := a.marketplaces.get(id)
+	if ok {
+		return addresses, nil
+	}
+
 	addresses, err := a.lookup.Marketplace(id)
 	if err != nil {
 		return nil, fmt.Errorf("could not lookup marketplace: %w", err)
 	}
 
-	// FIXME: Add caching.
+	a.marketplaces.set(id, addresses)
 
 	return addresses, nil
 }

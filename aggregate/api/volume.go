@@ -47,7 +47,7 @@ func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 	}
 
 	// Lookup collection addresses.
-	addresses, err := a.lookup.Collections(request.IDs)
+	addresses, err := a.lookupCollections(request.IDs)
 	if err != nil {
 		err := fmt.Errorf("could not lookup collection addresses: %w", err)
 		return apiError(err)

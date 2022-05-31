@@ -2,8 +2,6 @@ package api
 
 import (
 	"github.com/rs/zerolog"
-
-	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
 // API provides the Aggregation API functionality.
@@ -12,7 +10,8 @@ type API struct {
 	lookup Lookup
 	log    zerolog.Logger
 
-	collectionCache map[string]identifier.Address
+	collections  *addressCache
+	marketplaces *addressCache
 }
 
 // New creates a new API handler.
@@ -23,7 +22,8 @@ func New(stats Stats, lookup Lookup, log zerolog.Logger) *API {
 		lookup: lookup,
 		log:    log,
 
-		collectionCache: make(map[string]identifier.Address),
+		collections:  newAddressCache(),
+		marketplaces: newAddressCache(),
 	}
 
 	return &api
