@@ -8,14 +8,9 @@ type batchPriceResult struct {
 	TradePrice        float64 `gorm:"column:trade_price"`
 }
 
-type batchVolumeResult struct {
-	ChainID           uint    `gorm:"column:chain_id"`
-	CollectionAddress string  `gorm:"column:collection_address"`
-	Total             float64 `gorm:"column:total"`
-}
-
-// FIXME: Could be modeled with the same type as volume.
-type batchMarketCapResult struct {
+// batchStatResult represents the result of the batch collection volume
+// and market cap queries.
+type batchStatResult struct {
 	ChainID           uint    `gorm:"column:chain_id"`
 	CollectionAddress string  `gorm:"column:collection_address"`
 	Total             float64 `gorm:"column:total"`

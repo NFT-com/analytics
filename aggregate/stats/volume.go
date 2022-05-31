@@ -8,8 +8,6 @@ import (
 	"github.com/NFT-com/graph-api/aggregate/models/identifier"
 )
 
-// FIXME: These might be good candidates to support batch requests.
-
 // CollectionVolume returns the total value of all trades for this collection.
 func (s *Stats) CollectionVolume(address identifier.Address) (float64, error) {
 
@@ -43,7 +41,7 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 	filter := s.createCollectionFilter(addresses)
 	query = query.Where(filter)
 
-	var volumes []batchVolumeResult
+	var volumes []batchStatResult
 	err := query.Find(&volumes).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve collection volumes: %w", err)
