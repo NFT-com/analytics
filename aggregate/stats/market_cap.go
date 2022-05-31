@@ -55,7 +55,7 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 		Where("c.rank = 1").
 		Group("chain_id, collection_address")
 
-	var caps []batchMarketCapResult
+	var caps []batchStatResult
 	err := sumQuery.Find(&caps).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve market caps: %w", err)

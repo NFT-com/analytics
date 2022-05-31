@@ -12,7 +12,6 @@ type Lookup interface {
 	NFT(id string) (identifier.NFT, error)
 
 	// Lookup batches of IDs.
-	// FIXME: Consider having this as the only option.
 	NFTs(ids []string) (map[string]identifier.NFT, error)
 	Collections(id []string) (map[string]identifier.Address, error)
 }
