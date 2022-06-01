@@ -13,14 +13,13 @@ func (a *API) CollectionVolumeHistory(ctx echo.Context) error {
 	// Unpack and validate request.
 	request, err := a.unpackCollectionHistoryRequest(ctx)
 	if err != nil {
-		return err
+		return bindError(fmt.Errorf("could not unpack collection request: %w", err))
 	}
 
 	// Retrieve collection volume.
 	volume, err := a.stats.CollectionVolumeHistory(request.address, request.from, request.to)
 	if err != nil {
-		err := fmt.Errorf("could not get collection volume history: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not get collection volume history: %w", err))
 	}
 
 	return ctx.JSON(http.StatusOK, volume)
@@ -32,14 +31,13 @@ func (a *API) MarketplaceVolumeHistory(ctx echo.Context) error {
 	// Unpack and validate request
 	request, err := a.unpackMarketplaceHistoryRequest(ctx)
 	if err != nil {
-		return err
+		return bindError(fmt.Errorf("could not unpack marketplace request: %w", err))
 	}
 
 	// Retrieve marketplace volume.
 	volume, err := a.stats.MarketplaceVolumeHistory(request.addresses, request.from, request.to)
 	if err != nil {
-		err := fmt.Errorf("could not get marketplace volume history: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not get marketplace volume history: %w", err))
 	}
 
 	return ctx.JSON(http.StatusOK, volume)

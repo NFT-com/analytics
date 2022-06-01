@@ -13,14 +13,13 @@ func (a *API) CollectionSizeHistory(ctx echo.Context) error {
 	// Unpack and validate request.
 	request, err := a.unpackCollectionHistoryRequest(ctx)
 	if err != nil {
-		return err
+		return bindError(fmt.Errorf("could not unpack collection request: %w", err))
 	}
 
 	// Retrieve the number of NFTs in the collection.
 	count, err := a.stats.CollectionSizeHistory(request.address, request.from, request.to)
 	if err != nil {
-		err := fmt.Errorf("could not retrieve collection size: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not retrieve collection size: %w", err))
 	}
 
 	return ctx.JSON(http.StatusOK, count)

@@ -20,14 +20,13 @@ func (a *API) unpackCollectionHistoryRequest(ctx echo.Context) (*collectionReque
 	}
 
 	if request.ID == "" {
-		err = errors.New("collection ID is required")
-		return nil, bindError(err)
+		return nil, errors.New("collection ID is required")
 	}
 
 	// Lookup collection address.
 	address, err := a.lookupCollection(request.ID)
 	if err != nil {
-		return nil, apiError(err)
+		return nil, fmt.Errorf("could not lookup collection: %w", err)
 	}
 
 	out := &collectionRequest{
@@ -49,14 +48,13 @@ func (a *API) unpackMarketplaceHistoryRequest(ctx echo.Context) (*marketplaceReq
 	}
 
 	if request.ID == "" {
-		err = errors.New("marketplace ID is required")
-		return nil, bindError(err)
+		return nil, errors.New("marketplace ID is required")
 	}
 
 	// Lookup marketplace addresses.
 	addresses, err := a.lookupMarketplace(request.ID)
 	if err != nil {
-		return nil, apiError(err)
+		return nil, fmt.Errorf("could not lookup marketplace: %w", err)
 	}
 
 	out := &marketplaceRequest{
@@ -78,8 +76,7 @@ func (a *API) unpackNFTRequest(ctx echo.Context) (*nftRequest, error) {
 	}
 
 	if request.ID == "" {
-		err = errors.New("NFT ID is required")
-		return nil, bindError(err)
+		return nil, errors.New("NFT ID is required")
 	}
 
 	// Lookup NFT identifier.

@@ -13,14 +13,13 @@ func (a *API) CollectionSalesHistory(ctx echo.Context) error {
 	// Unpack and validate request.
 	request, err := a.unpackCollectionHistoryRequest(ctx)
 	if err != nil {
-		return err
+		return bindError(fmt.Errorf("could not unpack collection request: %w", err))
 	}
 
 	// Retrieve number of sales for the collection.
 	sales, err := a.stats.CollectionSalesHistory(request.address, request.from, request.to)
 	if err != nil {
-		err := fmt.Errorf("could not retrieve collection sales history: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not retrieve collection sales history: %w", err))
 	}
 
 	return ctx.JSON(http.StatusOK, sales)
@@ -32,14 +31,13 @@ func (a *API) MarketplaceSalesHistory(ctx echo.Context) error {
 	// Unpack and validate request
 	request, err := a.unpackMarketplaceHistoryRequest(ctx)
 	if err != nil {
-		return err
+		return bindError(fmt.Errorf("could not unpack marketplace request: %w", err))
 	}
 
 	// Retrieve number of sales for the collection.
 	sales, err := a.stats.MarketplaceSalesHistory(request.addresses, request.from, request.to)
 	if err != nil {
-		err := fmt.Errorf("could not retrieve marketplace sales history: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not retrieve marketplace sales history: %w", err))
 	}
 
 	return ctx.JSON(http.StatusOK, sales)

@@ -13,14 +13,13 @@ func (a *API) CollectionAverageHistory(ctx echo.Context) error {
 	// Unpack and validate request.
 	request, err := a.unpackCollectionHistoryRequest(ctx)
 	if err != nil {
-		return err
+		return bindError(fmt.Errorf("could not unpack collection request: %w", err))
 	}
 
 	// Retrieve collection average value.
 	avg, err := a.stats.CollectionAverageHistory(request.address, request.from, request.to)
 	if err != nil {
-		err := fmt.Errorf("could not retrieve collection average price: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not retrieve collection average price: %w", err))
 	}
 
 	return ctx.JSON(http.StatusOK, avg)

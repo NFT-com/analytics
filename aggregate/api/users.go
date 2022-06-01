@@ -17,14 +17,13 @@ func (a *API) MarketplaceUsers(ctx echo.Context) error {
 	// Lookup marketplace addresses.
 	addresses, err := a.lookupMarketplace(id)
 	if err != nil {
-		return apiError(err)
+		return apiError(fmt.Errorf("could not lookup marketplace: %w", err))
 	}
 
 	// Retrieve marketplace user data.
 	users, err := a.stats.MarketplaceUserCount(addresses)
 	if err != nil {
-		err := fmt.Errorf("could not retrieve marketplace user count: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not retrieve marketplace user count: %w", err))
 	}
 
 	response := datapoint.Value{

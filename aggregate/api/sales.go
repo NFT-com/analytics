@@ -16,13 +16,12 @@ func (a *API) CollectionSales(ctx echo.Context) error {
 	// Lookup collection address.
 	address, err := a.lookupCollection(id)
 	if err != nil {
-		return apiError(err)
+		return apiError(fmt.Errorf("could not lookup collection: %w", err))
 	}
 	// Retrieve number of sales for the collection.
 	sales, err := a.stats.CollectionSales(address)
 	if err != nil {
-		err := fmt.Errorf("could not retrieve collection sales: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not retrieve collection sales: %w", err))
 	}
 
 	response := datapoint.Value{
@@ -41,14 +40,13 @@ func (a *API) MarketplaceSales(ctx echo.Context) error {
 	// Lookup marketplace addresses.
 	addresses, err := a.lookupMarketplace(id)
 	if err != nil {
-		return apiError(err)
+		return apiError(fmt.Errorf("could not lookup marketplace: %w", err))
 	}
 
 	// Retrieve number of sales for the marketplace.
 	sales, err := a.stats.MarketplaceSales(addresses)
 	if err != nil {
-		err := fmt.Errorf("could not retrieve marketplace sales: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not retrieve marketplace sales: %w", err))
 	}
 
 	response := datapoint.Value{

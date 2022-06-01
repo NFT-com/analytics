@@ -19,13 +19,13 @@ func (a *API) CollectionMarketCap(ctx echo.Context) error {
 	// Lookup collection address.
 	address, err := a.lookupCollection(id)
 	if err != nil {
-		return apiError(err)
+		return apiError(fmt.Errorf("could not lookup collection: %w", err))
 	}
 
 	// Retrieve the collection market cap.
 	cap, err := a.stats.CollectionMarketCap(address)
 	if err != nil {
-		return apiError(err)
+		return apiError(fmt.Errorf("could not retrieve collection market cap: %w", err))
 	}
 
 	response := datapoint.Value{
@@ -42,7 +42,7 @@ func (a *API) CollectionBatchMarketCap(ctx echo.Context) error {
 	var request api.BatchRequest
 	err := ctx.Bind(&request)
 	if err != nil {
-		return bindError(err)
+		return bindError(fmt.Errorf("could not unpack collection batch request: %w", err))
 	}
 
 	// If we don't have any IDs provided, just return.
@@ -53,8 +53,7 @@ func (a *API) CollectionBatchMarketCap(ctx echo.Context) error {
 	// Lookup collection addresses.
 	addresses, err := a.lookupCollections(request.IDs)
 	if err != nil {
-		err := fmt.Errorf("could not lookup collection addresses: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not lookup collection addresses: %w", err))
 	}
 
 	// Transform the map into a list of addresses.
@@ -66,8 +65,7 @@ func (a *API) CollectionBatchMarketCap(ctx echo.Context) error {
 	// Get the total volume for the collections.
 	caps, err := a.stats.CollectionBatchMarketCaps(list)
 	if err != nil {
-		err := fmt.Errorf("could not retrieve collection market caps: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not retrieve collection market caps: %w", err))
 	}
 
 	// Map the list of volumes back to the collection IDs.
@@ -106,13 +104,13 @@ func (a *API) MarketplaceMarketCap(ctx echo.Context) error {
 	// Lookup marketplace addresses.
 	addresses, err := a.lookupMarketplace(id)
 	if err != nil {
-		return apiError(err)
+		return apiError(fmt.Errorf("could not lookup marketplace: %w", err))
 	}
 
 	// Retrieve marketplace market cap info.
 	cap, err := a.stats.MarketplaceMarketCap(addresses)
 	if err != nil {
-		return apiError(err)
+		return apiError(fmt.Errorf("could not retrieve marketplace market cap: %w", err))
 	}
 
 	response := datapoint.Value{

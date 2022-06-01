@@ -19,14 +19,13 @@ func (a *API) CollectionVolume(ctx echo.Context) error {
 	// Lookup collection address.
 	address, err := a.lookupCollection(id)
 	if err != nil {
-		return apiError(err)
+		return apiError(fmt.Errorf("could not lookup collection: %w", err))
 	}
 
 	// Retrieve collection volume.
 	volume, err := a.stats.CollectionVolume(address)
 	if err != nil {
-		err := fmt.Errorf("could not get collection volume data: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not get collection volume data: %w", err))
 	}
 
 	response := datapoint.Value{
@@ -43,7 +42,7 @@ func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 	var request api.BatchRequest
 	err := ctx.Bind(&request)
 	if err != nil {
-		return bindError(err)
+		return bindError(fmt.Errorf("could not unpack collection batch request: %w", err))
 	}
 
 	// If we don't have any IDs provided, just return.
@@ -54,8 +53,7 @@ func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 	// Lookup collection addresses.
 	addresses, err := a.lookupCollections(request.IDs)
 	if err != nil {
-		err := fmt.Errorf("could not lookup collection addresses: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not lookup collection addresses: %w", err))
 	}
 
 	// Transform the map into a list of addresses.
@@ -67,8 +65,7 @@ func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 	// Get the total volume for the collections.
 	volumes, err := a.stats.CollectionBatchVolumes(list)
 	if err != nil {
-		err := fmt.Errorf("could not retrieve collection volumes: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not retrieve collection volumes: %w", err))
 	}
 
 	// Map the list of volumes back to the collection IDs.
@@ -107,14 +104,13 @@ func (a *API) MarketplaceVolume(ctx echo.Context) error {
 	// Lookup marketplace addresses.
 	addresses, err := a.lookupMarketplace(id)
 	if err != nil {
-		return apiError(err)
+		return apiError(fmt.Errorf("could not lookup marketplace: %w", err))
 	}
 
 	// Retrieve marketplace volume info.
 	volume, err := a.stats.MarketplaceVolume(addresses)
 	if err != nil {
-		err := fmt.Errorf("could not get marketplace volume data: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not get marketplace volume data: %w", err))
 	}
 
 	response := datapoint.Value{

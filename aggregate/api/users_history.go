@@ -13,14 +13,13 @@ func (a *API) MarketplaceUsersHistory(ctx echo.Context) error {
 	// Unpack and validate request.
 	request, err := a.unpackMarketplaceHistoryRequest(ctx)
 	if err != nil {
-		return err
+		return bindError(fmt.Errorf("could not unpack marketplace request: %w", err))
 	}
 
 	// Retrieve marketplace user data.
 	users, err := a.stats.MarketplaceUserCountHistory(request.addresses, request.from, request.to)
 	if err != nil {
-		err := fmt.Errorf("could not retrieve marketplace user count history: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not retrieve marketplace user count history: %w", err))
 	}
 
 	return ctx.JSON(http.StatusOK, users)

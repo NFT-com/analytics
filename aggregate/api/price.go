@@ -19,15 +19,13 @@ func (a *API) NFTPrice(ctx echo.Context) error {
 	// Lookup NFT identifier.
 	nft, err := a.lookup.NFT(id)
 	if err != nil {
-		err := fmt.Errorf("could not lookup NFT: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not lookup NFT: %w", err))
 	}
 
 	// Retrieve NFT price.
 	price, err := a.stats.NFTPrice(nft)
 	if err != nil {
-		err := fmt.Errorf("could not retrieve NFT price: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not retrieve NFT price: %w", err))
 	}
 
 	response := datapoint.Value{
@@ -45,7 +43,7 @@ func (a *API) NFTBatchPrice(ctx echo.Context) error {
 	var request api.BatchRequest
 	err := ctx.Bind(&request)
 	if err != nil {
-		return bindError(err)
+		return bindError(fmt.Errorf("could not unpack NFT batch price request: %w", err))
 	}
 
 	// If we don't have any IDs provided, just return.
@@ -56,8 +54,7 @@ func (a *API) NFTBatchPrice(ctx echo.Context) error {
 	// Lookup the list of NFT identifiers based on IDs.
 	addresses, err := a.lookup.NFTs(request.IDs)
 	if err != nil {
-		err := fmt.Errorf("could not lookup NFT addresses: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not lookup NFT addresses: %w", err))
 	}
 
 	// Transform the map into a list of identifiers.
@@ -69,8 +66,7 @@ func (a *API) NFTBatchPrice(ctx echo.Context) error {
 	// Get the prices for the NFT set.
 	prices, err := a.stats.NFTBatchPrices(list)
 	if err != nil {
-		err := fmt.Errorf("could not retrieve batch prices: %w", err)
-		return apiError(err)
+		return apiError(fmt.Errorf("could not retrieve batch prices: %w", err))
 	}
 
 	// Map the list of prices back to the NFT IDs.
