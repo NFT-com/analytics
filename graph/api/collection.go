@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 
-	"github.com/NFT-com/graph-api/graph/models/api"
-	"github.com/NFT-com/graph-api/graph/query"
+	"github.com/NFT-com/analytics/graph/models/api"
+	"github.com/NFT-com/analytics/graph/query"
 )
 
 // getCollection returns a single collection based on its ID.

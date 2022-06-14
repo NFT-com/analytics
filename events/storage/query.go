@@ -6,7 +6,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/NFT-com/graph-api/events/models/events"
+	"github.com/NFT-com/analytics/events/models/selectors"
 )
 
 type conditionSetFunc func(*gorm.DB) *gorm.DB
@@ -54,37 +54,37 @@ func withLimit(limit uint) conditionSetFunc {
 
 // withTimeFilter returns the condition setter that adds the time range condition
 // to the query, if provided.
-func withTimeFilter(selector events.TimeSelector) conditionSetFunc {
+func withTimestampRange(selector selectors.TimestampRange) conditionSetFunc {
 	return func(db *gorm.DB) *gorm.DB {
 
 		// Set start time condition.
-		start := time.Time(selector.Start)
+		start := time.Time(selector.StartTimestamp)
 		if !start.IsZero() {
-			db = db.Where("emitted_at >= ?", start.Format(events.TimeLayout))
+			db = db.Where("emitted_at >= ?", start.Format(selectors.TimeLayout))
 		}
 
 		// Set end time condition.
-		end := time.Time(selector.End)
+		end := time.Time(selector.EndTimestamp)
 		if !end.IsZero() {
-			db = db.Where("emitted_at <= ?", end.Format(events.TimeLayout))
+			db = db.Where("emitted_at <= ?", end.Format(selectors.TimeLayout))
 		}
 
 		return db
 	}
 }
 
-// withBlockRangeFilter returns the condition setter that adds the block range condition
+// withHeightRangeFilter returns the condition setter that adds the block range condition
 // to the query, if provided.
-func withBlockRangeFilter(selector events.BlockSelector) conditionSetFunc {
+func withHeightRange(selector selectors.HeightRange) conditionSetFunc {
 	return func(db *gorm.DB) *gorm.DB {
 
 		// Set start block condition.
-		if selector.BlockStart != "" {
-			db = db.Where("block_number >= ?", selector.BlockStart)
+		if selector.StartHeight != "" {
+			db = db.Where("block_number >= ?", selector.StartHeight)
 		}
 		// Set end block condition.
-		if selector.BlockEnd != "" {
-			db = db.Where("block_number <= ?", selector.BlockEnd)
+		if selector.EndHeight != "" {
+			db = db.Where("block_number <= ?", selector.EndHeight)
 		}
 
 		return db

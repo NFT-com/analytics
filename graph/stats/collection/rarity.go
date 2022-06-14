@@ -1,7 +1,7 @@
 package collection
 
 import (
-	"github.com/NFT-com/graph-api/graph/models/api"
+	"github.com/NFT-com/analytics/graph/models/api"
 )
 
 // CalculateRarity takes the collection size and a list of traits (key-value pairs)

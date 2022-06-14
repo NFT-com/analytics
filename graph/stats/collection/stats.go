@@ -1,7 +1,7 @@
 package collection
 
 import (
-	"github.com/NFT-com/graph-api/graph/models/api"
+	"github.com/NFT-com/analytics/graph/models/api"
 )
 
 // Stats contains trait statistics for a given collection.

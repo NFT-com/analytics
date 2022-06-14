@@ -21,8 +21,8 @@ const (
 // decoded using `unpackToken` and used as the new reference point for
 // the next batch of records.
 
-func createToken(block string, eventIndex uint) string {
-	raw := fmt.Sprintf("%s%s%d", block, tokenDelimiter, eventIndex)
+func createToken(height uint64, index uint) string {
+	raw := fmt.Sprintf("%d%s%d", height, tokenDelimiter, index)
 	return base64.RawStdEncoding.EncodeToString([]byte(raw))
 }
 

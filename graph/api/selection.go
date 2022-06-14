@@ -3,7 +3,7 @@ package api
 import (
 	"context"
 
-	"github.com/NFT-com/graph-api/graph/query"
+	"github.com/NFT-com/analytics/graph/query"
 )
 
 type nftQueryConfig struct {

@@ -3,7 +3,7 @@ package api
 import (
 	"context"
 
-	"github.com/NFT-com/graph-api/graph/models/api"
+	"github.com/NFT-com/analytics/graph/models/api"
 )
 
 // marketplaceCollections returns a list of collections on a specified marketplace.

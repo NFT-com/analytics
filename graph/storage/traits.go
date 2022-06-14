@@ -3,7 +3,7 @@ package storage
 import (
 	"fmt"
 
-	"github.com/NFT-com/graph-api/graph/models/api"
+	"github.com/NFT-com/analytics/graph/models/api"
 )
 
 // NFTTraits retrieves a list of traits of that NFT.

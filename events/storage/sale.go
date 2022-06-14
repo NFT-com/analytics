@@ -3,27 +3,28 @@ package storage
 import (
 	"fmt"
 
-	"github.com/NFT-com/graph-api/events/models/events"
+	"github.com/NFT-com/analytics/events/models/selectors"
+	"github.com/NFT-com/indexer/models/events"
 )
 
 // TODO: Add postman tests for sale events.
-// See https://github.com/NFT-com/graph-api/issues/11
+// See https://github.com/NFT-com/analytics/issues/11
 
 // Sales retrieves NFT sale events according to the specified filters.
 // The number of events returned is limited by the `batchSize` `Storage` parameter.
 // If the number of events for the specified criteria is greater than `batchSize`,
 // a token is provided along with the list of events. This token should be provided
 // when retrieving the next batch of records.
-func (s *Storage) Sales(selector events.SaleSelector, token string) ([]events.Sale, string, error) {
+func (s *Storage) Sales(selector selectors.SalesFilter, token string) ([]events.Sale, string, error) {
 
 	query := events.Sale{
-		ChainID:            selector.Chain,
-		CollectionAddress:  selector.Collection,
+		ChainID:            selector.ChainID,
+		MarketplaceAddress: selector.MarketplaceAddress,
+		CollectionAddress:  selector.CollectionAddress,
 		TokenID:            selector.TokenID,
-		MarketplaceAddress: selector.Marketplace,
-		Transaction:        selector.Transaction,
-		Seller:             selector.Seller,
-		Buyer:              selector.Buyer,
+		TransactionHash:    selector.TransactionHash,
+		SellerAddress:      selector.SellerAddress,
+		BuyerAddress:       selector.BuyerAddress,
 	}
 
 	// NOTE: This function creates a query with a limit of `batchSize + 1` to avoid unnecessary queries.
@@ -31,15 +32,15 @@ func (s *Storage) Sales(selector events.SaleSelector, token string) ([]events.Sa
 	limit := s.batchSize + 1
 	db, err := s.createQuery(query, token,
 		withLimit(limit),
-		withTimeFilter(selector.TimeSelector),
-		withBlockRangeFilter(selector.BlockSelector),
+		withTimestampRange(selector.TimestampRange),
+		withHeightRange(selector.HeightRange),
 	)
 	if err != nil {
 		return nil, "", fmt.Errorf("could not create query: %w", err)
 	}
 
-	if selector.Price != "" {
-		db = db.Where("trade_price >= ?", selector.Price)
+	if selector.TradePrice != "" {
+		db = db.Where("trade_price >= ?", selector.TradePrice)
 	}
 
 	var sales []events.Sale

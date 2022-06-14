@@ -5,12 +5,14 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/NFT-com/graph-api/events/models/events"
+	"github.com/NFT-com/indexer/models/events"
+
+	"github.com/NFT-com/analytics/events/models/selectors"
 )
 
 // saleRequest describes a request to the sales endpoint.
 type saleRequest struct {
-	events.SaleSelector
+	selectors.SalesFilter
 	Page string `query:"page"`
 }
 
@@ -29,7 +31,7 @@ func (a *API) Sale(ctx echo.Context) error {
 		return bindError(err)
 	}
 
-	sales, token, err := a.storage.Sales(req.SaleSelector, req.Page)
+	sales, token, err := a.storage.Sales(req.SalesFilter, req.Page)
 	if err != nil {
 		return apiError(err)
 	}

@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/NFT-com/graph-api/graph/models/api"
+	"github.com/NFT-com/analytics/graph/models/api"
 )
 
 // getNetwork retrieves a network based on its ID.

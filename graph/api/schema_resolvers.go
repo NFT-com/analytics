@@ -7,8 +7,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/NFT-com/graph-api/graph/generated"
-	"github.com/NFT-com/graph-api/graph/models/api"
+	"github.com/NFT-com/analytics/graph/generated"
+	"github.com/NFT-com/analytics/graph/models/api"
 )
 
 func (r *collectionServer) Network(ctx context.Context, obj *api.Collection) (*api.Network, error) {

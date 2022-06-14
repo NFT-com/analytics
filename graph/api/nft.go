@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 
-	"github.com/NFT-com/graph-api/graph/models/api"
-	"github.com/NFT-com/graph-api/graph/stats/collection"
+	"github.com/NFT-com/analytics/graph/models/api"
+	"github.com/NFT-com/analytics/graph/stats/collection"
 )
 
 // getNFT returns a single NFT based on its ID.

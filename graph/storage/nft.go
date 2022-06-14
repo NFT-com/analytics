@@ -6,8 +6,8 @@ import (
 
 	"gorm.io/gorm"
 
-	server "github.com/NFT-com/graph-api/graph/api"
-	"github.com/NFT-com/graph-api/graph/models/api"
+	server "github.com/NFT-com/analytics/graph/api"
+	"github.com/NFT-com/analytics/graph/models/api"
 )
 
 const (
