@@ -6,8 +6,12 @@ import (
 
 	"gorm.io/gorm"
 
-	server "github.com/NFT-com/graph-api/graph/api"
-	"github.com/NFT-com/graph-api/graph/models/api"
+	server "github.com/NFT-com/analytics/graph/api"
+	"github.com/NFT-com/analytics/graph/models/api"
+)
+
+const (
+	startHeightColumnName = "start_height"
 )
 
 // Collection retrieves a single collection from its ID.
@@ -28,11 +32,11 @@ func (s *Storage) Collection(id string) (*api.Collection, error) {
 	return &collection, nil
 }
 
-// CollectionByContract retrieves a single collection based on the chain ID and the contract address.
-func (s *Storage) CollectionByContract(chainID string, contract string) (*api.Collection, error) {
+// CollectionByContract retrieves a single collection based on the network ID and the contract address.
+func (s *Storage) CollectionByContract(networkID string, contract string) (*api.Collection, error) {
 
-	if chainID == "" {
-		return nil, errors.New("chain ID is required")
+	if networkID == "" {
+		return nil, errors.New("network ID is required")
 	}
 	if contract == "" {
 		return nil, errors.New("contract address is required")
@@ -41,8 +45,8 @@ func (s *Storage) CollectionByContract(chainID string, contract string) (*api.Co
 	var collection api.Collection
 	err := s.db.
 		Where(api.Collection{
-			ChainID: chainID,
-			Address: contract,
+			NetworkID: networkID,
+			Address:   contract,
 		}).
 		First(&collection).
 		Error
@@ -56,12 +60,12 @@ func (s *Storage) CollectionByContract(chainID string, contract string) (*api.Co
 	return &collection, nil
 }
 
-// Collections retrieves the list of collections on a chain.
-func (s *Storage) Collections(chain *string, orderBy api.CollectionOrder) ([]*api.Collection, error) {
+// Collections retrieves the list of collections on a network.
+func (s *Storage) Collections(networkID *string, orderBy api.CollectionOrder) ([]*api.Collection, error) {
 
 	query := api.Collection{}
-	if chain != nil {
-		query.ChainID = *chain
+	if networkID != nil {
+		query.NetworkID = *networkID
 	}
 	db := s.db.Where(query)
 
@@ -69,7 +73,6 @@ func (s *Storage) Collections(chain *string, orderBy api.CollectionOrder) ([]*ap
 	if err != nil {
 		return nil, fmt.Errorf("could not prepare order clause: %w", err)
 	}
-
 	db = db.Order(orderClause)
 
 	var collections []*api.Collection
@@ -84,12 +87,12 @@ func (s *Storage) Collections(chain *string, orderBy api.CollectionOrder) ([]*ap
 // CollectionNFTs retrieves the list of NFTs in a specific collection.
 func (s *Storage) CollectionNFTs(collectionID string) ([]*api.NFT, error) {
 
-	var nfts []*api.NFT
-	err := s.db.Where(api.NFT{
+	query := api.NFT{
 		Collection: collectionID,
-	}).
-		Find(&nfts).
-		Error
+	}
+
+	var nfts []*api.NFT
+	err := s.db.Where(&query).Find(&nfts).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve nfts: %w", err)
 	}
@@ -98,15 +101,15 @@ func (s *Storage) CollectionNFTs(collectionID string) ([]*api.NFT, error) {
 
 }
 
-// CollectionsByChain retrieves a list of collections on a specified Chain.
-func (s *Storage) CollectionsByChain(chainID string) ([]*api.Collection, error) {
+// CollectionsByNetwork retrieves a list of collections on a specified network.
+func (s *Storage) CollectionsByNetwork(networkID string) ([]*api.Collection, error) {
+
+	query := api.Collection{
+		NetworkID: networkID,
+	}
 
 	var collections []*api.Collection
-	err := s.db.Where(api.Collection{
-		ChainID: chainID,
-	}).
-		Find(&collections).
-		Error
+	err := s.db.Where(&query).Find(&collections).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve collections: %w", err)
 	}
@@ -117,8 +120,12 @@ func (s *Storage) CollectionsByChain(chainID string) ([]*api.Collection, error) 
 // CollectionSize returns the number of NFTs in a collection.
 func (s *Storage) CollectionSize(collectionID string) (uint, error) {
 
+	query := api.NFT{
+		Collection: collectionID,
+	}
+
 	var count int64
-	err := s.db.Table("nfts").Where("collection = ?", collectionID).Count(&count).Error
+	err := s.db.Model(&api.NFT{}).Where(&query).Count(&count).Error
 	if err != nil {
 		return 0, fmt.Errorf("could not retrieve collection size: %w", err)
 	}
@@ -137,7 +144,7 @@ func formatCollectionOrderBy(clause api.CollectionOrder) (string, error) {
 	switch clause.Field {
 
 	case api.CollectionOrderFieldCreationTime:
-		field = creationTimeColumnName
+		field = startHeightColumnName
 
 	// FIXME: Remove when sorting by value becomes possible.
 	default:

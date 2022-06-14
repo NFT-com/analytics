@@ -5,7 +5,7 @@ import (
 )
 
 // TODO: Refactor the storage package so it's more generic.
-// See https://github.com/NFT-com/graph-api/issues/5
+// See https://github.com/NFT-com/analytics/issues/5
 
 // Storage provides the database interaction functionality, such as retrieving NFTs and Collections
 // from the database.

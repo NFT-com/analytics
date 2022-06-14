@@ -25,31 +25,32 @@ enum OrderDirection {
 }
 
 """
-Chain represents the chain and its networks.
+Network represents the blockchain networks.
+Mainnet and testnets of a specific blockchain are distinct network objects.
 """
-type Chain {
+type Network {
     """
-    Chain ID.
+    Network ID.
     """
     id: ID!
 
     """
-    Name of the chain, e.g. `Ethereum`.
+    Name of the network, e.g. `Ethereum`.
     """
     name: String!
 
     """
-    Description of the chain.
+    Description of the network.
     """
     description: String!
 
     """
-    Marketplaces on this chain.
+    Marketplaces on this network.
     """
     marketplaces: [Marketplace!]
 
     """
-    Collections found on this chain.
+    Collections found on this network.
     """
     collections: [Collection!]
 }
@@ -79,9 +80,9 @@ type Marketplace {
     website: String
 
     """
-    Chains the marketplace operates on.
+    Networks the marketplace operates on.
     """
-    chains: [Chain!]!
+    networks: [Network!]!
 
     """
     Collections on this marketplace.
@@ -124,9 +125,9 @@ type Collection {
     image_url: String
 
     """
-    Chain on which collection resides on.
+    Network on which collection resides on.
     """
-    chain: Chain!
+    network: Network!
 
     """
     Marketplaces this collection is on.
@@ -201,7 +202,7 @@ type NFT {
     """
     Token ID, as found on the blockchain.
     """
-    tokenID: String!
+    token_id: String!
 
     """
     Name of the NFT.
@@ -250,9 +251,9 @@ Trait represents a single NFT trait.
 """
 type Trait {
     """
-    Trait type.
+    Trait name.
     """
-    type: String!
+    name: String!
 
     """
     Trait value.
@@ -306,19 +307,19 @@ The query root of NFT.com GraphQL interface.
 type Query {
 
     """
-    Get a single chain.
+    Get a single network.
     """
-    chain(
+    network(
         """
-        ID of the Chain.
+        ID of the Network.
         """
         id: ID!
-    ): Chain
+    ): Network
 
     """
-    List chains.
+    List networks.
     """
-    chains: [Chain!]
+    networks: [Network!]
 
     """
     Get a single NFT.
@@ -335,9 +336,9 @@ type Query {
     """
     nftByTokenID(
         """
-        Chain ID.
+        Network ID.
         """
-        chainID: ID!
+        network_id: ID!
 
         """
         ID of the smart contract.
@@ -390,9 +391,9 @@ type Query {
     """
     collectionByAddress(
         """
-        Chain ID.
+        Network ID.
         """
-        chainID: ID!
+        network_id: ID!
 
         """
         Address of the smart contract.
@@ -405,9 +406,9 @@ type Query {
     """
     collections(
         """
-        ID of the chain that the collection is on.
+        ID of the network that the collection is on.
         """
-        chain: ID
+        network_id: ID
         
         """
         Ordering options for the returned collections.

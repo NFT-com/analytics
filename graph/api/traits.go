@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/NFT-com/graph-api/graph/stats/collection"
+	"github.com/NFT-com/analytics/graph/stats/collection"
 )
 
 func (s *Server) getTraitsForCollection(collectionID string) (collection.TraitMap, error) {

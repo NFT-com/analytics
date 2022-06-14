@@ -24,9 +24,9 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/playground"
 
-	"github.com/NFT-com/graph-api/graph/api"
-	"github.com/NFT-com/graph-api/graph/generated"
-	"github.com/NFT-com/graph-api/graph/storage"
+	"github.com/NFT-com/analytics/graph/api"
+	"github.com/NFT-com/analytics/graph/generated"
+	"github.com/NFT-com/analytics/graph/storage"
 )
 
 const (

@@ -1,9 +1,10 @@
-module github.com/NFT-com/graph-api
+module github.com/NFT-com/analytics
 
 go 1.17
 
 require (
 	github.com/99designs/gqlgen v0.17.3
+	github.com/NFT-com/indexer v0.0.0-20220613134029-a4675df1e306
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/rs/zerolog v1.26.1
 	github.com/spf13/pflag v1.0.5
@@ -18,7 +19,7 @@ require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
-	github.com/hashicorp/golang-lru v0.5.4 // indirect
+	github.com/hashicorp/golang-lru v0.5.5-0.20210104140557-80c98217689d // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.12.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
@@ -40,4 +41,5 @@ require (
 	golang.org/x/sys v0.0.0-20220422013727-9388b58f7150 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220411224347-583f2d630306 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

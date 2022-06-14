@@ -6,7 +6,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/NFT-com/graph-api/events/models/events"
+	"github.com/NFT-com/analytics/events/models/selectors"
 )
 
 type conditionSetFunc func(*gorm.DB) *gorm.DB
@@ -16,13 +16,13 @@ func (s *Storage) createQuery(query interface{}, token string, conditions ...con
 
 	db := s.db.
 		Where(query).
-		Order("block DESC").
+		Order("block_number DESC").
 		Order("event_index DESC")
 
 	// If there's a token provided, unpack it and use it
 	// to determine the offset.
 	if token != "" {
-		blockNo, eventIndex, err := unpackToken(token)
+		height, eventIndex, err := unpackToken(token)
 		if err != nil {
 			return nil, fmt.Errorf("could not unpack event ID for query offset: %w", err)
 		}
@@ -30,9 +30,9 @@ func (s *Storage) createQuery(query interface{}, token string, conditions ...con
 		// If this is a continued iteration, request earlier events in the same block
 		// and earlier blocks.
 		db = db.Where(
-			s.db.Where("block < ?", blockNo),
+			s.db.Where("block_number < ?", height),
 		).Or(
-			s.db.Where("block = ?", blockNo).Where("event_index < ?", eventIndex),
+			s.db.Where("block_number = ?", height).Where("event_index < ?", eventIndex),
 		)
 	}
 
@@ -52,39 +52,59 @@ func withLimit(limit uint) conditionSetFunc {
 	}
 }
 
-// withTimeFilter returns the condition setter that adds the time range condition
+// withTimestampRange returns the condition setter that adds the time range condition
 // to the query, if provided.
-func withTimeFilter(selector events.TimeSelector) conditionSetFunc {
+func withTimestampRange(selector selectors.TimestampRange) conditionSetFunc {
 	return func(db *gorm.DB) *gorm.DB {
 
 		// Set start time condition.
-		start := time.Time(selector.Start)
+		start := time.Time(selector.StartTimestamp)
 		if !start.IsZero() {
-			db = db.Where("emitted_at >= ?", start.Format(events.TimeLayout))
+			db = db.Where("emitted_at >= ?", start.Format(selectors.TimeLayout))
 		}
 
 		// Set end time condition.
-		end := time.Time(selector.End)
+		end := time.Time(selector.EndTimestamp)
 		if !end.IsZero() {
-			db = db.Where("emitted_at <= ?", end.Format(events.TimeLayout))
+			db = db.Where("emitted_at <= ?", end.Format(selectors.TimeLayout))
 		}
 
 		return db
 	}
 }
 
-// withBlockRangeFilter returns the condition setter that adds the block range condition
+// withHeightRange returns the condition setter that adds the height range condition
 // to the query, if provided.
-func withBlockRangeFilter(selector events.BlockSelector) conditionSetFunc {
+func withHeightRange(selector selectors.HeightRange) conditionSetFunc {
 	return func(db *gorm.DB) *gorm.DB {
 
-		// Set start block condition.
-		if selector.BlockStart != "" {
-			db = db.Where("block >= ?", selector.BlockStart)
+		// Set start height condition.
+		if selector.StartHeight != "" {
+			db = db.Where("block_number >= ?", selector.StartHeight)
 		}
-		// Set end block condition.
-		if selector.BlockEnd != "" {
-			db = db.Where("block <= ?", selector.BlockEnd)
+
+		// Set end height condition.
+		if selector.EndHeight != "" {
+			db = db.Where("block_number <= ?", selector.EndHeight)
+		}
+
+		return db
+	}
+}
+
+// withPriceRange returns the condition setter that addes the price range condition
+// to the query, if provided.
+func withPriceRange(selector selectors.PriceRange) conditionSetFunc {
+	return func(db *gorm.DB) *gorm.DB {
+
+		// Set the start price condition.
+		if selector.StartPrice != 0 {
+			db = db.Where("trade_price >= ?", selector.StartPrice)
+		}
+
+		// Set end price condition.
+		if selector.EndPrice != 0 {
+			db = db.Where("trade_price <= ?", selector.EndPrice)
 		}
 
 		return db

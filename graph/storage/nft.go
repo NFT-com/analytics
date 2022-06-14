@@ -6,8 +6,8 @@ import (
 
 	"gorm.io/gorm"
 
-	server "github.com/NFT-com/graph-api/graph/api"
-	"github.com/NFT-com/graph-api/graph/models/api"
+	server "github.com/NFT-com/analytics/graph/api"
+	"github.com/NFT-com/analytics/graph/models/api"
 )
 
 const (
@@ -32,11 +32,11 @@ func (s *Storage) NFT(id string) (*api.NFT, error) {
 	return &nft, nil
 }
 
-// NFTByTokenID retrieves a single NFT based on the chain, contract and the tokenID.
-func (s *Storage) NFTByTokenID(chainID string, contract string, tokenID string) (*api.NFT, error) {
+// NFTByTokenID retrieves a single NFT based on the network, contract and the tokenID.
+func (s *Storage) NFTByTokenID(networkID string, contract string, tokenID string) (*api.NFT, error) {
 
-	if chainID == "" {
-		return nil, errors.New("chain ID is required")
+	if networkID == "" {
+		return nil, errors.New("network ID is required")
 	}
 	if contract == "" {
 		return nil, errors.New("contract address is required")
@@ -47,9 +47,9 @@ func (s *Storage) NFTByTokenID(chainID string, contract string, tokenID string) 
 
 	var nft api.NFT
 	err := s.db.
-		Joins("INNER JOIN collections c ON collection = c.id").
-		Where("c.chain_id = ?", chainID).
-		Where("c.address = ?", contract).
+		Joins("INNER JOIN collections c ON collection_id = c.id").
+		Where("c.network_id = ?", networkID).
+		Where("c.contract_address = ?", contract).
 		Where("token_id = ?", tokenID).
 		First(&nft).
 		Error

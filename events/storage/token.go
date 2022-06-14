@@ -21,8 +21,8 @@ const (
 // decoded using `unpackToken` and used as the new reference point for
 // the next batch of records.
 
-func createToken(block string, eventIndex uint) string {
-	raw := fmt.Sprintf("%s%s%d", block, tokenDelimiter, eventIndex)
+func createToken(height uint64, index uint) string {
+	raw := fmt.Sprintf("%d%s%d", height, tokenDelimiter, index)
 	return base64.RawStdEncoding.EncodeToString([]byte(raw))
 }
 
@@ -41,7 +41,7 @@ func unpackToken(token string) (string, uint, error) {
 	}
 
 	// Verify that the first field is a valid block number.
-	blockNo, ok := big.NewInt(0).SetString(fields[0], tokenNumberBase)
+	blockNumber, ok := big.NewInt(0).SetString(fields[0], tokenNumberBase)
 	if !ok {
 		return "", 0, fmt.Errorf("invalid token block number (have: %s)", fields[0])
 	}
@@ -53,5 +53,5 @@ func unpackToken(token string) (string, uint, error) {
 	}
 
 	// Return block number as a decimal string with an event index.
-	return blockNo.String(), uint(eventIndex), nil
+	return blockNumber.String(), uint(eventIndex), nil
 }

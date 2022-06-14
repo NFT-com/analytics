@@ -19,8 +19,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"github.com/NFT-com/graph-api/events/api"
-	"github.com/NFT-com/graph-api/events/storage"
+	"github.com/NFT-com/analytics/events/api"
+	"github.com/NFT-com/analytics/events/storage"
 )
 
 const (

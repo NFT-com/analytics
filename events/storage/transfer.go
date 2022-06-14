@@ -3,7 +3,8 @@ package storage
 import (
 	"fmt"
 
-	"github.com/NFT-com/graph-api/events/models/events"
+	"github.com/NFT-com/analytics/events/models/selectors"
+	"github.com/NFT-com/indexer/models/events"
 )
 
 // Transfers retrieves NFT transfer events according to the specified filters.
@@ -11,15 +12,16 @@ import (
 // If the number of events for the specified criteria is greater than `batchSize`,
 // a token is provided along with the list of events. This token should be provided
 // when retrieving the next batch of records.
-func (s *Storage) Transfers(selector events.TransferSelector, token string) ([]events.Transfer, string, error) {
+func (s *Storage) Transfers(selector selectors.TransferFilter, token string) ([]events.Transfer, string, error) {
 
 	// Initialize the query variable.
 	query := events.Transfer{
-		Collection:  selector.Collection,
-		Transaction: selector.Transaction,
-		TokenID:     selector.TokenID,
-		From:        selector.From,
-		To:          selector.To,
+		ChainID:           selector.ChainID,
+		CollectionAddress: selector.CollectionAddress,
+		TokenID:           selector.TokenID,
+		TransactionHash:   selector.TransactionHash,
+		SenderAddress:     selector.SenderAddress,
+		ReceiverAddress:   selector.ReceiverAddress,
 	}
 
 	// Create the database query.
@@ -32,8 +34,8 @@ func (s *Storage) Transfers(selector events.TransferSelector, token string) ([]e
 	limit := s.batchSize + 1
 	db, err := s.createQuery(query, token,
 		withLimit(limit),
-		withTimeFilter(selector.TimeSelector),
-		withBlockRangeFilter(selector.BlockSelector),
+		withTimestampRange(selector.TimestampRange),
+		withHeightRange(selector.HeightRange),
 	)
 	if err != nil {
 		return nil, "", fmt.Errorf("could not create query: %w", err)
