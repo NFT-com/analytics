@@ -18,35 +18,36 @@ Listing all events for a single NFT is done by issuing requests to individual en
 Listing transfer events is done by issuing a `GET` request to the `/transfers` endpoint.
 The following filters are available for transfer events:
 
-- `collection` — UUID of the collection
-- `token_id` — Non-Fungible Token ID, as seen on the chain
-- `transaction` — transaction ID
-- `start` — start time in RFC3339 format (inclusive)
-- `end` — end time in RFC3339 format (inclusive)
-- `block_start` — string representation of the block number in decimal format (inclusive)
-- `block_end` — string representation of the block number in decimal format (inclusive)
-- `from` — address of the token sender
-- `to` — address of the token receiver 
+- `collection_address` — address of the collection
+- `token_id` — ID of the token, as seen on chain
+- `transaction_hash` — transaction hash
+- `start_timestamp` — start timestamp in RFC3339 format (inclusive)
+- `end_timestamp` — end timestamp in RFC3339 format (inclusive)
+- `start_height` — start height for block range (inclusive)
+- `end_height` — end height for block range (inclusive)
+- `sender_address` — address of the token sender
+- `receiver_address` — address of the token receiver 
 
 ### Sales
 
 Listing sale events is done by issuing a `GET` request to the `/sales/` endpoint.
 The following filters are available for sale events:
 
-- `marketplace` — UUID of the marketplace
-- `transaction` — transaction ID
-- `start` — start time in RFC3339 format (inclusive)
-- `end` — end time in RFC3339 format (inclusive)
-- `block_start` — string representation of the block number in decimal format (inclusive)
-- `block_end` — string representation of the block number in decimal format (inclusive)
-- `seller` — address of the token seller
-- `buyer` — address of the token buyer
-- `price` — price for the token
+- `marketplace_address` — address of the marketplace
+- `collection_address` — address of the collection
+- `token_id` - ID of the token, as seen on chain
+- `transaction_hash` — transaction hash
+- `start_timestamp` — start timestamp in RFC3339 format (inclusive)
+- `end_timestamp` — end timestamp in RFC3339 format (inclusive)
+- `start_height` — start height for block range (inclusive)
+- `end_height` — end height for block range (inclusive)
+- `seller_address` — address of the token seller
+- `buyer_address` — address of the token buyer
 
 ## Pagination
 
 Since the number of events fitting a search criteria can be large, events are returned in batches.
-Default number of events returned in a single batch is configured on the back-end side via a CLI flag.
+Default number of events returned in a single batch is configured on the back-end side via a command line flag.
 
 When a given search criteria has more events than what is returned in a single batch, a `next_page` token is included in the API response:
 

@@ -18,7 +18,7 @@ type saleRequest struct {
 
 // saleResponse describes a response to the sale listing request.
 type saleResponse struct {
-	Events   []events.Sale `json:"events"`
+	Sales    []events.Sale `json:"sales"`
 	NextPage string        `json:"next_page,omitempty"`
 }
 
@@ -37,7 +37,7 @@ func (a *API) Sale(ctx echo.Context) error {
 	}
 
 	res := saleResponse{
-		Events:   sales,
+		Sales:    sales,
 		NextPage: token,
 	}
 

@@ -18,8 +18,8 @@ type transferRequest struct {
 
 // transferResponse describes a response to the transfer listing request.
 type transferResponse struct {
-	Events   []events.Transfer `json:"events"`
-	NextPage string            `json:"next_page,omitempty"`
+	Transfers []events.Transfer `json:"transfers"`
+	NextPage  string            `json:"next_page,omitempty"`
 }
 
 // Transfer returns all NFT transfer events, according to the specified search criteria.
@@ -37,8 +37,8 @@ func (a *API) Transfer(ctx echo.Context) error {
 	}
 
 	res := transferResponse{
-		Events:   transfers,
-		NextPage: token,
+		Transfers: transfers,
+		NextPage:  token,
 	}
 
 	return ctx.JSON(http.StatusOK, res)
