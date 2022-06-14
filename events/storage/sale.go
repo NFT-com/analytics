@@ -34,13 +34,10 @@ func (s *Storage) Sales(selector selectors.SalesFilter, token string) ([]events.
 		withLimit(limit),
 		withTimestampRange(selector.TimestampRange),
 		withHeightRange(selector.HeightRange),
+		withPriceRange(selector.PriceRange),
 	)
 	if err != nil {
 		return nil, "", fmt.Errorf("could not create query: %w", err)
-	}
-
-	if selector.TradePrice != "" {
-		db = db.Where("trade_price >= ?", selector.TradePrice)
 	}
 
 	var sales []events.Sale

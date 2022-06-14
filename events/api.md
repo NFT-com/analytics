@@ -43,6 +43,8 @@ The following filters are available for sale events:
 - `end_height` — end height for block range (inclusive)
 - `seller_address` — address of the token seller
 - `buyer_address` — address of the token buyer
+- `start_price` - start price for price range
+- `end_price` - end price for price range
 
 ## Pagination
 

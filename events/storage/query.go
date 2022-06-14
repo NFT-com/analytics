@@ -52,7 +52,7 @@ func withLimit(limit uint) conditionSetFunc {
 	}
 }
 
-// withTimeFilter returns the condition setter that adds the time range condition
+// withTimestampRange returns the condition setter that adds the time range condition
 // to the query, if provided.
 func withTimestampRange(selector selectors.TimestampRange) conditionSetFunc {
 	return func(db *gorm.DB) *gorm.DB {
@@ -73,18 +73,38 @@ func withTimestampRange(selector selectors.TimestampRange) conditionSetFunc {
 	}
 }
 
-// withHeightRangeFilter returns the condition setter that adds the block range condition
+// withHeightRange returns the condition setter that adds the height range condition
 // to the query, if provided.
 func withHeightRange(selector selectors.HeightRange) conditionSetFunc {
 	return func(db *gorm.DB) *gorm.DB {
 
-		// Set start block condition.
+		// Set start height condition.
 		if selector.StartHeight != "" {
 			db = db.Where("block_number >= ?", selector.StartHeight)
 		}
-		// Set end block condition.
+
+		// Set end height condition.
 		if selector.EndHeight != "" {
 			db = db.Where("block_number <= ?", selector.EndHeight)
+		}
+
+		return db
+	}
+}
+
+// withPriceRange returns the condition setter that addes the price range condition
+// to the query, if provided.
+func withPriceRange(selector selectors.PriceRange) conditionSetFunc {
+	return func(db *gorm.DB) *gorm.DB {
+
+		// Set the start price condition.
+		if selector.StartPrice != 0 {
+			db = db.Where("trade_price >= ?", selector.StartPrice)
+		}
+
+		// Set end price condition.
+		if selector.EndPrice != 0 {
+			db = db.Where("trade_price <= ?", selector.EndPrice)
 		}
 
 		return db

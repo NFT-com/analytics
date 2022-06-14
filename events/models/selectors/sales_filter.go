@@ -5,12 +5,13 @@ package selectors
 type SalesFilter struct {
 	TimestampRange
 	HeightRange
-	TokenIdentifier
+	PriceRange
 
+	ChainID            uint64 `query:"chain_id"`
 	MarketplaceAddress string `query:"marketplace_address"`
 	CollectionAddress  string `query:"collection_address"`
+	TokenID            string `query:"token_id"`
 	TransactionHash    string `query:"transaction_address"`
 	SellerAddress      string `query:"seller_address"`
 	BuyerAddress       string `query:"buyer_address"`
-	TradePrice         string `query:"trade_price"`
 }
