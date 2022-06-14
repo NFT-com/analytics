@@ -47,9 +47,8 @@ type NFT struct {
 // (for example when displaying distribution ratio of a rare trait).
 type Trait struct {
 	Name   string  `gorm:"column:name" json:"name"`
-	Value  string  `gorm:"column:value" json:"value"`
+	Value  string  `gorm:"column:value" json:"value,omitempty"`
+	Type   string  `gorm:"column:type" json:"type,omitempty"`
 	NFT    string  `gorm:"column:nft_id" json:"-"`
 	Rarity float64 `gorm:"-" json:"rarity"`
-
-	// TODO: Add trait type.
 }
