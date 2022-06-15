@@ -29,11 +29,7 @@ func (s *Storage) createQuery(query interface{}, token string, conditions ...con
 
 		// If this is a continued iteration, request earlier events in the same block
 		// and earlier blocks.
-		db = db.Where(
-			s.db.Where("block_number < ?", height),
-		).Or(
-			s.db.Where("block_number = ?", height).Where("event_index < ?", eventIndex),
-		)
+		db = db.Where("( block_number < ? OR (block_number = ? AND event_index < ?) )", height, height, eventIndex)
 	}
 
 	// Apply conditions provided.
