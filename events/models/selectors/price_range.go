@@ -1,6 +1,10 @@
 package selectors
 
+import (
+	"math/big"
+)
+
 type PriceRange struct {
-	StartPrice uint64 `json:"start_price"`
-	EndPrice   uint64 `json:"end_price"`
+	StartPrice big.Int `query:"start_price"`
+	EndPrice   big.Int `query:"end_price"`
 }

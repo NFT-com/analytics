@@ -2,6 +2,7 @@ package storage
 
 import (
 	"fmt"
+	"math/big"
 	"time"
 
 	"gorm.io/gorm"
@@ -123,13 +124,13 @@ func withPriceRange(selector selectors.PriceRange) conditionFunc {
 	return func(db *gorm.DB) *gorm.DB {
 
 		// Set the start price condition.
-		if selector.StartPrice != 0 {
-			db = db.Where("trade_price >= ?", selector.StartPrice)
+		if selector.StartPrice.Cmp(big.NewInt(0)) != 0 {
+			db = db.Where("trade_price >= ?", selector.StartPrice.String())
 		}
 
 		// Set end price condition.
-		if selector.EndPrice != 0 {
-			db = db.Where("trade_price <= ?", selector.EndPrice)
+		if selector.EndPrice.Cmp(big.NewInt(0)) != 0 {
+			db = db.Where("trade_price <= ?", selector.EndPrice.String())
 		}
 
 		return db
