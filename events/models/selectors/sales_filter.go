@@ -11,7 +11,7 @@ type SalesFilter struct {
 	MarketplaceAddress string `query:"marketplace_address"`
 	CollectionAddress  string `query:"collection_address"`
 	TokenID            string `query:"token_id"`
-	TransactionHash    string `query:"transaction_address"`
+	TransactionHash    string `query:"transaction_hash"`
 	SellerAddress      string `query:"seller_address"`
 	BuyerAddress       string `query:"buyer_address"`
 }
