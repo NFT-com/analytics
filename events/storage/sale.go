@@ -17,25 +17,26 @@ import (
 // when retrieving the next batch of records.
 func (s *Storage) Sales(selector selectors.SalesFilter, token string) ([]events.Sale, string, error) {
 
-	query := events.Sale{
-		ChainID:            selector.ChainID,
-		MarketplaceAddress: selector.MarketplaceAddress,
-		CollectionAddress:  selector.CollectionAddress,
-		TokenID:            selector.TokenID,
-		TransactionHash:    selector.TransactionHash,
-		SellerAddress:      selector.SellerAddress,
-		BuyerAddress:       selector.BuyerAddress,
-	}
-
 	// NOTE: This function creates a query with a limit of `batchSize + 1` to avoid unnecessary queries.
 	// See the comment for the `Transfers` query creation for more details.
 	limit := s.batchSize + 1
-	db, err := s.createQuery(query, token,
+	filters := []conditionFunc{
+		withUint64Field("chain_id", selector.ChainID),
+		withStrField("marketplace_address", selector.MarketplaceAddress),
+		withStrField("collection_address", selector.CollectionAddress),
+		withStrField("token_id", selector.TokenID),
+		withStrField("transaction_hash", selector.TransactionHash),
+		withStrField("seller_address", selector.SellerAddress),
+		withStrField("buyer_address", selector.BuyerAddress),
+
+		// Limit and ranges.
 		withLimit(limit),
 		withTimestampRange(selector.TimestampRange),
 		withHeightRange(selector.HeightRange),
 		withPriceRange(selector.PriceRange),
-	)
+	}
+
+	db, err := s.createQuery(token, filters...)
 	if err != nil {
 		return nil, "", fmt.Errorf("could not create query: %w", err)
 	}

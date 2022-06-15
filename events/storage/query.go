@@ -9,13 +9,12 @@ import (
 	"github.com/NFT-com/analytics/events/models/selectors"
 )
 
-type conditionSetFunc func(*gorm.DB) *gorm.DB
+type conditionFunc func(*gorm.DB) *gorm.DB
 
 // createQuery creates an appropriate event lookup query.
-func (s *Storage) createQuery(query interface{}, token string, conditions ...conditionSetFunc) (*gorm.DB, error) {
+func (s *Storage) createQuery(token string, conditions ...conditionFunc) (*gorm.DB, error) {
 
 	db := s.db.
-		Where(query).
 		Order("block_number DESC").
 		Order("event_index DESC")
 
@@ -40,8 +39,38 @@ func (s *Storage) createQuery(query interface{}, token string, conditions ...con
 	return db, nil
 }
 
+// withField returns the condition setter that does a generic match on a field.
+func withUint64Field(name string, value uint64) conditionFunc {
+	return func(db *gorm.DB) *gorm.DB {
+
+		if value == 0 {
+			return db
+		}
+
+		query := fmt.Sprintf("%s = ?", name)
+		db = db.Where(query, value)
+
+		return db
+	}
+}
+
+// withStrField returns the condition setter that does case-insensitive text match on a field.
+func withStrField(name string, value string) conditionFunc {
+	return func(db *gorm.DB) *gorm.DB {
+
+		if value == "" {
+			return db
+		}
+
+		query := fmt.Sprintf("LOWER(%s) = LOWER(?)", name)
+		db = db.Where(query, value)
+
+		return db
+	}
+}
+
 // withLimit returns the condition setter that limits the number of results.
-func withLimit(limit uint) conditionSetFunc {
+func withLimit(limit uint) conditionFunc {
 	return func(db *gorm.DB) *gorm.DB {
 		db = db.Limit(int(limit))
 		return db
@@ -50,7 +79,7 @@ func withLimit(limit uint) conditionSetFunc {
 
 // withTimestampRange returns the condition setter that adds the time range condition
 // to the query, if provided.
-func withTimestampRange(selector selectors.TimestampRange) conditionSetFunc {
+func withTimestampRange(selector selectors.TimestampRange) conditionFunc {
 	return func(db *gorm.DB) *gorm.DB {
 
 		// Set start time condition.
@@ -71,7 +100,7 @@ func withTimestampRange(selector selectors.TimestampRange) conditionSetFunc {
 
 // withHeightRange returns the condition setter that adds the height range condition
 // to the query, if provided.
-func withHeightRange(selector selectors.HeightRange) conditionSetFunc {
+func withHeightRange(selector selectors.HeightRange) conditionFunc {
 	return func(db *gorm.DB) *gorm.DB {
 
 		// Set start height condition.
@@ -90,7 +119,7 @@ func withHeightRange(selector selectors.HeightRange) conditionSetFunc {
 
 // withPriceRange returns the condition setter that addes the price range condition
 // to the query, if provided.
-func withPriceRange(selector selectors.PriceRange) conditionSetFunc {
+func withPriceRange(selector selectors.PriceRange) conditionFunc {
 	return func(db *gorm.DB) *gorm.DB {
 
 		// Set the start price condition.
