@@ -25,11 +25,11 @@ func (s *Storage) Transfers(selector selectors.TransferFilter, token string) ([]
 	filters := []conditionFunc{
 		// Explicit matches.
 		withUint64Field("chain_id", selector.ChainID),
-		withStrField("collection_address", selector.CollectionAddress),
-		withStrField("token_id", selector.TokenID),
+		withStrCIField("collection_address", selector.CollectionAddress),
+		withStrCIField("sender_address", selector.SenderAddress),
+		withStrCIField("receiver_address", selector.ReceiverAddress),
 		withStrField("transaction_hash", selector.TransactionHash),
-		withStrField("sender_address", selector.SenderAddress),
-		withStrField("receiver_address", selector.ReceiverAddress),
+		withStrField("token_id", selector.TokenID),
 
 		// Limit and ranges.
 		withLimit(limit),

@@ -55,8 +55,23 @@ func withUint64Field(name string, value uint64) conditionFunc {
 	}
 }
 
-// withStrField returns the condition setter that does case-insensitive text match on a field.
+// withStrField returns the condition setter that does a text match on a field.
 func withStrField(name string, value string) conditionFunc {
+	return func(db *gorm.DB) *gorm.DB {
+
+		if value == "" {
+			return db
+		}
+
+		query := fmt.Sprintf("%s = ?", name)
+		db = db.Where(query, value)
+
+		return db
+	}
+}
+
+// withStrCIField returns the condition setter that does case-insensitive text match on a field.
+func withStrCIField(name string, value string) conditionFunc {
 	return func(db *gorm.DB) *gorm.DB {
 
 		if value == "" {

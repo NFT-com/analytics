@@ -22,12 +22,12 @@ func (s *Storage) Sales(selector selectors.SalesFilter, token string) ([]events.
 	limit := s.batchSize + 1
 	filters := []conditionFunc{
 		withUint64Field("chain_id", selector.ChainID),
-		withStrField("marketplace_address", selector.MarketplaceAddress),
-		withStrField("collection_address", selector.CollectionAddress),
-		withStrField("token_id", selector.TokenID),
+		withStrCIField("marketplace_address", selector.MarketplaceAddress),
+		withStrCIField("collection_address", selector.CollectionAddress),
+		withStrCIField("seller_address", selector.SellerAddress),
+		withStrCIField("buyer_address", selector.BuyerAddress),
 		withStrField("transaction_hash", selector.TransactionHash),
-		withStrField("seller_address", selector.SellerAddress),
-		withStrField("buyer_address", selector.BuyerAddress),
+		withStrField("token_id", selector.TokenID),
 
 		// Limit and ranges.
 		withLimit(limit),
