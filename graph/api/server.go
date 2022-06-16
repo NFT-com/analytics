@@ -6,14 +6,14 @@ import (
 
 // Server is an API server.
 type Server struct {
-	storage Storage
 	log     zerolog.Logger
+	storage Storage
 
 	searchLimit uint
 }
 
 // NewServer creates a new API server.
-func NewServer(storage Storage, log zerolog.Logger, opts ...OptionFunc) *Server {
+func NewServer(log zerolog.Logger, storage Storage, opts ...OptionFunc) *Server {
 
 	cfg := defaultConfig
 	for _, opt := range opts {
@@ -21,8 +21,8 @@ func NewServer(storage Storage, log zerolog.Logger, opts ...OptionFunc) *Server 
 	}
 
 	server := Server{
-		storage:     storage,
 		log:         log,
+		storage:     storage,
 		searchLimit: cfg.SearchLimit,
 	}
 

@@ -1971,9 +1971,9 @@ func (ec *executionContext) _NFT_traits(ctx context.Context, field graphql.Colle
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*api.Trait)
+	res := resTmp.([]api.Trait)
 	fc.Result = res
-	return ec.marshalOTrait2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTraitᚄ(ctx, field.Selections, res)
+	return ec.marshalOTrait2ᚕgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTraitᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _NFT_collection(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
@@ -5210,14 +5210,8 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) marshalNTrait2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTrait(ctx context.Context, sel ast.SelectionSet, v *api.Trait) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._Trait(ctx, sel, v)
+func (ec *executionContext) marshalNTrait2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTrait(ctx context.Context, sel ast.SelectionSet, v api.Trait) graphql.Marshaler {
+	return ec._Trait(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
@@ -5798,7 +5792,7 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) marshalOTrait2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTraitᚄ(ctx context.Context, sel ast.SelectionSet, v []*api.Trait) graphql.Marshaler {
+func (ec *executionContext) marshalOTrait2ᚕgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTraitᚄ(ctx context.Context, sel ast.SelectionSet, v []api.Trait) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -5825,7 +5819,7 @@ func (ec *executionContext) marshalOTrait2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraph
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNTrait2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTrait(ctx, sel, v[i])
+			ret[i] = ec.marshalNTrait2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTrait(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)

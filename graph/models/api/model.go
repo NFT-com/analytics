@@ -30,16 +30,16 @@ type Marketplace struct {
 
 // NFT represents a single Non-Fungible Token.
 type NFT struct {
-	ID          string   `gorm:"column:id" json:"id"`
-	Name        string   `gorm:"column:name" json:"name,omitempty"`
-	ImageURL    string   `gorm:"column:image" json:"image_url,omitempty"`
-	URI         string   `gorm:"column:uri" json:"uri,omitempty"`
-	Description string   `gorm:"column:description" json:"description,omitempty"`
-	TokenID     string   `gorm:"column:token_id" json:"token_id"`
-	Owner       string   `gorm:"column:owner" json:"owner"`
-	Collection  string   `gorm:"column:collection_id" json:"-"`
-	Traits      []*Trait `gorm:"-" json:"traits,omitempty"`
-	Rarity      float64  `gorm:"-" json:"rarity,omitempty"`
+	ID          string  `gorm:"column:id" json:"id"`
+	Name        string  `gorm:"column:name" json:"name,omitempty"`
+	ImageURL    string  `gorm:"column:image" json:"image_url,omitempty"`
+	URI         string  `gorm:"column:uri" json:"uri,omitempty"`
+	Description string  `gorm:"column:description" json:"description,omitempty"`
+	TokenID     string  `gorm:"column:token_id" json:"token_id"`
+	Owner       string  `gorm:"column:owner" json:"owner"`
+	Collection  string  `gorm:"column:collection_id" json:"-"`
+	Traits      []Trait `gorm:"-" json:"traits,omitempty"`
+	Rarity      float64 `gorm:"-" json:"rarity,omitempty"`
 }
 
 // Trait represents a single NFT trait.
@@ -51,4 +51,6 @@ type Trait struct {
 	Type   string  `gorm:"column:type" json:"type,omitempty"`
 	NFT    string  `gorm:"column:nft_id" json:"-"`
 	Rarity float64 `gorm:"-" json:"rarity"`
+	// TODO: Add trait type handling when implemented.
+	// https://github.com/NFT-com/analytics/issues/27
 }

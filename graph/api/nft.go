@@ -18,7 +18,7 @@ func (s *Server) getNFT(ctx context.Context, id string) (*api.NFT, error) {
 		return nil, errRetrieveNFTFailed
 	}
 
-	return s.getNFTDetails(ctx, nft)
+	return s.expandNFTDetails(ctx, nft)
 }
 
 // getNFTByTokenID returns a single NFT based on the combination of networkID, contract address and token ID.
@@ -34,11 +34,11 @@ func (s *Server) getNFTByTokenID(ctx context.Context, networkID string, contract
 		return nil, errRetrieveNFTFailed
 	}
 
-	return s.getNFTDetails(ctx, nft)
+	return s.expandNFTDetails(ctx, nft)
 }
 
-// getNFTDetails retrieves the NFT rarity and/or trait information.
-func (s *Server) getNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, error) {
+// expandNFTDetails retrieves the NFT rarity and/or trait information.
+func (s *Server) expandNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, error) {
 
 	// Parse the query to know how much information to return/calculate.
 	req := parseNFTQuery(ctx)
@@ -115,36 +115,40 @@ func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, 
 		return nfts, nil
 	}
 
-	// We only need traits and no rarity stats.
-	if !req.needRarity() {
+	// Retrieve traits for relevant collections.
+	// NOTE: We potentially iterate through the result set twice, first to
+	// create the traits map for collections, and then a second time to crunch the numbers and
+	// calculate rarity
 
-		// Map collection ID to collection traits.
-		traits := make(map[string]collection.TraitMap)
+	// Map collection ID to collection traits.
+	traits := make(map[string]collection.TraitMap)
 
-		for _, nft := range nfts {
-			// Lookup traits for this collection.
-			// If we don't have them already cached, fetch them now.
-			ctraits, ok := traits[nft.Collection]
-			if !ok {
-				tc, err := s.getTraitsForCollection(nft.Collection)
-				if err != nil {
-					s.logError(err).Str("collection", nft.Collection).Msg("could not retrieve traits for collection")
-					return nil, errRetrieveTraitsFailed
-				}
-				traits[nft.Collection] = tc
-				ctraits = tc
+	for _, nft := range nfts {
+		// Lookup traits for this collection.
+		// If we don't have them already cached, fetch them now.
+		ctraits, ok := traits[nft.Collection]
+		if !ok {
+			tc, err := s.getTraitsForCollection(nft.Collection)
+			if err != nil {
+				s.logError(err).Str("collection", nft.Collection).Msg("could not retrieve traits for collection")
+				return nil, errRetrieveTraitsFailed
 			}
-
-			nft.Traits = ctraits[nft.ID]
+			traits[nft.Collection] = tc
+			ctraits = tc
 		}
 
+		// Set the traits for this NFT.
+		nft.Traits = ctraits[nft.ID]
+	}
+
+	// If we don't need rarity stats - we have everything we need and we're done.
+	if !req.needRarity() {
 		return nfts, nil
 	}
 
-	// We need rarity calculations.
+	// We also need to calculate rarity.
 
 	// Cache traits and stats for each of the collections.
-	traits := make(map[string]collection.TraitMap)
 	stats := make(map[string]collection.Stats)
 	sizes := make(map[string]uint)
 
@@ -153,11 +157,7 @@ func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, 
 		// If we don't have them already cached, fetch them now, calculate stats and cache them.
 		cstats, ok := stats[nft.Collection]
 		if !ok {
-			tc, err := s.getTraitsForCollection(nft.Collection)
-			if err != nil {
-				s.logError(err).Str("collection", nft.Collection).Msg("could not retrieve traits for collection")
-				return nil, errRetrieveTraitsFailed
-			}
+			tc := traits[nft.Collection]
 
 			size, err := s.storage.CollectionSize(nft.Collection)
 			if err != nil {
@@ -165,7 +165,6 @@ func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, 
 				return nil, errRetrieveTraitsFailed
 			}
 
-			traits[nft.Collection] = tc
 			st := tc.CalculateStats()
 			stats[nft.Collection] = st
 			sizes[nft.Collection] = size
@@ -173,9 +172,11 @@ func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, 
 			cstats = st
 		}
 
-		nft.Traits = traits[nft.Collection][nft.ID]
+		// Calculate rarity.
 		rarity, traitRarity := cstats.CalculateRarity(sizes[nft.Collection], nft.Traits)
 		nft.Rarity = rarity
+
+		// Only set traits rarity if explicitely requested.
 		if req.traitRarity {
 			nft.Traits = traitRarity
 		}

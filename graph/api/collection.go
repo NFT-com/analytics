@@ -20,12 +20,12 @@ func (s *Server) getCollection(ctx context.Context, id string) (*api.Collection,
 
 	// Does this query require retrieving the list of NFTs?
 	sel := query.GetSelection(ctx)
-	includeNFTs := sel.Has(nftField)
+	includeNFTs := sel.Has(fieldNFTs)
 	if !includeNFTs {
 		return collection, nil
 	}
 
-	return s.getCollectionDetails(ctx, collection)
+	return s.expandCollectionDetails(ctx, collection)
 }
 
 // getCollectionByContract returns a single collection for the specified network, given its contract address.
@@ -42,19 +42,19 @@ func (s *Server) getCollectionByContract(ctx context.Context, networkID string, 
 
 	// Does this query require retrieving the list of NFTs?
 	sel := query.GetSelection(ctx)
-	includeNFTs := sel.Has(nftField)
+	includeNFTs := sel.Has(fieldNFTs)
 	if !includeNFTs {
 		return collection, nil
 	}
 
-	return s.getCollectionDetails(ctx, collection)
+	return s.expandCollectionDetails(ctx, collection)
 }
 
-// getCollectionDetails is the workhorse function that will do all of the heavy lifting for
+// expandCollectionDetails is the workhorse function that will do all of the heavy lifting for
 // the collection queries. It fetches all NFTs from that collection
 // (similar to how dataloaders would), but also retrieves traits and deals with rarity calculation.
 // NOTE: This function modifies the provided collection in-place.
-func (s *Server) getCollectionDetails(ctx context.Context, collection *api.Collection) (*api.Collection, error) {
+func (s *Server) expandCollectionDetails(ctx context.Context, collection *api.Collection) (*api.Collection, error) {
 
 	// Retrieve the list of NFTs.
 	nfts, err := s.getCollectionNFTs(collection.ID)
@@ -71,14 +71,14 @@ func (s *Server) getCollectionDetails(ctx context.Context, collection *api.Colle
 
 	// Parse the NFT query.
 	cfg := nftQueryConfig{
-		traitPath:       query.FieldPath(nftField, traitField),
-		traitRarityPath: query.FieldPath(nftField, traitField, rarityField),
-		rarityPath:      query.FieldPath(nftField, rarityField),
+		traitPath:       query.FieldPath(fieldNFTs, fieldTraits),
+		traitRarityPath: query.FieldPath(fieldNFTs, fieldTraits, fieldRarity),
+		rarityPath:      query.FieldPath(fieldNFTs, fieldRarity),
 	}
 	req := parseNFTQueryWithConfig(cfg, ctx)
 
 	s.log.Debug().
-		Bool("include_rarity", req.rarity).
+		Bool("include_nft_rarity", req.nftRarity).
 		Bool("include_traits", req.traits).
 		Bool("include_trait_rarity", req.traitRarity).
 		Msg("NFT information requested")
@@ -154,7 +154,7 @@ func (s *Server) collections(ctx context.Context, network *string, orderBy api.C
 	}
 
 	for _, collection := range collections {
-		collection, err = s.getCollectionDetails(ctx, collection)
+		collection, err = s.expandCollectionDetails(ctx, collection)
 		if err != nil {
 			s.logError(err).Str("id", collection.ID).Msg("retrieving collection details failed")
 			return nil, errRetrieveCollectionFailed
@@ -176,7 +176,7 @@ func (s *Server) collectionsByNetwork(ctx context.Context, networkID string) ([]
 	}
 
 	for _, collection := range collections {
-		collection, err = s.getCollectionDetails(ctx, collection)
+		collection, err = s.expandCollectionDetails(ctx, collection)
 		if err != nil {
 			s.logError(err).Str("id", collection.ID).Msg("retrieving collection details failed")
 			return nil, errRetrieveCollectionFailed
