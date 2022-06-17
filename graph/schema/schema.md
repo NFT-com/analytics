@@ -93,9 +93,9 @@ The query root of NFT.com GraphQL interface.
 			<td>Lookup NFTs based on specified criteria.</td>
 		</tr>
 		<tr>
-			<td colspan="2" align="right" valign="top">owner</td>
+			<td colspan="2" align="right" valign="top">owners</td>
 			<td valign="top"><a href="#address">Address</a></td>
-			<td>Owner of the NFT.</td>
+			<td>Addresses of accounts that own this NFT.</td>
 		</tr>
 		<tr>
 			<td colspan="2" align="right" valign="top">collection</td>
@@ -311,9 +311,9 @@ NFT represents a single Non-Fungible Token.
 			<td>Description of the NFT.</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top"><strong>owner</strong></td>
-			<td valign="top"><a href="#address">Address</a>!</td>
-			<td>Address of the account that owns the NFT.</td>
+			<td colspan="2" valign="top"><strong>owners</strong></td>
+			<td valign="top">[<a href="#address">Address</a>!]</td>
+			<td>Addresses of accounts that own this NFT.</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>rarity</strong></td>
