@@ -59,3 +59,36 @@ func (s *Storage) CollectionOwners(collectionID string) (map[string][]string, er
 
 	return out, nil
 }
+
+// nftListOwners retrieves owners for a list of NFTs.
+func (s *Storage) nftListOwners(nftIDs []string) (map[string][]string, error) {
+
+	var owners []nftOwner
+	err := s.db.
+		Table("owners o, nfts n").
+		Select("o.owner, o.nft_id").
+		Where("o.nft_id = n.id").
+		Where("o.number > 0").
+		Where("n.id IN (?)", nftIDs).
+		Find(&owners).Error
+	if err != nil {
+		return nil, fmt.Errorf("could not lookup owners for a collection: %w", err)
+	}
+
+	// Map owners to NFT IDs.
+	out := make(map[string][]string)
+	for _, owner := range owners {
+		list, ok := out[owner.NFTID]
+		if ok {
+			list = append(list, owner.Owner)
+			out[owner.NFTID] = list
+		}
+
+		list = make([]string, 0, 1)
+		list = append(list, owner.Owner)
+
+		out[owner.NFTID] = list
+	}
+
+	return out, nil
+}

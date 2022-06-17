@@ -10,7 +10,7 @@ type Storage interface {
 
 	NFT(id string) (*api.NFT, error)
 	NFTByTokenID(networkID string, contract string, tokenID string) (*api.NFT, error)
-	NFTs(owner *string, collectionID *string, orderBy api.NFTOrder, limit uint) ([]*api.NFT, error)
+	NFTs(owner *string, collectionID *string, orderBy api.NFTOrder, limit uint, prefetchOwners bool) ([]*api.NFT, error)
 	NFTTraits(id string) ([]api.Trait, error)
 	NFTOwners(nftID string) ([]string, error)
 

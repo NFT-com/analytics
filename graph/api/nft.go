@@ -101,7 +101,10 @@ func (s *Server) expandNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, 
 // nfts returns a list of NFTs fitting the search criteria.
 func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, rarityMax *float64, orderBy api.NFTOrder) ([]*api.NFT, error) {
 
-	nfts, err := s.storage.NFTs(owner, collectionID, orderBy, s.searchLimit)
+	// Parse the query to know how much information to return/calculate.
+	req := parseNFTQuery(ctx)
+
+	nfts, err := s.storage.NFTs(owner, collectionID, orderBy, s.searchLimit, req.owners)
 	if err != nil {
 		log := s.logError(err)
 		if owner != nil {
@@ -118,9 +121,6 @@ func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, 
 	}
 
 	filterByRarity := rarityMax != nil
-
-	// Parse the query to know how much information to return/calculate.
-	req := parseNFTQuery(ctx)
 
 	// If we do not need traits nor rarity, we're done.
 	if !req.traits && !req.needRarity() && !filterByRarity {
