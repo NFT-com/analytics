@@ -48,7 +48,7 @@ func (s *Server) expandNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, 
 	if req.owners {
 		owners, err := s.storage.NFTOwners(nft.ID)
 		if err != nil {
-			return nil, fmt.Errorf("could not retrieve owner for the NFT: %w", err)
+			return nil, fmt.Errorf("could not retrieve owners for the NFT: %w", err)
 		}
 		nft.Owners = owners
 	}
