@@ -5,5 +5,6 @@ package api
 const (
 	fieldRarity = "rarity"
 	fieldTraits = "traits"
+	fieldOwners = "owners"
 	fieldNFTs   = "nfts"
 )

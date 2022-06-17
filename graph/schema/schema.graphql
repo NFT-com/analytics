@@ -225,9 +225,9 @@ type NFT {
     description: String
 
     """
-    Address of the account that owns the NFT.
+    Addresses of accounts that own this NFT.
     """
-    owner: Address!
+    owners: [Address!]
 
     """
     Rarity score for the NFT.

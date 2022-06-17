@@ -10,6 +10,7 @@ type nftQueryConfig struct {
 	traitPath       string
 	traitRarityPath string
 	rarityPath      string
+	ownersPath      string
 }
 
 // nftQuery is used to describe the NFT detail query, namely whether the GraphQL query
@@ -18,6 +19,7 @@ type nftQuery struct {
 	traits      bool
 	traitRarity bool
 	nftRarity   bool
+	owners      bool
 }
 
 // parseNFTQuery parses the GraphQL query with the default configuration.
@@ -26,6 +28,7 @@ func parseNFTQuery(ctx context.Context) *nftQuery {
 		traitPath:       query.FieldPath(fieldTraits),
 		traitRarityPath: query.FieldPath(fieldTraits, fieldRarity),
 		rarityPath:      query.FieldPath(fieldRarity),
+		ownersPath:      query.FieldPath(fieldOwners),
 	}
 	return parseNFTQueryWithConfig(cfg, ctx)
 }
@@ -39,6 +42,7 @@ func parseNFTQueryWithConfig(cfg nftQueryConfig, ctx context.Context) *nftQuery 
 		traits:      selection.Has(cfg.traitPath),
 		traitRarity: selection.Has(cfg.traitRarityPath),
 		nftRarity:   selection.Has(cfg.rarityPath),
+		owners:      selection.Has(cfg.ownersPath),
 	}
 
 	return &query

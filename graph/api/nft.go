@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/NFT-com/analytics/graph/models/api"
 	"github.com/NFT-com/analytics/graph/stats/collection"
@@ -42,6 +43,15 @@ func (s *Server) expandNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, 
 
 	// Parse the query to know how much information to return/calculate.
 	req := parseNFTQuery(ctx)
+
+	// Retrieve owner if it was requested/
+	if req.owners {
+		owners, err := s.storage.NFTOwners(nft.ID)
+		if err != nil {
+			return nil, fmt.Errorf("could not retrieve owner for the NFT: %w", err)
+		}
+		nft.Owners = owners
+	}
 
 	// If we do not need traits nor rarity, we're done.
 	if !req.traits && !req.needRarity() {

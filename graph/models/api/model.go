@@ -37,7 +37,8 @@ type NFT struct {
 	Description string   `gorm:"column:description" json:"description,omitempty"`
 	TokenID     string   `gorm:"column:token_id" json:"token_id"`
 	Collection  string   `gorm:"column:collection_id" json:"-"`
-	Traits      []*Trait `gorm:"-" json:"traits,omitempty"`
+	Owners      []string `gorm:"-" json:"owners,omitempty"`
+	Traits      []Trait  `gorm:"-" json:"traits,omitempty"`
 	Rarity      float64  `gorm:"-" json:"rarity,omitempty"`
 }
 

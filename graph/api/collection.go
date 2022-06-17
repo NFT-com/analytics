@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/NFT-com/analytics/graph/models/api"
 	"github.com/NFT-com/analytics/graph/query"
@@ -74,6 +75,7 @@ func (s *Server) expandCollectionDetails(ctx context.Context, collection *api.Co
 		traitPath:       query.FieldPath(fieldNFTs, fieldTraits),
 		traitRarityPath: query.FieldPath(fieldNFTs, fieldTraits, fieldRarity),
 		rarityPath:      query.FieldPath(fieldNFTs, fieldRarity),
+		ownersPath:      query.FieldPath(fieldNFTs, fieldOwners),
 	}
 	req := parseNFTQueryWithConfig(cfg, ctx)
 
@@ -81,7 +83,21 @@ func (s *Server) expandCollectionDetails(ctx context.Context, collection *api.Co
 		Bool("include_nft_rarity", req.nftRarity).
 		Bool("include_traits", req.traits).
 		Bool("include_trait_rarity", req.traitRarity).
+		Bool("include_owners", req.owners).
 		Msg("NFT information requested")
+
+	// Retrieve owners if needed.
+	if req.owners {
+		owners, err := s.storage.CollectionOwners(collection.ID)
+		if err != nil {
+			return nil, fmt.Errorf("could not retrieve owners for the collection: %w", err)
+		}
+
+		// Set the owners for each of the NFTs.
+		for _, nft := range collection.NFTs {
+			nft.Owners = owners[nft.ID]
+		}
+	}
 
 	// If we do not need traits nor rarity, we're done.
 	if !req.traits && !req.needRarity() {

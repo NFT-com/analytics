@@ -73,7 +73,7 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		ImageURL    func(childComplexity int) int
 		Name        func(childComplexity int) int
-		Owner       func(childComplexity int) int
+		Owners      func(childComplexity int) int
 		Rarity      func(childComplexity int) int
 		TokenID     func(childComplexity int) int
 		Traits      func(childComplexity int) int
@@ -115,8 +115,6 @@ type MarketplaceResolver interface {
 	Collections(ctx context.Context, obj *api.Marketplace) ([]*api.Collection, error)
 }
 type NFTResolver interface {
-	Owner(ctx context.Context, obj *api.NFT) (string, error)
-
 	Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error)
 }
 type NetworkResolver interface {
@@ -289,12 +287,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.NFT.Name(childComplexity), true
 
-	case "NFT.owner":
-		if e.complexity.NFT.Owner == nil {
+	case "NFT.owners":
+		if e.complexity.NFT.Owners == nil {
 			break
 		}
 
-		return e.complexity.NFT.Owner(childComplexity), true
+		return e.complexity.NFT.Owners(childComplexity), true
 
 	case "NFT.rarity":
 		if e.complexity.NFT.Rarity == nil {
@@ -748,9 +746,9 @@ type NFT {
     description: String
 
     """
-    Address of the account that owns the NFT.
+    Addresses of accounts that own this NFT.
     """
-    owner: Address!
+    owners: [Address!]
 
     """
     Rarity score for the NFT.
@@ -1876,7 +1874,7 @@ func (ec *executionContext) _NFT_description(ctx context.Context, field graphql.
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _NFT_owner(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
+func (ec *executionContext) _NFT_owners(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1887,28 +1885,25 @@ func (ec *executionContext) _NFT_owner(ctx context.Context, field graphql.Collec
 		Object:     "NFT",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.NFT().Owner(rctx, obj)
+		return obj.Owners, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNAddress2string(ctx, field.Selections, res)
+	return ec.marshalOAddress2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _NFT_rarity(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
@@ -4194,26 +4189,13 @@ func (ec *executionContext) _NFT(ctx context.Context, sel ast.SelectionSet, obj 
 
 			out.Values[i] = innerFunc(ctx)
 
-		case "owner":
-			field := field
-
+		case "owners":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._NFT_owner(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
+				return ec._NFT_owners(ctx, field, obj)
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			out.Values[i] = innerFunc(ctx)
 
-			})
 		case "rarity":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._NFT_rarity(ctx, field, obj)
@@ -5477,6 +5459,44 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalOAddress2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNAddress2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOAddress2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNAddress2string(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOAddress2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
