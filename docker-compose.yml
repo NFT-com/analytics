@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: cmd/events-api/Dockerfile
     restart: always
-    entrypoint: '/api --database "host=host.docker.internal user=db-user password=db-pass dbname=db-name port=5432"'
+    entrypoint: '/api --database "host=host.docker.internal user=db-user password=db-pass dbname=db-name port=5432" --log-level debug --db-connection-limit 70 --batch-size 100 --enable-query-logging'
     ports:
       - '8085:8080'
   
@@ -27,7 +27,7 @@ services:
       context: .
       dockerfile: cmd/graph-api/Dockerfile
     restart: always
-    entrypoint: '/api --database "host=host.docker.internal user=db-user password=db-pass dbname=db-name port=5432" --enable-playground'
+    entrypoint: '/api --database "host=host.docker.internal user=db-user password=db-pass dbname=db-name port=5432" --enable-playground --db-connection-limit 70 --log-level debug --enable-query-logging --search-limit 20'
     ports:
       - '8083:8080'
     # FIXME: Once the aggregation API is implemented, the dependency should be added.
