@@ -68,9 +68,9 @@ func (s *Storage) NFTs(owner *string, collectionID *string, orderBy api.NFTOrder
 
 	// Apply explicit query filters - the token owner and collection ID.
 	query := api.NFT{}
-	if owner != nil {
-		query.Owner = *owner
-	}
+
+	// FIXME: Reintroduce owner handling.
+
 	if collectionID != nil {
 		query.Collection = *collectionID
 	}

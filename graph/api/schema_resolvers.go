@@ -35,6 +35,13 @@ func (r *marketplaceServer) Collections(ctx context.Context, obj *api.Marketplac
 	return r.Server.marketplaceCollections(ctx, obj.ID)
 }
 
+func (r *nFTServer) Owner(ctx context.Context, obj *api.NFT) (string, error) {
+	// Owner handles expanding the owner field for an NFT.
+
+	// FIXME: Implement this.
+	return "", nil
+}
+
 func (r *nFTServer) Collection(ctx context.Context, obj *api.NFT) (*api.Collection, error) {
 	// Collection handles expanding the Collection object within an NFT object.
 
