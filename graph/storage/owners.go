@@ -49,6 +49,7 @@ func (s *Storage) CollectionOwners(collectionID string) (map[string][]string, er
 		if ok {
 			list = append(list, owner.Owner)
 			out[owner.NFTID] = list
+			continue
 		}
 
 		list = make([]string, 0, 1)
@@ -82,6 +83,7 @@ func (s *Storage) nftListOwners(nftIDs []string) (map[string][]string, error) {
 		if ok {
 			list = append(list, owner.Owner)
 			out[owner.NFTID] = list
+			continue
 		}
 
 		list = make([]string, 0, 1)
