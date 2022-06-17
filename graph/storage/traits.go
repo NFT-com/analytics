@@ -27,7 +27,9 @@ func (s *Storage) CollectionTraits(collectionID string) ([]api.Trait, error) {
 
 	var traits []api.Trait
 	err := s.db.
-		Table("traits_collections").
+		Table("traits t, nfts n").
+		Select("t.*, n.collection_id").
+		Where("t.nft_id = n.id").
 		Where("collection_id = ?", collectionID).
 		Find(&traits).Error
 	if err != nil {
