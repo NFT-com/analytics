@@ -1,0 +1,88 @@
+{
+	"info": {
+		"_postman_id": "88648dbb-ee18-4aa5-95cc-20d8500d1df5",
+		"name": "Network",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19032524"
+	},
+	"item": [
+		{
+			"name": "Get Network",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query($id: ID!) {\r\n    network(id: $id) {\r\n        id\r\n        name\r\n        description\r\n    }\r\n}",
+						"variables": "{\r\n    \"id\": \"94c754fe-e06c-4d2b-bb76-2faa240b5bb8\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/graphql",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Network with Collections",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query($id: ID!) {\r\n    network(id: $id) {\r\n        id\r\n        name\r\n        description\r\n        collections {\r\n            id\r\n            name\r\n            description\r\n            address\r\n            website\r\n            image_url\r\n        }\r\n    }\r\n}",
+						"variables": "{\r\n    \"id\": \"94c754fe-e06c-4d2b-bb76-2faa240b5bb8\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/graphql",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Network with Marketplaces",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query($id: ID!) {\r\n    network(id: $id) {\r\n        id\r\n        name\r\n        description\r\n        marketplaces {\r\n            id\r\n            name\r\n            description\r\n            website\r\n        }\r\n    }\r\n}",
+						"variables": "{\r\n    \"id\": \"94c754fe-e06c-4d2b-bb76-2faa240b5bb8\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/graphql",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

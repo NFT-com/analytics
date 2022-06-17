@@ -1,0 +1,166 @@
+{
+	"info": {
+		"_postman_id": "4deca63d-f7cb-49f1-be81-99f7be825332",
+		"name": "NFT",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19032524"
+	},
+	"item": [
+		{
+			"name": "Get NFT",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query($id: ID!) {\r\n    nft(id: $id) {\r\n       id\r\n       name\r\n       description\r\n       image_url\r\n       token_id\r\n       uri\r\n       rarity\r\n       owners\r\n       traits {\r\n           name\r\n           value\r\n           rarity\r\n       }\r\n    }\r\n}",
+						"variables": "{\r\n    \"id\": \"62b92c13-b7e9-5808-af12-c0c5b5cdc427\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/graphql",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get NFT with multiple owners",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query($id: ID!) {\r\n    nft(id: $id) {\r\n       id\r\n       name\r\n       description\r\n       image_url\r\n       token_id\r\n       uri\r\n       rarity\r\n       owners\r\n       traits {\r\n           name\r\n           value\r\n           rarity\r\n       }\r\n       collection {\r\n           id\r\n           name\r\n       }\r\n    }\r\n}",
+						"variables": "{\r\n    \"id\": \"52ad872d-cd97-fbd9-12cf-43a685888b7c\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/graphql",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get NFT with rarity and trait rarity",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query($id: ID!) {\r\n    nft(id: $id) {\r\n       id\r\n       token_id\r\n       image_url\r\n       uri\r\n       rarity\r\n       traits {\r\n           name\r\n           value\r\n           rarity\r\n       }\r\n    }\r\n}",
+						"variables": "{\r\n    \"id\": \"83ec1393-efa0-770d-4c78-d25504aa7658\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/graphql",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get NFTby token ID with rarity and trait rarity",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query($network_id: ID!, $contract: Address!, $token_id: String!) {\r\n    nft_by_token_id(network_id: $network_id, contract: $contract, token_id: $token_id) {\r\n       id\r\n       token_id\r\n       image_url\r\n       uri\r\n       rarity\r\n       owners\r\n       traits {\r\n           name\r\n           value\r\n           rarity\r\n       }\r\n    }\r\n}",
+						"variables": "{\r\n    \"network_id\": \"94c754fe-e06c-4d2b-bb76-2faa240b5bb8\",\r\n    \"contract\": \"0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d\",\r\n    \"token_id\": \"2113\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/graphql",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lookup NFTs by collection and rarity",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query($collection: ID, $rarity_max: Float) {\r\n    nfts(collection: $collection, rarity_max: $rarity_max) {\r\n        id\r\n        token_id\r\n        image_url\r\n        uri\r\n        rarity\r\n    }\r\n}",
+						"variables": "{\r\n   \"collection\": \"612ecc22-36ef-4ef7-bb0b-5b864b85d089\",\r\n   \"rarity_max\" : 0.0000000004\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/graphql",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lookup NFTs by collection and rarity, incl owners",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query($owner: Address, $collection: ID) {\r\n    nfts(owner: $owner, collection: $collection) {\r\n        id\r\n        token_id\r\n        image_url\r\n        uri\r\n        rarity\r\n        owners\r\n    }\r\n}",
+						"variables": "{\r\n   \"owner\": \"0xd311bDACB151b72BddFEE9cBdC414Af22a5E38dc\",\r\n   \"collection\": \"37f5eff7-e355-4d8b-9a35-8bfa4f819fef\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/graphql",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
