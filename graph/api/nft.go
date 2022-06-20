@@ -197,13 +197,14 @@ func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, 
 			nft.Traits = traitRarity
 		}
 
-		if filterByRarity {
-			// If we are filtering NFTs by rarity, check whether this NFT is rare enough.
-			if nft.Rarity < *rarityMax {
-				filteredNFTs = append(filteredNFTs, nft)
-			}
+		// If we're not filtering by rarity just include this NFT.
+		if !filterByRarity {
+			filteredNFTs = append(filteredNFTs, nft)
+			continue
+		}
 
-		} else {
+		// If we are filtering NFTs by rarity, check whether this NFT is rare enough.
+		if nft.Rarity < *rarityMax {
 			filteredNFTs = append(filteredNFTs, nft)
 		}
 	}
