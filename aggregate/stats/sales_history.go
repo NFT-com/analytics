@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
-	"github.com/NFT-com/graph-api/aggregate/models/identifier"
+	"github.com/NFT-com/analytics/aggregate/models/datapoint"
+	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
 // CollectionSalesHistory returns the number of sales in this collection in the given interval.

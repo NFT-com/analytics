@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
-	"github.com/NFT-com/graph-api/aggregate/models/identifier"
+	"github.com/NFT-com/analytics/aggregate/models/datapoint"
+	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
 // MarketplaceUserCountHistory returns the number of unique active users on the marketplace in the specified date range.

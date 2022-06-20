@@ -3,8 +3,8 @@ package lookup
 import (
 	"fmt"
 
-	aggregate "github.com/NFT-com/graph-api/aggregate/api"
-	"github.com/NFT-com/graph-api/aggregate/models/identifier"
+	aggregate "github.com/NFT-com/analytics/aggregate/api"
+	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
 // Collection returns the address of the specified collection.

@@ -12,7 +12,7 @@ var (
 )
 
 // TODO: Improve error handling - some errors need not be relayed to the user.
-// See https://github.com/NFT-com/graph-api/issues/12
+// See https://github.com/NFT-com/analytics/issues/12
 
 // bindError is used when user input was malformed.
 func bindError(err error) *echo.HTTPError {

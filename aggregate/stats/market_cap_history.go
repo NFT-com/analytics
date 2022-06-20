@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
-	"github.com/NFT-com/graph-api/aggregate/models/identifier"
+	"github.com/NFT-com/analytics/aggregate/models/datapoint"
+	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
 // CollectionMarketCapHistory returns the market cap for the collection in the given time range.

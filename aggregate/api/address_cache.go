@@ -3,7 +3,7 @@ package api
 import (
 	"sync"
 
-	"github.com/NFT-com/graph-api/aggregate/models/identifier"
+	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
 type addressCache struct {

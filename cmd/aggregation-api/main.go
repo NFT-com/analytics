@@ -20,9 +20,9 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"github.com/NFT-com/graph-api/aggregate/api"
-	"github.com/NFT-com/graph-api/aggregate/lookup"
-	"github.com/NFT-com/graph-api/aggregate/stats"
+	"github.com/NFT-com/analytics/aggregate/api"
+	"github.com/NFT-com/analytics/aggregate/lookup"
+	"github.com/NFT-com/analytics/aggregate/stats"
 )
 
 const (

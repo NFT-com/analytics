@@ -6,8 +6,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/NFT-com/graph-api/aggregate/models/api"
-	"github.com/NFT-com/graph-api/aggregate/models/identifier"
+	"github.com/NFT-com/analytics/aggregate/models/api"
+	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
 func (a *API) unpackCollectionHistoryRequest(ctx echo.Context) (*collectionRequest, error) {

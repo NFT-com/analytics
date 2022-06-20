@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
-	"github.com/NFT-com/graph-api/aggregate/models/identifier"
+	"github.com/NFT-com/analytics/aggregate/models/datapoint"
+	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
 // CollectionAverageHistory returns the average price for the collection NFT in the given interval.

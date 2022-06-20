@@ -3,7 +3,7 @@ package api
 import (
 	"time"
 
-	"github.com/NFT-com/graph-api/aggregate/models/identifier"
+	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
 // collectionRequest describes the intermediate format for the API request

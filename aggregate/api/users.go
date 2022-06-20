@@ -6,7 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/NFT-com/graph-api/aggregate/models/datapoint"
+	"github.com/NFT-com/analytics/aggregate/models/datapoint"
 )
 
 // MarketplaceUsers handles the request for number of active users on a marketplace.

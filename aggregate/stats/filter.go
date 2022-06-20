@@ -3,7 +3,7 @@ package stats
 import (
 	"gorm.io/gorm"
 
-	"github.com/NFT-com/graph-api/aggregate/models/identifier"
+	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
 const (
