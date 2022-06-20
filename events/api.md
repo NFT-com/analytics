@@ -1,6 +1,6 @@
 # Events API
 
-Events API is a REST API serving time series data relating to NFT-related events occurring on a blockchain.
+Events API is a REST API serving data about NFT-related events occurring on a blockchain.
 Events are served in a reverse chronological order, meaning most recent events are returned first.
 
 ## Endpoints
@@ -18,6 +18,7 @@ Listing all events for a single NFT is done by issuing requests to individual en
 Listing transfer events is done by issuing a `GET` request to the `/transfers` endpoint.
 The following filters are available for transfer events:
 
+- `chain_id` — chain ID
 - `collection_address` — address of the collection
 - `token_id` — ID of the token, as seen on chain
 - `transaction_hash` — transaction hash
@@ -33,6 +34,7 @@ The following filters are available for transfer events:
 Listing sale events is done by issuing a `GET` request to the `/sales/` endpoint.
 The following filters are available for sale events:
 
+- `chain_id` — chain ID
 - `marketplace_address` — address of the marketplace
 - `collection_address` — address of the collection
 - `token_id` - ID of the token, as seen on chain
@@ -43,8 +45,8 @@ The following filters are available for sale events:
 - `end_height` — end height for block range (inclusive)
 - `seller_address` — address of the token seller
 - `buyer_address` — address of the token buyer
-- `start_price` - start price for price range
-- `end_price` - end price for price range
+- `start_price` — start price for price range (inclusive)
+- `end_price` — end price for price range (inclusive)
 
 ## Pagination
 

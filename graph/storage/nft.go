@@ -64,17 +64,22 @@ func (s *Storage) NFTByTokenID(networkID string, contract string, tokenID string
 }
 
 // NFTs retrieves a list of NFTs fitting the specified criteria.
-func (s *Storage) NFTs(owner *string, collectionID *string, orderBy api.NFTOrder, limit uint) ([]*api.NFT, error) {
+func (s *Storage) NFTs(owner *string, collectionID *string, orderBy api.NFTOrder, limit uint, prefetchOwners bool) ([]*api.NFT, error) {
 
-	// Apply explicit query filters - the token owner and collection ID.
-	query := api.NFT{}
+	db := s.db.
+		Table("nfts n, owners o").
+		Select("DISTINCT n.*").
+		Where("o.nft_id = n.id")
+
+	// Set owner filter if specified.
 	if owner != nil {
-		query.Owner = *owner
+		db = db.Where("o.owner = ? AND o.number > 0", owner)
 	}
+
+	// Set collection filter if specified.
 	if collectionID != nil {
-		query.Collection = *collectionID
+		db = db.Where("collection_id = ?", collectionID)
 	}
-	db := s.db.Where(query)
 
 	// Set `orderBy` if applicable - only for creation time we can directly use the DB sorting.
 	if orderBy.Field == api.NFTOrderFieldCreationTime {
@@ -86,10 +91,30 @@ func (s *Storage) NFTs(owner *string, collectionID *string, orderBy api.NFTOrder
 		db = db.Limit(int(limit))
 	}
 
+	// Execute query.
 	var nfts []*api.NFT
 	err := db.Find(&nfts).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve nfts: %w", err)
+	}
+
+	if !prefetchOwners {
+		return nfts, nil
+	}
+
+	// Lookup owner for the list of NFTs.
+	var ids []string
+	for _, nft := range nfts {
+		ids = append(ids, nft.ID)
+	}
+
+	owners, err := s.nftListOwners(ids)
+	if err != nil {
+		return nil, fmt.Errorf("could not lookup owners for the NFT list: %w", err)
+	}
+
+	for _, nft := range nfts {
+		nft.Owners = owners[nft.ID]
 	}
 
 	return nfts, nil

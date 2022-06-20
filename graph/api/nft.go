@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/NFT-com/analytics/graph/models/api"
 	"github.com/NFT-com/analytics/graph/stats/collection"
@@ -42,6 +43,15 @@ func (s *Server) expandNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, 
 
 	// Parse the query to know how much information to return/calculate.
 	req := parseNFTQuery(ctx)
+
+	// Retrieve owner if it was requested/
+	if req.owners {
+		owners, err := s.storage.NFTOwners(nft.ID)
+		if err != nil {
+			return nil, fmt.Errorf("could not retrieve owners for the NFT: %w", err)
+		}
+		nft.Owners = owners
+	}
 
 	// If we do not need traits nor rarity, we're done.
 	if !req.traits && !req.needRarity() {
@@ -91,7 +101,10 @@ func (s *Server) expandNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, 
 // nfts returns a list of NFTs fitting the search criteria.
 func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, rarityMax *float64, orderBy api.NFTOrder) ([]*api.NFT, error) {
 
-	nfts, err := s.storage.NFTs(owner, collectionID, orderBy, s.searchLimit)
+	// Parse the query to know how much information to return/calculate.
+	req := parseNFTQuery(ctx)
+
+	nfts, err := s.storage.NFTs(owner, collectionID, orderBy, s.searchLimit, req.owners)
 	if err != nil {
 		log := s.logError(err)
 		if owner != nil {
@@ -107,11 +120,10 @@ func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, 
 		return nil, errRetrieveNFTFailed
 	}
 
-	// Parse the query to know how much information to return/calculate.
-	req := parseNFTQuery(ctx)
+	filterByRarity := rarityMax != nil
 
 	// If we do not need traits nor rarity, we're done.
-	if !req.traits && !req.needRarity() {
+	if !req.traits && !req.needRarity() && !filterByRarity {
 		return nfts, nil
 	}
 
@@ -152,7 +164,11 @@ func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, 
 	stats := make(map[string]collection.Stats)
 	sizes := make(map[string]uint)
 
+	// List of NFTs that fit into the rarity filter specified.
+	var filteredNFTs []*api.NFT
+
 	for _, nft := range nfts {
+		nft := nft
 		// Lookup stats for this collection.
 		// If we don't have them already cached, fetch them now, calculate stats and cache them.
 		cstats, ok := stats[nft.Collection]
@@ -180,7 +196,18 @@ func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, 
 		if req.traitRarity {
 			nft.Traits = traitRarity
 		}
+
+		// If we're not filtering by rarity just include this NFT.
+		if !filterByRarity {
+			filteredNFTs = append(filteredNFTs, nft)
+			continue
+		}
+
+		// If we are filtering NFTs by rarity, check whether this NFT is rare enough.
+		if nft.Rarity < *rarityMax {
+			filteredNFTs = append(filteredNFTs, nft)
+		}
 	}
 
-	return nfts, nil
+	return filteredNFTs, nil
 }

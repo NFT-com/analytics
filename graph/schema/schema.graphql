@@ -225,9 +225,9 @@ type NFT {
     description: String
 
     """
-    Address of the account that owns the NFT.
+    Addresses of accounts that own this NFT.
     """
-    owner: Address!
+    owners: [Address!]
 
     """
     Rarity score for the NFT.
@@ -334,7 +334,7 @@ type Query {
     """
     Get a single NFT by its token ID.
     """
-    nftByTokenID(
+    nft_by_token_id(
         """
         Network ID.
         """
@@ -348,7 +348,7 @@ type Query {
         """
         Token ID of the NFT.
         """
-        tokenID: String!
+        token_id: String!
     ): NFT
 
     """
@@ -368,12 +368,12 @@ type Query {
         """
         Maximum rarity value.
         """
-        rarityMax: Float
+        rarity_max: Float
         
         """
         Ordering options for the returned NFTs.
         """
-        orderBy: NFTOrder = { field: CREATION_TIME, direction: DESC }
+        order_by: NFTOrder = { field: CREATION_TIME, direction: DESC }
     ): [NFT!]
 
     """
@@ -389,7 +389,7 @@ type Query {
     """
     Get a single collection by address.
     """
-    collectionByAddress(
+    collection_by_address(
         """
         Network ID.
         """
@@ -413,6 +413,6 @@ type Query {
         """
         Ordering options for the returned collections.
         """
-        orderBy: CollectionOrder = { field: CREATION_TIME, direction: DESC }
+        order_by: CollectionOrder = { field: CREATION_TIME, direction: DESC }
     ): [Collection!]
 }

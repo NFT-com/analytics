@@ -68,7 +68,7 @@ The query root of NFT.com GraphQL interface.
 			<td>ID of the NFT.</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top"><strong>nftByTokenID</strong></td>
+			<td colspan="2" valign="top"><strong>nft_by_token_id</strong></td>
 			<td valign="top"><a href="#nft">NFT</a></td>
 			<td>Get a single NFT by its token ID.</td>
 		</tr>
@@ -83,7 +83,7 @@ The query root of NFT.com GraphQL interface.
 			<td>ID of the smart contract.</td>
 		</tr>
 		<tr>
-			<td colspan="2" align="right" valign="top">tokenID</td>
+			<td colspan="2" align="right" valign="top">token_id</td>
 			<td valign="top"><a href="#string">String</a>!</td>
 			<td>Token ID of the NFT.</td>
 		</tr>
@@ -93,9 +93,9 @@ The query root of NFT.com GraphQL interface.
 			<td>Lookup NFTs based on specified criteria.</td>
 		</tr>
 		<tr>
-			<td colspan="2" align="right" valign="top">owner</td>
+			<td colspan="2" align="right" valign="top">owners</td>
 			<td valign="top"><a href="#address">Address</a></td>
-			<td>Owner of the NFT.</td>
+			<td>Addresses of accounts that own this NFT.</td>
 		</tr>
 		<tr>
 			<td colspan="2" align="right" valign="top">collection</td>
@@ -103,12 +103,12 @@ The query root of NFT.com GraphQL interface.
 			<td>ID of the collection the NFT is part of.</td>
 		</tr>
 		<tr>
-			<td colspan="2" align="right" valign="top">rarityMax</td>
+			<td colspan="2" align="right" valign="top">rarity_max</td>
 			<td valign="top"><a href="#float">Float</a></td>
 			<td>Maximum rarity value.</td>
 		</tr>
 		<tr>
-			<td colspan="2" align="right" valign="top">orderBy</td>
+			<td colspan="2" align="right" valign="top">order_by</td>
 			<td valign="top"><a href="#nftorder">NFTOrder</a></td>
 			<td>Ordering options for the returned NFTs.</td>
 		</tr>
@@ -123,7 +123,7 @@ The query root of NFT.com GraphQL interface.
 			<td>ID of the collection.</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top"><strong>collectionByAddress</strong></td>
+			<td colspan="2" valign="top"><strong>collection_by_address</strong></td>
 			<td valign="top"><a href="#collection">Collection</a></td>
 			<td>Get a single collection by address.</td>
 		</tr>
@@ -148,7 +148,7 @@ The query root of NFT.com GraphQL interface.
 			<td>ID of the network that the collection is on.</td>
 		</tr>
 		<tr>
-			<td colspan="2" align="right" valign="top">orderBy</td>
+			<td colspan="2" align="right" valign="top">order_by</td>
 			<td valign="top"><a href="#collectionorder">CollectionOrder</a></td>
 			<td>Ordering options for the returned collections.</td>
 		</tr>
@@ -311,9 +311,9 @@ NFT represents a single Non-Fungible Token.
 			<td>Description of the NFT.</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top"><strong>owner</strong></td>
-			<td valign="top"><a href="#address">Address</a>!</td>
-			<td>Address of the account that owns the NFT.</td>
+			<td colspan="2" valign="top"><strong>owners</strong></td>
+			<td valign="top">[<a href="#address">Address</a>!]</td>
+			<td>Addresses of accounts that own this NFT.</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>rarity</strong></td>

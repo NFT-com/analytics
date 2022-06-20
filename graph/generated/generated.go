@@ -73,7 +73,7 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		ImageURL    func(childComplexity int) int
 		Name        func(childComplexity int) int
-		Owner       func(childComplexity int) int
+		Owners      func(childComplexity int) int
 		Rarity      func(childComplexity int) int
 		TokenID     func(childComplexity int) int
 		Traits      func(childComplexity int) int
@@ -287,12 +287,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.NFT.Name(childComplexity), true
 
-	case "NFT.owner":
-		if e.complexity.NFT.Owner == nil {
+	case "NFT.owners":
+		if e.complexity.NFT.Owners == nil {
 			break
 		}
 
-		return e.complexity.NFT.Owner(childComplexity), true
+		return e.complexity.NFT.Owners(childComplexity), true
 
 	case "NFT.rarity":
 		if e.complexity.NFT.Rarity == nil {
@@ -369,12 +369,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Collection(childComplexity, args["id"].(string)), true
 
-	case "Query.collectionByAddress":
+	case "Query.collection_by_address":
 		if e.complexity.Query.CollectionByAddress == nil {
 			break
 		}
 
-		args, err := ec.field_Query_collectionByAddress_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_collection_by_address_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -391,7 +391,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Collections(childComplexity, args["network_id"].(*string), args["orderBy"].(*api.CollectionOrder)), true
+		return e.complexity.Query.Collections(childComplexity, args["network_id"].(*string), args["order_by"].(*api.CollectionOrder)), true
 
 	case "Query.network":
 		if e.complexity.Query.Network == nil {
@@ -424,17 +424,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Nft(childComplexity, args["id"].(string)), true
 
-	case "Query.nftByTokenID":
+	case "Query.nft_by_token_id":
 		if e.complexity.Query.NftByTokenID == nil {
 			break
 		}
 
-		args, err := ec.field_Query_nftByTokenID_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_nft_by_token_id_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.NftByTokenID(childComplexity, args["network_id"].(string), args["contract"].(string), args["tokenID"].(string)), true
+		return e.complexity.Query.NftByTokenID(childComplexity, args["network_id"].(string), args["contract"].(string), args["token_id"].(string)), true
 
 	case "Query.nfts":
 		if e.complexity.Query.Nfts == nil {
@@ -446,7 +446,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Nfts(childComplexity, args["owner"].(*string), args["collection"].(*string), args["rarityMax"].(*float64), args["orderBy"].(*api.NFTOrder)), true
+		return e.complexity.Query.Nfts(childComplexity, args["owner"].(*string), args["collection"].(*string), args["rarity_max"].(*float64), args["order_by"].(*api.NFTOrder)), true
 
 	case "Trait.name":
 		if e.complexity.Trait.Name == nil {
@@ -546,7 +546,7 @@ enum OrderDirection {
 }
 
 """
-Network represents the blockchains networks.
+Network represents the blockchain networks.
 Mainnet and testnets of a specific blockchain are distinct network objects.
 """
 type Network {
@@ -746,9 +746,9 @@ type NFT {
     description: String
 
     """
-    Address of the account that owns the NFT.
+    Addresses of accounts that own this NFT.
     """
-    owner: Address!
+    owners: [Address!]
 
     """
     Rarity score for the NFT.
@@ -855,7 +855,7 @@ type Query {
     """
     Get a single NFT by its token ID.
     """
-    nftByTokenID(
+    nft_by_token_id(
         """
         Network ID.
         """
@@ -869,7 +869,7 @@ type Query {
         """
         Token ID of the NFT.
         """
-        tokenID: String!
+        token_id: String!
     ): NFT
 
     """
@@ -889,12 +889,12 @@ type Query {
         """
         Maximum rarity value.
         """
-        rarityMax: Float
+        rarity_max: Float
         
         """
         Ordering options for the returned NFTs.
         """
-        orderBy: NFTOrder = { field: CREATION_TIME, direction: DESC }
+        order_by: NFTOrder = { field: CREATION_TIME, direction: DESC }
     ): [NFT!]
 
     """
@@ -910,7 +910,7 @@ type Query {
     """
     Get a single collection by address.
     """
-    collectionByAddress(
+    collection_by_address(
         """
         Network ID.
         """
@@ -934,7 +934,7 @@ type Query {
         """
         Ordering options for the returned collections.
         """
-        orderBy: CollectionOrder = { field: CREATION_TIME, direction: DESC }
+        order_by: CollectionOrder = { field: CREATION_TIME, direction: DESC }
     ): [Collection!]
 }
 `, BuiltIn: false},
@@ -960,7 +960,22 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_collectionByAddress_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_collection_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_collection_by_address_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -984,21 +999,6 @@ func (ec *executionContext) field_Query_collectionByAddress_args(ctx context.Con
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_collection_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Query_collections_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -1012,14 +1012,14 @@ func (ec *executionContext) field_Query_collections_args(ctx context.Context, ra
 	}
 	args["network_id"] = arg0
 	var arg1 *api.CollectionOrder
-	if tmp, ok := rawArgs["orderBy"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
-		arg1, err = ec.unmarshalOCollectionOrder2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐCollectionOrder(ctx, tmp)
+	if tmp, ok := rawArgs["order_by"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("order_by"))
+		arg1, err = ec.unmarshalOCollectionOrder2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCollectionOrder(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["orderBy"] = arg1
+	args["order_by"] = arg1
 	return args, nil
 }
 
@@ -1038,7 +1038,22 @@ func (ec *executionContext) field_Query_network_args(ctx context.Context, rawArg
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_nftByTokenID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_nft_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_nft_by_token_id_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -1060,29 +1075,14 @@ func (ec *executionContext) field_Query_nftByTokenID_args(ctx context.Context, r
 	}
 	args["contract"] = arg1
 	var arg2 string
-	if tmp, ok := rawArgs["tokenID"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenID"))
+	if tmp, ok := rawArgs["token_id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token_id"))
 		arg2, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["tokenID"] = arg2
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_nft_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
+	args["token_id"] = arg2
 	return args, nil
 }
 
@@ -1108,23 +1108,23 @@ func (ec *executionContext) field_Query_nfts_args(ctx context.Context, rawArgs m
 	}
 	args["collection"] = arg1
 	var arg2 *float64
-	if tmp, ok := rawArgs["rarityMax"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rarityMax"))
+	if tmp, ok := rawArgs["rarity_max"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rarity_max"))
 		arg2, err = ec.unmarshalOFloat2ᚖfloat64(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["rarityMax"] = arg2
+	args["rarity_max"] = arg2
 	var arg3 *api.NFTOrder
-	if tmp, ok := rawArgs["orderBy"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
-		arg3, err = ec.unmarshalONFTOrder2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNFTOrder(ctx, tmp)
+	if tmp, ok := rawArgs["order_by"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("order_by"))
+		arg3, err = ec.unmarshalONFTOrder2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFTOrder(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["orderBy"] = arg3
+	args["order_by"] = arg3
 	return args, nil
 }
 
@@ -1402,7 +1402,7 @@ func (ec *executionContext) _Collection_network(ctx context.Context, field graph
 	}
 	res := resTmp.(*api.Network)
 	fc.Result = res
-	return ec.marshalNNetwork2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNetwork(ctx, field.Selections, res)
+	return ec.marshalNNetwork2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNetwork(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Collection_marketplaces(ctx context.Context, field graphql.CollectedField, obj *api.Collection) (ret graphql.Marshaler) {
@@ -1434,7 +1434,7 @@ func (ec *executionContext) _Collection_marketplaces(ctx context.Context, field 
 	}
 	res := resTmp.([]*api.Marketplace)
 	fc.Result = res
-	return ec.marshalOMarketplace2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐMarketplaceᚄ(ctx, field.Selections, res)
+	return ec.marshalOMarketplace2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐMarketplaceᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Collection_nfts(ctx context.Context, field graphql.CollectedField, obj *api.Collection) (ret graphql.Marshaler) {
@@ -1466,7 +1466,7 @@ func (ec *executionContext) _Collection_nfts(ctx context.Context, field graphql.
 	}
 	res := resTmp.([]*api.NFT)
 	fc.Result = res
-	return ec.marshalONFT2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNFTᚄ(ctx, field.Selections, res)
+	return ec.marshalONFT2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFTᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Marketplace_id(ctx context.Context, field graphql.CollectedField, obj *api.Marketplace) (ret graphql.Marshaler) {
@@ -1638,7 +1638,7 @@ func (ec *executionContext) _Marketplace_networks(ctx context.Context, field gra
 	}
 	res := resTmp.([]*api.Network)
 	fc.Result = res
-	return ec.marshalNNetwork2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNetworkᚄ(ctx, field.Selections, res)
+	return ec.marshalNNetwork2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNetworkᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Marketplace_collections(ctx context.Context, field graphql.CollectedField, obj *api.Marketplace) (ret graphql.Marshaler) {
@@ -1670,7 +1670,7 @@ func (ec *executionContext) _Marketplace_collections(ctx context.Context, field 
 	}
 	res := resTmp.([]*api.Collection)
 	fc.Result = res
-	return ec.marshalOCollection2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐCollectionᚄ(ctx, field.Selections, res)
+	return ec.marshalOCollection2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCollectionᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _NFT_id(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
@@ -1874,7 +1874,7 @@ func (ec *executionContext) _NFT_description(ctx context.Context, field graphql.
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _NFT_owner(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
+func (ec *executionContext) _NFT_owners(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1892,21 +1892,18 @@ func (ec *executionContext) _NFT_owner(ctx context.Context, field graphql.Collec
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Owner, nil
+		return obj.Owners, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNAddress2string(ctx, field.Selections, res)
+	return ec.marshalOAddress2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _NFT_rarity(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
@@ -1973,7 +1970,7 @@ func (ec *executionContext) _NFT_traits(ctx context.Context, field graphql.Colle
 	}
 	res := resTmp.([]api.Trait)
 	fc.Result = res
-	return ec.marshalOTrait2ᚕgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTraitᚄ(ctx, field.Selections, res)
+	return ec.marshalOTrait2ᚕgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐTraitᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _NFT_collection(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
@@ -2008,7 +2005,7 @@ func (ec *executionContext) _NFT_collection(ctx context.Context, field graphql.C
 	}
 	res := resTmp.(*api.Collection)
 	fc.Result = res
-	return ec.marshalNCollection2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐCollection(ctx, field.Selections, res)
+	return ec.marshalNCollection2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCollection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Network_id(ctx context.Context, field graphql.CollectedField, obj *api.Network) (ret graphql.Marshaler) {
@@ -2145,7 +2142,7 @@ func (ec *executionContext) _Network_marketplaces(ctx context.Context, field gra
 	}
 	res := resTmp.([]*api.Marketplace)
 	fc.Result = res
-	return ec.marshalOMarketplace2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐMarketplaceᚄ(ctx, field.Selections, res)
+	return ec.marshalOMarketplace2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐMarketplaceᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Network_collections(ctx context.Context, field graphql.CollectedField, obj *api.Network) (ret graphql.Marshaler) {
@@ -2177,7 +2174,7 @@ func (ec *executionContext) _Network_collections(ctx context.Context, field grap
 	}
 	res := resTmp.([]*api.Collection)
 	fc.Result = res
-	return ec.marshalOCollection2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐCollectionᚄ(ctx, field.Selections, res)
+	return ec.marshalOCollection2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCollectionᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_network(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2216,7 +2213,7 @@ func (ec *executionContext) _Query_network(ctx context.Context, field graphql.Co
 	}
 	res := resTmp.(*api.Network)
 	fc.Result = res
-	return ec.marshalONetwork2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNetwork(ctx, field.Selections, res)
+	return ec.marshalONetwork2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNetwork(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_networks(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2248,7 +2245,7 @@ func (ec *executionContext) _Query_networks(ctx context.Context, field graphql.C
 	}
 	res := resTmp.([]*api.Network)
 	fc.Result = res
-	return ec.marshalONetwork2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNetworkᚄ(ctx, field.Selections, res)
+	return ec.marshalONetwork2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNetworkᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_nft(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2287,10 +2284,10 @@ func (ec *executionContext) _Query_nft(ctx context.Context, field graphql.Collec
 	}
 	res := resTmp.(*api.NFT)
 	fc.Result = res
-	return ec.marshalONFT2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNFT(ctx, field.Selections, res)
+	return ec.marshalONFT2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFT(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_nftByTokenID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_nft_by_token_id(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -2307,7 +2304,7 @@ func (ec *executionContext) _Query_nftByTokenID(ctx context.Context, field graph
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_nftByTokenID_args(ctx, rawArgs)
+	args, err := ec.field_Query_nft_by_token_id_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -2315,7 +2312,7 @@ func (ec *executionContext) _Query_nftByTokenID(ctx context.Context, field graph
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().NftByTokenID(rctx, args["network_id"].(string), args["contract"].(string), args["tokenID"].(string))
+		return ec.resolvers.Query().NftByTokenID(rctx, args["network_id"].(string), args["contract"].(string), args["token_id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2326,7 +2323,7 @@ func (ec *executionContext) _Query_nftByTokenID(ctx context.Context, field graph
 	}
 	res := resTmp.(*api.NFT)
 	fc.Result = res
-	return ec.marshalONFT2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNFT(ctx, field.Selections, res)
+	return ec.marshalONFT2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFT(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_nfts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2354,7 +2351,7 @@ func (ec *executionContext) _Query_nfts(ctx context.Context, field graphql.Colle
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Nfts(rctx, args["owner"].(*string), args["collection"].(*string), args["rarityMax"].(*float64), args["orderBy"].(*api.NFTOrder))
+		return ec.resolvers.Query().Nfts(rctx, args["owner"].(*string), args["collection"].(*string), args["rarity_max"].(*float64), args["order_by"].(*api.NFTOrder))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2365,7 +2362,7 @@ func (ec *executionContext) _Query_nfts(ctx context.Context, field graphql.Colle
 	}
 	res := resTmp.([]*api.NFT)
 	fc.Result = res
-	return ec.marshalONFT2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNFTᚄ(ctx, field.Selections, res)
+	return ec.marshalONFT2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFTᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_collection(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2404,10 +2401,10 @@ func (ec *executionContext) _Query_collection(ctx context.Context, field graphql
 	}
 	res := resTmp.(*api.Collection)
 	fc.Result = res
-	return ec.marshalOCollection2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐCollection(ctx, field.Selections, res)
+	return ec.marshalOCollection2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCollection(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_collectionByAddress(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_collection_by_address(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -2424,7 +2421,7 @@ func (ec *executionContext) _Query_collectionByAddress(ctx context.Context, fiel
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_collectionByAddress_args(ctx, rawArgs)
+	args, err := ec.field_Query_collection_by_address_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -2443,7 +2440,7 @@ func (ec *executionContext) _Query_collectionByAddress(ctx context.Context, fiel
 	}
 	res := resTmp.(*api.Collection)
 	fc.Result = res
-	return ec.marshalOCollection2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐCollection(ctx, field.Selections, res)
+	return ec.marshalOCollection2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCollection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_collections(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2471,7 +2468,7 @@ func (ec *executionContext) _Query_collections(ctx context.Context, field graphq
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Collections(rctx, args["network_id"].(*string), args["orderBy"].(*api.CollectionOrder))
+		return ec.resolvers.Query().Collections(rctx, args["network_id"].(*string), args["order_by"].(*api.CollectionOrder))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2482,7 +2479,7 @@ func (ec *executionContext) _Query_collections(ctx context.Context, field graphq
 	}
 	res := resTmp.([]*api.Collection)
 	fc.Result = res
-	return ec.marshalOCollection2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐCollectionᚄ(ctx, field.Selections, res)
+	return ec.marshalOCollection2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCollectionᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3860,7 +3857,7 @@ func (ec *executionContext) unmarshalInputCollectionOrder(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
-			it.Field, err = ec.unmarshalNCollectionOrderField2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐCollectionOrderField(ctx, v)
+			it.Field, err = ec.unmarshalNCollectionOrderField2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCollectionOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3868,7 +3865,7 @@ func (ec *executionContext) unmarshalInputCollectionOrder(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
-			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐOrderDirection(ctx, v)
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐOrderDirection(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3891,7 +3888,7 @@ func (ec *executionContext) unmarshalInputNFTOrder(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
-			it.Field, err = ec.unmarshalNNFTOrderField2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNFTOrderField(ctx, v)
+			it.Field, err = ec.unmarshalNNFTOrderField2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFTOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3899,7 +3896,7 @@ func (ec *executionContext) unmarshalInputNFTOrder(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
-			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐOrderDirection(ctx, v)
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐOrderDirection(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4192,16 +4189,13 @@ func (ec *executionContext) _NFT(ctx context.Context, sel ast.SelectionSet, obj 
 
 			out.Values[i] = innerFunc(ctx)
 
-		case "owner":
+		case "owners":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._NFT_owner(ctx, field, obj)
+				return ec._NFT_owners(ctx, field, obj)
 			}
 
 			out.Values[i] = innerFunc(ctx)
 
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "rarity":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._NFT_rarity(ctx, field, obj)
@@ -4414,7 +4408,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "nftByTokenID":
+		case "nft_by_token_id":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -4423,7 +4417,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_nftByTokenID(ctx, field)
+				res = ec._Query_nft_by_token_id(ctx, field)
 				return res
 			}
 
@@ -4474,7 +4468,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "collectionByAddress":
+		case "collection_by_address":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -4483,7 +4477,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_collectionByAddress(ctx, field)
+				res = ec._Query_collection_by_address(ctx, field)
 				return res
 			}
 
@@ -5043,11 +5037,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNCollection2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐCollection(ctx context.Context, sel ast.SelectionSet, v api.Collection) graphql.Marshaler {
+func (ec *executionContext) marshalNCollection2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCollection(ctx context.Context, sel ast.SelectionSet, v api.Collection) graphql.Marshaler {
 	return ec._Collection(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNCollection2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐCollection(ctx context.Context, sel ast.SelectionSet, v *api.Collection) graphql.Marshaler {
+func (ec *executionContext) marshalNCollection2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCollection(ctx context.Context, sel ast.SelectionSet, v *api.Collection) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -5057,13 +5051,13 @@ func (ec *executionContext) marshalNCollection2ᚖgithubᚗcomᚋNFTᚑcomᚋgra
 	return ec._Collection(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNCollectionOrderField2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐCollectionOrderField(ctx context.Context, v interface{}) (api.CollectionOrderField, error) {
+func (ec *executionContext) unmarshalNCollectionOrderField2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCollectionOrderField(ctx context.Context, v interface{}) (api.CollectionOrderField, error) {
 	var res api.CollectionOrderField
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNCollectionOrderField2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐCollectionOrderField(ctx context.Context, sel ast.SelectionSet, v api.CollectionOrderField) graphql.Marshaler {
+func (ec *executionContext) marshalNCollectionOrderField2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCollectionOrderField(ctx context.Context, sel ast.SelectionSet, v api.CollectionOrderField) graphql.Marshaler {
 	return v
 }
 
@@ -5097,7 +5091,7 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) marshalNMarketplace2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐMarketplace(ctx context.Context, sel ast.SelectionSet, v *api.Marketplace) graphql.Marshaler {
+func (ec *executionContext) marshalNMarketplace2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐMarketplace(ctx context.Context, sel ast.SelectionSet, v *api.Marketplace) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -5107,7 +5101,7 @@ func (ec *executionContext) marshalNMarketplace2ᚖgithubᚗcomᚋNFTᚑcomᚋgr
 	return ec._Marketplace(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNNFT2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNFT(ctx context.Context, sel ast.SelectionSet, v *api.NFT) graphql.Marshaler {
+func (ec *executionContext) marshalNNFT2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFT(ctx context.Context, sel ast.SelectionSet, v *api.NFT) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -5117,21 +5111,21 @@ func (ec *executionContext) marshalNNFT2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑap
 	return ec._NFT(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNNFTOrderField2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNFTOrderField(ctx context.Context, v interface{}) (api.NFTOrderField, error) {
+func (ec *executionContext) unmarshalNNFTOrderField2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFTOrderField(ctx context.Context, v interface{}) (api.NFTOrderField, error) {
 	var res api.NFTOrderField
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNNFTOrderField2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNFTOrderField(ctx context.Context, sel ast.SelectionSet, v api.NFTOrderField) graphql.Marshaler {
+func (ec *executionContext) marshalNNFTOrderField2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFTOrderField(ctx context.Context, sel ast.SelectionSet, v api.NFTOrderField) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) marshalNNetwork2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNetwork(ctx context.Context, sel ast.SelectionSet, v api.Network) graphql.Marshaler {
+func (ec *executionContext) marshalNNetwork2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNetwork(ctx context.Context, sel ast.SelectionSet, v api.Network) graphql.Marshaler {
 	return ec._Network(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNNetwork2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNetworkᚄ(ctx context.Context, sel ast.SelectionSet, v []*api.Network) graphql.Marshaler {
+func (ec *executionContext) marshalNNetwork2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNetworkᚄ(ctx context.Context, sel ast.SelectionSet, v []*api.Network) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -5155,7 +5149,7 @@ func (ec *executionContext) marshalNNetwork2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgra
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNNetwork2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNetwork(ctx, sel, v[i])
+			ret[i] = ec.marshalNNetwork2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNetwork(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -5175,7 +5169,7 @@ func (ec *executionContext) marshalNNetwork2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgra
 	return ret
 }
 
-func (ec *executionContext) marshalNNetwork2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNetwork(ctx context.Context, sel ast.SelectionSet, v *api.Network) graphql.Marshaler {
+func (ec *executionContext) marshalNNetwork2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNetwork(ctx context.Context, sel ast.SelectionSet, v *api.Network) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -5185,13 +5179,13 @@ func (ec *executionContext) marshalNNetwork2ᚖgithubᚗcomᚋNFTᚑcomᚋgraph�
 	return ec._Network(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNOrderDirection2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐOrderDirection(ctx context.Context, v interface{}) (api.OrderDirection, error) {
+func (ec *executionContext) unmarshalNOrderDirection2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐOrderDirection(ctx context.Context, v interface{}) (api.OrderDirection, error) {
 	var res api.OrderDirection
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNOrderDirection2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐOrderDirection(ctx context.Context, sel ast.SelectionSet, v api.OrderDirection) graphql.Marshaler {
+func (ec *executionContext) marshalNOrderDirection2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐOrderDirection(ctx context.Context, sel ast.SelectionSet, v api.OrderDirection) graphql.Marshaler {
 	return v
 }
 
@@ -5210,7 +5204,7 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) marshalNTrait2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTrait(ctx context.Context, sel ast.SelectionSet, v api.Trait) graphql.Marshaler {
+func (ec *executionContext) marshalNTrait2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐTrait(ctx context.Context, sel ast.SelectionSet, v api.Trait) graphql.Marshaler {
 	return ec._Trait(ctx, sel, &v)
 }
 
@@ -5467,6 +5461,44 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
+func (ec *executionContext) unmarshalOAddress2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNAddress2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOAddress2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNAddress2string(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) unmarshalOAddress2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
 	if v == nil {
 		return nil, nil
@@ -5509,7 +5541,7 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalOCollection2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐCollectionᚄ(ctx context.Context, sel ast.SelectionSet, v []*api.Collection) graphql.Marshaler {
+func (ec *executionContext) marshalOCollection2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCollectionᚄ(ctx context.Context, sel ast.SelectionSet, v []*api.Collection) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -5536,7 +5568,7 @@ func (ec *executionContext) marshalOCollection2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNCollection2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐCollection(ctx, sel, v[i])
+			ret[i] = ec.marshalNCollection2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCollection(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -5556,14 +5588,14 @@ func (ec *executionContext) marshalOCollection2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋ
 	return ret
 }
 
-func (ec *executionContext) marshalOCollection2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐCollection(ctx context.Context, sel ast.SelectionSet, v *api.Collection) graphql.Marshaler {
+func (ec *executionContext) marshalOCollection2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCollection(ctx context.Context, sel ast.SelectionSet, v *api.Collection) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Collection(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOCollectionOrder2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐCollectionOrder(ctx context.Context, v interface{}) (*api.CollectionOrder, error) {
+func (ec *executionContext) unmarshalOCollectionOrder2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCollectionOrder(ctx context.Context, v interface{}) (*api.CollectionOrder, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -5603,7 +5635,7 @@ func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalOMarketplace2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐMarketplaceᚄ(ctx context.Context, sel ast.SelectionSet, v []*api.Marketplace) graphql.Marshaler {
+func (ec *executionContext) marshalOMarketplace2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐMarketplaceᚄ(ctx context.Context, sel ast.SelectionSet, v []*api.Marketplace) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -5630,7 +5662,7 @@ func (ec *executionContext) marshalOMarketplace2ᚕᚖgithubᚗcomᚋNFTᚑcom�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNMarketplace2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐMarketplace(ctx, sel, v[i])
+			ret[i] = ec.marshalNMarketplace2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐMarketplace(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -5650,7 +5682,7 @@ func (ec *executionContext) marshalOMarketplace2ᚕᚖgithubᚗcomᚋNFTᚑcom�
 	return ret
 }
 
-func (ec *executionContext) marshalONFT2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNFTᚄ(ctx context.Context, sel ast.SelectionSet, v []*api.NFT) graphql.Marshaler {
+func (ec *executionContext) marshalONFT2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFTᚄ(ctx context.Context, sel ast.SelectionSet, v []*api.NFT) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -5677,7 +5709,7 @@ func (ec *executionContext) marshalONFT2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraph�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNNFT2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNFT(ctx, sel, v[i])
+			ret[i] = ec.marshalNNFT2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFT(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -5697,14 +5729,14 @@ func (ec *executionContext) marshalONFT2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraph�
 	return ret
 }
 
-func (ec *executionContext) marshalONFT2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNFT(ctx context.Context, sel ast.SelectionSet, v *api.NFT) graphql.Marshaler {
+func (ec *executionContext) marshalONFT2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFT(ctx context.Context, sel ast.SelectionSet, v *api.NFT) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._NFT(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalONFTOrder2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNFTOrder(ctx context.Context, v interface{}) (*api.NFTOrder, error) {
+func (ec *executionContext) unmarshalONFTOrder2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFTOrder(ctx context.Context, v interface{}) (*api.NFTOrder, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -5712,7 +5744,7 @@ func (ec *executionContext) unmarshalONFTOrder2ᚖgithubᚗcomᚋNFTᚑcomᚋgra
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalONetwork2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNetworkᚄ(ctx context.Context, sel ast.SelectionSet, v []*api.Network) graphql.Marshaler {
+func (ec *executionContext) marshalONetwork2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNetworkᚄ(ctx context.Context, sel ast.SelectionSet, v []*api.Network) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -5739,7 +5771,7 @@ func (ec *executionContext) marshalONetwork2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgra
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNNetwork2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNetwork(ctx, sel, v[i])
+			ret[i] = ec.marshalNNetwork2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNetwork(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -5759,7 +5791,7 @@ func (ec *executionContext) marshalONetwork2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋgra
 	return ret
 }
 
-func (ec *executionContext) marshalONetwork2ᚖgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐNetwork(ctx context.Context, sel ast.SelectionSet, v *api.Network) graphql.Marshaler {
+func (ec *executionContext) marshalONetwork2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNetwork(ctx context.Context, sel ast.SelectionSet, v *api.Network) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -5792,7 +5824,7 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) marshalOTrait2ᚕgithubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTraitᚄ(ctx context.Context, sel ast.SelectionSet, v []api.Trait) graphql.Marshaler {
+func (ec *executionContext) marshalOTrait2ᚕgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐTraitᚄ(ctx context.Context, sel ast.SelectionSet, v []api.Trait) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -5819,7 +5851,7 @@ func (ec *executionContext) marshalOTrait2ᚕgithubᚗcomᚋNFTᚑcomᚋgraphᚑ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNTrait2githubᚗcomᚋNFTᚑcomᚋgraphᚑapiᚋgraphᚋmodelsᚋapiᚐTrait(ctx, sel, v[i])
+			ret[i] = ec.marshalNTrait2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐTrait(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)

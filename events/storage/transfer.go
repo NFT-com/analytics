@@ -14,16 +14,6 @@ import (
 // when retrieving the next batch of records.
 func (s *Storage) Transfers(selector selectors.TransferFilter, token string) ([]events.Transfer, string, error) {
 
-	// Initialize the query variable.
-	query := events.Transfer{
-		ChainID:           selector.ChainID,
-		CollectionAddress: selector.CollectionAddress,
-		TokenID:           selector.TokenID,
-		TransactionHash:   selector.TransactionHash,
-		SenderAddress:     selector.SenderAddress,
-		ReceiverAddress:   selector.ReceiverAddress,
-	}
-
 	// Create the database query.
 	// NOTE: This function creates a query with a limit of `batchSize + 1`.
 	// This is done in order to see if there are more records fitting the search
@@ -32,11 +22,22 @@ func (s *Storage) Transfers(selector selectors.TransferFilter, token string) ([]
 	// the cost of doing another database query to do `SELECT COUNT(*) ...`.
 	// It is up to the caller to trim the result set to fit the `batchSize`.
 	limit := s.batchSize + 1
-	db, err := s.createQuery(query, token,
+	filters := []conditionFunc{
+		// Explicit matches.
+		withUint64Field("chain_id", selector.ChainID),
+		withStrCIField("collection_address", selector.CollectionAddress),
+		withStrCIField("sender_address", selector.SenderAddress),
+		withStrCIField("receiver_address", selector.ReceiverAddress),
+		withStrField("transaction_hash", selector.TransactionHash),
+		withStrField("token_id", selector.TokenID),
+
+		// Limit and ranges.
 		withLimit(limit),
 		withTimestampRange(selector.TimestampRange),
 		withHeightRange(selector.HeightRange),
-	)
+	}
+
+	db, err := s.createQuery(token, filters...)
 	if err != nil {
 		return nil, "", fmt.Errorf("could not create query: %w", err)
 	}

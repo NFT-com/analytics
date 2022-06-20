@@ -53,11 +53,10 @@ func (s *Storage) MarketplacesByNetwork(networkID string) ([]*api.Marketplace, e
 
 	var marketplaces []*api.Marketplace
 	err := s.db.
-		Table("marketplaces m").
+		Table("marketplaces m, networks_marketplaces nm").
 		Select("DISTINCT m.*").
-		Joins("INNER JOIN marketplaces_collections mc ON m.id = mc.marketplace_id").
-		Joins("INNER JOIN collections c ON mc.collection_id = c.id").
-		Where("c.network_id = ?", networkID).
+		Where("m.id = nm.marketplace_id").
+		Where("nm.network_id = ?", networkID).
 		Find(&marketplaces).
 		Error
 	if err != nil {

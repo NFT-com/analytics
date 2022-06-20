@@ -2,6 +2,7 @@ package storage
 
 import (
 	"fmt"
+	"math/big"
 	"time"
 
 	"gorm.io/gorm"
@@ -9,13 +10,12 @@ import (
 	"github.com/NFT-com/analytics/events/models/selectors"
 )
 
-type conditionSetFunc func(*gorm.DB) *gorm.DB
+type conditionFunc func(*gorm.DB) *gorm.DB
 
 // createQuery creates an appropriate event lookup query.
-func (s *Storage) createQuery(query interface{}, token string, conditions ...conditionSetFunc) (*gorm.DB, error) {
+func (s *Storage) createQuery(token string, conditions ...conditionFunc) (*gorm.DB, error) {
 
 	db := s.db.
-		Where(query).
 		Order("block_number DESC").
 		Order("event_index DESC")
 
@@ -29,11 +29,7 @@ func (s *Storage) createQuery(query interface{}, token string, conditions ...con
 
 		// If this is a continued iteration, request earlier events in the same block
 		// and earlier blocks.
-		db = db.Where(
-			s.db.Where("block_number < ?", height),
-		).Or(
-			s.db.Where("block_number = ?", height).Where("event_index < ?", eventIndex),
-		)
+		db = db.Where("( block_number < ? OR (block_number = ? AND event_index < ?) )", height, height, eventIndex)
 	}
 
 	// Apply conditions provided.
@@ -44,8 +40,53 @@ func (s *Storage) createQuery(query interface{}, token string, conditions ...con
 	return db, nil
 }
 
+// withField returns the condition setter that does a generic match on a field.
+func withUint64Field(name string, value uint64) conditionFunc {
+	return func(db *gorm.DB) *gorm.DB {
+
+		if value == 0 {
+			return db
+		}
+
+		query := fmt.Sprintf("%s = ?", name)
+		db = db.Where(query, value)
+
+		return db
+	}
+}
+
+// withStrField returns the condition setter that does a text match on a field.
+func withStrField(name string, value string) conditionFunc {
+	return func(db *gorm.DB) *gorm.DB {
+
+		if value == "" {
+			return db
+		}
+
+		query := fmt.Sprintf("%s = ?", name)
+		db = db.Where(query, value)
+
+		return db
+	}
+}
+
+// withStrCIField returns the condition setter that does case-insensitive text match on a field.
+func withStrCIField(name string, value string) conditionFunc {
+	return func(db *gorm.DB) *gorm.DB {
+
+		if value == "" {
+			return db
+		}
+
+		query := fmt.Sprintf("LOWER(%s) = LOWER(?)", name)
+		db = db.Where(query, value)
+
+		return db
+	}
+}
+
 // withLimit returns the condition setter that limits the number of results.
-func withLimit(limit uint) conditionSetFunc {
+func withLimit(limit uint) conditionFunc {
 	return func(db *gorm.DB) *gorm.DB {
 		db = db.Limit(int(limit))
 		return db
@@ -54,7 +95,7 @@ func withLimit(limit uint) conditionSetFunc {
 
 // withTimestampRange returns the condition setter that adds the time range condition
 // to the query, if provided.
-func withTimestampRange(selector selectors.TimestampRange) conditionSetFunc {
+func withTimestampRange(selector selectors.TimestampRange) conditionFunc {
 	return func(db *gorm.DB) *gorm.DB {
 
 		// Set start time condition.
@@ -75,7 +116,7 @@ func withTimestampRange(selector selectors.TimestampRange) conditionSetFunc {
 
 // withHeightRange returns the condition setter that adds the height range condition
 // to the query, if provided.
-func withHeightRange(selector selectors.HeightRange) conditionSetFunc {
+func withHeightRange(selector selectors.HeightRange) conditionFunc {
 	return func(db *gorm.DB) *gorm.DB {
 
 		// Set start height condition.
@@ -94,17 +135,17 @@ func withHeightRange(selector selectors.HeightRange) conditionSetFunc {
 
 // withPriceRange returns the condition setter that addes the price range condition
 // to the query, if provided.
-func withPriceRange(selector selectors.PriceRange) conditionSetFunc {
+func withPriceRange(selector selectors.PriceRange) conditionFunc {
 	return func(db *gorm.DB) *gorm.DB {
 
 		// Set the start price condition.
-		if selector.StartPrice != 0 {
-			db = db.Where("trade_price >= ?", selector.StartPrice)
+		if selector.StartPrice.Cmp(big.NewInt(0)) != 0 {
+			db = db.Where("trade_price >= ?", selector.StartPrice.String())
 		}
 
 		// Set end price condition.
-		if selector.EndPrice != 0 {
-			db = db.Where("trade_price <= ?", selector.EndPrice)
+		if selector.EndPrice.Cmp(big.NewInt(0)) != 0 {
+			db = db.Where("trade_price <= ?", selector.EndPrice.String())
 		}
 
 		return db

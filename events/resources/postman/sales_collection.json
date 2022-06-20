@@ -1,0 +1,883 @@
+{
+	"info": {
+		"_postman_id": "fb7022c4-f0e5-4d8f-9ac8-439f7bf79f93",
+		"name": "Sales",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19032524"
+	},
+	"item": [
+		{
+			"name": "Block range",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that events are from the requested block range.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let start = BigInt(pm.request.url.query.get('start_height'));\r",
+							"let end = BigInt(pm.request.url.query.get('end_height'));\r",
+							"\r",
+							"response.sales.forEach(function(sales) {\r",
+							"    \r",
+							"    let block = BigInt(sales.block_number);\r",
+							"    pm.test(\"Sale is from the expected block range\", function() {\r",
+							"        pm.expect(start <= block)\r",
+							"        pm.expect(block <= end)\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/sales/?start_height=14232100&end_height=14232170",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"sales",
+						""
+					],
+					"query": [
+						{
+							"key": "start_height",
+							"value": "14232100"
+						},
+						{
+							"key": "end_height",
+							"value": "14232170"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Time range",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const moment = require(\"moment\")\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"// Parse the start and end parameters.\r",
+							"let start = moment(decodeURI(pm.request.url.query.get('start_timestamp')));\r",
+							"let end = moment(decodeURI(pm.request.url.query.get('end_timestamp')));\r",
+							"\r",
+							"response.sales.forEach(function(sale) {\r",
+							"\r",
+							"    // Parse the event timestamp.\r",
+							"    let ts = moment(sale.emitted_at);\r",
+							"    pm.test(\"Event timestamp is valid\", function() {\r",
+							"        pm.expect(ts.isValid()).to.be.true\r",
+							"    });\r",
+							"\r",
+							"    // Verify the event timestamp is within the set limits.\r",
+							"    pm.test(\"Event timestamp is after the start threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrAfter(start)).to.be.true\r",
+							"    });\r",
+							"    pm.test(\"Event timestamp is before the end threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrBefore(end)).to.be.true\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/sales/?start_timestamp=2022-02-20T00:00:00Z&end_timestamp=2022-02-20T00:01:00Z",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"sales",
+						""
+					],
+					"query": [
+						{
+							"key": "start_timestamp",
+							"value": "2022-02-20T00:00:00Z"
+						},
+						{
+							"key": "end_timestamp",
+							"value": "2022-02-20T00:01:00Z"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Time range - paging - first page",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const moment = require(\"moment\")\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"// Parse the start and end parameters.\r",
+							"let start = moment(decodeURI(pm.request.url.query.get('start_timestamp')));\r",
+							"let end = moment(decodeURI(pm.request.url.query.get('end_timestamp')));\r",
+							"\r",
+							"response.sales.forEach(function(sale) {\r",
+							"\r",
+							"    // Parse the event timestamp.\r",
+							"    let ts = moment(sale.emitted_at);\r",
+							"    pm.test(\"Event timestamp is valid\", function() {\r",
+							"        pm.expect(ts.isValid()).to.be.true\r",
+							"    });\r",
+							"\r",
+							"    // Verify the event timestamp is within the set limits.\r",
+							"    pm.test(\"Event timestamp is after the start threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrAfter(start)).to.be.true\r",
+							"    });\r",
+							"    pm.test(\"Event timestamp is before the end threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrBefore(end)).to.be.true\r",
+							"    });\r",
+							"})\r",
+							"\r",
+							"// Verify that the response has a token for the next page.\r",
+							"let nextPageToken = response.next_page;\r",
+							"pm.test(\"Event list has a token for the next page\", function() {\r",
+							"    pm.expect(nextPageToken).is.not.empty\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/sales/?start_timestamp=2022-02-20T00:00:00Z&end_timestamp=2022-02-20T00:04:00Z",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"sales",
+						""
+					],
+					"query": [
+						{
+							"key": "start_timestamp",
+							"value": "2022-02-20T00:00:00Z"
+						},
+						{
+							"key": "end_timestamp",
+							"value": "2022-02-20T00:04:00Z"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Time range - paging - last page",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const moment = require(\"moment\")\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"// Parse the start and end parameters.\r",
+							"let start = moment(decodeURI(pm.request.url.query.get('start_timestamp')));\r",
+							"let end = moment(decodeURI(pm.request.url.query.get('end_timestamp')));\r",
+							"\r",
+							"response.sales.forEach(function(sale) {\r",
+							"\r",
+							"    // Parse the event timestamp.\r",
+							"    let ts = moment(sale.emitted_at);\r",
+							"    pm.test(\"Event timestamp is valid\", function() {\r",
+							"        pm.expect(ts.isValid()).to.be.true\r",
+							"    });\r",
+							"\r",
+							"    // Verify the event timestamp is within the set limits.\r",
+							"    pm.test(\"Event timestamp is after the start threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrAfter(start)).to.be.true\r",
+							"    });\r",
+							"    pm.test(\"Event timestamp is before the end threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrBefore(end)).to.be.true\r",
+							"    });\r",
+							"})\r",
+							"\r",
+							"// Verify that the response does not have a token for the next page.\r",
+							"let nextPageToken = response.next_page;\r",
+							"pm.test(\"Event list does not have a token for the next page\", function() {\r",
+							"    pm.expect(nextPageToken).is.equal(undefined);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/sales/?start_timestamp=2022-02-20T00:00:00Z&end_timestamp=2022-02-20T00:04:00Z&page=MTQyMzk1Nzg6Mjk5",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"sales",
+						""
+					],
+					"query": [
+						{
+							"key": "start_timestamp",
+							"value": "2022-02-20T00:00:00Z"
+						},
+						{
+							"key": "end_timestamp",
+							"value": "2022-02-20T00:04:00Z"
+						},
+						{
+							"key": "page",
+							"value": "MTQyMzk1Nzg6Mjk5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sales between accounts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that all sales are from the correct sender and have \r",
+							"// the correct receiver.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let sender = pm.request.url.query.get('seller_address');\r",
+							"let receiver = pm.request.url.query.get('buyer_address');\r",
+							"\r",
+							"response.sales.forEach(function(sale) {\r",
+							"    pm.test(\"Transfer is from the correct sender\", function() {\r",
+							"        pm.expect(sale.seller_address).to.be.eq(sender)\r",
+							"    });\r",
+							"    pm.test(\"Transfer is to the correct receiver\", function() {\r",
+							"        pm.expect(sale.buyer_address).to.be.eq(receiver)\r",
+							"    });\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/sales/?seller_address=0xe86073b90666547b822887CFd7d4E6E973906e5C&buyer_address=0x14D702Bd1Ae7a48Df5D33c7F873aA353BbC7446d",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"sales",
+						""
+					],
+					"query": [
+						{
+							"key": "seller_address",
+							"value": "0xe86073b90666547b822887CFd7d4E6E973906e5C"
+						},
+						{
+							"key": "buyer_address",
+							"value": "0x14D702Bd1Ae7a48Df5D33c7F873aA353BbC7446d"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "From seller",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that all sales are from the correct sender and have \r",
+							"// the correct receiver.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let sender = pm.request.url.query.get('seller_address');\r",
+							"\r",
+							"response.sales.forEach(function(sale) {\r",
+							"    pm.test(\"Sale is from the correct seller\", function() {\r",
+							"        pm.expect(sale.seller_address).to.be.eq(sender)\r",
+							"    });\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/sales/?seller_address=0xBe8EDBa2Bf6a443c36342980681391E640639B9B",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"sales",
+						""
+					],
+					"query": [
+						{
+							"key": "seller_address",
+							"value": "0xBe8EDBa2Bf6a443c36342980681391E640639B9B"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "To buyer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that all sales are from the correct sender and have \r",
+							"// the correct receiver.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let receiver = pm.request.url.query.get('buyer_address');\r",
+							"\r",
+							"response.sales.forEach(function(sale) {\r",
+							"    pm.test(\"Sale is to the correct buyer\", function() {\r",
+							"        pm.expect(sale.buyer_address).to.be.eq(receiver)\r",
+							"    });\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/sales/?buyer_address=0xd4fB8A295c9dDc47063f4c83Bab973E6140A42d8",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"sales",
+						""
+					],
+					"query": [
+						{
+							"key": "buyer_address",
+							"value": "0xd4fB8A295c9dDc47063f4c83Bab973E6140A42d8"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "On marketplace",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that all events are from the correct collection.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let chainID = parseInt(pm.request.url.query.get('chain_id'));\r",
+							"let marketplace = pm.request.url.query.get('marketplace_address');\r",
+							"\r",
+							"response.sales.forEach(function(sale) {\r",
+							"    pm.test(\"Sale is on the correct marketplace\", function() {\r",
+							"        pm.expect(sale.marketplace_address).to.be.eq(marketplace)\r",
+							"    });\r",
+							"     pm.test(\"Sale is on the correct chain\", function() {\r",
+							"        pm.expect(sale.chain_id).to.be.eq(chainID)\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/sales/?marketplace_address=0x7f268357A8c2552623316e2562D90e642bB538E5&chain_id=1",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"sales",
+						""
+					],
+					"query": [
+						{
+							"key": "marketplace_address",
+							"value": "0x7f268357A8c2552623316e2562D90e642bB538E5"
+						},
+						{
+							"key": "chain_id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "From collection",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that all events are from the correct collection.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let chainID = parseInt(pm.request.url.query.get('chain_id'));\r",
+							"let collection = pm.request.url.query.get('collection_address');\r",
+							"\r",
+							"response.sales.forEach(function(sale) {\r",
+							"    pm.test(\"Sale is from the correct collection\", function() {\r",
+							"        pm.expect(sale.collection_address).to.be.eq(collection)\r",
+							"    });\r",
+							"     pm.test(\"Sale is from the correct chain\", function() {\r",
+							"        pm.expect(sale.chain_id).to.be.eq(chainID)\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/sales/?collection_address=&chain_id=1",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"sales",
+						""
+					],
+					"query": [
+						{
+							"key": "collection_address",
+							"value": ""
+						},
+						{
+							"key": "chain_id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transaction filter",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that all events are from the correct transaction.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let expected = pm.request.url.query.get('transaction_hash');\r",
+							"\r",
+							"response.sales.forEach(function(sale) {\r",
+							"    pm.test(\"Sale is from the correct transaction\", function() {\r",
+							"        pm.expect(sale.transaction_hash).to.be.eq(expected)\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/sales/?transaction_hash=0x7ec5da3b14b517c5234ec19585d0211f9b9d37383c275365041ff977f7b0a114",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"sales",
+						""
+					],
+					"query": [
+						{
+							"key": "transaction_hash",
+							"value": "0x7ec5da3b14b517c5234ec19585d0211f9b9d37383c275365041ff977f7b0a114"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Specific NFT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that all events are of the correct NFT.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let chainID = parseInt(pm.request.url.query.get('chain_id'));\r",
+							"let collection = pm.request.url.query.get('collection_address');\r",
+							"let tokenID = pm.request.url.query.get('token_id');\r",
+							"\r",
+							"response.sales.forEach(function(sale) {\r",
+							"     pm.test(\"Sale is on the correct chain\", function() {\r",
+							"        pm.expect(sale.chain_id).to.be.eq(chainID)\r",
+							"    });\r",
+							"    pm.test(\"Sale is from the correct collection\", function() {\r",
+							"        pm.expect(sale.collection_address).to.be.eq(collection)\r",
+							"    });\r",
+							"    pm.test(\"Sale is of the correct token ID\", function() {\r",
+							"        pm.expect(sale.token_id).to.be.eq(tokenID)\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/sales/?collection_address=&chain_id=1&token_id=",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"sales",
+						""
+					],
+					"query": [
+						{
+							"key": "collection_address",
+							"value": ""
+						},
+						{
+							"key": "chain_id",
+							"value": "1"
+						},
+						{
+							"key": "token_id",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Price range",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that events are from the requested block range.\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let start = BigInt(pm.request.url.query.get('start_price'));\r",
+							"let end = BigInt(pm.request.url.query.get('end_price'));\r",
+							"\r",
+							"response.sales.forEach(function(sale) {\r",
+							"    \r",
+							"    let price = BigInt(sale.trade_price);\r",
+							"    pm.test(\"Price is in the expected price range\", function() {\r",
+							"        pm.expect(start <= price)\r",
+							"        pm.expect(price <= end)\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/sales/?start_price=134000000000000000000000000&end_price=344000000000000000000000000",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"sales",
+						""
+					],
+					"query": [
+						{
+							"key": "start_price",
+							"value": "134000000000000000000000000"
+						},
+						{
+							"key": "end_price",
+							"value": "344000000000000000000000000"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Combined filters",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const moment = require(\"moment\")\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"let chainID = parseInt(pm.request.url.query.get('chain_id'));\r",
+							"let collection = pm.request.url.query.get('collection_address');\r",
+							"let tokenID = pm.request.url.query.get('token_id');\r",
+							"\r",
+							"let start_height = BigInt(pm.request.url.query.get('start_height'));\r",
+							"let end_height = BigInt(pm.request.url.query.get('end_height'));\r",
+							"\r",
+							"// Parse the start and end time parameters.\r",
+							"let start_timestamp = moment(decodeURI(pm.request.url.query.get('start_timestamp')));\r",
+							"let end_timestamp = moment(decodeURI(pm.request.url.query.get('end_timestamp')));\r",
+							"\r",
+							"let seller = pm.request.url.query.get('seller_address');\r",
+							"let buyer = pm.request.url.query.get('buyer_address');\r",
+							"\r",
+							"let transaction = pm.request.url.query.get('transaction_hash');\r",
+							"\r",
+							"response.sales.forEach(function(sale) {\r",
+							"\r",
+							"     pm.test(\"Sale is on the correct chain\", function() {\r",
+							"        pm.expect(sale.chain_id).to.be.eq(chainID)\r",
+							"    });\r",
+							"    pm.test(\"Sale is from the correct collection\", function() {\r",
+							"        pm.expect(sale.collection_address).to.be.eq(collection)\r",
+							"    });\r",
+							"    pm.test(\"Sale is of the correct token ID\", function() {\r",
+							"        pm.expect(sale.token_id).to.be.eq(tokenID)\r",
+							"    });\r",
+							"\r",
+							"\r",
+							"     pm.test(\"Sale is from the expected block range\", function() {\r",
+							"        pm.expect(start_height <= sale.block_number)\r",
+							"        pm.expect(sale.block_number <= end_height)\r",
+							"    });\r",
+							"\r",
+							"\r",
+							"    // Parse the event timestamp.\r",
+							"    let ts = moment(sale.emitted_at);\r",
+							"    pm.test(\"Event timestamp is valid\", function() {\r",
+							"        pm.expect(ts.isValid()).to.be.true\r",
+							"    });\r",
+							"\r",
+							"    // Verify the event timestamp is within the set limits.\r",
+							"    pm.test(\"Event timestamp is after the start threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrAfter(start_timestamp)).to.be.true\r",
+							"    });\r",
+							"    pm.test(\"Event timestamp is before the end threshold\", function() {\r",
+							"        pm.expect(ts.isSameOrBefore(end_timestamp)).to.be.true\r",
+							"    });\r",
+							"\r",
+							"    pm.test(\"Sale is from the correct seller\", function() {\r",
+							"        pm.expect(sale.seller_address).to.be.eq(seller)\r",
+							"    });\r",
+							"    pm.test(\"Sale is to the correct buyer\", function() {\r",
+							"        pm.expect(sale.buyer_address).to.be.eq(buyer)\r",
+							"    });\r",
+							"\r",
+							"    pm.test(\"Sale is from the correct transaction\", function() {\r",
+							"        pm.expect(sale.transaction_hash).to.be.eq(transaction)\r",
+							"    });\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/sales/?chain_id=1&start_height=14237210&end_height=14237220&start_timestamp=2022-02-19T00:00:00Z&end_timestamp=2022-02-23T00:00:00Z&transaction_hash=0xb9889ad63c68d3b068bf22a103193abfd9f318d3b0d2917c9149eb7a63fb2a7b&seller_address=0xe86073b90666547b822887CFd7d4E6E973906e5C&buyer_address=0x14D702Bd1Ae7a48Df5D33c7F873aA353BbC7446d&marketplace_address=0x7f268357A8c2552623316e2562D90e642bB538E5&start_price=140000000000000000&end_price=160000000000000000&collection_address&token_id",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"sales",
+						""
+					],
+					"query": [
+						{
+							"key": "chain_id",
+							"value": "1"
+						},
+						{
+							"key": "start_height",
+							"value": "14237210"
+						},
+						{
+							"key": "end_height",
+							"value": "14237220"
+						},
+						{
+							"key": "start_timestamp",
+							"value": "2022-02-19T00:00:00Z"
+						},
+						{
+							"key": "end_timestamp",
+							"value": "2022-02-23T00:00:00Z"
+						},
+						{
+							"key": "transaction_hash",
+							"value": "0xb9889ad63c68d3b068bf22a103193abfd9f318d3b0d2917c9149eb7a63fb2a7b"
+						},
+						{
+							"key": "seller_address",
+							"value": "0xe86073b90666547b822887CFd7d4E6E973906e5C"
+						},
+						{
+							"key": "buyer_address",
+							"value": "0x14D702Bd1Ae7a48Df5D33c7F873aA353BbC7446d"
+						},
+						{
+							"key": "marketplace_address",
+							"value": "0x7f268357A8c2552623316e2562D90e642bB538E5"
+						},
+						{
+							"key": "start_price",
+							"value": "140000000000000000"
+						},
+						{
+							"key": "end_price",
+							"value": "160000000000000000"
+						},
+						{
+							"key": "collection_address",
+							"value": null
+						},
+						{
+							"key": "token_id",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Check status code.",
+					"pm.test(\"Status code is 200\", function () {",
+					"    pm.response.to.have.status(200);",
+					"});",
+					"",
+					"// Verify that there are at least some events returned.",
+					"let response = pm.response.json();",
+					"pm.test(\"Events returned\", function() {",
+					"    pm.expect(response.sales.length).to.be.least(1)",
+					"});"
+				]
+			}
+		}
+	]
+}
