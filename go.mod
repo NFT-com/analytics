@@ -5,7 +5,6 @@ go 1.17
 require (
 	github.com/99designs/gqlgen v0.17.3
 	github.com/NFT-com/indexer v0.0.0-20220614140847-721c702c7867
-	github.com/go-playground/validator/v10 v10.11.0
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/rs/zerolog v1.26.1
 	github.com/spf13/pflag v1.0.5
