@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/NFT-com/analytics/aggregate/models/datapoint"
 	"github.com/labstack/echo/v4"
+
+	"github.com/NFT-com/analytics/aggregate/models/datapoint"
 )
 
 // CollectionSales handles the request for number of sales for a collection.

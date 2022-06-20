@@ -53,7 +53,6 @@ func (l *Lookup) Collections(ids []string) (map[string]identifier.Address, error
 
 	// Translate the list of collections to a map.
 	addresses := make(map[string]identifier.Address)
-
 	for _, collection := range collections {
 
 		address := identifier.Address{

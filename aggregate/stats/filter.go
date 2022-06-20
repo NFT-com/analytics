@@ -7,16 +7,16 @@ import (
 )
 
 const (
-	FILTER_COLLECTION = iota + 1
-	FILTER_MARKETPLACE
+	FilterCollection = iota + 1
+	FilterMarketplace
 )
 
 func (s *Stats) createCollectionFilter(addresses []identifier.Address) *gorm.DB {
-	return s.createAddressFilter(addresses, FILTER_COLLECTION)
+	return s.createAddressFilter(addresses, FilterCollection)
 }
 
 func (s *Stats) createMarketplaceFilter(addresses []identifier.Address) *gorm.DB {
-	return s.createAddressFilter(addresses, FILTER_MARKETPLACE)
+	return s.createAddressFilter(addresses, FilterMarketplace)
 }
 
 // createAddressFilter accepts a list of addresses and returns the appropriate `WHERE` clauses
@@ -28,13 +28,12 @@ func (s *Stats) createAddressFilter(addresses []identifier.Address, filterType i
 		return s.db
 	}
 
-	var condition string
-
 	// Set the SQL condition to use.
+	var condition string
 	switch filterType {
-	case FILTER_COLLECTION:
+	case FilterCollection:
 		condition = "chain_id = ? AND collection_address = ?"
-	case FILTER_MARKETPLACE:
+	case FilterMarketplace:
 		condition = "chain_id = ? AND marketplace_address = ?"
 
 	// Invalid filter value, just return an empty condition.
