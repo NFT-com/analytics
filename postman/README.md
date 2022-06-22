@@ -1,14 +1,6 @@
 # Postman collections
 
-The `transfers_collection.json` and `sales_collection.json` files contain Postman requests showcasing a number of different use-cases for the Events API.
-
-Each request in the Postman collection has a number of tests associated with it.
-For each request in the collection, a check is made whether the request succeeded with a `200 OK` HTTP status, as well as if the request returned at least one result (transfer or sale event).
-
-Besides this, each request has a number of other checks associated with it.
-For instance, if the HTTP request requests all events in a block range, it is checked that the `block_number` of returned events is within the specified block range.
-
-Requests have a number of parameters that should be changed depending on the underlying data served by the API - e.g. block range, indexed collections etc.
+For each of the three APIs - the Graph, Events and the Aggregation API, there are Postman collections showcasing a number of different use-cases for the respective API.
 
 ## Running tests
 
@@ -23,10 +15,10 @@ $ npm install -g newman
 Collections and tests checking the functionality of the `/transfers/` endpoint of the Events API can now be ran using:
 
 ```console
-newman run transfers_collection.json -e env.json
+newman run events/transfers_collection.json -e env.json
 ```
 
-Note that the Events API should be running and reachable according to the provided environment.
+Note that the targeted API should be running and reachable according to the provided environment.
 
 ### Environment
 
