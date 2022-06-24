@@ -6,7 +6,7 @@ import * as pulumi from "@pulumi/pulumi";
 
 const pulumiProgram = async (): Promise<Record<string, any> | void> => {
   const config = new pulumi.Config()
-  const org = config.require('org')
+  const org = 'nftcom'
   const project = pulumi.getProject()
   const indexerStack = getResourceName('indexer.shared.us-east-1')
   const indexerStackRef = new pulumi.StackReference(`${org}/${project}/${indexerStack}`)
