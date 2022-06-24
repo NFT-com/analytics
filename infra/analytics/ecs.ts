@@ -86,7 +86,7 @@ export const createParsingDispatcherTaskDefinition = (
     infraOutput: SharedInfraOutput,
 ): aws.ecs.TaskDefinition => {
     const resourceName = getResourceName('indexer-td-parsing-dispatcher')
-    const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.indexerECRRepo}:parsing-dispatcher`
+    const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:parsing-dispatcher`
     
     return new aws.ecs.TaskDefinition(resourceName, 
     {
@@ -133,7 +133,7 @@ export const createAdditionDispatcherTaskDefinition = (
     const execRole = 'arn:aws:iam::016437323894:role/ecsTaskExecutionRole'
     const taskRole = 'arn:aws:iam::016437323894:role/ECSServiceTask'
     const resourceName = getResourceName('indexer-td-addition-dispatcher')
-    const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.indexerECRRepo}:addition-dispatcher`
+    const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:addition-dispatcher`
 
     return new aws.ecs.TaskDefinition(resourceName, 
     {
@@ -180,7 +180,7 @@ export const createJobCreatorTaskDefinition = (
     const execRole = 'arn:aws:iam::016437323894:role/ecsTaskExecutionRole'
     const taskRole = 'arn:aws:iam::016437323894:role/ECSServiceTask'
     const resourceName = getResourceName('indexer-td-jobs-creator')
-    const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.indexerECRRepo}:jobs-creator`
+    const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:jobs-creator`
 
     return new aws.ecs.TaskDefinition(resourceName, 
     {
