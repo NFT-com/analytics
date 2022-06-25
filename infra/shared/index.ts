@@ -7,9 +7,9 @@ import * as pulumi from "@pulumi/pulumi";
 const pulumiProgram = async (): Promise<Record<string, any> | void> => {
   const config = new pulumi.Config()
   const org = 'nftcom'
-  const project = pulumi.getProject()
+  const project = pulumi.getProject() //nftcom
   const indexerStack = getResourceName('indexer.shared.us-east-1')
-  const indexerStackRef = new pulumi.StackReference(`${org}/${project}/${indexerStack}`)
+  const indexerStackRef = new pulumi.StackReference(`${project}/${indexerStack}`)
   
   const zones = config.require('availabilityZones').split(',')
   const vpc = await pulumiOutToValue(indexerStackRef.getOutput('vpcId'))
