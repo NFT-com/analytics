@@ -81,5 +81,5 @@ runs:
         DB_NAME: ${{ fromJSON(inputs.secrets).DB_NAME }}
         DB_USER: ${{ fromJSON(inputs.secrets).DB_USER }}
         DB_PASSWORD: ${{ fromJSON(inputs.secrets).DB_PASSWORD }}
-      run: npm run deploy:indexer
+      run: npm run deploy:analytics
       
