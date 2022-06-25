@@ -8,17 +8,11 @@ import { createSharedInfra } from './shared'
 import { createAnalyticEcsCluster } from './analytics'
 
 export const sharedOutToJSONFile = (outMap: pulumi.automation.OutputMap): void => {
-  const jobDbHost = outMap.jobDbHost.value
-  const eventDbHost = outMap.eventDbHost.value
-  const graphDbHost = outMap.graphDbHost.value
   const analyticECRRepo = outMap.indexerECRRepo.value
   const publicSubnets = outMap.publicSubnetIds.value
   const vpcId = outMap.vpcId.value
   const webSGId = outMap.webSGId.value
   const sharedOutput: SharedInfraOutput = {
-    jobDbHost,
-    eventDbHost,
-    graphDbHost,
     analyticECRRepo,
     publicSubnets,
     vpcId,
