@@ -130,41 +130,41 @@ export const createGraphTaskDefinition = (
 }
 
 export const createAggregationTaskDefinition = (
-    infraOutput: SharedInfraOutput,
+  infraOutput: SharedInfraOutput,
 ): aws.ecs.TaskDefinition => {
-    const resourceName = getResourceName('analytics-td-aggregation-api')
-    const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:aggregation-api`
+  const resourceName = getResourceName('analytics-td-aggregation-api')
+  const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:aggregation-api`
 
-    return new aws.ecs.TaskDefinition(resourceName, 
-    {
-        containerDefinitions: JSON.stringify([
-            {
-                command: ['--events-api','events-api=8080','-l',process.env.LOG_LEVEL],
-                cpu: 0,
-                entryPoint: ['/api'],
-                essential: true,
-                image: ecrImage,
-                links: [],
-                memoryReservation: 512,
-                mountPoints: [],
-                name: resourceName,
-                portMappings: [
-                    { 
-                        containerPort: 8084,
-                        hostPort: 8080,
-                        protocol: 'tcp'
-                    }
-                ],
-                environment: [],
-                volumesFrom: []
-        }]),
-        executionRoleArn: execRole,
-        family: resourceName,
-        cpu: '256',
-        memory: '512',
-        requiresCompatibilities: ['EC2'],
-        taskRoleArn: taskRole,
-    })
+  return new aws.ecs.TaskDefinition(resourceName, 
+  {
+      containerDefinitions: JSON.stringify([
+          {
+              command: ['--events-api','events-api:8080'],
+              cpu: 0,
+              entryPoint: ['/api'],
+              environment: [],
+              essential: true,
+              image: ecrImage,
+              links: [],
+              memoryReservation: 512,
+              mountPoints: [],
+              name: resourceName,
+              portMappings: [
+                  { 
+                      containerPort: 8085,
+                      hostPort: 8080,
+                      protocol: 'tcp'
+                  }
+              ],
+              volumesFrom: []
+      }]),
+      executionRoleArn: execRole,
+      family: resourceName,
+      cpu: '256',
+      memory: '512',
+      requiresCompatibilities: ['EC2'],
+      taskRoleArn: taskRole,
+  })
 }
 
 export const createEventsTaskDefinition = (
