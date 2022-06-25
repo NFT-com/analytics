@@ -116,7 +116,8 @@ export const createGraphTaskDefinition = (
                         hostPort: 8080,
                         protocol: 'tcp'
                     }
-                ],                environment: [],
+                ],
+                environment: [],
                 volumesFrom: []
         }]),
         executionRoleArn: execRole,
@@ -138,7 +139,7 @@ export const createAggregationTaskDefinition = (
     {
         containerDefinitions: JSON.stringify([
             {
-                command: ['--events-api','events-api:8080','-l',process.env.LOG_LEVEL],
+                command: ['--events-api','events-api=8080','-l',process.env.LOG_LEVEL],
                 cpu: 0,
                 entryPoint: ['/api'],
                 essential: true,
