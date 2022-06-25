@@ -79,6 +79,13 @@ export const getSharedInfraOutput = (): SharedInfraOutput => {
   return <SharedInfraOutput>JSON.parse(output)
 }
 
+export const getTags = (tags = {}): {[key: string]: string} => {
+  return {
+    ...tags,
+    env: getStage(),
+  }
+}
+
 const promisifiedExec = util.promisify(exec)
 export const execShellCommand = (command: string, swallowError = false): Promise<void> => {
   return promisifiedExec(command)
