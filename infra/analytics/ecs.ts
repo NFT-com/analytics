@@ -155,7 +155,7 @@ export const createAggregationTaskDefinition = (
                     }
                 ],
                 environment: [],
-                volumesFrom:[]
+                volumesFrom: []
         }]),
         executionRoleArn: execRole,
         family: resourceName,
