@@ -9,7 +9,7 @@ const pulumiProgram = async (): Promise<Record<string, any> | void> => {
   const org = 'nftcom'
   const project = pulumi.getProject() //nftcom
   const indexerStack = getResourceName('indexer.shared.us-east-1')
-  const indexerStackRef = new pulumi.StackReference(`${project}/${indexerStack}`)
+  const indexerStackRef = new pulumi.StackReference(indexerStack)
   
   const zones = config.require('availabilityZones').split(',')
   const vpc = await pulumiOutToValue(indexerStackRef.getOutput('vpcId'))
