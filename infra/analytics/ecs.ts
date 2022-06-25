@@ -101,7 +101,7 @@ export const createGraphTaskDefinition = (
     {
         containerDefinitions: JSON.stringify([
             {
-                command: ['--database',graph_db,'--enable-playground','-db-connection-limit','70','-l',process.env.LOG_LEVEL,'--enable-query-logging','--search-limit','20'],
+                command: ['--database',graph_db,'--enable-playground','-db-connection-limit','70','--log-level',process.env.LOG_LEVEL,'--enable-query-logging','--search-limit','20'],
                 cpu: 0,
                 entryPoint: ['/api'],
                 essential: true,
@@ -139,7 +139,7 @@ export const createAggregationTaskDefinition = (
   {
       containerDefinitions: JSON.stringify([
           {
-              command: ['--events-api','events-api:8080'],
+              command: ['--log-level',process.env.LOG_LEVEL,'--events-api','events-api:8080'],
               cpu: 0,
               entryPoint: ['/api'],
               environment: [],
@@ -177,7 +177,7 @@ export const createEventsTaskDefinition = (
     {
         containerDefinitions: JSON.stringify([
             {
-                command: ['--database',event_db,'-l',process.env.LOG_LEVEL,'--db-connection-limit','70','--batch-size','100','--enable-query-logging'],
+                command: ['--database',event_db,'--log-level',process.env.LOG_LEVEL,'--db-connection-limit','70','--batch-size','100','--enable-query-logging'],
                 cpu: 0,
                 entryPoint: ['/api'],
                 environment: [],
@@ -237,7 +237,7 @@ const createEcsASG = (
     config: pulumi.Config,
     infraOutput: SharedInfraOutput,
 ): aws.autoscaling.Group => {
-    const resourceName = getResourceName('analytics-asg')
+    const resourceName = getResourceName('analytics-ec2')
     return new aws.autoscaling.Group(resourceName, {
         defaultCooldown: 300,
         desiredCapacity: 1,
