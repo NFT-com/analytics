@@ -12,7 +12,7 @@ const tags = {
   service: 'analytics',
 }
 
-const applyEcsServiceAutoscaling = (
+const applyEventServiceAutoscaling = (
   config: pulumi.Config,
   service: aws.ecs.Service,
 ): void => {
@@ -25,6 +25,33 @@ const applyEcsServiceAutoscaling = (
   })
 
   new aws.appautoscaling.Policy('analytics-svcAsg-policy', {
+    policyType: 'TargetTrackingScaling',
+    resourceId: target.resourceId,
+    scalableDimension: target.scalableDimension,
+    serviceNamespace: target.serviceNamespace,
+    targetTrackingScalingPolicyConfiguration: {
+      targetValue: 60,
+      predefinedMetricSpecification: {
+        predefinedMetricType: 'ECSServiceAverageCPUUtilization',
+      },
+      scaleInCooldown: 360,
+    },
+  })
+}
+
+const applyGraphServiceAutoscaling = (
+  config: pulumi.Config,
+  service: aws.ecs.Service,
+): void => {
+  const target = new aws.appautoscaling.Target('analytics-svcAsg-graph-target', {
+    maxCapacity: 1,
+    minCapacity: 1,
+    resourceId: service.id.apply((id) => id.split(':').pop() || ''),
+    scalableDimension: 'ecs:service:DesiredCount',
+    serviceNamespace: 'ecs',
+  })
+
+  new aws.appautoscaling.Policy('analytics-svcAsg-graph-policy', {
     policyType: 'TargetTrackingScaling',
     resourceId: target.resourceId,
     scalableDimension: target.scalableDimension,
@@ -452,7 +479,7 @@ export const createEcsCluster = (
       tags: getTags(tags),
     })
   
-    applyEcsServiceAutoscaling(config, eventService)
+    applyEventServiceAutoscaling(config, eventService)
 
     // create ecs graph service (lb, tg, listeners, svc)
     const graphTargetGroup = createGraphTargetGroup(infraOutput)
@@ -484,7 +511,7 @@ export const createEcsCluster = (
       taskDefinition: graphTaskDefinition.arn,
       tags: getTags(tags),
     })
-    applyEcsServiceAutoscaling(config, graphService)
+    applyGraphServiceAutoscaling(config, graphService)
 
     return cluster 
 }
