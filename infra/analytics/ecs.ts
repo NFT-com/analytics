@@ -85,6 +85,7 @@ const createEventTargetGroup = (
   return new aws.lb.TargetGroup(resourceName, {
     healthCheck: {
       interval: 15,
+      port: '8085',
       matcher: '200-399',
       path: '/transfers/?start_height=14232120&end_height=14232121', // to create health check
       timeout: 5,
@@ -350,8 +351,9 @@ export const createEcsCluster = (
         rollback: true,
       },
       desiredCount: 1,
+      deploymentMaximumPercent: 200,
+      deploymentMinimumHealthyPercent: 100,
       enableEcsManagedTags: true,
-      enableExecuteCommand: true,
       forceNewDeployment: true,
       healthCheckGracePeriodSeconds: 20,
       launchType: 'EC2',
@@ -363,11 +365,6 @@ export const createEcsCluster = (
         },
       ],
       name: eventServiceResourceName,
-      networkConfiguration: {
-        assignPublicIp: true,
-        securityGroups: [infraOutput.webSGId],
-        subnets: infraOutput.publicSubnets,
-      },
       taskDefinition: eventTaskDefinition.arn,
       tags: getTags(tags),
     })
