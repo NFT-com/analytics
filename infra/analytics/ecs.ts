@@ -151,7 +151,7 @@ export const createAggregationTaskDefinition = (
               name: resourceName,
               portMappings: [
                   { 
-                      containerPort: 8085,
+                      containerPort: 8084,
                       hostPort: 8080,
                       protocol: 'tcp'
                   }
