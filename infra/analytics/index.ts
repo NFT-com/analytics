@@ -4,15 +4,12 @@ import * as upath from 'upath'
 import * as pulumi from '@pulumi/pulumi'
 
 import { deployInfra, getSharedInfraOutput } from '../helper'
-import { createEcsCluster, createEventsTaskDefinition, createAggregationTaskDefinition, createGraphTaskDefinition  } from './ecs'
+import { createEcsCluster  } from './ecs'
 
 
 const pulumiProgram = async (): Promise<Record<string, any> | void> => {
     const config = new pulumi.Config()
     const sharedInfraOutput = getSharedInfraOutput()
-    createEventsTaskDefinition(sharedInfraOutput)
-    createAggregationTaskDefinition(sharedInfraOutput)
-    createGraphTaskDefinition(sharedInfraOutput)
     createEcsCluster(config,sharedInfraOutput)
   }
   

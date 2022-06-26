@@ -12,13 +12,38 @@ const tags = {
   service: 'analytics',
 }
 
-/*
+const applyEcsServiceAutoscaling = (
+  config: pulumi.Config,
+  service: aws.ecs.Service,
+): void => {
+  const target = new aws.appautoscaling.Target('analytics-svcAsg-target', {
+    maxCapacity: 1,
+    minCapacity: 1,
+    resourceId: service.id.apply((id) => id.split(':').pop() || ''),
+    scalableDimension: 'ecs:service:DesiredCount',
+    serviceNamespace: 'ecs',
+  })
+
+  new aws.appautoscaling.Policy('analytics-svcAsg-policy', {
+    policyType: 'TargetTrackingScaling',
+    resourceId: target.resourceId,
+    scalableDimension: target.scalableDimension,
+    serviceNamespace: target.serviceNamespace,
+    targetTrackingScalingPolicyConfiguration: {
+      targetValue: 60,
+      predefinedMetricSpecification: {
+        predefinedMetricType: 'ECSServiceAverageCPUUtilization',
+      },
+      scaleInCooldown: 360,
+    },
+  })
+}
 
 const attachLBListeners = (
   lb: aws.lb.LoadBalancer,
   tg: aws.lb.TargetGroup,
 ): void => {
-  new aws.lb.Listener('listener_http_dev_gql_ecs', {
+  new aws.lb.Listener('analytics-listener-http', {
     defaultActions: [
       {
         order: 1,
@@ -36,7 +61,7 @@ const attachLBListeners = (
     tags: getTags(tags),
   })
 
-  new aws.lb.Listener('listener_https_dev_gql_ecs', {
+  new aws.lb.Listener('analytics-listener-https', {
     certificateArn:
       'arn:aws:acm:us-east-1:016437323894:certificate/0c01a3a8-59c4-463a-87ec-5c487695f09e',
     defaultActions: [
@@ -53,19 +78,20 @@ const attachLBListeners = (
   })
 }
 
-const createEcsTargetGroup = (
+const createEventTargetGroup = (
   infraOutput: SharedInfraOutput,
 ): aws.lb.TargetGroup => {
-  return new aws.lb.TargetGroup('tg_gql_ecs', {
+  const resourceName = getResourceName('analytics-lb-tg')
+  return new aws.lb.TargetGroup(resourceName, {
     healthCheck: {
       interval: 15,
       matcher: '200-399',
-      path: '/.well-known/apollo/server-health',
+      path: 'transfers/?start_height=14232120&end_height=14232121', // to create health check
       timeout: 5,
       unhealthyThreshold: 5,
     },
-    name: getResourceName('gql-ecs'),
-    port: 8080,
+    name: resourceName,
+    port: 8085,
     protocol: 'HTTP',
     protocolVersion: 'HTTP1',
     stickiness: {
@@ -81,15 +107,15 @@ const createEcsTargetGroup = (
 const createEcsLoadBalancer = (
   infraOutput: SharedInfraOutput,
 ): aws.lb.LoadBalancer => {
-  return new aws.lb.LoadBalancer('lb_gql_ecs', {
+  const resourceName = getResourceName('analytics-lb')
+  return new aws.lb.LoadBalancer(resourceName, {
     ipAddressType: 'ipv4',
-    name: getResourceName('gql-ecs'),
+    name: resourceName,
     securityGroups: [infraOutput.webSGId],
     subnets: infraOutput.publicSubnets,
     tags: getTags(tags),
   })
 }
-*/
 
 export const createGraphTaskDefinition = (
     infraOutput: SharedInfraOutput,
@@ -301,12 +327,52 @@ export const createEcsCluster = (
     {
         name: resourceName,
         settings: [
-            {
+        {
             name: 'containerInsights',
             value: 'enabled',
         }],
         capacityProviders: [capacityProvider]
     })
+
+    // cluster created, now create ecs tds, service & load balancer
+    const eventTaskDefinition = createEventsTaskDefinition(infraOutput)
+    const aggregationTaskDefinition = createAggregationTaskDefinition(infraOutput)
+    const graphTaskDefiniton = createGraphTaskDefinition(infraOutput)
+    const eventTargetGroup = createEventTargetGroup(infraOutput)
+    const loadBalancer = createEcsLoadBalancer(infraOutput)
+    attachLBListeners(loadBalancer, eventTargetGroup)
+
+    const eventServiceResourceName = getResourceName('analytics-event-svc')
+    const eventService = new aws.ecs.Service(eventServiceResourceName, {
+      cluster: cluster.arn,
+      deploymentCircuitBreaker: {
+        enable: true,
+        rollback: true,
+      },
+      desiredCount: 1,
+      enableEcsManagedTags: true,
+      enableExecuteCommand: true,
+      forceNewDeployment: true,
+      healthCheckGracePeriodSeconds: 20,
+      launchType: 'EC2',
+      loadBalancers: [
+        {
+          containerName: eventServiceResourceName,
+          containerPort: 8085,
+          targetGroupArn: eventTargetGroup.arn,
+        },
+      ],
+      name: eventServiceResourceName,
+      networkConfiguration: {
+        assignPublicIp: true,
+        securityGroups: [infraOutput.webSGId],
+        subnets: infraOutput.publicSubnets,
+      },
+      taskDefinition: eventTaskDefinition.arn,
+      tags: getTags(tags),
+    })
+  
+    applyEcsServiceAutoscaling(config, eventService)
 
     return cluster 
 }
