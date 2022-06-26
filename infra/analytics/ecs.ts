@@ -39,7 +39,7 @@ const applyEcsServiceAutoscaling = (
   })
 }
 
-const attachLBListeners = (
+const attachEventLBListeners = (
   lb: aws.lb.LoadBalancer,
   tg: aws.lb.TargetGroup,
 ): void => {
@@ -62,6 +62,45 @@ const attachLBListeners = (
   })
 
   new aws.lb.Listener('analytics-listener-https', {
+    certificateArn:
+      'arn:aws:acm:us-east-1:016437323894:certificate/0c01a3a8-59c4-463a-87ec-5c487695f09e',
+    defaultActions: [
+      {
+        targetGroupArn: tg.arn,
+        type: 'forward',
+      },
+    ],
+    loadBalancerArn: lb.arn,
+    port: 443,
+    protocol: 'HTTPS',
+    sslPolicy: 'ELBSecurityPolicy-2016-08',
+    tags: getTags(tags),
+  })
+}
+
+const attachGraphLBListeners = (
+  lb: aws.lb.LoadBalancer,
+  tg: aws.lb.TargetGroup,
+): void => {
+  new aws.lb.Listener('analytics-graph-listener-http', {
+    defaultActions: [
+      {
+        order: 1,
+        redirect: {
+          port: '443',
+          protocol: 'HTTPS',
+          statusCode: 'HTTP_301',
+        },
+        type: 'redirect',
+      },
+    ],
+    loadBalancerArn: lb.arn,
+    port: 80,
+    protocol: 'HTTP',
+    tags: getTags(tags),
+  })
+
+  new aws.lb.Listener('analytics-graph-listener-https', {
     certificateArn:
       'arn:aws:acm:us-east-1:016437323894:certificate/0c01a3a8-59c4-463a-87ec-5c487695f09e',
     defaultActions: [
@@ -105,10 +144,51 @@ const createEventTargetGroup = (
   })
 }
 
-const createEcsLoadBalancer = (
+const createGraphTargetGroup = (
+  infraOutput: SharedInfraOutput,
+): aws.lb.TargetGroup => {
+  const resourceName = getResourceName('analytics-graph-lb-tg')
+  return new aws.lb.TargetGroup(resourceName, {
+    // health check disabled until defined 
+    /*healthCheck: {
+      interval: 15,
+      port: '8083',
+      matcher: '200-399',
+      path: '/transfers/?start_height=14232120&end_height=14232121', 
+      timeout: 5,
+      unhealthyThreshold: 5,
+    },*/
+    name: resourceName,
+    port: 8083,
+    protocol: 'HTTP',
+    protocolVersion: 'HTTP1',
+    stickiness: {
+      enabled: false,
+      type: 'lb_cookie',
+    },
+    targetType: 'instance',
+    vpcId: infraOutput.vpcId,
+    tags: getTags(tags),
+  })
+}
+
+const createEventLoadBalancer = (
   infraOutput: SharedInfraOutput,
 ): aws.lb.LoadBalancer => {
   const resourceName = getResourceName('analytics-lb')
+  return new aws.lb.LoadBalancer(resourceName, {
+    ipAddressType: 'ipv4',
+    name: resourceName,
+    securityGroups: [infraOutput.webSGId],
+    subnets: infraOutput.publicSubnets,
+    tags: getTags(tags),
+  })
+}
+
+const createGraphLoadBalancer = (
+  infraOutput: SharedInfraOutput,
+): aws.lb.LoadBalancer => {
+  const resourceName = getResourceName('analytics-graph-lb')
   return new aws.lb.LoadBalancer(resourceName, {
     ipAddressType: 'ipv4',
     name: resourceName,
@@ -324,6 +404,7 @@ export const createEcsCluster = (
 ): aws.ecs.Cluster => {
     const resourceName = getResourceName('analytics')
     const { name: capacityProvider } = createEcsCapacityProvider(config, infraOutput)
+    // create ecs cluster
     const cluster = new aws.ecs.Cluster(resourceName, 
     {
         name: resourceName,
@@ -335,13 +416,15 @@ export const createEcsCluster = (
         capacityProviders: [capacityProvider]
     })
 
-    // cluster created, now create ecs tds, service & load balancer
+    // create ecs task definitions 
     const eventTaskDefinition = createEventsTaskDefinition(infraOutput)
     const aggregationTaskDefinition = createAggregationTaskDefinition(infraOutput)
-    const graphTaskDefiniton = createGraphTaskDefinition(infraOutput)
+    const graphTaskDefinition = createGraphTaskDefinition(infraOutput)
+
+    // create ecs event service (lb, tg, listeners, svc)
     const eventTargetGroup = createEventTargetGroup(infraOutput)
-    const loadBalancer = createEcsLoadBalancer(infraOutput)
-    attachLBListeners(loadBalancer, eventTargetGroup)
+    const eventloadBalancer = createEventLoadBalancer(infraOutput)
+    attachEventLBListeners(eventloadBalancer, eventTargetGroup)
 
     const eventServiceResourceName = getResourceName('analytics-event-svc')
     const eventService = new aws.ecs.Service(eventServiceResourceName, {
@@ -370,6 +453,38 @@ export const createEcsCluster = (
     })
   
     applyEcsServiceAutoscaling(config, eventService)
+
+    // create ecs graph service (lb, tg, listeners, svc)
+    const graphTargetGroup = createGraphTargetGroup(infraOutput)
+    const graphloadBalancer = createGraphLoadBalancer(infraOutput)
+    attachGraphLBListeners(graphloadBalancer, graphTargetGroup)
+
+    const graphServiceResourceName = getResourceName('analytics-graph-svc')
+    const graphService = new aws.ecs.Service(graphServiceResourceName, {
+      cluster: cluster.arn,
+      deploymentCircuitBreaker: {
+        enable: true,
+        rollback: true,
+      },
+      desiredCount: 1,
+      deploymentMaximumPercent: 200,
+      deploymentMinimumHealthyPercent: 100,
+      enableEcsManagedTags: true,
+      forceNewDeployment: true,
+      healthCheckGracePeriodSeconds: 20,
+      launchType: 'EC2',
+      loadBalancers: [
+        {
+          containerName: graphTaskDefinition.family,
+          containerPort: 8080,
+          targetGroupArn: graphTargetGroup.arn,
+        },
+      ],
+      name: graphServiceResourceName,
+      taskDefinition: graphTaskDefinition.arn,
+      tags: getTags(tags),
+    })
+    applyEcsServiceAutoscaling(config, graphService)
 
     return cluster 
 }
