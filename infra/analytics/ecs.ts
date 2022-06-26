@@ -112,8 +112,8 @@ export const createGraphTaskDefinition = (
                 name: resourceName,
                 portMappings: [
                     { 
-                        containerPort: 8083,
-                        hostPort: 8080,
+                        containerPort: 8080,
+                        hostPort: 8083,
                         protocol: 'tcp'
                     }
                 ],
@@ -151,8 +151,8 @@ export const createAggregationTaskDefinition = (
               name: resourceName,
               portMappings: [
                   { 
-                      containerPort: 8084,
-                      hostPort: 8080,
+                      containerPort: 8080,
+                      hostPort: 8084,
                       protocol: 'tcp'
                   }
               ],
@@ -189,8 +189,8 @@ export const createEventsTaskDefinition = (
                 name: resourceName,
                 portMappings: [
                     { 
-                        containerPort: 8085,
-                        hostPort: 8080,
+                        containerPort: 8080,
+                        hostPort: 8085,
                         protocol: 'tcp'
                     }
                 ],
