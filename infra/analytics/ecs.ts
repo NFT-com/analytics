@@ -86,7 +86,7 @@ const createEventTargetGroup = (
     healthCheck: {
       interval: 15,
       matcher: '200-399',
-      path: 'transfers/?start_height=14232120&end_height=14232121', // to create health check
+      path: '/transfers/?start_height=14232120&end_height=14232121', // to create health check
       timeout: 5,
       unhealthyThreshold: 5,
     },
