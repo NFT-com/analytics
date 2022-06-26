@@ -101,7 +101,7 @@ export const createGraphTaskDefinition = (
     {
         containerDefinitions: JSON.stringify([
             {
-                command: ['--database',graph_db,'--enable-playground','-db-connection-limit','70','--log-level',process.env.LOG_LEVEL,'--enable-query-logging','--search-limit','20'],
+                command: ['--database',graph_db,'--enable-playground','--db-connection-limit','70','--log-level',process.env.LOG_LEVEL,'--enable-query-logging','--search-limit','20'],
                 cpu: 0,
                 entryPoint: ['/api'],
                 essential: true,
