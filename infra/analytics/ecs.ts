@@ -357,7 +357,7 @@ export const createEcsCluster = (
       launchType: 'EC2',
       loadBalancers: [
         {
-          containerName: eventServiceResourceName,
+          containerName: eventTaskDefinition.family,
           containerPort: 8085,
           targetGroupArn: eventTargetGroup.arn,
         },
