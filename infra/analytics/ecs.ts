@@ -358,7 +358,7 @@ export const createEcsCluster = (
       loadBalancers: [
         {
           containerName: eventTaskDefinition.family,
-          containerPort: 8085,
+          containerPort: 8080,
           targetGroupArn: eventTargetGroup.arn,
         },
       ],
