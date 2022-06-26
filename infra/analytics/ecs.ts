@@ -98,7 +98,7 @@ const createEventTargetGroup = (
       enabled: false,
       type: 'lb_cookie',
     },
-    targetType: 'ip',
+    targetType: 'instance',
     vpcId: infraOutput.vpcId,
     tags: getTags(tags),
   })
