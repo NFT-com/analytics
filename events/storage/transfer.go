@@ -3,8 +3,8 @@ package storage
 import (
 	"fmt"
 
+	"github.com/NFT-com/analytics/events/models/events"
 	"github.com/NFT-com/analytics/events/models/selectors"
-	"github.com/NFT-com/indexer/models/events"
 )
 
 // Transfers retrieves NFT transfer events according to the specified filters.

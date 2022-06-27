@@ -4,7 +4,6 @@ go 1.17
 
 require (
 	github.com/99designs/gqlgen v0.17.3
-	github.com/NFT-com/indexer v0.0.0-20220614140847-721c702c7867
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/rs/zerolog v1.26.1
 	github.com/spf13/pflag v1.0.5
@@ -31,6 +30,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/labstack/gommon v0.3.1 // indirect
+	github.com/lib/pq v1.10.4 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect

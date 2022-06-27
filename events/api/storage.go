@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/NFT-com/indexer/models/events"
+	"github.com/NFT-com/analytics/events/models/events"
 
 	"github.com/NFT-com/analytics/events/models/selectors"
 )
