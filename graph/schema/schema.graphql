@@ -80,6 +80,26 @@ type Marketplace {
     website: String
 
     """
+    Trading volume on this marketplace.
+    """
+    volume: Float!
+
+    """
+    Market cap of this marketplace.
+    """
+    market_cap: Float!
+
+    """
+    Number of sales on this marketplace.
+    """
+    sales: Int!
+
+    """
+    Number of users on this marketplace.
+    """
+    users: Int!
+
+    """
     Networks the marketplace operates on.
     """
     networks: [Network!]!
@@ -123,6 +143,21 @@ type Collection {
     URL of an image for the collection.
     """
     image_url: String
+
+    """
+    Trading volume of this collection.
+    """
+    volume: Float!
+
+    """
+    Market cap of this collection.
+    """
+    market_cap: Float!
+
+    """
+    Number of sales in this collection.
+    """
+    sales: Int!
 
     """
     Network on which collection resides on.
@@ -175,14 +210,14 @@ enum CollectionOrderField {
     TOTAL_VOLUME
 
     """
-    Order by biggest gains.
+    Order by market cap gain.
     """
-    BIGGEST_GAINS
+    MARKET_CAP_GAIN
 
     """
-    Order by biggest losses.
+    Order by number of sales.
     """
-    BIGGEST_LOSSES
+    SALES
 
     """
     Order by daily volume.
@@ -233,6 +268,16 @@ type NFT {
     Rarity score for the NFT.
     """
     rarity: Float!
+
+    """
+    Trading price for this NFT.
+    """
+    trading_price: Float!
+
+    """
+    All time average-price for this NFT.
+    """
+    average_price: Float!
 
     """
     Traits contains a list of attributes of the NFT.

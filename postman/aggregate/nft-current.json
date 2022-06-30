@@ -1,0 +1,139 @@
+{
+	"info": {
+		"_postman_id": "c2c8ce8f-6921-44a0-85fb-448dccc83c29",
+		"name": "NFT - current",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19032524"
+	},
+	"item": [
+		{
+			"name": "Price",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/nft/{{nft-id}}/price",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"nft",
+						"{{nft-id}}",
+						"price"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Batch price",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ids\": [\r\n        \"{{batch-nft-id-1}}\",\r\n        \"{{batch-nft-id-2}}\",\r\n        \"{{batch-nft-id-3}}\",\r\n        \"{{batch-nft-id-4}}\",\r\n        \"{{batch-nft-id-5}}\",\r\n        \"{{batch-nft-id-6}}\",\r\n        \"{{batch-nft-id-7}}\",\r\n        \"{{batch-nft-id-8}}\",\r\n        \"{{batch-nft-id-9}}\",\r\n        \"{{batch-nft-id-10}}\"\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/nft/batch/price",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"nft",
+						"batch",
+						"price"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "nft-id",
+			"value": "2d8c78d3-5d2d-aafb-291d-f31f6b4cb5fd",
+			"type": "string"
+		},
+		{
+			"key": "batch-nft-id-1",
+			"value": "83ec1393-efa0-770d-4c78-d25504aa7658",
+			"type": "string"
+		},
+		{
+			"key": "batch-nft-id-2",
+			"value": "5f09e248-5a85-24d6-0423-c8d39e9f3611",
+			"type": "string"
+		},
+		{
+			"key": "batch-nft-id-3",
+			"value": "291f79bd-598a-e384-a88c-2450efcb7612",
+			"type": "string"
+		},
+		{
+			"key": "batch-nft-id-4",
+			"value": "a74ee48a-81f2-d2a3-c5a1-779227dc2271",
+			"type": "string"
+		},
+		{
+			"key": "batch-nft-id-5",
+			"value": "3c95ed47-6183-cd5d-699a-0663c0fe1b1f",
+			"type": "string"
+		},
+		{
+			"key": "batch-nft-id-6",
+			"value": "c9645538-a69f-bbec-c346-3cfcb928f5cf",
+			"type": "string"
+		},
+		{
+			"key": "batch-nft-id-7",
+			"value": "3ecdc4da-c9fe-1ec7-b2c9-bb84a06a369e",
+			"type": "string"
+		},
+		{
+			"key": "batch-nft-id-8",
+			"value": "9182cff9-7d8d-2423-87fe-2e25e8bc56bf",
+			"type": "string"
+		},
+		{
+			"key": "batch-nft-id-9",
+			"value": "f0755716-b4b2-0ee4-9a5b-05d87d92c6ca",
+			"type": "string"
+		},
+		{
+			"key": "batch-nft-id-10",
+			"value": "a1284652-c4a5-5fa3-0ff7-ee8f7ead7b15",
+			"type": "string"
+		}
+	]
+}

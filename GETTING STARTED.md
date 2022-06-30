@@ -10,6 +10,7 @@ All docker commands are supposed to be run from the root of the repository.
 3. [Aggregation API](#aggregation-api)
 4. [Graph API](#graph-api)
 5. [Running all APIs with Docker Compose](#running-all-apis-with-docker-compose)
+6. [Postman Collections](#postman-collections)
 
 ## Requirements
 
@@ -42,7 +43,8 @@ For more details about the API's usage, Postman examples and tests see [the Even
 
 ## Aggregation API
 
-> ⚠️ A running Events API server is a prerequisite for the Aggregation API.
+Aggregation API needs to be able to connect to the Events database in order to retrieve sales data.
+Aggregation API also needs to be able to connect to the Graph database in order to lookup collection and marketplace chain IDs and contract addresses, as well as token information.
 
 ### Build the Docker Image
 
@@ -57,7 +59,7 @@ docker build -t aggregation-api -f ./cmd/aggregation-api/Dockerfile .
 To run a docker image inside a container, publishing port `8080` and forwarding CLI arguments to the application, we can use `docker run`:
 
 ```console
-docker run -p 8080:8080 aggregation-api --bind ':8080' --events-api=example.com:9999
+docker run -p 8080:8080 aggregation-api --bind ':8080' --events-database "host=host.docker.internal user=db-user password=db-pass dbname=events-db-name port=5432" --graph-database "host=host.docker.internal user=db-user password=db-pass dbname=graph-db-name port=5432" --events-db-connection-limit 70 --graph-db-connection-limit 70 --log-level debug --enable-query-logging
 ```
 
 ### Further Reading
@@ -114,3 +116,7 @@ docker-compose up -d
 ```
 
 > 🚧 Since the Aggregation API is not yet implemented, the corresponding service will exit immediately.
+
+## Postman Collections
+
+A number of Postman collections testing the APIs, as well as instructions on how to run them, can be found in the [/postman](/postman) directory.
