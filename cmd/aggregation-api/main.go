@@ -139,14 +139,14 @@ func run() error {
 
 	// Collection stats - current.
 	server.GET("/collections/:id/volume", api.CollectionVolume)
-	server.GET("/collections/:id/market_cap", api.CollectionMarketCap)
+	server.GET("/collections/:id/marketcap", api.CollectionMarketCap)
 	server.GET("/collections/:id/sales", api.CollectionSales)
 	server.POST("/collections/batch/volume", api.CollectionBatchVolume)
-	server.POST("/collections/batch/market_cap", api.CollectionBatchMarketCap)
+	server.POST("/collections/batch/marketcap", api.CollectionBatchMarketCap)
 
 	// Collection stats - historic.
 	server.GET("/collections/:id/volume/history", api.CollectionVolumeHistory)
-	server.GET("/collections/:id/market_cap/history", api.CollectionMarketCapHistory)
+	server.GET("/collections/:id/marketcap/history", api.CollectionMarketCapHistory)
 	server.GET("/collections/:id/sales/history", api.CollectionSalesHistory)
 	server.GET("/collections/:id/size/history", api.CollectionSizeHistory)
 	server.GET("/collections/:id/average/history", api.CollectionAverageHistory)
@@ -154,13 +154,13 @@ func run() error {
 
 	// Marketplace stats - current.
 	server.GET("/marketplaces/:id/volume", api.MarketplaceVolume)
-	server.GET("/marketplaces/:id/market_cap", api.MarketplaceMarketCap)
+	server.GET("/marketplaces/:id/marketcap", api.MarketplaceMarketCap)
 	server.GET("/marketplaces/:id/sales", api.MarketplaceSales)
 	server.GET("/marketplaces/:id/users", api.MarketplaceUsers)
 
 	// Marketplace stats - historic.
 	server.GET("/marketplaces/:id/volume/history", api.MarketplaceVolumeHistory)
-	server.GET("/marketplaces/:id/market_cap/history", api.MarketplaceMarketCapHistory)
+	server.GET("/marketplaces/:id/marketcap/history", api.MarketplaceMarketCapHistory)
 	server.GET("/marketplaces/:id/sales/history", api.MarketplaceSalesHistory)
 	server.GET("/marketplaces/:id/users/history", api.MarketplaceUsersHistory)
 

@@ -44,7 +44,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplaces/{{marketplace-id}}/market_cap/history?from={{date-from}}&to={{date-to}}",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplaces/{{marketplace-id}}/marketcap/history?from={{date-from}}&to={{date-to}}",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
@@ -53,7 +53,7 @@
 					"path": [
 						"marketplaces",
 						"{{marketplace-id}}",
-						"market_cap",
+						"marketcap",
 						"history"
 					],
 					"query": [

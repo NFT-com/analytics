@@ -33,7 +33,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplaces/{{marketplace-id}}/market_cap",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplaces/{{marketplace-id}}/marketcap",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
@@ -42,7 +42,7 @@
 					"path": [
 						"marketplaces",
 						"{{marketplace-id}}",
-						"market_cap"
+						"marketcap"
 					]
 				}
 			},
