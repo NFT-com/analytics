@@ -12,14 +12,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/collection/{{collection-id}}/volume",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/collections/{{collection-id}}/volume",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"collection",
+						"collections",
 						"{{collection-id}}",
 						"volume"
 					]
@@ -33,16 +33,16 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/collection/{{collection-id}}/market_cap",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/collections/{{collection-id}}/marketcap",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"collection",
+						"collections",
 						"{{collection-id}}",
-						"market_cap"
+						"marketcap"
 					]
 				}
 			},
@@ -54,14 +54,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/collection/{{collection-id}}/sales",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/collections/{{collection-id}}/sales",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"collection",
+						"collections",
 						"{{collection-id}}",
 						"sales"
 					]
@@ -84,14 +84,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/collection/batch/volume",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/collections/batch/volume",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"collection",
+						"collections",
 						"batch",
 						"volume"
 					]
@@ -114,16 +114,16 @@
 					}
 				},
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/collection/batch/market_cap",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/collections/batch/marketcap",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"collection",
+						"collections",
 						"batch",
-						"market_cap"
+						"marketcap"
 					]
 				}
 			},

@@ -12,14 +12,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/collection/{{collection-id}}/volume/history?from={{date-from}}&to={{date-to}}",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/collections/{{collection-id}}/volume/history?from={{date-from}}&to={{date-to}}",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"collection",
+						"collections",
 						"{{collection-id}}",
 						"volume",
 						"history"
@@ -44,16 +44,16 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/collection/{{collection-id}}/market_cap/history?from={{date-from}}&to={{date-to}}",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/collections/{{collection-id}}/marketcap/history?from={{date-from}}&to={{date-to}}",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"collection",
+						"collections",
 						"{{collection-id}}",
-						"market_cap",
+						"marketcap",
 						"history"
 					],
 					"query": [
@@ -76,14 +76,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/collection/{{collection-id}}/sales/history?from={{date-from}}&to={{date-to}}",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/collections/{{collection-id}}/sales/history?from={{date-from}}&to={{date-to}}",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"collection",
+						"collections",
 						"{{collection-id}}",
 						"sales",
 						"history"
@@ -108,14 +108,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/collection/{{collection-id}}/size/history?from={{date-from}}&to={{date-to}}",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/collections/{{collection-id}}/size/history?from={{date-from}}&to={{date-to}}",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"collection",
+						"collections",
 						"{{collection-id}}",
 						"size",
 						"history"
@@ -140,14 +140,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/collection/{{collection-id}}/average/history?from={{date-from}}&to={{date-to}}",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/collections/{{collection-id}}/average/history?from={{date-from}}&to={{date-to}}",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"collection",
+						"collections",
 						"{{collection-id}}",
 						"average",
 						"history"
@@ -172,14 +172,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/collection/{{collection-id}}/floor/history?from={{date-from}}&to={{date-to}}",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/collections/{{collection-id}}/floor/history?from={{date-from}}&to={{date-to}}",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"collection",
+						"collections",
 						"{{collection-id}}",
 						"floor",
 						"history"

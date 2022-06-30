@@ -12,14 +12,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/nft/{{nft-id}}/price/history?from={{date-from}}&to={{date-to}}",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/nfts/{{nft-id}}/price/history?from={{date-from}}&to={{date-to}}",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"nft",
+						"nfts",
 						"{{nft-id}}",
 						"price",
 						"history"
@@ -44,14 +44,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/nft/{{nft-id}}/price",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/nfts/{{nft-id}}/price",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"nft",
+						"nfts",
 						"{{nft-id}}",
 						"price"
 					]
