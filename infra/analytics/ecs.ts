@@ -66,6 +66,33 @@ const applyGraphServiceAutoscaling = (
   })
 }
 
+const applyAggregationServiceAutoscaling = (
+  config: pulumi.Config,
+  service: aws.ecs.Service,
+): void => {
+  const target = new aws.appautoscaling.Target('analytics-svcAsg-aggregation-target', {
+    maxCapacity: 1,
+    minCapacity: 1,
+    resourceId: service.id.apply((id) => id.split(':').pop() || ''),
+    scalableDimension: 'ecs:service:DesiredCount',
+    serviceNamespace: 'ecs',
+  })
+
+  new aws.appautoscaling.Policy('analytics-svcAsg-aggregation-policy', {
+    policyType: 'TargetTrackingScaling',
+    resourceId: target.resourceId,
+    scalableDimension: target.scalableDimension,
+    serviceNamespace: target.serviceNamespace,
+    targetTrackingScalingPolicyConfiguration: {
+      targetValue: 60,
+      predefinedMetricSpecification: {
+        predefinedMetricType: 'ECSServiceAverageCPUUtilization',
+      },
+      scaleInCooldown: 360,
+    },
+  })
+}
+
 const attachEventLBListeners = (
   lb: aws.lb.LoadBalancer,
   tg: aws.lb.TargetGroup,
@@ -144,6 +171,45 @@ const attachGraphLBListeners = (
   })
 }
 
+const attachAggregationLBListeners = (
+  lb: aws.lb.LoadBalancer,
+  tg: aws.lb.TargetGroup,
+): void => {
+  new aws.lb.Listener('analytics-aggregation-listener-http', {
+    defaultActions: [
+      {
+        order: 1,
+        redirect: {
+          port: '443',
+          protocol: 'HTTPS',
+          statusCode: 'HTTP_301',
+        },
+        type: 'redirect',
+      },
+    ],
+    loadBalancerArn: lb.arn,
+    port: 80,
+    protocol: 'HTTP',
+    tags: getTags(tags),
+  })
+
+  new aws.lb.Listener('analytics-aggregation-listener-https', {
+    certificateArn:
+      'arn:aws:acm:us-east-1:016437323894:certificate/0c01a3a8-59c4-463a-87ec-5c487695f09e',
+    defaultActions: [
+      {
+        targetGroupArn: tg.arn,
+        type: 'forward',
+      },
+    ],
+    loadBalancerArn: lb.arn,
+    port: 443,
+    protocol: 'HTTPS',
+    sslPolicy: 'ELBSecurityPolicy-2016-08',
+    tags: getTags(tags),
+  })
+}
+
 const createEventTargetGroup = (
   infraOutput: SharedInfraOutput,
 ): aws.lb.TargetGroup => {
@@ -199,6 +265,34 @@ const createGraphTargetGroup = (
   })
 }
 
+const createAggregationTargetGroup = (
+  infraOutput: SharedInfraOutput,
+): aws.lb.TargetGroup => {
+  const resourceName = getResourceName('analytics-aggregation-lb-tg')
+  return new aws.lb.TargetGroup(resourceName, {
+    // health check disabled until defined 
+    /*healthCheck: {
+      interval: 15,
+      port: '8083',
+      matcher: '200-399',
+      path: '/transfers/?start_height=14232120&end_height=14232121', 
+      timeout: 5,
+      unhealthyThreshold: 5,
+    },*/
+    name: resourceName,
+    port: 8084,
+    protocol: 'HTTP',
+    protocolVersion: 'HTTP1',
+    stickiness: {
+      enabled: false,
+      type: 'lb_cookie',
+    },
+    targetType: 'instance',
+    vpcId: infraOutput.vpcId,
+    tags: getTags(tags),
+  })
+}
+
 const createEventLoadBalancer = (
   infraOutput: SharedInfraOutput,
 ): aws.lb.LoadBalancer => {
@@ -216,6 +310,19 @@ const createGraphLoadBalancer = (
   infraOutput: SharedInfraOutput,
 ): aws.lb.LoadBalancer => {
   const resourceName = getResourceName('analytics-graph-lb')
+  return new aws.lb.LoadBalancer(resourceName, {
+    ipAddressType: 'ipv4',
+    name: resourceName,
+    securityGroups: [infraOutput.webSGId],
+    subnets: infraOutput.publicSubnets,
+    tags: getTags(tags),
+  })
+}
+
+const createAggregationLoadBalancer = (
+  infraOutput: SharedInfraOutput,
+): aws.lb.LoadBalancer => {
+  const resourceName = getResourceName('analytics-aggregation-lb')
   return new aws.lb.LoadBalancer(resourceName, {
     ipAddressType: 'ipv4',
     name: resourceName,
@@ -492,6 +599,38 @@ export const createEcsCluster = (
   
     applyEventServiceAutoscaling(config, eventService)
 
+    // create ecs aggregation service (lb, tg, listeners, svc)
+    const aggregationTargetGroup = createAggregationTargetGroup(infraOutput)
+    const aggregationloadBalancer = createAggregationLoadBalancer(infraOutput)
+    attachAggregationLBListeners(aggregationloadBalancer, aggregationTargetGroup)
+
+    const aggregationServiceResourceName = getResourceName('analytics-aggregation-svc')
+    const aggregationService = new aws.ecs.Service(aggregationServiceResourceName, {
+      cluster: cluster.arn,
+      deploymentCircuitBreaker: {
+        enable: true,
+        rollback: true,
+      },
+      desiredCount: 1,
+      deploymentMaximumPercent: 200,
+      deploymentMinimumHealthyPercent: 100,
+      enableEcsManagedTags: true,
+      forceNewDeployment: true,
+      healthCheckGracePeriodSeconds: 20,
+      launchType: 'EC2',
+      loadBalancers: [
+        {
+          containerName: graphTaskDefinition.family,
+          containerPort: 8080,
+          targetGroupArn: aggregationTargetGroup.arn,
+        },
+      ],
+      name: aggregationServiceResourceName,
+      taskDefinition: graphTaskDefinition.arn,
+      tags: getTags(tags),
+    })
+    applyAggregationServiceAutoscaling(config, aggregationService)
+
     // create ecs graph service (lb, tg, listeners, svc)
     const graphTargetGroup = createGraphTargetGroup(infraOutput)
     const graphloadBalancer = createGraphLoadBalancer(infraOutput)
@@ -513,13 +652,13 @@ export const createEcsCluster = (
       launchType: 'EC2',
       loadBalancers: [
         {
-          containerName: graphTaskDefinition.family,
+          containerName: aggregationTaskDefinition.family,
           containerPort: 8080,
           targetGroupArn: graphTargetGroup.arn,
         },
       ],
       name: graphServiceResourceName,
-      taskDefinition: graphTaskDefinition.arn,
+      taskDefinition: aggregationTaskDefinition.arn,
       tags: getTags(tags),
     })
     applyGraphServiceAutoscaling(config, graphService)
