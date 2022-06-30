@@ -12,14 +12,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplace/{{marketplace-id}}/volume",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplaces/{{marketplace-id}}/volume",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"marketplace",
+						"marketplaces",
 						"{{marketplace-id}}",
 						"volume"
 					]
@@ -33,14 +33,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplace/{{marketplace-id}}/market_cap",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplaces/{{marketplace-id}}/market_cap",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"marketplace",
+						"marketplaces",
 						"{{marketplace-id}}",
 						"market_cap"
 					]
@@ -54,14 +54,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplace/{{marketplace-id}}/sales",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplaces/{{marketplace-id}}/sales",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"marketplace",
+						"marketplaces",
 						"{{marketplace-id}}",
 						"sales"
 					]
@@ -75,14 +75,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplace/{{marketplace-id}}/users",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplaces/{{marketplace-id}}/users",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"marketplace",
+						"marketplaces",
 						"{{marketplace-id}}",
 						"users"
 					]

@@ -12,14 +12,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplace/{{marketplace-id}}/volume/history?from={{date-from}}&to={{date-to}}",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplaces/{{marketplace-id}}/volume/history?from={{date-from}}&to={{date-to}}",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"marketplace",
+						"marketplaces",
 						"{{marketplace-id}}",
 						"volume",
 						"history"
@@ -44,14 +44,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplace/{{marketplace-id}}/market_cap/history?from={{date-from}}&to={{date-to}}",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplaces/{{marketplace-id}}/market_cap/history?from={{date-from}}&to={{date-to}}",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"marketplace",
+						"marketplaces",
 						"{{marketplace-id}}",
 						"market_cap",
 						"history"
@@ -76,14 +76,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplace/{{marketplace-id}}/sales/history?from={{date-from}}&to={{date-to}}",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplaces/{{marketplace-id}}/sales/history?from={{date-from}}&to={{date-to}}",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"marketplace",
+						"marketplaces",
 						"{{marketplace-id}}",
 						"sales",
 						"history"
@@ -108,14 +108,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplace/{{marketplace-id}}/users/history?from={{date-from}}&to={{date-to}}",
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/marketplaces/{{marketplace-id}}/users/history?from={{date-from}}&to={{date-to}}",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{hostname}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"marketplace",
+						"marketplaces",
 						"{{marketplace-id}}",
 						"users",
 						"history"
