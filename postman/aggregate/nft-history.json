@@ -1,0 +1,100 @@
+{
+	"info": {
+		"_postman_id": "c7506b81-cb83-4f2d-aaaa-3854202e04a8",
+		"name": "NFT - history",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19032524"
+	},
+	"item": [
+		{
+			"name": "Price",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/nft/{{nft-id}}/price/history?from={{date-from}}&to={{date-to}}",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"nft",
+						"{{nft-id}}",
+						"price",
+						"history"
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "{{date-from}}"
+						},
+						{
+							"key": "to",
+							"value": "{{date-to}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Average",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{hostname}}:{{port}}/nft/{{nft-id}}/price",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"nft",
+						"{{nft-id}}",
+						"price"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "nft-id",
+			"value": "2d8c78d3-5d2d-aafb-291d-f31f6b4cb5fd",
+			"type": "string"
+		},
+		{
+			"key": "date-from",
+			"value": "2022-05-01",
+			"type": "string"
+		},
+		{
+			"key": "date-to",
+			"value": "2022-06-01",
+			"type": "string"
+		}
+	]
+}
