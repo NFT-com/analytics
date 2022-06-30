@@ -620,13 +620,13 @@ export const createEcsCluster = (
       launchType: 'EC2',
       loadBalancers: [
         {
-          containerName: graphTaskDefinition.family,
+          containerName: aggregationTaskDefinition.family,
           containerPort: 8080,
           targetGroupArn: aggregationTargetGroup.arn,
         },
       ],
       name: aggregationServiceResourceName,
-      taskDefinition: graphTaskDefinition.arn,
+      taskDefinition: aggregationTaskDefinition.arn,
       tags: getTags(tags),
     })
     applyAggregationServiceAutoscaling(config, aggregationService)
@@ -652,13 +652,13 @@ export const createEcsCluster = (
       launchType: 'EC2',
       loadBalancers: [
         {
-          containerName: aggregationTaskDefinition.family,
+          containerName: graphTaskDefinition.family,
           containerPort: 8080,
           targetGroupArn: graphTargetGroup.arn,
         },
       ],
       name: graphServiceResourceName,
-      taskDefinition: aggregationTaskDefinition.arn,
+      taskDefinition: graphTaskDefinition.arn,
       tags: getTags(tags),
     })
     applyGraphServiceAutoscaling(config, graphService)
