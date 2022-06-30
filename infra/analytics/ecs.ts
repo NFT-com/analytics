@@ -229,6 +229,7 @@ export const createGraphTaskDefinition = (
     infraOutput: SharedInfraOutput,
 ): aws.ecs.TaskDefinition => {
     const resourceName = getResourceName('analytics-td-graph-api')
+    const depResourceName = getResourceName('analytics-td-aggregation-api')
     const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:graph-api`
     
     return new aws.ecs.TaskDefinition(resourceName, 
@@ -239,6 +240,10 @@ export const createGraphTaskDefinition = (
                 cpu: 0,
                 entryPoint: ['/api'],
                 essential: true,
+                dependsOn: [{
+                  containerName: depResourceName,
+                  condition: "START"
+                }],
                 image: ecrImage,
                 links: [],
                 memoryReservation: 512,
@@ -267,14 +272,20 @@ export const createAggregationTaskDefinition = (
   infraOutput: SharedInfraOutput,
 ): aws.ecs.TaskDefinition => {
   const resourceName = getResourceName('analytics-td-aggregation-api')
+  const depResourceName = getResourceName('analytics-td-events-api')
+
   const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:aggregation-api`
 
   return new aws.ecs.TaskDefinition(resourceName, 
   {
       containerDefinitions: JSON.stringify([
           {
-              command: ['--log-level',process.env.LOG_LEVEL,'--events-api','events-api:8080'],
+              command: ['--events-database',event_db,'--graph-database',graph_db,'--log-level',process.env.LOG_LEVEL,'--events-db-connection-limit','70','--enable-query-logging'],
               cpu: 0,
+              dependsOn: [{
+                containerName: depResourceName,
+                condition: "START"
+              }],
               entryPoint: ['/api'],
               environment: [],
               essential: true,
