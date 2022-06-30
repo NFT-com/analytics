@@ -43,6 +43,7 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
+      - github.com/99designs/gqlgen/graphql.Uint64
   NFT:
     model:
       - "github.com/NFT-com/analytics/graph/models/api.NFT"

@@ -10,36 +10,45 @@ type Network struct {
 
 // Collection represents a group of NFTs that share the same smart contract.
 type Collection struct {
-	ID          string `gorm:"column:id" json:"id"`
-	Name        string `gorm:"column:name" json:"name"`
-	Description string `gorm:"column:description" json:"description"`
-	Address     string `gorm:"column:contract_address" json:"address"`
-	Website     string `gorm:"column:website" json:"website"`
-	ImageURL    string `gorm:"column:image_url" json:"image_url"`
-	NFTs        []*NFT `gorm:"-" json:"nfts"`
-	NetworkID   string `gorm:"column:network_id" json:"-"`
+	ID          string  `gorm:"column:id" json:"id"`
+	Name        string  `gorm:"column:name" json:"name"`
+	Description string  `gorm:"column:description" json:"description"`
+	Address     string  `gorm:"column:contract_address" json:"address"`
+	Website     string  `gorm:"column:website" json:"website"`
+	ImageURL    string  `gorm:"column:image_url" json:"image_url"`
+	NFTs        []*NFT  `gorm:"-" json:"nfts"`
+	NetworkID   string  `gorm:"column:network_id" json:"-"`
+	Volume      float64 `gorm:"-" json:"volume"`
+	MarketCap   float64 `gorm:"-" json:"market_cap"`
+	Sales       uint64  `gorm:"-" json:"sales"`
 }
 
 // Marketplace represents a single NFT marketplace (e.g. Opensea, DefiKingdoms).
 type Marketplace struct {
-	ID          string `gorm:"column:id" json:"id"`
-	Name        string `gorm:"column:name" json:"name"`
-	Description string `gorm:"column:description" json:"description"`
-	Website     string `gorm:"column:website" json:"website"`
+	ID          string  `gorm:"column:id" json:"id"`
+	Name        string  `gorm:"column:name" json:"name"`
+	Description string  `gorm:"column:description" json:"description"`
+	Website     string  `gorm:"column:website" json:"website"`
+	Volume      float64 `gorm:"-" json:"volume"`
+	MarketCap   float64 `gorm:"-" json:"market_cap"`
+	Sales       uint64  `gorm:"-" json:"sales"`
+	Users       uint64  `gorm:"-" json:"users"`
 }
 
 // NFT represents a single Non-Fungible Token.
 type NFT struct {
-	ID          string   `gorm:"column:id" json:"id"`
-	Name        string   `gorm:"column:name" json:"name,omitempty"`
-	ImageURL    string   `gorm:"column:image" json:"image_url,omitempty"`
-	URI         string   `gorm:"column:uri" json:"uri,omitempty"`
-	Description string   `gorm:"column:description" json:"description,omitempty"`
-	TokenID     string   `gorm:"column:token_id" json:"token_id"`
-	Collection  string   `gorm:"column:collection_id" json:"-"`
-	Owners      []string `gorm:"-" json:"owners,omitempty"`
-	Traits      []Trait  `gorm:"-" json:"traits,omitempty"`
-	Rarity      float64  `gorm:"-" json:"rarity,omitempty"`
+	ID           string   `gorm:"column:id" json:"id"`
+	Name         string   `gorm:"column:name" json:"name,omitempty"`
+	ImageURL     string   `gorm:"column:image" json:"image_url,omitempty"`
+	URI          string   `gorm:"column:uri" json:"uri,omitempty"`
+	Description  string   `gorm:"column:description" json:"description,omitempty"`
+	TokenID      string   `gorm:"column:token_id" json:"token_id"`
+	Collection   string   `gorm:"column:collection_id" json:"-"`
+	Owners       []string `gorm:"-" json:"owners,omitempty"`
+	Traits       []Trait  `gorm:"-" json:"traits,omitempty"`
+	Rarity       float64  `gorm:"-" json:"rarity,omitempty"`
+	TradingPrice float64  `gorm:"-" json:"trading_price,omitempty"`
+	AveragePrice float64  `gorm:"-" json:"average_price,omitempty"`
 }
 
 // Trait represents a single NFT trait.

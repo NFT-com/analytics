@@ -34,10 +34,10 @@ const (
 	CollectionOrderFieldMarketCap CollectionOrderField = "MARKET_CAP"
 	// Order by total volume.
 	CollectionOrderFieldTotalVolume CollectionOrderField = "TOTAL_VOLUME"
-	// Order by biggest gains.
-	CollectionOrderFieldBiggestGains CollectionOrderField = "BIGGEST_GAINS"
-	// Order by biggest losses.
-	CollectionOrderFieldBiggestLosses CollectionOrderField = "BIGGEST_LOSSES"
+	// Order by market cap gain.
+	CollectionOrderFieldMarketCapGain CollectionOrderField = "MARKET_CAP_GAIN"
+	// Order by number of sales.
+	CollectionOrderFieldSales CollectionOrderField = "SALES"
 	// Order by daily volume.
 	CollectionOrderFieldDailyVolume CollectionOrderField = "DAILY_VOLUME"
 )
@@ -46,14 +46,14 @@ var AllCollectionOrderField = []CollectionOrderField{
 	CollectionOrderFieldCreationTime,
 	CollectionOrderFieldMarketCap,
 	CollectionOrderFieldTotalVolume,
-	CollectionOrderFieldBiggestGains,
-	CollectionOrderFieldBiggestLosses,
+	CollectionOrderFieldMarketCapGain,
+	CollectionOrderFieldSales,
 	CollectionOrderFieldDailyVolume,
 }
 
 func (e CollectionOrderField) IsValid() bool {
 	switch e {
-	case CollectionOrderFieldCreationTime, CollectionOrderFieldMarketCap, CollectionOrderFieldTotalVolume, CollectionOrderFieldBiggestGains, CollectionOrderFieldBiggestLosses, CollectionOrderFieldDailyVolume:
+	case CollectionOrderFieldCreationTime, CollectionOrderFieldMarketCap, CollectionOrderFieldTotalVolume, CollectionOrderFieldMarketCapGain, CollectionOrderFieldSales, CollectionOrderFieldDailyVolume:
 		return true
 	}
 	return false

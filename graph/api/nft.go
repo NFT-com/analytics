@@ -19,7 +19,16 @@ func (s *Server) getNFT(ctx context.Context, id string) (*api.NFT, error) {
 		return nil, errRetrieveNFTFailed
 	}
 
-	return s.expandNFTDetails(ctx, nft)
+	// Parse the query to know how much information to return/calculate.
+	query := parseNFTQuery(ctx)
+
+	// Get NFT details.
+	err = s.expandNFTDetails(query, nft)
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve NFT details: %w", err)
+	}
+
+	return nft, nil
 }
 
 // getNFTByTokenID returns a single NFT based on the combination of networkID, contract address and token ID.
@@ -35,64 +44,13 @@ func (s *Server) getNFTByTokenID(ctx context.Context, networkID string, contract
 		return nil, errRetrieveNFTFailed
 	}
 
-	return s.expandNFTDetails(ctx, nft)
-}
-
-// expandNFTDetails retrieves the NFT rarity and/or trait information.
-func (s *Server) expandNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, error) {
-
 	// Parse the query to know how much information to return/calculate.
-	req := parseNFTQuery(ctx)
+	query := parseNFTQuery(ctx)
 
-	// Retrieve owner if it was requested/
-	if req.owners {
-		owners, err := s.storage.NFTOwners(nft.ID)
-		if err != nil {
-			return nil, fmt.Errorf("could not retrieve owners for the NFT: %w", err)
-		}
-		nft.Owners = owners
-	}
-
-	// If we do not need traits nor rarity, we're done.
-	if !req.traits && !req.needRarity() {
-		return nft, nil
-	}
-
-	// If we do not need rarity, just fetch the traits for this NFT.
-	if !req.needRarity() {
-		traits, err := s.storage.NFTTraits(nft.ID)
-		if err != nil {
-			s.logError(err).Str("id", nft.ID).Msg("could not retrieve traits")
-			return nil, errRetrieveTraitsFailed
-		}
-
-		nft.Traits = traits
-		return nft, nil
-	}
-
-	// Get traits and calculate rarity.
-	traits, err := s.getTraitsForCollection(nft.Collection)
+	// Get NFT details.
+	err = s.expandNFTDetails(query, nft)
 	if err != nil {
-		return nil, errRetrieveTraitsFailed
-	}
-	nft.Traits = traits[nft.ID]
-
-	// Get the size of this collection.
-	size, err := s.storage.CollectionSize(nft.Collection)
-	if err != nil {
-		s.logError(err).Str("collection", nft.Collection).Msg("could not retrieve collection size")
-		return nil, errRetrieveTraitsFailed
-	}
-
-	stats := traits.CalculateStats()
-	rarity, traitRarity := stats.CalculateRarity(size, nft.Traits)
-
-	nft.Rarity = rarity
-
-	// Returned traits include traits missing for this NFT.
-	// Only set them if individual trait rarity is requested.
-	if req.traitRarity {
-		nft.Traits = traitRarity
+		return nil, fmt.Errorf("could not retrieve NFT details: %w", err)
 	}
 
 	return nft, nil
@@ -102,9 +60,9 @@ func (s *Server) expandNFTDetails(ctx context.Context, nft *api.NFT) (*api.NFT, 
 func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, rarityMax *float64, orderBy api.NFTOrder) ([]*api.NFT, error) {
 
 	// Parse the query to know how much information to return/calculate.
-	req := parseNFTQuery(ctx)
+	query := parseNFTQuery(ctx)
 
-	nfts, err := s.storage.NFTs(owner, collectionID, orderBy, s.searchLimit, req.owners)
+	nfts, err := s.storage.NFTs(owner, collectionID, orderBy, s.searchLimit, query.Owners)
 	if err != nil {
 		log := s.logError(err)
 		if owner != nil {
@@ -123,7 +81,7 @@ func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, 
 	filterByRarity := rarityMax != nil
 
 	// If we do not need traits nor rarity, we're done.
-	if !req.traits && !req.needRarity() && !filterByRarity {
+	if !query.Traits && !query.NeedRarity() && !filterByRarity {
 		return nfts, nil
 	}
 
@@ -142,8 +100,7 @@ func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, 
 		if !ok {
 			tc, err := s.getTraitsForCollection(nft.Collection)
 			if err != nil {
-				s.logError(err).Str("collection", nft.Collection).Msg("could not retrieve traits for collection")
-				return nil, errRetrieveTraitsFailed
+				return nil, fmt.Errorf("could not retrieve traits for collection (id: %s): %w", nft.Collection, err)
 			}
 			traits[nft.Collection] = tc
 			ctraits = tc
@@ -153,8 +110,8 @@ func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, 
 		nft.Traits = ctraits[nft.ID]
 	}
 
-	// If we don't need rarity stats - we have everything we need and we're done.
-	if !req.needRarity() {
+	// If we don't need rarity information - we have everything we need and we're done.
+	if !query.NeedRarity() && !filterByRarity {
 		return nfts, nil
 	}
 
@@ -191,9 +148,8 @@ func (s *Server) nfts(ctx context.Context, owner *string, collectionID *string, 
 		// Calculate rarity.
 		rarity, traitRarity := cstats.CalculateRarity(sizes[nft.Collection], nft.Traits)
 		nft.Rarity = rarity
-
 		// Only set traits rarity if explicitely requested.
-		if req.traitRarity {
+		if query.TraitRarity {
 			nft.Traits = traitRarity
 		}
 

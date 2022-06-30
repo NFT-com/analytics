@@ -20,7 +20,7 @@ func (r *collectionServer) Network(ctx context.Context, obj *api.Collection) (*a
 func (r *collectionServer) Marketplaces(ctx context.Context, obj *api.Collection) ([]*api.Marketplace, error) {
 	// Marketplace handles expanding the list of Marketplaces within a Collection object.
 
-	return r.Server.collectionsListings(obj.ID)
+	return r.Server.collectionsListings(ctx, obj.ID)
 }
 
 func (r *marketplaceServer) Networks(ctx context.Context, obj *api.Marketplace) ([]*api.Network, error) {
@@ -44,7 +44,7 @@ func (r *nFTServer) Collection(ctx context.Context, obj *api.NFT) (*api.Collecti
 func (r *networkServer) Marketplaces(ctx context.Context, obj *api.Network) ([]*api.Marketplace, error) {
 	// Marketplaces handles expanding the list of Marketplaces within a Network object.
 
-	return r.Server.marketplacesByNetwork(obj.ID)
+	return r.Server.marketplacesByNetwork(ctx, obj.ID)
 }
 
 func (r *networkServer) Collections(ctx context.Context, obj *api.Network) ([]*api.Collection, error) {
@@ -80,7 +80,8 @@ func (r *queryServer) NftByTokenID(ctx context.Context, networkID string, contra
 func (r *queryServer) Nfts(ctx context.Context, owner *string, collection *string, rarityMax *float64, orderBy *api.NFTOrder) ([]*api.NFT, error) {
 	// Nfts implements the `nfts` GraphQL query.
 
-	// FIXME: remove the validation of the sorting mode when all modes become supported
+	// TODO: Implement remaining sorting modes.
+	// See https://github.com/NFT-com/analytics/issues/31
 	switch orderBy.Field {
 
 	case api.NFTOrderFieldValue, api.NFTOrderFieldRarity:
@@ -110,9 +111,10 @@ func (r *queryServer) CollectionByAddress(ctx context.Context, networkID string,
 func (r *queryServer) Collections(ctx context.Context, networkID *string, orderBy *api.CollectionOrder) ([]*api.Collection, error) {
 	// Collections implements the `collections` GraphQL query.
 
+	// TODO: Implement remaining sorting modes.
+	// See https://github.com/NFT-com/analytics/issues/31
 	switch orderBy.Field {
 
-	// FIXME: remove when all modes become supported
 	default:
 		return nil, errors.New("TBD: sorting mode not supported")
 

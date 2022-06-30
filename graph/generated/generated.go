@@ -51,10 +51,13 @@ type ComplexityRoot struct {
 		Description  func(childComplexity int) int
 		ID           func(childComplexity int) int
 		ImageURL     func(childComplexity int) int
+		MarketCap    func(childComplexity int) int
 		Marketplaces func(childComplexity int) int
 		NFTs         func(childComplexity int) int
 		Name         func(childComplexity int) int
 		Network      func(childComplexity int) int
+		Sales        func(childComplexity int) int
+		Volume       func(childComplexity int) int
 		Website      func(childComplexity int) int
 	}
 
@@ -62,22 +65,28 @@ type ComplexityRoot struct {
 		Collections func(childComplexity int) int
 		Description func(childComplexity int) int
 		ID          func(childComplexity int) int
+		MarketCap   func(childComplexity int) int
 		Name        func(childComplexity int) int
 		Networks    func(childComplexity int) int
+		Sales       func(childComplexity int) int
+		Users       func(childComplexity int) int
+		Volume      func(childComplexity int) int
 		Website     func(childComplexity int) int
 	}
 
 	NFT struct {
-		Collection  func(childComplexity int) int
-		Description func(childComplexity int) int
-		ID          func(childComplexity int) int
-		ImageURL    func(childComplexity int) int
-		Name        func(childComplexity int) int
-		Owners      func(childComplexity int) int
-		Rarity      func(childComplexity int) int
-		TokenID     func(childComplexity int) int
-		Traits      func(childComplexity int) int
-		URI         func(childComplexity int) int
+		AveragePrice func(childComplexity int) int
+		Collection   func(childComplexity int) int
+		Description  func(childComplexity int) int
+		ID           func(childComplexity int) int
+		ImageURL     func(childComplexity int) int
+		Name         func(childComplexity int) int
+		Owners       func(childComplexity int) int
+		Rarity       func(childComplexity int) int
+		TokenID      func(childComplexity int) int
+		TradingPrice func(childComplexity int) int
+		Traits       func(childComplexity int) int
+		URI          func(childComplexity int) int
 	}
 
 	Network struct {
@@ -175,6 +184,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Collection.ImageURL(childComplexity), true
 
+	case "Collection.market_cap":
+		if e.complexity.Collection.MarketCap == nil {
+			break
+		}
+
+		return e.complexity.Collection.MarketCap(childComplexity), true
+
 	case "Collection.marketplaces":
 		if e.complexity.Collection.Marketplaces == nil {
 			break
@@ -202,6 +218,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Collection.Network(childComplexity), true
+
+	case "Collection.sales":
+		if e.complexity.Collection.Sales == nil {
+			break
+		}
+
+		return e.complexity.Collection.Sales(childComplexity), true
+
+	case "Collection.volume":
+		if e.complexity.Collection.Volume == nil {
+			break
+		}
+
+		return e.complexity.Collection.Volume(childComplexity), true
 
 	case "Collection.website":
 		if e.complexity.Collection.Website == nil {
@@ -231,6 +261,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Marketplace.ID(childComplexity), true
 
+	case "Marketplace.market_cap":
+		if e.complexity.Marketplace.MarketCap == nil {
+			break
+		}
+
+		return e.complexity.Marketplace.MarketCap(childComplexity), true
+
 	case "Marketplace.name":
 		if e.complexity.Marketplace.Name == nil {
 			break
@@ -245,12 +282,40 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Marketplace.Networks(childComplexity), true
 
+	case "Marketplace.sales":
+		if e.complexity.Marketplace.Sales == nil {
+			break
+		}
+
+		return e.complexity.Marketplace.Sales(childComplexity), true
+
+	case "Marketplace.users":
+		if e.complexity.Marketplace.Users == nil {
+			break
+		}
+
+		return e.complexity.Marketplace.Users(childComplexity), true
+
+	case "Marketplace.volume":
+		if e.complexity.Marketplace.Volume == nil {
+			break
+		}
+
+		return e.complexity.Marketplace.Volume(childComplexity), true
+
 	case "Marketplace.website":
 		if e.complexity.Marketplace.Website == nil {
 			break
 		}
 
 		return e.complexity.Marketplace.Website(childComplexity), true
+
+	case "NFT.average_price":
+		if e.complexity.NFT.AveragePrice == nil {
+			break
+		}
+
+		return e.complexity.NFT.AveragePrice(childComplexity), true
 
 	case "NFT.collection":
 		if e.complexity.NFT.Collection == nil {
@@ -307,6 +372,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.NFT.TokenID(childComplexity), true
+
+	case "NFT.trading_price":
+		if e.complexity.NFT.TradingPrice == nil {
+			break
+		}
+
+		return e.complexity.NFT.TradingPrice(childComplexity), true
 
 	case "NFT.traits":
 		if e.complexity.NFT.Traits == nil {
@@ -601,6 +673,26 @@ type Marketplace {
     website: String
 
     """
+    Trading volume on this marketplace.
+    """
+    volume: Float!
+
+    """
+    Market cap of this marketplace.
+    """
+    market_cap: Float!
+
+    """
+    Number of sales on this marketplace.
+    """
+    sales: Int!
+
+    """
+    Number of users on this marketplace.
+    """
+    users: Int!
+
+    """
     Networks the marketplace operates on.
     """
     networks: [Network!]!
@@ -644,6 +736,21 @@ type Collection {
     URL of an image for the collection.
     """
     image_url: String
+
+    """
+    Trading volume of this collection.
+    """
+    volume: Float!
+
+    """
+    Market cap of this collection.
+    """
+    market_cap: Float!
+
+    """
+    Number of sales in this collection.
+    """
+    sales: Int!
 
     """
     Network on which collection resides on.
@@ -696,14 +803,14 @@ enum CollectionOrderField {
     TOTAL_VOLUME
 
     """
-    Order by biggest gains.
+    Order by market cap gain.
     """
-    BIGGEST_GAINS
+    MARKET_CAP_GAIN
 
     """
-    Order by biggest losses.
+    Order by number of sales.
     """
-    BIGGEST_LOSSES
+    SALES
 
     """
     Order by daily volume.
@@ -754,6 +861,16 @@ type NFT {
     Rarity score for the NFT.
     """
     rarity: Float!
+
+    """
+    Trading price for this NFT.
+    """
+    trading_price: Float!
+
+    """
+    All time average-price for this NFT.
+    """
+    average_price: Float!
 
     """
     Traits contains a list of attributes of the NFT.
@@ -1370,6 +1487,111 @@ func (ec *executionContext) _Collection_image_url(ctx context.Context, field gra
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Collection_volume(ctx context.Context, field graphql.CollectedField, obj *api.Collection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Collection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Volume, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Collection_market_cap(ctx context.Context, field graphql.CollectedField, obj *api.Collection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Collection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MarketCap, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Collection_sales(ctx context.Context, field graphql.CollectedField, obj *api.Collection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Collection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sales, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uint64)
+	fc.Result = res
+	return ec.marshalNInt2uint64(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Collection_network(ctx context.Context, field graphql.CollectedField, obj *api.Collection) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1604,6 +1826,146 @@ func (ec *executionContext) _Marketplace_website(ctx context.Context, field grap
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Marketplace_volume(ctx context.Context, field graphql.CollectedField, obj *api.Marketplace) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Marketplace",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Volume, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Marketplace_market_cap(ctx context.Context, field graphql.CollectedField, obj *api.Marketplace) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Marketplace",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MarketCap, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Marketplace_sales(ctx context.Context, field graphql.CollectedField, obj *api.Marketplace) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Marketplace",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sales, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uint64)
+	fc.Result = res
+	return ec.marshalNInt2uint64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Marketplace_users(ctx context.Context, field graphql.CollectedField, obj *api.Marketplace) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Marketplace",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Users, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uint64)
+	fc.Result = res
+	return ec.marshalNInt2uint64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Marketplace_networks(ctx context.Context, field graphql.CollectedField, obj *api.Marketplace) (ret graphql.Marshaler) {
@@ -1925,6 +2287,76 @@ func (ec *executionContext) _NFT_rarity(ctx context.Context, field graphql.Colle
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Rarity, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _NFT_trading_price(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "NFT",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TradingPrice, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _NFT_average_price(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "NFT",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AveragePrice, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3978,6 +4410,36 @@ func (ec *executionContext) _Collection(ctx context.Context, sel ast.SelectionSe
 
 			out.Values[i] = innerFunc(ctx)
 
+		case "volume":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Collection_volume(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "market_cap":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Collection_market_cap(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "sales":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Collection_sales(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "network":
 			field := field
 
@@ -4080,6 +4542,46 @@ func (ec *executionContext) _Marketplace(ctx context.Context, sel ast.SelectionS
 
 			out.Values[i] = innerFunc(ctx)
 
+		case "volume":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Marketplace_volume(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "market_cap":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Marketplace_market_cap(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "sales":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Marketplace_sales(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "users":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Marketplace_users(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "networks":
 			field := field
 
@@ -4199,6 +4701,26 @@ func (ec *executionContext) _NFT(ctx context.Context, sel ast.SelectionSet, obj 
 		case "rarity":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._NFT_rarity(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "trading_price":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._NFT_trading_price(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "average_price":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._NFT_average_price(ctx, field, obj)
 			}
 
 			out.Values[i] = innerFunc(ctx)
@@ -5083,6 +5605,21 @@ func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface
 
 func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
 	res := graphql.MarshalID(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNInt2uint64(ctx context.Context, v interface{}) (uint64, error) {
+	res, err := graphql.UnmarshalUint64(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNInt2uint64(ctx context.Context, sel ast.SelectionSet, v uint64) graphql.Marshaler {
+	res := graphql.MarshalUint64(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
