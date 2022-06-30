@@ -240,10 +240,10 @@ export const createGraphTaskDefinition = (
                 cpu: 0,
                 entryPoint: ['/api'],
                 essential: true,
-                dependsOn: [{
+                /*dependsOn: [{
                   containerName: depResourceName,
                   condition: "START"
-                }],
+                }],*/
                 image: ecrImage,
                 links: [],
                 memoryReservation: 512,
@@ -282,10 +282,10 @@ export const createAggregationTaskDefinition = (
           {
               command: ['--events-database',event_db,'--graph-database',graph_db,'--log-level',process.env.LOG_LEVEL,'--events-db-connection-limit','70','--enable-query-logging'],
               cpu: 0,
-              dependsOn: [{
+              /*dependsOn: [{
                 containerName: depResourceName,
                 condition: "START"
-              }],
+              }],*/
               entryPoint: ['/api'],
               environment: [],
               essential: true,
