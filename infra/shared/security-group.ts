@@ -54,8 +54,9 @@ export const createSecurityGroups = (
       buildIngressRule(443),
       buildIngressRule(80),
       buildIngressRule(22),
-      buildIngressRule(8085),
       buildIngressRule(8083),
+      buildIngressRule(8084),
+      buildIngressRule(8085),
     ],
     egress: [
       buildEgressRule(0, '-1'),
