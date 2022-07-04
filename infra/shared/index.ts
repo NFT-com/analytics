@@ -10,7 +10,7 @@ const pulumiProgram = async (): Promise<Record<string, any> | void> => {
   //const stackRefName = getResourceName('indexer.shared.us-east-1')
   const stage = getStage()
   const sharedStack = new pulumi.StackReference(`${stage}.indexer.shared.us-east-1`);
-  const vpc = sharedStack.getOutput('vpcId').apply(value => resolve(value)) // 'vpc-068564e7eded7ab8b'
+  const vpc = sharedStack.getOutput('vpcId') // 'vpc-068564e7eded7ab8b'
   const subnets =  sharedStack.getOutput('subnets') //  ['subnet-0e2f01ec6714dc53f','subnet-0c8aa8a71e35104fc','subnet-08ea44006fecc2ab2']
   const vpcVal = await pulumiOutToValue(vpc)
   const subnetVal = await pulumiOutToValue(subnets)
