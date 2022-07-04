@@ -343,7 +343,7 @@ export const createGraphTaskDefinition = (
     {
         containerDefinitions: JSON.stringify([
             {
-                command: ['--database',graph_db,'--enable-playground','--db-connection-limit','70','--log-level',process.env.LOG_LEVEL,'--enable-query-logging','--search-limit','20'],
+                command: ['--database',graph_db,'--enable-playground','--db-connection-limit','70','--log-level',process.env.ANALYTICS_LOG_LEVEL,'--enable-query-logging','--search-limit','20'],
                 cpu: 0,
                 entryPoint: ['/api'],
                 essential: true,
@@ -386,7 +386,7 @@ export const createAggregationTaskDefinition = (
   {
       containerDefinitions: JSON.stringify([
           {
-              command: ['--events-database',event_db,'--graph-database',graph_db,'--log-level',process.env.LOG_LEVEL,'--events-db-connection-limit','70','--enable-query-logging'],
+              command: ['--events-database',event_db,'--graph-database',graph_db,'--log-level',process.env.ANALYTICS_LOG_LEVEL,'--events-db-connection-limit','70','--enable-query-logging'],
               cpu: 0,
               dependsOn: [{
                 containerName: eventEcrImage,
@@ -428,7 +428,7 @@ export const createEventsTaskDefinition = (
     {
         containerDefinitions: JSON.stringify([
             {
-                command: ['--database',event_db,'--log-level',process.env.LOG_LEVEL,'--db-connection-limit','70','--batch-size','100','--enable-query-logging'],
+                command: ['--database',event_db,'--log-level',process.env.ANALYTICS_LOG_LEVEL,'--db-connection-limit','70','--batch-size','100','--enable-query-logging'],
                 cpu: 0,
                 entryPoint: ['/api'],
                 environment: [],

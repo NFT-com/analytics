@@ -13,15 +13,14 @@ const pulumiProgram = async (): Promise<Record<string, any> | void> => {
   const vpc = sharedStack.getOutput('vpcId') // 'vpc-068564e7eded7ab8b'
   const subnets =  sharedStack.getOutput('subnets') //  ['subnet-0e2f01ec6714dc53f','subnet-0c8aa8a71e35104fc','subnet-08ea44006fecc2ab2']
   const vpcVal = await pulumiOutToValue(vpc)
-  const subnetVal = await pulumiOutToValue(subnets)
 
   const sgs = createSecurityGroups(config, vpcVal) //hardcode test
   const { analytics } = createRepositories()
 
   return {
     analyticECRRepo: analytics.name,
-    publicSubnetIds: subnetVal,
-    vpcId: vpcVal,
+    publicSubnetIds: subnets,
+    vpcId: vpc,
     webSGId: sgs.web.id,
   }
 }
