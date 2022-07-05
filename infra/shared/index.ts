@@ -10,15 +10,10 @@ const pulumiProgram = async (): Promise<Record<string, any> | void> => {
   const sharedStack = new pulumi.StackReference(`${stage}.indexer.shared.us-east-1`);
   const vpc = sharedStack.getOutput('vpcId') // 'vpc-068564e7eded7ab8b'
   const subnets =  sharedStack.getOutput('subnets') //  ['subnet-0e2f01ec6714dc53f','subnet-0c8aa8a71e35104fc','subnet-08ea44006fecc2ab2']
-  console.log(`vpc is ${vpc}`)
-  const vpcVal: pulumi.Output<string> = await pulumiOutToValue(vpc)
-  const subnetVal: pulumi.Output<string> = await pulumiOutToValue(subnets)
-  console.log(`vpc.tostring  is ${vpc.toString()}`)
-  console.log(`vpcVal (pulumi.output<string>) is ${vpcVal}`)
-  console.log(`vpcVal.tostring  is ${vpcVal.toString()}`)
+  const vpcVal: string = await pulumiOutToValue(vpc) //converts output<t> to string
+  const subnetVal: string[] = await pulumiOutToValue(subnets)
 
-
-  const sgs = createSecurityGroups(config, vpcVal.toString()) //hardcode test
+  const sgs = createSecurityGroups(config, vpcVal) //hardcode test
   const { analytics } = createRepositories()
 
   return {
