@@ -14,16 +14,16 @@ const pulumiProgram = async (): Promise<Record<string, any> | void> => {
   const subnetVal: string[] = await pulumiOutToValue(subnets)
   console.log(typeof subnetVal)
 
-  const vpcHard = 'vpc-068564e7eded7ab8b'
-  const subnetsHard = ['subnet-0e2f01ec6714dc53f','subnet-0c8aa8a71e35104fc','subnet-08ea44006fecc2ab2']
+  //const vpcHard = 'vpc-068564e7eded7ab8b'
+  //const subnetsHard = ['subnet-0e2f01ec6714dc53f','subnet-0c8aa8a71e35104fc','subnet-08ea44006fecc2ab2']
 
   const sgs = createSecurityGroups(config, vpcHard) //hardcode test
   const { analytics } = createRepositories()
 
   return {
     analyticECRRepo: analytics.name,
-    publicSubnetIds: subnetsHard,
-    vpcId: vpcHard,
+    publicSubnetIds: subnetVal,
+    vpcId: vpcVal,
     webSGId: sgs.web.id,
   }
 }
