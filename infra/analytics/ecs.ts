@@ -347,10 +347,6 @@ export const createGraphTaskDefinition = (
                 cpu: 0,
                 entryPoint: ['/api'],
                 essential: true,
-                dependsOn: [{
-                  containerName: aggEcrImage,
-                  condition: "START"
-                }],
                 image: ecrImage,
                 links: [],
                 memoryReservation: 512,
@@ -388,10 +384,6 @@ export const createAggregationTaskDefinition = (
           {
               command: ['--events-database',event_db,'--graph-database',graph_db,'--log-level',process.env.ANALYTICS_LOG_LEVEL,'--events-db-connection-limit','70','--enable-query-logging'],
               cpu: 0,
-              dependsOn: [{
-                containerName: eventEcrImage,
-                condition: "START"
-              }],
               entryPoint: ['/api'],
               environment: [],
               essential: true,
@@ -551,6 +543,7 @@ export const createEcsCluster = (
 ): aws.ecs.Cluster => {
     const resourceName = getResourceName('analytics')
     const { name: capacityProvider } = createEcsCapacityProvider(config, infraOutput)
+
     // create ecs cluster
     const cluster = new aws.ecs.Cluster(resourceName, 
     {
@@ -562,11 +555,6 @@ export const createEcsCluster = (
         }],
         capacityProviders: [capacityProvider]
     })
-
-    // create ecs task definitions 
-    //const eventTaskDefinition = createEventsTaskDefinition(infraOutput)
-    //const aggregationTaskDefinition = createAggregationTaskDefinition(infraOutput)
-    //const graphTaskDefinition = createGraphTaskDefinition(infraOutput)
 
     // create ecs event service (lb, tg, listeners, svc)
     const eventTargetGroup = createEventTargetGroup(infraOutput)
