@@ -12,12 +12,13 @@ const pulumiProgram = async (): Promise<Record<string, any> | void> => {
   const subnets =  sharedStack.getOutput('subnets') //  ['subnet-0e2f01ec6714dc53f','subnet-0c8aa8a71e35104fc','subnet-08ea44006fecc2ab2']
   const vpcVal: string = await pulumiOutToValue(vpc) //converts output<t> to string
   const subnetVal: string[] = await pulumiOutToValue(subnets)
-  console.log(typeof subnetVal)
+  console.log('typeof subnet val is ' + typeof subnetVal)
+  console.log(`subnet is ${subnetVal}`)
 
   //const vpcHard = 'vpc-068564e7eded7ab8b'
   //const subnetsHard = ['subnet-0e2f01ec6714dc53f','subnet-0c8aa8a71e35104fc','subnet-08ea44006fecc2ab2']
 
-  const sgs = createSecurityGroups(config, vpcHard) //hardcode test
+  const sgs = createSecurityGroups(config, vpcVal.toString()) //hardcode test
   const { analytics } = createRepositories()
 
   return {
