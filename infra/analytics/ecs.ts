@@ -545,6 +545,9 @@ const createEcsCapacityProvider = (
 export const createEcsCluster = (
     config: pulumi.Config,
     infraOutput: SharedInfraOutput,
+    eventTaskDefinition: aws.ecs.TaskDefinition,
+    aggregationTaskDefinition: aws.ecs.TaskDefinition,
+    graphTaskDefinition: aws.ecs.TaskDefinition,
 ): aws.ecs.Cluster => {
     const resourceName = getResourceName('analytics')
     const { name: capacityProvider } = createEcsCapacityProvider(config, infraOutput)
@@ -561,9 +564,9 @@ export const createEcsCluster = (
     })
 
     // create ecs task definitions 
-    const eventTaskDefinition = createEventsTaskDefinition(infraOutput)
-    const aggregationTaskDefinition = createAggregationTaskDefinition(infraOutput)
-    const graphTaskDefinition = createGraphTaskDefinition(infraOutput)
+    //const eventTaskDefinition = createEventsTaskDefinition(infraOutput)
+    //const aggregationTaskDefinition = createAggregationTaskDefinition(infraOutput)
+    //const graphTaskDefinition = createGraphTaskDefinition(infraOutput)
 
     // create ecs event service (lb, tg, listeners, svc)
     const eventTargetGroup = createEventTargetGroup(infraOutput)
