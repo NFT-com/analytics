@@ -10,6 +10,7 @@
     * [Marketplace](#marketplace)
     * [NFT](#nft)
     * [Network](#network)
+    * [Owner](#owner)
 	* [Trait](#trait)
   * [Inputs](#inputs)
     * [CollectionOrder](#collectionorder)
@@ -24,6 +25,7 @@
     * [DateTime](#datetime)
     * [Float](#float)
     * [ID](#id)
+    * [Int](#int)
     * [String](#string)
 
 </details>
@@ -94,7 +96,7 @@ The query root of NFT.com GraphQL interface.
 		</tr>
 		<tr>
 			<td colspan="2" align="right" valign="top">owners</td>
-			<td valign="top"><a href="#address">Address</a></td>
+			<td valign="top"><a href="#address">Owners</a></td>
 			<td>Addresses of accounts that own this NFT.</td>
 		</tr>
 		<tr>
@@ -202,6 +204,21 @@ Collection represents a group of NFTs that share the same smart contract.
 			<td>URL of an image for the collection.</td>
 		</tr>
 		<tr>
+			<td colspan="2" valign="top"><strong>volume</strong></td>
+			<td valign="top"><a href="#float">Float</a>!</td>
+			<td>Trading volume of this collection.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>market_cap</strong></td>
+			<td valign="top"><a href="#float">Float</a>!</td>
+			<td>Market cap of this collection.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>sales</strong></td>
+			<td valign="top"><a href="#int">Int</a>!</td>
+			<td>Number of sales in this collection.</td>
+		</tr>
+		<tr>
 			<td colspan="2" valign="top"><strong>network</strong></td>
 			<td valign="top"><a href="#network">Network</a>!</td>
 			<td>Network on which collection resides on.</td>
@@ -252,6 +269,26 @@ Marketplace represents a single NFT marketplace (e.g. Opensea, DefiKingdoms).
 			<td colspan="2" valign="top"><strong>website</strong></td>
 			<td valign="top"><a href="#string">String</a></td>
 			<td>Marketplace website.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>volume</strong></td>
+			<td valign="top"><a href="#float">Float</a>!</td>
+			<td>Trading volume on this marketplace.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>market_cap</strong></td>
+			<td valign="top"><a href="#float">Float</a>!</td>
+			<td>Market cap of this marketplace.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>sales</strong></td>
+			<td valign="top"><a href="#int">Int</a>!</td>
+			<td>Number of sales on this marketplace.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>users</strong></td>
+			<td valign="top"><a href="#int">Int</a>!</td>
+			<td>Number of users on this marketplace.</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>networks</strong></td>
@@ -312,13 +349,23 @@ NFT represents a single Non-Fungible Token.
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>owners</strong></td>
-			<td valign="top">[<a href="#address">Address</a>!]</td>
+			<td valign="top">[<a href="#owner">Owner</a>!]</td>
 			<td>Addresses of accounts that own this NFT.</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>rarity</strong></td>
 			<td valign="top"><a href="#float">Float</a>!</td>
 			<td>Rarity score for the NFT.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>trading_price</strong></td>
+			<td valign="top"><a href="#float">Float</a>!</td>
+			<td>Trading price for this NFT.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>average_price</strong></td>
+			<td valign="top"><a href="#float">Float</a>!</td>
+			<td>All time average-price for this NFT.</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>traits</strong></td>
@@ -372,6 +419,33 @@ Mainnet and testnets of a specific blockchain are distinct network objects.
 			<td colspan="2" valign="top"><strong>collections</strong></td>
 			<td valign="top">[<a href="#collection">Collection</a>!]</td>
 			<td>Collections found on this network.</td>
+		</tr>
+	</tbody>
+</table>
+
+### Owner
+
+Owner reprecsents the owner of the NFT, along with the information of how many tokens it has.
+
+<table>
+	<thead>
+		<tr>
+			<th align="left">Field</th>
+			<th align="right">Argument</th>
+			<th align="left">Type</th>
+			<th align="left">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="2" valign="top"><strong>address</strong></td>
+			<td valign="top"><a href="#address">Address</a>!</td>
+			<td>Address of the owner.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>number</strong></td>
+			<td valign="top"><a href="#int">Int</a>!</td>
+			<td>Number of tokens this address owns.</td>
 		</tr>
 	</tbody>
 </table>
@@ -568,6 +642,10 @@ The `Float` scalar type represents signed double-precision fractional values as 
 ### ID
 
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
+
+### Int
+
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
 
 ### String
 
