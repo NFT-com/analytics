@@ -7,6 +7,7 @@ import (
 type Transfer struct {
 	ID                string    `gorm:"column:id" json:"id"`
 	ChainID           uint64    `gorm:"column:chain_id" json:"chain_id"`
+	TokenStandard     string    `gorm:"column:token_standard" json:"token_standard"`
 	CollectionAddress string    `gorm:"column:collection_address" json:"collection_address"`
 	TokenID           string    `gorm:"column:token_id" json:"token_id"`
 	BlockNumber       uint64    `gorm:"column:block_number" json:"block_number"`
