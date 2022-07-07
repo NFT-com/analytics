@@ -12,7 +12,7 @@ type Storage interface {
 	NFTByTokenID(networkID string, contract string, tokenID string) (*api.NFT, error)
 	NFTs(owner *string, collectionID *string, orderBy api.NFTOrder, limit uint, prefetchOwners bool) ([]*api.NFT, error)
 	NFTTraits(id string) ([]api.Trait, error)
-	NFTOwners(nftID string) ([]string, error)
+	NFTOwners(nftID string) ([]api.Owner, error)
 
 	Collection(id string) (*api.Collection, error)
 	CollectionByContract(networkID string, contract string) (*api.Collection, error)
@@ -21,7 +21,7 @@ type Storage interface {
 	CollectionsByNetwork(networkID string) ([]*api.Collection, error)
 	CollectionTraits(collectionID string) ([]api.Trait, error)
 	CollectionSize(id string) (uint, error)
-	CollectionOwners(collectionID string) (map[string][]string, error)
+	CollectionOwners(collectionID string) (map[string][]api.Owner, error)
 
 	MarketplaceCollections(marketplaceID string) ([]*api.Collection, error)
 	MarketplaceNetworks(marketplaceID string) ([]*api.Network, error)
