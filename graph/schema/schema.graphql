@@ -262,7 +262,7 @@ type NFT {
     """
     Addresses of accounts that own this NFT.
     """
-    owners: [Address!]
+    owners: [Owner!]
 
     """
     Rarity score for the NFT.
@@ -290,6 +290,20 @@ type NFT {
     collection: Collection!
 }
 
+"""
+Owner reprecsents the owner of the NFT, along with the information of how many tokens it has.
+"""
+type Owner {
+    """
+    Address of the owner.
+    """
+    address: Address!
+
+    """
+    Number of tokens this address owns.
+    """
+    number: Int!
+}
 
 """
 Trait represents a single NFT trait.

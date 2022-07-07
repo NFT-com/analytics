@@ -2,15 +2,17 @@ package storage
 
 import (
 	"fmt"
+
+	"github.com/NFT-com/analytics/graph/models/api"
 )
 
 // NFTOwners returns the addresses of all accounts owning this NFT.
-func (s *Storage) NFTOwners(nftID string) ([]string, error) {
+func (s *Storage) NFTOwners(nftID string) ([]api.Owner, error) {
 
-	var owners []string
+	var owners []api.Owner
 	err := s.db.
 		Table("owners").
-		Select("owner").
+		Select("owner, nft_id, number").
 		Where("nft_id = ?", nftID).
 		Where("number > 0").
 		Find(&owners).Error
@@ -21,19 +23,13 @@ func (s *Storage) NFTOwners(nftID string) ([]string, error) {
 	return owners, nil
 }
 
-// nftOwner models the result of the owner query.
-type nftOwner struct {
-	Owner string `gorm:"column:owner"`
-	NFTID string `gorm:"column:nft_id"`
-}
-
 // CollectionOwners returns the list of owners for each NFT in the collection.
-func (s *Storage) CollectionOwners(collectionID string) (map[string][]string, error) {
+func (s *Storage) CollectionOwners(collectionID string) (map[string][]api.Owner, error) {
 
-	var owners []nftOwner
+	var owners []api.Owner
 	err := s.db.
 		Table("owners o, nfts n").
-		Select("o.owner, o.nft_id").
+		Select("o.owner, o.nft_id, o.number").
 		Where("o.nft_id = n.id").
 		Where("o.number > 0").
 		Where("n.collection_id = ?", collectionID).
@@ -43,17 +39,17 @@ func (s *Storage) CollectionOwners(collectionID string) (map[string][]string, er
 	}
 
 	// Map owners to NFT IDs.
-	out := make(map[string][]string)
+	out := make(map[string][]api.Owner)
 	for _, owner := range owners {
 		list, ok := out[owner.NFTID]
 		if ok {
-			list = append(list, owner.Owner)
+			list = append(list, owner)
 			out[owner.NFTID] = list
 			continue
 		}
 
-		list = make([]string, 0, 1)
-		list = append(list, owner.Owner)
+		list = make([]api.Owner, 0, 1)
+		list = append(list, owner)
 
 		out[owner.NFTID] = list
 	}
@@ -62,12 +58,12 @@ func (s *Storage) CollectionOwners(collectionID string) (map[string][]string, er
 }
 
 // nftListOwners retrieves owners for a list of NFTs.
-func (s *Storage) nftListOwners(nftIDs []string) (map[string][]string, error) {
+func (s *Storage) nftListOwners(nftIDs []string) (map[string][]api.Owner, error) {
 
-	var owners []nftOwner
+	var owners []api.Owner
 	err := s.db.
 		Table("owners o, nfts n").
-		Select("o.owner, o.nft_id").
+		Select("o.owner, o.nft_id, o.number").
 		Where("o.nft_id = n.id").
 		Where("o.number > 0").
 		Where("n.id IN (?)", nftIDs).
@@ -77,17 +73,17 @@ func (s *Storage) nftListOwners(nftIDs []string) (map[string][]string, error) {
 	}
 
 	// Map owners to NFT IDs.
-	out := make(map[string][]string)
+	out := make(map[string][]api.Owner)
 	for _, owner := range owners {
 		list, ok := out[owner.NFTID]
 		if ok {
-			list = append(list, owner.Owner)
+			list = append(list, owner)
 			out[owner.NFTID] = list
 			continue
 		}
 
-		list = make([]string, 0, 1)
-		list = append(list, owner.Owner)
+		list = make([]api.Owner, 0, 1)
+		list = append(list, owner)
 
 		out[owner.NFTID] = list
 	}
