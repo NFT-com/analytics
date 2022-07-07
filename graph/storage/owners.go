@@ -14,8 +14,9 @@ func (s *Storage) NFTOwners(nftID string) ([]api.Owner, error) {
 		Table("owners").
 		Select("owner, SUM(number) AS number").
 		Group("owner").
+		Where("owner != ?", "0x0000000000000000000000000000000000000000").
 		Where("nft_id = ?", nftID).
-		Where("number > 0").
+		Having("SUM(number) > ?", 0).
 		Find(&owners).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve NFT owners: %w", err)
@@ -32,9 +33,10 @@ func (s *Storage) CollectionOwners(collectionID string) (map[string][]api.Owner,
 		Table("owners o, nfts n").
 		Select("o.owner, o.nft_id, SUM(o.number) as number").
 		Group("owner, nft_id").
+		Where("o.owner != ?", "0x0000000000000000000000000000000000000000").
 		Where("o.nft_id = n.id").
-		Where("o.number > 0").
 		Where("n.collection_id = ?", collectionID).
+		Having("SUM(o.number) > ?", 0).
 		Find(&owners).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not lookup owners for a collection: %w", err)
