@@ -12,7 +12,8 @@ func (s *Storage) NFTOwners(nftID string) ([]api.Owner, error) {
 	var owners []api.Owner
 	err := s.db.
 		Table("owners").
-		Select("owner, nft_id, number").
+		Select("owner, SUM(number) AS number").
+		Group("owner").
 		Where("nft_id = ?", nftID).
 		Where("number > 0").
 		Find(&owners).Error
@@ -29,7 +30,8 @@ func (s *Storage) CollectionOwners(collectionID string) (map[string][]api.Owner,
 	var owners []api.Owner
 	err := s.db.
 		Table("owners o, nfts n").
-		Select("o.owner, o.nft_id, o.number").
+		Select("o.owner, o.nft_id, SUM(o.number) as number").
+		Group("owner, nft_id").
 		Where("o.nft_id = n.id").
 		Where("o.number > 0").
 		Where("n.collection_id = ?", collectionID).
@@ -63,7 +65,8 @@ func (s *Storage) nftListOwners(nftIDs []string) (map[string][]api.Owner, error)
 	var owners []api.Owner
 	err := s.db.
 		Table("owners o, nfts n").
-		Select("o.owner, o.nft_id, o.number").
+		Select("o.owner, o.nft_id, SUM(o.number) AS number").
+		Group("owner, nft_id").
 		Where("o.nft_id = n.id").
 		Where("o.number > 0").
 		Where("n.id IN (?)", nftIDs).
