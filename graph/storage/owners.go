@@ -3,6 +3,7 @@ package storage
 import (
 	"fmt"
 
+	"github.com/NFT-com/analytics/aggregate/models/identifier"
 	"github.com/NFT-com/analytics/graph/models/api"
 )
 
@@ -13,9 +14,9 @@ func (s *Storage) NFTOwners(nftID string) ([]api.Owner, error) {
 	err := s.db.
 		Table("owners").
 		Select("owner, SUM(number) AS number").
-		Group("owner").
-		Where("owner != ?", "0x0000000000000000000000000000000000000000").
+		Where("owner != ?", identifier.ZeroAddress).
 		Where("nft_id = ?", nftID).
+		Group("owner").
 		Having("SUM(number) > ?", 0).
 		Find(&owners).Error
 	if err != nil {
@@ -32,10 +33,10 @@ func (s *Storage) CollectionOwners(collectionID string) (map[string][]api.Owner,
 	err := s.db.
 		Table("owners o, nfts n").
 		Select("o.owner, o.nft_id, SUM(o.number) as number").
-		Group("owner, nft_id").
-		Where("o.owner != ?", "0x0000000000000000000000000000000000000000").
+		Where("o.owner != ?", identifier.ZeroAddress).
 		Where("o.nft_id = n.id").
 		Where("n.collection_id = ?", collectionID).
+		Group("owner, nft_id").
 		Having("SUM(o.number) > ?", 0).
 		Find(&owners).Error
 	if err != nil {
@@ -68,10 +69,11 @@ func (s *Storage) nftListOwners(nftIDs []string) (map[string][]api.Owner, error)
 	err := s.db.
 		Table("owners o, nfts n").
 		Select("o.owner, o.nft_id, SUM(o.number) AS number").
-		Group("owner, nft_id").
+		Where("o.owner != ?", identifier.ZeroAddress).
 		Where("o.nft_id = n.id").
-		Where("o.number > 0").
 		Where("n.id IN (?)", nftIDs).
+		Group("owner, nft_id").
+		Having("SUM(o.number) > ?", 0).
 		Find(&owners).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not lookup owners for a collection: %w", err)
