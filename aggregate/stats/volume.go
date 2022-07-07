@@ -15,7 +15,7 @@ func (s *Stats) CollectionVolume(address identifier.Address) (float64, error) {
 		Table("sales").
 		Select("SUM(trade_price) AS total").
 		Where("chain_id = ?", address.ChainID).
-		Where("collection_address = ?", address.Address)
+		Where("LOWER(collection_address) = LOWER(?)", address.Address)
 
 	var volume datapoint.Volume
 	err := query.Take(&volume).Error
@@ -35,8 +35,8 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 
 	query := s.db.
 		Table("sales").
-		Select("SUM(trade_price) AS total, chain_id, collection_address").
-		Group("chain_id, collection_address")
+		Select("SUM(trade_price) AS total, chain_id, LOWER(collection_address)").
+		Group("chain_id, LOWER(collection_address)")
 
 	filter := s.createCollectionFilter(addresses)
 	query = query.Where(filter)

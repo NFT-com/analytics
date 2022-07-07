@@ -32,9 +32,9 @@ func (s *Stats) createAddressFilter(addresses []identifier.Address, filterType i
 	var condition string
 	switch filterType {
 	case FilterCollection:
-		condition = "chain_id = ? AND collection_address = ?"
+		condition = "chain_id = ? AND LOWER(collection_address) = LOWER(?)"
 	case FilterMarketplace:
-		condition = "chain_id = ? AND marketplace_address = ?"
+		condition = "chain_id = ? AND LOWER(marketplace_address) = LOWER(?)"
 
 	// Invalid filter value, just return an empty condition.
 	default:
@@ -64,7 +64,7 @@ func (s *Stats) createNFTFilter(nfts []identifier.NFT) *gorm.DB {
 	nft := nfts[0]
 
 	// Create the first condition.
-	filter := s.db.Where("chain_id = ? AND collection_address = ? AND token_id = ?",
+	filter := s.db.Where("chain_id = ? AND LOWER(collection_address) = LOWER(?) AND token_id = ?",
 		nft.Collection.ChainID,
 		nft.Collection.Address,
 		nft.TokenID,
@@ -72,7 +72,7 @@ func (s *Stats) createNFTFilter(nfts []identifier.NFT) *gorm.DB {
 
 	// Add the remaining conditions using an `OR`.
 	for _, nft := range nfts[1:] {
-		filter = filter.Or("chain_id = ? AND collection_address = ? AND token_id = ?",
+		filter = filter.Or("chain_id = ? AND LOWER(collection_address) = LOWER(?) AND token_id = ?",
 			nft.Collection.ChainID,
 			nft.Collection.Address,
 			nft.TokenID,

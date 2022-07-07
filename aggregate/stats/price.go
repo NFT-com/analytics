@@ -15,7 +15,7 @@ func (s *Stats) NFTPrice(nft identifier.NFT) (float64, error) {
 		Table("sales").
 		Select("trade_price").
 		Where("chain_id = ?", nft.Collection.ChainID).
-		Where("collection_address = ?", nft.Collection.Address).
+		Where("LOWER(collection_address) = LOWER(?)", nft.Collection.Address).
 		Where("token_id = ?", nft.TokenID).
 		Order("emitted_at DESC").
 		Limit(1)
@@ -38,10 +38,10 @@ func (s *Stats) NFTBatchPrices(nfts []identifier.NFT) (map[identifier.NFT]float6
 
 	selectFields := []string{
 		"chain_id",
-		"collection_address",
+		"LOWER(collection_address)",
 		"token_id",
 		"trade_price",
-		"row_number() OVER (PARTITION BY chain_id, collection_address, token_id ORDER BY emitted_at DESC) AS rank",
+		"row_number() OVER (PARTITION BY chain_id, LOWER(collection_address), token_id ORDER BY emitted_at DESC) AS rank",
 	}
 
 	priceQuery := s.db.

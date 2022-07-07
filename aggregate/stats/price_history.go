@@ -18,7 +18,7 @@ func (s *Stats) NFTPriceHistory(nft identifier.NFT, from time.Time, to time.Time
 		Table("sales").
 		Select("trade_price, emitted_at").
 		Where("chain_id = ?", nft.Collection.ChainID).
-		Where("collection_address = ?", nft.Collection.Address).
+		Where("LOWER(collection_address) = LOWER(?)", nft.Collection.Address).
 		Where("token_id = ?", nft.TokenID).
 		Where("emitted_at > ?", from.Format(timeFormat)).
 		Where("emitted_at <= ?", to.Format(timeFormat)).
@@ -40,7 +40,7 @@ func (s *Stats) NFTAveragePriceHistory(nft identifier.NFT) (datapoint.Average, e
 		Table("sales").
 		Select("AVG(trade_price) AS average").
 		Where("chain_id = ?", nft.Collection.ChainID).
-		Where("collection_address = ?", nft.Collection.Address).
+		Where("LOWER(collection_address) = LOWER(?)", nft.Collection.Address).
 		Where("token_id = ?", nft.TokenID)
 
 	var out datapoint.Average
