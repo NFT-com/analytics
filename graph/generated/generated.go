@@ -97,6 +97,11 @@ type ComplexityRoot struct {
 		Name         func(childComplexity int) int
 	}
 
+	Owner struct {
+		Address func(childComplexity int) int
+		Number  func(childComplexity int) int
+	}
+
 	Query struct {
 		Collection          func(childComplexity int, id string) int
 		CollectionByAddress func(childComplexity int, networkID string, contract string) int
@@ -428,6 +433,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Network.Name(childComplexity), true
+
+	case "Owner.address":
+		if e.complexity.Owner.Address == nil {
+			break
+		}
+
+		return e.complexity.Owner.Address(childComplexity), true
+
+	case "Owner.number":
+		if e.complexity.Owner.Number == nil {
+			break
+		}
+
+		return e.complexity.Owner.Number(childComplexity), true
 
 	case "Query.collection":
 		if e.complexity.Query.Collection == nil {
@@ -855,7 +874,7 @@ type NFT {
     """
     Addresses of accounts that own this NFT.
     """
-    owners: [Address!]
+    owners: [Owner!]
 
     """
     Rarity score for the NFT.
@@ -883,6 +902,20 @@ type NFT {
     collection: Collection!
 }
 
+"""
+Owner reprecsents the owner of the NFT, along with the information of how many tokens it has.
+"""
+type Owner {
+    """
+    Address of the owner.
+    """
+    address: Address!
+
+    """
+    Number of tokens this address owns.
+    """
+    number: Int!
+}
 
 """
 Trait represents a single NFT trait.
@@ -2263,9 +2296,9 @@ func (ec *executionContext) _NFT_owners(ctx context.Context, field graphql.Colle
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.([]api.Owner)
 	fc.Result = res
-	return ec.marshalOAddress2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalOOwner2ᚕgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐOwnerᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _NFT_rarity(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
@@ -2607,6 +2640,76 @@ func (ec *executionContext) _Network_collections(ctx context.Context, field grap
 	res := resTmp.([]*api.Collection)
 	fc.Result = res
 	return ec.marshalOCollection2ᚕᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCollectionᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Owner_address(ctx context.Context, field graphql.CollectedField, obj *api.Owner) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Owner",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Address, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNAddress2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Owner_number(ctx context.Context, field graphql.CollectedField, obj *api.Owner) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Owner",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Number, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_network(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4851,6 +4954,47 @@ func (ec *executionContext) _Network(ctx context.Context, sel ast.SelectionSet, 
 	return out
 }
 
+var ownerImplementors = []string{"Owner"}
+
+func (ec *executionContext) _Owner(ctx context.Context, sel ast.SelectionSet, obj *api.Owner) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, ownerImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Owner")
+		case "address":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Owner_address(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "number":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Owner_number(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var queryImplementors = []string{"Query"}
 
 func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -5613,6 +5757,21 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
+func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
+	res, err := graphql.UnmarshalInt(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	res := graphql.MarshalInt(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
 func (ec *executionContext) unmarshalNInt2uint64(ctx context.Context, v interface{}) (uint64, error) {
 	res, err := graphql.UnmarshalUint64(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -5724,6 +5883,10 @@ func (ec *executionContext) unmarshalNOrderDirection2githubᚗcomᚋNFTᚑcomᚋ
 
 func (ec *executionContext) marshalNOrderDirection2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐOrderDirection(ctx context.Context, sel ast.SelectionSet, v api.OrderDirection) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) marshalNOwner2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐOwner(ctx context.Context, sel ast.SelectionSet, v api.Owner) graphql.Marshaler {
+	return ec._Owner(ctx, sel, &v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -5996,44 +6159,6 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) unmarshalOAddress2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]string, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNAddress2string(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalOAddress2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalNAddress2string(ctx, sel, v[i])
-	}
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
 }
 
 func (ec *executionContext) unmarshalOAddress2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
@@ -6333,6 +6458,53 @@ func (ec *executionContext) marshalONetwork2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyt
 		return graphql.Null
 	}
 	return ec._Network(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOOwner2ᚕgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐOwnerᚄ(ctx context.Context, sel ast.SelectionSet, v []api.Owner) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNOwner2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐOwner(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
