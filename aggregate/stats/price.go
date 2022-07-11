@@ -38,7 +38,7 @@ func (s *Stats) NFTBatchPrices(nfts []identifier.NFT) (map[identifier.NFT]float6
 
 	selectFields := []string{
 		"chain_id",
-		"LOWER(collection_address)",
+		"LOWER(collection_address) AS collection_address",
 		"token_id",
 		"trade_price",
 		"row_number() OVER (PARTITION BY chain_id, LOWER(collection_address), token_id ORDER BY emitted_at DESC) AS rank",

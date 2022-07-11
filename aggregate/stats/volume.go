@@ -35,7 +35,7 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 
 	query := s.db.
 		Table("sales").
-		Select("SUM(trade_price) AS total, chain_id, LOWER(collection_address)").
+		Select("SUM(trade_price) AS total, chain_id, LOWER(collection_address) AS collection_address").
 		Group("chain_id, LOWER(collection_address)")
 
 	filter := s.createCollectionFilter(addresses)
