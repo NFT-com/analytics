@@ -122,6 +122,7 @@ func run() error {
 	server.Use(lecho.Middleware(lecho.Config{Logger: slog}))
 
 	// Initialize routes.
+	server.GET("/health", health)
 	server.GET(transferEndpoint, api.Transfer)
 	server.GET(saleEndpoint, api.Sale)
 
@@ -168,5 +169,10 @@ func run() error {
 		return fmt.Errorf("could not shut down events API server: %w", err)
 	}
 
+	return nil
+}
+
+// health is an HTTP handler that will just return an empty '200 OK' response.
+func health(ctx echo.Context) error {
 	return nil
 }
