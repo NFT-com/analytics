@@ -63,7 +63,7 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 
 	sumQuery := s.db.
 		Table("( ? ) c", latestPriceQuery).
-		Select("SUM(trade_price) AS total, chain_id, LOWER(collection_address)").
+		Select("SUM(trade_price) AS total, chain_id, LOWER(collection_address) AS collection_address").
 		Where("c.rank = 1").
 		Group("chain_id, LOWER(collection_address)")
 
