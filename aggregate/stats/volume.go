@@ -27,6 +27,7 @@ func (s *Stats) CollectionVolume(address identifier.Address) (float64, error) {
 }
 
 // CollectionBatchVolumes returns the list of volumes for each individual collection.
+// Volumes are mapped to the lowercased collection contract address.
 func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[identifier.Address]float64, error) {
 
 	if len(addresses) == 0 {

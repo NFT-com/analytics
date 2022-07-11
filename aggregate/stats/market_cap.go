@@ -48,6 +48,7 @@ func (s *Stats) CollectionMarketCap(address identifier.Address) (float64, error)
 }
 
 // CollectionMarketCaps returns the current market cap for the list of collections.
+// Market caps are mapped to the lowercased collection contract address.
 func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[identifier.Address]float64, error) {
 
 	if len(addresses) == 0 {
