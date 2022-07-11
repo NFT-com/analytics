@@ -28,7 +28,7 @@ func (s *Stats) marketCapHistory(collectionAddress *identifier.Address, marketpl
 	// The query has a date threshold to consider only prices up to a date.
 	latestPriceQuery := s.db.
 		Table("sales").
-		Select("sales.*, row_number() OVER (PARTITION BY chain_id, collection_address, token_id ORDER BY emitted_at DESC) AS rank").
+		Select("sales.*, row_number() OVER (PARTITION BY chain_id, LOWER(collection_address), token_id ORDER BY emitted_at DESC) AS rank").
 		Where("emitted_at <= d.date")
 
 	// Set collection filter if needed.

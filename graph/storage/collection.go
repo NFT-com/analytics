@@ -44,10 +44,8 @@ func (s *Storage) CollectionByContract(networkID string, contract string) (*api.
 
 	var collection api.Collection
 	err := s.db.
-		Where(api.Collection{
-			NetworkID: networkID,
-			Address:   contract,
-		}).
+		Where("network_id = ?", networkID).
+		Where("LOWER(contract_address) = LOWER(?)", contract).
 		First(&collection).
 		Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {

@@ -21,7 +21,7 @@ func (s *Stats) CollectionFloorHistory(address identifier.Address, from time.Tim
 			"start_date",
 			"start_date + interval '1 day' AS end_date"}).
 		Where("chain_id = ?", address.ChainID).
-		Where("collection_address = ?", address.Address)
+		Where("LOWER(collection_address) = LOWER(?)", address.Address)
 
 	seriesQuery := s.db.
 		Table("(?) s", intervalQuery).

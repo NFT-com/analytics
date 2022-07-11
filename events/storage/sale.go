@@ -7,9 +7,6 @@ import (
 	"github.com/NFT-com/analytics/events/models/selectors"
 )
 
-// TODO: Add postman tests for sale events.
-// See https://github.com/NFT-com/analytics/issues/11
-
 // Sales retrieves NFT sale events according to the specified filters.
 // The number of events returned is limited by the `batchSize` `Storage` parameter.
 // If the number of events for the specified criteria is greater than `batchSize`,

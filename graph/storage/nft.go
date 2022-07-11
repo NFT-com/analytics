@@ -49,7 +49,7 @@ func (s *Storage) NFTByTokenID(networkID string, contract string, tokenID string
 	err := s.db.
 		Joins("INNER JOIN collections c ON collection_id = c.id").
 		Where("c.network_id = ?", networkID).
-		Where("c.contract_address = ?", contract).
+		Where("LOWER(c.contract_address) = LOWER(?)", contract).
 		Where("token_id = ?", tokenID).
 		First(&nft).
 		Error
@@ -73,7 +73,7 @@ func (s *Storage) NFTs(owner *string, collectionID *string, orderBy api.NFTOrder
 
 	// Set owner filter if specified.
 	if owner != nil {
-		db = db.Where("o.owner = ? AND o.number > 0", owner)
+		db = db.Where("LOWER(o.owner) = LOWER(?) AND o.number > 0", owner)
 	}
 
 	// Set collection filter if specified.

@@ -23,7 +23,7 @@ func (s *Stats) CollectionAverageHistory(address identifier.Address, from time.T
 		Table("sales").
 		Select("sales.*, row_number() OVER (PARTITION BY token_id ORDER BY emitted_at DESC) AS rank").
 		Where("chain_id = ? ", address.ChainID).
-		Where("collection_address = ?", address.Address).
+		Where("LOWER(collection_address) = LOWER(?)", address.Address).
 		Where("emitted_at <= d.date")
 
 	// Averaging query will return the average of all of the freshest prices for
