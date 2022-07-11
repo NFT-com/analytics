@@ -72,7 +72,7 @@ func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 	var collectionVolumes []datapoint.Value
 	for id, address := range addresses {
 
-		volume, ok := volumes[address]
+		volume, ok := volumes[lowerAddress(address)]
 		// If a collection has not been traded before, there won't be any volume data.
 		if !ok {
 			a.log.Debug().Str("collection_id", id).Msg("no volume data for collection")

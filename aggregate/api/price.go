@@ -73,7 +73,7 @@ func (a *API) NFTBatchPrice(ctx echo.Context) error {
 	var nftPrices []datapoint.Value
 	for id, address := range addresses {
 
-		price, ok := prices[address]
+		price, ok := prices[lowerNFTID(address)]
 		// If an NFT has never been sold before, it's normal that we don't know the price.
 		if !ok {
 			a.log.Debug().Str("nft_id", id).Msg("no known price for NFT")
