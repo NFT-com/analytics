@@ -219,7 +219,7 @@ const createEventTargetGroup = (
       interval: 15,
       port: '8085',
       matcher: '200-399',
-      path: '/transfers/?start_height=14232120&end_height=14232121', // to create health check
+      path: '/health',
       timeout: 5,
       unhealthyThreshold: 5,
     },
@@ -242,15 +242,14 @@ const createGraphTargetGroup = (
 ): aws.lb.TargetGroup => {
   const resourceName = getResourceName('analytics-graph-lb-tg')
   return new aws.lb.TargetGroup(resourceName, {
-    // health check disabled until defined 
-    /*healthCheck: {
+    healthCheck: {
       interval: 15,
       port: '8083',
       matcher: '200-399',
-      path: '/transfers/?start_height=14232120&end_height=14232121', 
+      path: '/health', 
       timeout: 5,
       unhealthyThreshold: 5,
-    },*/
+    },
     name: resourceName,
     port: 8083,
     protocol: 'HTTP',
@@ -270,15 +269,14 @@ const createAggregationTargetGroup = (
 ): aws.lb.TargetGroup => {
   const resourceName = getResourceName('analytics-aggregation-lb-tg')
   return new aws.lb.TargetGroup(resourceName, {
-    // health check disabled until defined 
-    /*healthCheck: {
+    healthCheck: {
       interval: 15,
-      port: '8083',
+      port: '8084',
       matcher: '200-399',
-      path: '/transfers/?start_height=14232120&end_height=14232121', 
+      path: '/health', 
       timeout: 5,
       unhealthyThreshold: 5,
-    },*/
+    },
     name: resourceName,
     port: 8084,
     protocol: 'HTTP',
@@ -337,7 +335,6 @@ export const createGraphTaskDefinition = (
 ): aws.ecs.TaskDefinition => {
     const resourceName = getResourceName('analytics-td-graph-api')
     const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:graph-api`
-    const aggEcrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:aggregation-api`
     
     return new aws.ecs.TaskDefinition(resourceName, 
     {
@@ -376,7 +373,6 @@ export const createAggregationTaskDefinition = (
 ): aws.ecs.TaskDefinition => {
   const resourceName = getResourceName('analytics-td-aggregation-api')
   const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:aggregation-api`
-  const eventEcrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:events-api`
 
   return new aws.ecs.TaskDefinition(resourceName, 
   {

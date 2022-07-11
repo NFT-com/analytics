@@ -1,6 +1,8 @@
 # Postman collections
 
-For each of the three APIs - the Graph, Events and the Aggregation API, there are Postman collections showcasing a number of different use-cases for the respective API.
+A single Postman collection file provides requests for each of the Analytic APIs: Graph, Events and Aggregation. These sample requests help showcase the different use case behind each API. While some input parameters are specified directly in the request, a handful of other variables are configurable on the Collection level. 
+
+Note the env.json file is only used for the newman script below but it is not necessary to work with the above Collection. 
 
 ## Running tests
 
@@ -37,7 +39,19 @@ For example, the content of the `env.json` file might contain something like thi
                         "enabled": true
                 },
                 {
-                        "key": "hostname",
+                        "key": "graph_hostname",
+                        "value": "localhost",
+                        "type": "default",
+                        "enabled": true
+                },
+                                {
+                        "key": "event_hostname",
+                        "value": "localhost",
+                        "type": "default",
+                        "enabled": true
+                },
+                                {
+                        "key": "aggregation_hostname",
                         "value": "localhost",
                         "type": "default",
                         "enabled": true
@@ -56,6 +70,6 @@ For example, the content of the `env.json` file might contain something like thi
 }
 ```
 
-Requests in the Postman collections reference these variables in requests, by specifying the HTTP address of the API as e.g. `{{scheme}}://{{hostname}}:{{port}}/transfers/`.
-Each of the variables - `scheme`, `hostname` and `port` are loaded from the provided environment file.
+Requests in the Postman collections reference these variables in requests, by specifying the HTTP address of the API as e.g. `{{scheme}}://{{*_hostname}}:{{port}}/transfers/`.
+Each of the variables - `scheme`, `*_hostname` and `port` are loaded from the provided environment file.
 These variables should be set to the appropriate values for the API being tested.
