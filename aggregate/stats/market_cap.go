@@ -15,7 +15,7 @@ func (s *Stats) CollectionMarketCap(address identifier.Address) (float64, error)
 			(
 				SELECT token_id, trade_price
 				FROM sales
-				WHERE chain_id = ? and collection_address = ?
+				WHERE chain_id = ? and LOWER(collection_address) = LOWER(?)
 				ORDER BY token_id, emitted_at DESC
 				LIMIT 1
 			)
@@ -25,7 +25,7 @@ func (s *Stats) CollectionMarketCap(address identifier.Address) (float64, error)
 			LATERAL (
 				SELECT token_id, trade_price
 				FROM sales
-				WHERE token_id > c.token_id AND chain_id = ? and collection_address = ?
+				WHERE token_id > c.token_id AND chain_id = ? and LOWER(collection_address) = LOWER(?)
 				ORDER BY token_id, emitted_at DESC
 				LIMIT 1
 			) s
@@ -56,16 +56,16 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 
 	latestPriceQuery := s.db.
 		Table("sales").
-		Select("sales.*, row_number() OVER (PARTITION BY chain_id, collection_address, token_id ORDER BY emitted_at DESC) AS rank")
+		Select("sales.*, row_number() OVER (PARTITION BY chain_id, LOWER(collection_address), token_id ORDER BY emitted_at DESC) AS rank")
 
 	filter := s.createCollectionFilter(addresses)
 	latestPriceQuery = latestPriceQuery.Where(filter)
 
 	sumQuery := s.db.
 		Table("( ? ) c", latestPriceQuery).
-		Select("SUM(trade_price) AS total, chain_id, collection_address").
+		Select("SUM(trade_price) AS total, chain_id, LOWER(collection_address)").
 		Where("c.rank = 1").
-		Group("chain_id, collection_address")
+		Group("chain_id, LOWER(collection_address)")
 
 	var caps []batchStatResult
 	err := sumQuery.Find(&caps).Error
@@ -95,7 +95,7 @@ func (s *Stats) MarketplaceMarketCap(addresses []identifier.Address) (float64, e
 	// Prices with the lowest rank (closer to 1) will be the most recent ones.
 	latestPriceQuery := s.db.
 		Table("sales").
-		Select("sales.*, row_number() OVER (PARTITION BY chain_id, collection_address, token_id ORDER BY emitted_at DESC) AS rank")
+		Select("sales.*, row_number() OVER (PARTITION BY chain_id, LOWER(collection_address), token_id ORDER BY emitted_at DESC) AS rank")
 
 	filter := s.createMarketplaceFilter(addresses)
 	latestPriceQuery = latestPriceQuery.Where(filter)

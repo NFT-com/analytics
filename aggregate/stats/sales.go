@@ -14,7 +14,7 @@ func (s *Stats) CollectionSales(address identifier.Address) (uint64, error) {
 		Table("sales").
 		Select("COUNT(*) AS count").
 		Where("chain_id = ?", address.ChainID).
-		Where("collection_address = ?", address.Address)
+		Where("LOWER(collection_address) = LOWER(?)", address.Address)
 
 	var count datapoint.Sale
 	err := query.Take(&count).Error

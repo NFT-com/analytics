@@ -16,14 +16,14 @@ func (s *Stats) MarketplaceUserCountHistory(addresses []identifier.Address, from
 	// Select all fitting sellers on a marketplace.
 	sellersQuery := s.db.
 		Table("sales").
-		Select("seller_address AS acc").
+		Select("LOWER(seller_address) AS acc").
 		Where("emitted_at <= date").
 		Where(marketplaceFilter)
 
 	// Select all fitting buyers on a marketplace.
 	buyersQuery := s.db.
 		Table("sales").
-		Select("buyer_address AS acc").
+		Select("LOWER(buyer_address) AS acc").
 		Where("emitted_at <= date").
 		Where(marketplaceFilter)
 

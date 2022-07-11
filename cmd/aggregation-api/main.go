@@ -136,6 +136,7 @@ func run() error {
 	server.Use(lecho.Middleware(lecho.Config{Logger: slog}))
 
 	// Initialize routes.
+	server.GET("/health", health)
 
 	// Collection stats - current.
 	server.GET("/collection/:id/volume", api.CollectionVolume)
@@ -215,5 +216,10 @@ func run() error {
 		return fmt.Errorf("could not shut down aggregation API server: %w", err)
 	}
 
+	return nil
+}
+
+// health is an HTTP handler that returns an empty '200 OK' response.
+func health(ctx echo.Context) error {
 	return nil
 }
