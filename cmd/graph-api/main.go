@@ -158,6 +158,7 @@ func run() error {
 	server.Use(lecho.Middleware(lecho.Config{Logger: slog}))
 
 	// Initialize server endpoints.
+	server.GET("/health", health)
 	server.POST(defaultGraphQLEndpoint, echoHandler(gqlServer))
 
 	// If GraphQL Playground is enabled, initialize the handler.
@@ -239,4 +240,9 @@ func echoHandler(h *handler.Server) echo.HandlerFunc {
 		h.ServeHTTP(ctx.Response().Writer, ctx.Request())
 		return nil
 	}
+}
+
+// health is an HTTP handler that returns an empty '200 OK' response.
+func health(ctx echo.Context) error {
+	return nil
 }
