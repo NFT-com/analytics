@@ -3,7 +3,7 @@ import * as upath from 'upath'
 import * as pulumi from '@pulumi/pulumi'
 
 import { deployInfra, getSharedInfraOutput } from '../helper'
-import { createEcsCluster, createEventsTaskDefinition, createAggregationTaskDefinition, createGraphTaskDefinition   } from './ecs'
+import { createEcsCluster, createEventsTaskDefinition, createAggregationTaskDefinition, createGraphTaskDefinition } from './ecs'
 
 
 const pulumiProgram = async (): Promise<Record<string, any> | void> => {
