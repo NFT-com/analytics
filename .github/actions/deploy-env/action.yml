@@ -2,7 +2,7 @@ name: Deploy Analytics Env
 description: Deploys the analytics infrastructure and apps to an environment
 inputs:
   stage:
-    description: Indexer Environment to deploy on
+    description: Analytics Environment to deploy on
     required: true
     default: dev
   secrets:
@@ -83,4 +83,3 @@ runs:
         DB_USER: ${{ fromJSON(inputs.secrets).DB_USER }}
         DB_PASSWORD: ${{ fromJSON(inputs.secrets).DB_PASSWORD }}
       run: npm run deploy:analytics
-      

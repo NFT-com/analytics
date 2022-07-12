@@ -14,12 +14,12 @@ const pulumiProgram = async (): Promise<Record<string, any> | void> => {
     const aggregationTaskDefinition = createAggregationTaskDefinition(sharedInfraOutput)
     const graphTaskDefinition = createGraphTaskDefinition(sharedInfraOutput)
     createEcsCluster(config,sharedInfraOutput, eventTaskDefinition,aggregationTaskDefinition,graphTaskDefinition )
-  }
+}
   
-  export const createAnalyticEcsCluster = (
-    preview?: boolean,
-  ): Promise<pulumi.automation.OutputMap> => {
-    const stackName = `${process.env.STAGE}.analytics.${process.env.AWS_REGION}`
-    const workDir = upath.joinSafe(__dirname, 'stack')
-    return deployInfra(stackName, workDir, pulumiProgram, preview)
-  }
+export const createAnalyticEcsCluster = (
+  preview?: boolean,
+): Promise<pulumi.automation.OutputMap> => {
+  const stackName = `${process.env.STAGE}.analytics.${process.env.AWS_REGION}`
+  const workDir = upath.joinSafe(__dirname, 'stack')
+  return deployInfra(stackName, workDir, pulumiProgram, preview)
+}
