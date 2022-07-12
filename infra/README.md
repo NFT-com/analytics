@@ -1,6 +1,6 @@
 # NFT.com Analytics Infra 
 
-![nftcom_arch-Page-5](https://user-images.githubusercontent.com/5006941/175179454-0936c204-1be9-4172-8460-41ecfcf2fdf2.png)
+![image](https://user-images.githubusercontent.com/5006941/178542374-97b8d319-7e55-439f-826d-a45d43039d37.png)
 Our analytics infrastructure is deployed using Pulumi. This infrastructure complements the Indexer infrastructure (https://github.com/NFT-com/indexer/tree/master/infra) by sharing networking and database resources. 
 
 ## Analytics Infrastructure 
