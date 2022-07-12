@@ -72,7 +72,7 @@ func (a *API) CollectionBatchMarketCap(ctx echo.Context) error {
 	var marketCaps []datapoint.Value
 	for id, address := range addresses {
 
-		cap, ok := caps[address]
+		cap, ok := caps[lowerAddress(address)]
 		// If a collection has not been traded before, there won't be any market cap data.
 		if !ok {
 			a.log.Debug().Str("collection_id", id).Msg("no market cap data for collection")

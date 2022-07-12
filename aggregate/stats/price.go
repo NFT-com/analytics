@@ -30,6 +30,7 @@ func (s *Stats) NFTPrice(nft identifier.NFT) (float64, error) {
 }
 
 // NFTBatchPrice returns the list of prices for the specified NFTs.
+// Prices are mapped to the NFT identifier, with the collection contract address being lowercased.
 func (s *Stats) NFTBatchPrices(nfts []identifier.NFT) (map[identifier.NFT]float64, error) {
 
 	if len(nfts) == 0 {
