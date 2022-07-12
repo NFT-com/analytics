@@ -24,4 +24,4 @@ Our analytics infrastructure is deployed using Pulumi. This infrastructure compl
 
 ### Analytics Deployment Notes
 
-- After deployment is triggered, github actions executes the script (action.yml), deploy the shared infra, build the latest images and push to AWS ECR, and finally deploy the ECS cluster including the task definitions to instantiate the analytic API services on ECS. 
+- After deployment is triggered, Github Actions executes the `action.yml` script, deploys the shared infra, builds the latest images and pushes them to AWS ECR, and finally deploys the ECS cluster including the task definitions to instantiate the analytic API services on ECS. 
