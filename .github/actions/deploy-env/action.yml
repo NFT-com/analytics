@@ -1,0 +1,85 @@
+name: Deploy Analytics Env
+description: Deploys the analytics infrastructure and apps to an environment
+inputs:
+  stage:
+    description: Analytics Environment to deploy on
+    required: true
+    default: dev
+  secrets:
+    description: Secrets
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v2
+      with:
+        node-version: 16.x
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ fromJSON(inputs.secrets).AWS_ACCESS_KEY_ID }}
+        aws-region: ${{ fromJSON(inputs.secrets).AWS_REGION }}
+        aws-secret-access-key: ${{ fromJSON(inputs.secrets).AWS_SECRET_ACCESS_KEY }}
+    - name: Login to AWS ECR
+      id: login_ecr
+      uses: aws-actions/amazon-ecr-login@v1
+    - name: Install Pulumi CLI
+      uses: pulumi/setup-pulumi@v2
+    - name: Login to Pulumi backend
+      shell: bash
+      run: pulumi login s3://nftcom-pulumi-state
+    - name: Install Analytics Infra Deps
+      working-directory: infra
+      shell: bash
+      run: npm install
+    - name: Deploy Analytics Shared Infra
+      working-directory: infra
+      shell: bash
+      env:
+        STAGE: ${{ inputs.stage }}
+        PULUMI_CONFIG_PASSPHRASE: ""
+        AWS_ACCOUNT_ID: ${{ fromJSON(inputs.secrets).AWS_ACCOUNT_ID }}
+        DB_PASSWORD: ${{ fromJSON(inputs.secrets).DB_PASSWORD }}
+      run: npm run deploy:shared
+    - name: Build and Push Analytics Docker Image(s)
+      shell: bash
+      env:
+        REPO: ${{ steps.login_ecr.outputs.registry }}/${{ inputs.stage }}-analytics
+      run: |
+        export DOCKER_BUILDKIT=1
+        
+        docker build . --build-arg BUILDKIT_INLINE_CACHE=1 -f cmd/events-api/Dockerfile -t ${{ env.REPO }}:events-api -t ${{ env.REPO }}:events-api-${{ github.sha }} 
+        docker push ${{ env.REPO }}:events-api
+        docker push ${{ env.REPO }}:events-api-${{ github.sha }}
+
+        docker build . --build-arg BUILDKIT_INLINE_CACHE=1 -f cmd/aggregation-api/Dockerfile -t ${{ env.REPO }}:aggregation-api -t ${{ env.REPO }}:aggregation-api-${{ github.sha }} 
+        docker push ${{ env.REPO }}:aggregation-api
+        docker push ${{ env.REPO }}:aggregation-api-${{ github.sha }}
+        
+        docker build . --build-arg BUILDKIT_INLINE_CACHE=1 -f cmd/graph-api/Dockerfile -t ${{ env.REPO }}:graph-api -t ${{ env.REPO }}:graph-api-${{ github.sha }} 
+        docker push ${{ env.REPO }}:graph-api
+        docker push ${{ env.REPO }}:graph-api-${{ github.sha }}
+    - name: Deploy Analytics ECS Service (Cluster and Task Definitions)
+      shell: bash
+      working-directory: infra
+      env:
+        STAGE: ${{ inputs.stage }}
+        PULUMI_CONFIG_PASSPHRASE: ""
+        ANALYTICS_LOG_LEVEL: ${{ fromJSON(inputs.secrets).ANALYTICS_LOG_LEVEL }}
+        AWS_ACCOUNT_ID: ${{ fromJSON(inputs.secrets).AWS_ACCOUNT_ID }}
+        AWS_ACCESS_KEY_ID: ${{ fromJSON(inputs.secrets).AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ fromJSON(inputs.secrets).AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ fromJSON(inputs.secrets).AWS_REGION }}
+        ECR_REGISTRY: ${{ fromJSON(inputs.secrets).ECR_REGISTRY }}
+        DB_EVENT_HOST: ${{ fromJSON(inputs.secrets).DB_EVENT_HOST }}
+        DB_JOB_HOST: ${{ fromJSON(inputs.secrets).DB_JOB_HOST }} 
+        DB_GRAPH_HOST: ${{ fromJSON(inputs.secrets).DB_GRAPH_HOST }}
+        DB_PORT: ${{ fromJSON(inputs.secrets).DB_PORT }}
+        DB_NAME: ${{ fromJSON(inputs.secrets).DB_NAME }}
+        DB_USER: ${{ fromJSON(inputs.secrets).DB_USER }}
+        DB_PASSWORD: ${{ fromJSON(inputs.secrets).DB_PASSWORD }}
+      run: npm run deploy:analytics
