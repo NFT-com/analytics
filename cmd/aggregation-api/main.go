@@ -167,10 +167,11 @@ func run() error {
 
 	// NFT stats - current.
 	server.GET("/nft/:id/price", api.NFTPrice)
+	server.GET("/nft/:id/average", api.NFTAveragePrice)
 	server.POST("/nft/batch/price", api.NFTBatchPrice)
+	server.POST("/nft/batch/average", api.NFTBatchAveragePrice)
 
 	// NFT stats - historic.
-	server.GET("/nft/:id/average", api.NFTAveragePrice)
 	server.GET("/nft/:id/price/history", api.NFTPriceHistory)
 
 	// This section launches the main executing components in their own

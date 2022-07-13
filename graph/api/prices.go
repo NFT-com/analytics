@@ -25,12 +25,12 @@ func (s *Server) getNFTStats(query *query.NFT, nft *api.NFT) error {
 
 	// Retrieve NFT average price from the aggregation API.
 	if query.AveragePrice {
-		average, err := s.aggregationAPI.AveragePrice(nft.ID)
+		averages, err := s.aggregationAPI.AveragePrices([]string{nft.ID})
 		if err != nil {
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not retrieve average price for NFT: %w", err))
 		}
 
-		nft.AveragePrice = average
+		nft.AveragePrice = averages[nft.ID]
 	}
 
 	return multiErr

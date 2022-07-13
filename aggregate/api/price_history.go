@@ -39,7 +39,7 @@ func (a *API) NFTAveragePrice(ctx echo.Context) error {
 	}
 
 	// Retrieve average price for the NFT.
-	average, err := a.stats.NFTAveragePriceHistory(nft)
+	average, err := a.stats.NFTAveragePrice(nft)
 	if err != nil {
 		return apiError(fmt.Errorf("could not retrieve NFT average price: %w", err))
 	}

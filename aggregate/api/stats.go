@@ -38,9 +38,10 @@ type Stats interface {
 
 	// NFT statistics - current.
 	NFTPrice(address identifier.NFT) (float64, error)
+	NFTAveragePrice(address identifier.NFT) (datapoint.Average, error)
 	NFTBatchPrices(addresses []identifier.NFT) (map[identifier.NFT]float64, error)
+	NFTBatchAveragePrices(addresses []identifier.NFT) (map[identifier.NFT]float64, error)
 
 	// NFT statistics - history.
 	NFTPriceHistory(address identifier.NFT, from time.Time, to time.Time) ([]datapoint.Price, error)
-	NFTAveragePriceHistory(address identifier.NFT) (datapoint.Average, error)
 }

@@ -14,13 +14,12 @@ func (c *Client) Prices(ids []string) (map[string]float64, error) {
 }
 
 // AveragePrice retrieves the average price for the specified NFT.
-func (c *Client) AveragePrice(id string) (float64, error) {
+func (c *Client) AveragePrices(ids []string) (map[string]float64, error) {
 
-	c.log.Debug().Str("id", id).Msg("requesting NFT average price")
+	c.log.Debug().Strs("id", ids).Msg("requesting NFT average prices")
 
-	path := fmt.Sprintf(fmtNFTAveragePriceEndpoint, id)
-	address := createAddress(c.apiURL, path)
-	return c.executeRequest(id, address)
+	address := createAddress(c.apiURL, nftBatchAveragePriceEndpoint)
+	return c.executeBatchRequest(ids, address)
 }
 
 // CollectionVolumes retrieves the volumes for the specified collections.

@@ -5,7 +5,7 @@ package api
 
 type Stats interface {
 	Prices(nftIDs []string) (map[string]float64, error)
-	AveragePrice(nftID string) (float64, error)
+	AveragePrices(nftIDs []string) (map[string]float64, error)
 
 	CollectionVolumes(collectionIDs []string) (map[string]float64, error)
 	CollectionMarketCaps(collectionIDs []string) (map[string]float64, error)

@@ -83,3 +83,51 @@ func (s *Stats) NFTBatchPrices(nfts []identifier.NFT) (map[identifier.NFT]float6
 
 	return priceMap, nil
 }
+
+// NFTBatchAveragePrice returns the average prices for the specified NFTs.
+// Prices are mapped to the NFT identifier, with the collection contract address being lowercased.
+func (s *Stats) NFTBatchAveragePrices(nfts []identifier.NFT) (map[identifier.NFT]float64, error) {
+
+	if len(nfts) == 0 {
+		return nil, errors.New("id list must be non-empty")
+	}
+
+	selectFields := []string{
+		"chain_id",
+		"LOWER(collection_address) AS collection_address",
+		"token_id",
+		"AVG(trade_price) AS average_price",
+	}
+
+	filter := s.createNFTFilter(nfts)
+
+	query := s.db.
+		Table("sales").
+		Select(selectFields).
+		Where(filter).
+		Group("chain_id, LOWER(collection_address), token_id")
+
+	var prices []batchAveragePriceResult
+	err := query.Find(&prices).Error
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve average prices: %w", err)
+	}
+
+	priceMap := make(map[identifier.NFT]float64)
+	for _, price := range prices {
+
+		// Create the NFT identifier.
+		collection := identifier.Address{
+			ChainID: price.ChainID,
+			Address: price.CollectionAddress,
+		}
+		nft := identifier.NFT{
+			Collection: collection,
+			TokenID:    price.TokenID,
+		}
+
+		priceMap[nft] = price.AveragePrice
+	}
+
+	return priceMap, nil
+}

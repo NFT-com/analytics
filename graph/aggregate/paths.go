@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	nftBatchPriceEndpoint      = "/nft/batch/price"
-	fmtNFTAveragePriceEndpoint = "/nft/%v/average"
+	nftBatchPriceEndpoint        = "/nft/batch/price"
+	nftBatchAveragePriceEndpoint = "/nft/batch/average"
 
 	collectionBatchVolumeEndpoint    = "/collection/batch/volume"
 	collectionBatchMarketCapEndpoint = "/collection/batch/market_cap"
