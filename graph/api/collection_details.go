@@ -46,7 +46,7 @@ func (s *Server) expandCollectionStats(query *query.Collection, collection *api.
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not get collection volume: %w", err))
 		}
 
-		collection.Volume = volumes[collection.ID]
+		collection.Volume, _ = volumes[collection.ID].Float64()
 	}
 
 	// Get market cap from the aggregation API.
@@ -56,7 +56,7 @@ func (s *Server) expandCollectionStats(query *query.Collection, collection *api.
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not get collection market cap: %w", err))
 		}
 
-		collection.MarketCap = caps[collection.ID]
+		collection.MarketCap, _ = caps[collection.ID].Float64()
 	}
 
 	// Get sale count from the aggregation API.
@@ -66,7 +66,7 @@ func (s *Server) expandCollectionStats(query *query.Collection, collection *api.
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not get collection sales: %w", err))
 		}
 
-		collection.Sales = uint64(sales)
+		collection.Sales = sales.BigInt().Uint64()
 	}
 
 	return multiErr

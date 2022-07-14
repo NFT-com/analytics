@@ -3,12 +3,14 @@ package stats
 import (
 	"fmt"
 
+	"github.com/shopspring/decimal"
+
 	"github.com/NFT-com/analytics/aggregate/models/datapoint"
 	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
 // CollectionMarketCap returns the current market cap for the collection.
-func (s *Stats) CollectionMarketCap(address identifier.Address) (float64, error) {
+func (s *Stats) CollectionMarketCap(address identifier.Address) (decimal.Decimal, error) {
 
 	query := s.db.Raw(
 		`WITH RECURSIVE cte AS (
@@ -41,7 +43,7 @@ func (s *Stats) CollectionMarketCap(address identifier.Address) (float64, error)
 	var marketCap datapoint.MarketCap
 	err := query.Scan(&marketCap).Error
 	if err != nil {
-		return 0, fmt.Errorf("could not retrieve market cap: %w", err)
+		return decimal.NewFromInt(0), fmt.Errorf("could not retrieve market cap: %w", err)
 	}
 
 	return marketCap.Total, nil
@@ -49,7 +51,7 @@ func (s *Stats) CollectionMarketCap(address identifier.Address) (float64, error)
 
 // CollectionMarketCaps returns the current market cap for the list of collections.
 // Market caps are mapped to the lowercased collection contract address.
-func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[identifier.Address]float64, error) {
+func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[identifier.Address]decimal.Decimal, error) {
 
 	if len(addresses) == 0 {
 		return nil, fmt.Errorf("address list must be non-empty")
@@ -75,7 +77,7 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 	}
 
 	// Transform the list of market caps to a map.
-	capMap := make(map[identifier.Address]float64, len(caps))
+	capMap := make(map[identifier.Address]decimal.Decimal, len(caps))
 	for _, cap := range caps {
 
 		collection := identifier.Address{
@@ -90,7 +92,7 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 }
 
 // MarketplaceMarketCap returns the current market cap for the marketplace.
-func (s *Stats) MarketplaceMarketCap(addresses []identifier.Address) (float64, error) {
+func (s *Stats) MarketplaceMarketCap(addresses []identifier.Address) (decimal.Decimal, error) {
 
 	// Latest price query will return prices per NFT ranked by freshness.
 	// Prices with the lowest rank (closer to 1) will be the most recent ones.
@@ -112,7 +114,7 @@ func (s *Stats) MarketplaceMarketCap(addresses []identifier.Address) (float64, e
 	var marketCap datapoint.MarketCap
 	err := sumQuery.Take(&marketCap).Error
 	if err != nil {
-		return 0, fmt.Errorf("could not retrieve market cap: %w", err)
+		return decimal.NewFromInt(0), fmt.Errorf("could not retrieve market cap: %w", err)
 	}
 
 	return marketCap.Total, nil

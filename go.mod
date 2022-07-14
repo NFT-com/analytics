@@ -7,6 +7,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/rs/zerolog v1.26.1
+	github.com/shopspring/decimal v1.2.0
 	github.com/spf13/pflag v1.0.5
 	github.com/vektah/gqlparser/v2 v2.4.2
 	github.com/wei840222/gorm-zerolog v0.0.0-20210303025759-235c42bb33fa

@@ -2,24 +2,26 @@ package datapoint
 
 import (
 	"time"
+
+	"github.com/shopspring/decimal"
 )
 
 // Value represents the generic datatype for some stat.
 type Value struct {
-	ID    string  `json:"id,omitempty"`
-	Value float64 `json:"value,omitempty"`
+	ID    string          `json:"id,omitempty"`
+	Value decimal.Decimal `json:"value,omitempty"`
 }
 
 // Volume represents the trading volume for a given category (e.g. collection or a marketplace).
 type Volume struct {
-	Total float64    `json:"total" gorm:"column:total"`
-	Date  *time.Time `json:"date,omitempty" gorm:"column:date"`
+	Total decimal.Decimal `json:"total" gorm:"column:total"`
+	Date  *time.Time      `json:"date,omitempty" gorm:"column:date"`
 }
 
 // MarketCap represents the total market cap of a given entity (collection or a marketplace).
 type MarketCap struct {
-	Total float64    `json:"total" gorm:"column:total"`
-	Date  *time.Time `json:"date,omitempty" gorm:"column:date"`
+	Total decimal.Decimal `json:"total" gorm:"column:total"`
+	Date  *time.Time      `json:"date,omitempty" gorm:"column:date"`
 }
 
 // Sale represents the number of sales for a given category (e.g. collection or a marketplace).
@@ -32,15 +34,15 @@ type Sale struct {
 // `Start` and `End` values denote the time span over which the
 // minimum trading price is calculated.
 type Floor struct {
-	Floor float64 `json:"floor" gorm:"column:floor"`
-	Start string  `json:"start" gorm:"column:start_date"`
-	End   string  `json:"end" gorm:"column:end_date"`
+	Floor decimal.Decimal `json:"floor" gorm:"column:floor"`
+	Start string          `json:"start" gorm:"column:start_date"`
+	End   string          `json:"end" gorm:"column:end_date"`
 }
 
 // Average represents the average price of an NFT in a collection.
 type Average struct {
-	Average float64    `json:"average" gorm:"column:average"`
-	Date    *time.Time `json:"date,omitempty" gorm:"column:date"`
+	Average decimal.Decimal `json:"average" gorm:"column:average"`
+	Date    *time.Time      `json:"date,omitempty" gorm:"column:date"`
 }
 
 // Users represents the number of unique users on a marketplace.
@@ -53,8 +55,8 @@ type Users struct {
 // NOTE: This is the only data type that uses the actual time instead
 // of the date.
 type Price struct {
-	Price float64    `json:"price" gorm:"column:trade_price"`
-	Time  *time.Time `json:"emitted_at,omitempty" gorm:"column:emitted_at"`
+	Price decimal.Decimal `json:"price" gorm:"column:trade_price"`
+	Time  *time.Time      `json:"emitted_at,omitempty" gorm:"column:emitted_at"`
 }
 
 // Count represents the total number of NFTs in a collection.

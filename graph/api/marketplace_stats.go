@@ -21,7 +21,7 @@ func (s *Server) expandMarketplaceStats(query *query.Marketplace, marketplace *a
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not get marketplace volume: %w", err))
 		}
 
-		marketplace.Volume = volume
+		marketplace.Volume, _ = volume.Float64()
 	}
 
 	// Get market cap from the aggregation API.
@@ -31,7 +31,7 @@ func (s *Server) expandMarketplaceStats(query *query.Marketplace, marketplace *a
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not get marketplace market cap: %w", err))
 		}
 
-		marketplace.MarketCap = cap
+		marketplace.MarketCap, _ = cap.Float64()
 	}
 
 	// Get sale count from the aggregation API.
@@ -41,7 +41,7 @@ func (s *Server) expandMarketplaceStats(query *query.Marketplace, marketplace *a
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not get marketplace sales: %w", err))
 		}
 
-		marketplace.Sales = uint64(sales)
+		marketplace.Sales = sales.BigInt().Uint64()
 	}
 
 	// Get user count from the aggregation API.
@@ -51,7 +51,7 @@ func (s *Server) expandMarketplaceStats(query *query.Marketplace, marketplace *a
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not get marketplace users: %w", err))
 		}
 
-		marketplace.Users = uint64(users)
+		marketplace.Users = users.BigInt().Uint64()
 	}
 
 	return multiErr

@@ -4,12 +4,14 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/shopspring/decimal"
+
 	"github.com/NFT-com/analytics/aggregate/models/datapoint"
 	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
 // NFTPrice returns the current NFT price for an NFT.
-func (s *Stats) NFTPrice(nft identifier.NFT) (float64, error) {
+func (s *Stats) NFTPrice(nft identifier.NFT) (decimal.Decimal, error) {
 
 	query := s.db.
 		Table("sales").
@@ -23,7 +25,7 @@ func (s *Stats) NFTPrice(nft identifier.NFT) (float64, error) {
 	var price datapoint.Price
 	err := query.Take(&price).Error
 	if err != nil {
-		return 0, fmt.Errorf("could not retrieve price: %w", err)
+		return decimal.NewFromInt(0), fmt.Errorf("could not retrieve price: %w", err)
 	}
 
 	return price.Price, nil
@@ -31,7 +33,7 @@ func (s *Stats) NFTPrice(nft identifier.NFT) (float64, error) {
 
 // NFTBatchPrice returns the list of prices for the specified NFTs.
 // Prices are mapped to the NFT identifier, with the collection contract address being lowercased.
-func (s *Stats) NFTBatchPrices(nfts []identifier.NFT) (map[identifier.NFT]float64, error) {
+func (s *Stats) NFTBatchPrices(nfts []identifier.NFT) (map[identifier.NFT]decimal.Decimal, error) {
 
 	if len(nfts) == 0 {
 		return nil, errors.New("id list must be non-empty")
@@ -65,7 +67,7 @@ func (s *Stats) NFTBatchPrices(nfts []identifier.NFT) (map[identifier.NFT]float6
 	}
 
 	// Transform the list of prices into a map, mapping the NFT identifier to the price point.
-	priceMap := make(map[identifier.NFT]float64, len(nfts))
+	priceMap := make(map[identifier.NFT]decimal.Decimal, len(nfts))
 	for _, price := range prices {
 
 		// Create the NFT identifier.

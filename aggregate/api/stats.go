@@ -3,6 +3,8 @@ package api
 import (
 	"time"
 
+	"github.com/shopspring/decimal"
+
 	"github.com/NFT-com/analytics/aggregate/models/datapoint"
 	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
@@ -10,11 +12,11 @@ import (
 type Stats interface {
 
 	// Collection statistics - current.
-	CollectionVolume(address identifier.Address) (float64, error)
-	CollectionMarketCap(address identifier.Address) (float64, error)
+	CollectionVolume(address identifier.Address) (decimal.Decimal, error)
+	CollectionMarketCap(address identifier.Address) (decimal.Decimal, error)
 	CollectionSales(address identifier.Address) (uint64, error)
-	CollectionBatchVolumes(addresses []identifier.Address) (map[identifier.Address]float64, error)
-	CollectionBatchMarketCaps(addresses []identifier.Address) (map[identifier.Address]float64, error)
+	CollectionBatchVolumes(addresses []identifier.Address) (map[identifier.Address]decimal.Decimal, error)
+	CollectionBatchMarketCaps(addresses []identifier.Address) (map[identifier.Address]decimal.Decimal, error)
 
 	// Collection statistics - history.
 	CollectionVolumeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error)
@@ -25,8 +27,8 @@ type Stats interface {
 	CollectionSizeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Count, error)
 
 	// Marketplace statistics - current.
-	MarketplaceVolume(addresses []identifier.Address) (float64, error)
-	MarketplaceMarketCap(addresses []identifier.Address) (float64, error)
+	MarketplaceVolume(addresses []identifier.Address) (decimal.Decimal, error)
+	MarketplaceMarketCap(addresses []identifier.Address) (decimal.Decimal, error)
 	MarketplaceSales(addresses []identifier.Address) (uint64, error)
 	MarketplaceUserCount(addresses []identifier.Address) (uint64, error)
 
@@ -37,8 +39,8 @@ type Stats interface {
 	MarketplaceUserCountHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Users, error)
 
 	// NFT statistics - current.
-	NFTPrice(address identifier.NFT) (float64, error)
-	NFTBatchPrices(addresses []identifier.NFT) (map[identifier.NFT]float64, error)
+	NFTPrice(address identifier.NFT) (decimal.Decimal, error)
+	NFTBatchPrices(addresses []identifier.NFT) (map[identifier.NFT]decimal.Decimal, error)
 
 	// NFT statistics - history.
 	NFTPriceHistory(address identifier.NFT, from time.Time, to time.Time) ([]datapoint.Price, error)
