@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/shopspring/decimal"
 
 	"github.com/NFT-com/analytics/aggregate/models/datapoint"
 )
@@ -27,7 +28,7 @@ func (a *API) CollectionSales(ctx echo.Context) error {
 
 	response := datapoint.Value{
 		ID:    id,
-		Value: float64(sales),
+		Value: decimal.NewFromInt(int64(sales)),
 	}
 
 	return ctx.JSON(http.StatusOK, response)
@@ -52,7 +53,7 @@ func (a *API) MarketplaceSales(ctx echo.Context) error {
 
 	response := datapoint.Value{
 		ID:    id,
-		Value: float64(sales),
+		Value: decimal.NewFromInt(int64(sales)),
 	}
 
 	return ctx.JSON(http.StatusOK, response)

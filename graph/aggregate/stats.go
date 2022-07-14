@@ -2,10 +2,12 @@ package aggregate
 
 import (
 	"fmt"
+
+	"github.com/shopspring/decimal"
 )
 
 // Prices retrieves the prices for the specified NFTs.
-func (c *Client) Prices(ids []string) (map[string]float64, error) {
+func (c *Client) Prices(ids []string) (map[string]decimal.Decimal, error) {
 
 	c.log.Debug().Strs("ids", ids).Msg("requesting NFT prices")
 
@@ -14,7 +16,7 @@ func (c *Client) Prices(ids []string) (map[string]float64, error) {
 }
 
 // AveragePrice retrieves the average price for the specified NFT.
-func (c *Client) AveragePrice(id string) (float64, error) {
+func (c *Client) AveragePrice(id string) (decimal.Decimal, error) {
 
 	c.log.Debug().Str("id", id).Msg("requesting NFT average price")
 
@@ -24,7 +26,7 @@ func (c *Client) AveragePrice(id string) (float64, error) {
 }
 
 // CollectionVolumes retrieves the volumes for the specified collections.
-func (c *Client) CollectionVolumes(ids []string) (map[string]float64, error) {
+func (c *Client) CollectionVolumes(ids []string) (map[string]decimal.Decimal, error) {
 
 	c.log.Debug().Strs("ids", ids).Msg("requesting collection volumes")
 
@@ -33,7 +35,7 @@ func (c *Client) CollectionVolumes(ids []string) (map[string]float64, error) {
 }
 
 // CollectionMarketCaps retrieves the market caps for the specified collections.
-func (c *Client) CollectionMarketCaps(ids []string) (map[string]float64, error) {
+func (c *Client) CollectionMarketCaps(ids []string) (map[string]decimal.Decimal, error) {
 
 	c.log.Debug().Strs("ids", ids).Msg("requesting collection market caps")
 
@@ -42,7 +44,7 @@ func (c *Client) CollectionMarketCaps(ids []string) (map[string]float64, error) 
 }
 
 // CollectionSales retrieves the sale count for the specified collection.
-func (c *Client) CollectionSales(id string) (float64, error) {
+func (c *Client) CollectionSales(id string) (decimal.Decimal, error) {
 
 	c.log.Debug().Str("id", id).Msg("requesting collection sale count")
 
@@ -52,7 +54,7 @@ func (c *Client) CollectionSales(id string) (float64, error) {
 }
 
 // MarketplaceVolume retrieves the volume for the specified marketplace.
-func (c *Client) MarketplaceVolume(id string) (float64, error) {
+func (c *Client) MarketplaceVolume(id string) (decimal.Decimal, error) {
 
 	c.log.Debug().Str("id", id).Msg("requesting marketplace volume")
 
@@ -62,7 +64,7 @@ func (c *Client) MarketplaceVolume(id string) (float64, error) {
 }
 
 // MarketplaceMarketCap retrieves the market cap for the specified marketplace.
-func (c *Client) MarketplaceMarketCap(id string) (float64, error) {
+func (c *Client) MarketplaceMarketCap(id string) (decimal.Decimal, error) {
 
 	c.log.Debug().Str("id", id).Msg("requesting marketplace market cap")
 
@@ -72,7 +74,7 @@ func (c *Client) MarketplaceMarketCap(id string) (float64, error) {
 }
 
 // MarketplaceSales retrieves the sale count for the specified marketplace.
-func (c *Client) MarketplaceSales(id string) (float64, error) {
+func (c *Client) MarketplaceSales(id string) (decimal.Decimal, error) {
 
 	c.log.Debug().Str("id", id).Msg("requesting marketplace sale count")
 
@@ -82,7 +84,7 @@ func (c *Client) MarketplaceSales(id string) (float64, error) {
 }
 
 // MarketplaceUsers retrieves the user count for the specified marketplace.
-func (c *Client) MarketplaceUsers(id string) (float64, error) {
+func (c *Client) MarketplaceUsers(id string) (decimal.Decimal, error) {
 
 	c.log.Debug().Str("id", id).Msg("requesting marketplace user count")
 

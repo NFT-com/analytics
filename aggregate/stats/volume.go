@@ -4,12 +4,14 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/shopspring/decimal"
+
 	"github.com/NFT-com/analytics/aggregate/models/datapoint"
 	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
 // CollectionVolume returns the total value of all trades for this collection.
-func (s *Stats) CollectionVolume(address identifier.Address) (float64, error) {
+func (s *Stats) CollectionVolume(address identifier.Address) (decimal.Decimal, error) {
 
 	query := s.db.
 		Table("sales").
@@ -20,7 +22,7 @@ func (s *Stats) CollectionVolume(address identifier.Address) (float64, error) {
 	var volume datapoint.Volume
 	err := query.Take(&volume).Error
 	if err != nil {
-		return 0, fmt.Errorf("could not retrieve collection volume: %w", err)
+		return decimal.NewFromInt(0), fmt.Errorf("could not retrieve collection volume: %w", err)
 	}
 
 	return volume.Total, nil
@@ -28,7 +30,7 @@ func (s *Stats) CollectionVolume(address identifier.Address) (float64, error) {
 
 // CollectionBatchVolumes returns the list of volumes for each individual collection.
 // Volumes are mapped to the lowercased collection contract address.
-func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[identifier.Address]float64, error) {
+func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[identifier.Address]decimal.Decimal, error) {
 
 	if len(addresses) == 0 {
 		return nil, errors.New("id list must be non-empty")
@@ -49,7 +51,7 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 	}
 
 	// Map the volumes to the collection identifier.
-	volumeMap := make(map[identifier.Address]float64, len(volumes))
+	volumeMap := make(map[identifier.Address]decimal.Decimal, len(volumes))
 	for _, volume := range volumes {
 
 		collection := identifier.Address{
@@ -64,7 +66,7 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 }
 
 // MarketplaceVolume returns the total value of all trades for this marketplace.
-func (s *Stats) MarketplaceVolume(addresses []identifier.Address) (float64, error) {
+func (s *Stats) MarketplaceVolume(addresses []identifier.Address) (decimal.Decimal, error) {
 
 	query := s.db.
 		Table("sales").
@@ -76,7 +78,7 @@ func (s *Stats) MarketplaceVolume(addresses []identifier.Address) (float64, erro
 	var volume datapoint.Volume
 	err := query.Take(&volume).Error
 	if err != nil {
-		return 0, fmt.Errorf("could not retrieve marketplace volume: %w", err)
+		return decimal.NewFromInt(0), fmt.Errorf("could not retrieve marketplace volume: %w", err)
 	}
 
 	return volume.Total, nil
