@@ -142,6 +142,8 @@ func run() error {
 	server.GET("/collection/:id/volume", api.CollectionVolume)
 	server.GET("/collection/:id/market_cap", api.CollectionMarketCap)
 	server.GET("/collection/:id/sales", api.CollectionSales)
+	server.GET("/collection/:id/prices", api.CollectionPrices)
+	server.GET("/collection/:id/average_prices", api.CollectionAveragePrices)
 	server.POST("/collection/batch/volume", api.CollectionBatchVolume)
 	server.POST("/collection/batch/market_cap", api.CollectionBatchMarketCap)
 
@@ -168,8 +170,6 @@ func run() error {
 	// NFT stats - current.
 	server.GET("/nft/:id/price", api.NFTPrice)
 	server.GET("/nft/:id/average", api.NFTAveragePrice)
-	server.POST("/nft/batch/price", api.NFTBatchPrice)
-	server.POST("/nft/batch/average", api.NFTBatchAveragePrice)
 
 	// NFT stats - historic.
 	server.GET("/nft/:id/price/history", api.NFTPriceHistory)

@@ -2,24 +2,29 @@ package aggregate
 
 import (
 	"fmt"
+
+	"github.com/NFT-com/analytics/aggregate/models/api"
+	"github.com/NFT-com/analytics/graph/aggregate/http"
 )
 
-// Prices retrieves the prices for the specified NFTs.
-func (c *Client) Prices(ids []string) (map[string]float64, error) {
+// Prices retrieves the price for the specified NFT.
+func (c *Client) Price(id string) (float64, error) {
 
-	c.log.Debug().Strs("ids", ids).Msg("requesting NFT prices")
+	c.log.Debug().Str("id", id).Msg("requesting NFT price")
 
-	address := createAddress(c.apiURL, nftBatchPriceEndpoint)
-	return c.executeBatchRequest(ids, address)
+	path := fmt.Sprintf(fmtNFTPriceEndpoint, id)
+	address := createAddress(c.apiURL, path)
+	return c.executeRequest(id, address)
 }
 
 // AveragePrice retrieves the average price for the specified NFT.
-func (c *Client) AveragePrices(ids []string) (map[string]float64, error) {
+func (c *Client) AveragePrice(id string) (float64, error) {
 
-	c.log.Debug().Strs("id", ids).Msg("requesting NFT average prices")
+	c.log.Debug().Str("id", id).Msg("requesting NFT average price")
 
-	address := createAddress(c.apiURL, nftBatchAveragePriceEndpoint)
-	return c.executeBatchRequest(ids, address)
+	path := fmt.Sprintf(fmtNFTAveragePriceEndpoint, id)
+	address := createAddress(c.apiURL, path)
+	return c.executeRequest(id, address)
 }
 
 // CollectionVolumes retrieves the volumes for the specified collections.
@@ -48,6 +53,54 @@ func (c *Client) CollectionSales(id string) (float64, error) {
 	path := fmt.Sprintf(fmtCollectionSalesEndpoint, id)
 	address := createAddress(c.apiURL, path)
 	return c.executeRequest(id, address)
+}
+
+// CollectionPrices retrieves the prices for NFTs in the specified collection.
+func (c *Client) CollectionPrices(id string) (map[string]float64, error) {
+
+	c.log.Debug().Str("id", id).Msg("requesting prices for a collection")
+
+	path := fmt.Sprintf(fmtCollectionPricesEndpoint, id)
+	address := createAddress(c.apiURL, path)
+
+	// Execute the API request.
+	var res api.BatchResponse
+	err := http.GET(address, &res)
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve prices for a collection: %w", err)
+	}
+
+	// Create the output.
+	out := make(map[string]float64)
+	for _, price := range res.Data {
+		out[price.ID] = price.Value
+	}
+
+	return out, nil
+}
+
+// CollectionAveragePrices retrieves the prices for NFTs in the specified collection.
+func (c *Client) CollectionAveragePrices(id string) (map[string]float64, error) {
+
+	c.log.Debug().Str("id", id).Msg("requesting average prices for a collection")
+
+	path := fmt.Sprintf(fmtCollectionAveragePricesEndpoint, id)
+	address := createAddress(c.apiURL, path)
+
+	// Execute the API request.
+	var res api.BatchResponse
+	err := http.GET(address, &res)
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve average prices for a collection: %w", err)
+	}
+
+	// Create the output.
+	out := make(map[string]float64)
+	for _, price := range res.Data {
+		out[price.ID] = price.Value
+	}
+
+	return out, nil
 }
 
 // MarketplaceVolume retrieves the volume for the specified marketplace.

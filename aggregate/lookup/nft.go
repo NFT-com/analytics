@@ -45,24 +45,23 @@ func (l *Lookup) NFT(id string) (identifier.NFT, error) {
 	return nftAddress, nil
 }
 
-// NFTs returns a set of NFT identifiers, mapped by their IDs.
-func (l *Lookup) NFTs(ids []string) (map[string]identifier.NFT, error) {
+// CollectionNFTs returns the identifiers of NFTs in the collection.
+func (l *Lookup) CollectionNFTs(id string) (map[string]identifier.NFT, error) {
 
 	query := l.db.
 		Table("nfts n, collections c, networks").
 		Select("n.id, networks.chain_id, c.contract_address, n.token_id").
 		Where("c.id = n.collection_id").
 		Where("networks.id = c.network_id").
-		Where("n.id IN ?", ids)
+		Where("c.id = ?", id)
 
 	var nfts []nftIdentifier
 	err := query.Find(&nfts).Error
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve NFT addresses: %w", err)
+		return nil, fmt.Errorf("could not lookup NFT identifiers: %w", err)
 	}
 
 	addresses := make(map[string]identifier.NFT, len(nfts))
-
 	for _, nft := range nfts {
 
 		collection := identifier.Address{
