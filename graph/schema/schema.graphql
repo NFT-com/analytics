@@ -170,9 +170,26 @@ type Collection {
     marketplaces: [Marketplace!]
 
     """
-    List of NFTs that are part of this collection.
+    List of NFTs in this collection.
     """
-    nfts: [NFT!]
+    nfts(first: Int, after: String): NFTConnection!
+}
+
+# FIXME: Add documentation comments.
+
+type NFTConnection {
+    edges: [NFTEdge!]
+    pageInfo: PageInfo!
+}
+
+type NFTEdge {
+    node: NFT!
+    cursor: String!
+}
+
+type PageInfo {
+    hasNextPage: Boolean!
+    startCursor: String!
 }
 
 """

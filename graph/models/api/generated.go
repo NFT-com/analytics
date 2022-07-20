@@ -16,12 +16,27 @@ type CollectionOrder struct {
 	Direction OrderDirection `json:"direction"`
 }
 
+type NFTConnection struct {
+	Edges    []*NFTEdge `json:"edges"`
+	PageInfo *PageInfo  `json:"pageInfo"`
+}
+
+type NFTEdge struct {
+	Node   *NFT   `json:"node"`
+	Cursor string `json:"cursor"`
+}
+
 // Ordering options for NFTs.
 type NFTOrder struct {
 	// Field by which NFTs should be sorted by.
 	Field NFTOrderField `json:"field"`
 	// Direction in which NFTs should be sorted.
 	Direction OrderDirection `json:"direction"`
+}
+
+type PageInfo struct {
+	HasNextPage bool   `json:"hasNextPage"`
+	StartCursor string `json:"startCursor"`
 }
 
 // Properties by which collections can be ordered.

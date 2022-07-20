@@ -92,16 +92,16 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 	collection.NFTs = nfts
 
 	s.log.Debug().
-		Bool("rarity", query.NFT.Rarity).
-		Bool("traits", query.NFT.Traits).
-		Bool("trait_rarity", query.NFT.TraitRarity).
-		Bool("owners", query.NFT.Owners).
-		Bool("price", query.NFT.Price).
-		Bool("average_price", query.NFT.AveragePrice).
+		Bool("rarity", query.NFT.Fields.Rarity).
+		Bool("traits", query.NFT.Fields.Traits).
+		Bool("trait_rarity", query.NFT.Fields.TraitRarity).
+		Bool("owners", query.NFT.Fields.Owners).
+		Bool("price", query.NFT.Fields.Price).
+		Bool("average_price", query.NFT.Fields.AveragePrice).
 		Msg("NFT information requested")
 
 	// Retrieve owners if needed.
-	if query.NFT.Owners {
+	if query.NFT.Fields.Owners {
 		owners, err := s.storage.CollectionOwners(collection.ID)
 		if err != nil {
 			return fmt.Errorf("could not retrieve owners for the collection: %w", err)
@@ -114,18 +114,18 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 	}
 
 	// If NFT prices are required, retrieve them now.
-	if query.NFT.Price || query.NFT.AveragePrice {
+	if query.NFT.Fields.Price || query.NFT.Fields.AveragePrice {
 
 		// Retrieve stats, but continue even if some could not be retrieved (e.g. API was unavailable).
 		var prices map[string]float64
-		if query.NFT.Price {
+		if query.NFT.Fields.Price {
 			prices, err = s.aggregationAPI.CollectionPrices(collection.ID)
 			if err != nil {
 				s.log.Error().Err(err).Msg("could not retrieve NFT prices")
 			}
 		}
 		var averages map[string]float64
-		if query.NFT.AveragePrice {
+		if query.NFT.Fields.AveragePrice {
 			averages, err = s.aggregationAPI.CollectionAveragePrices(collection.ID)
 			if err != nil {
 				s.log.Error().Err(err).Msg("could not retrieve NFT average prices")
@@ -140,7 +140,7 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 	}
 
 	// If we do not need traits nor rarity, we're done.
-	if !query.NFT.Traits && !query.NFT.NeedRarity() {
+	if !query.NFT.Fields.Traits && !query.NFT.Fields.NeedRarity() {
 		return nil
 	}
 
@@ -156,7 +156,7 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 	}
 
 	// If don't need rarity information, we're done.
-	if !query.NFT.NeedRarity() {
+	if !query.NFT.Fields.NeedRarity() {
 		return nil
 	}
 
@@ -174,7 +174,7 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 		nft.Rarity = rarity
 		// Set this only if individual trait rarity is requested, since it includes
 		// traits not necessarily found in this NFT.
-		if query.NFT.TraitRarity {
+		if query.NFT.Fields.TraitRarity {
 			nft.Traits = traitRarity
 		}
 	}

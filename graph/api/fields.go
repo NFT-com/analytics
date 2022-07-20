@@ -10,6 +10,10 @@ const (
 	fieldPrice        = "trading_price"
 	fieldAveragePrice = "average_price"
 
+	// Collection NFT arguments.
+	argumentFirst = "first"
+	argumentAfter = "after"
+
 	// Collection and marketplace fields.
 	fieldNFTs      = "nfts"
 	fieldVolume    = "volume"

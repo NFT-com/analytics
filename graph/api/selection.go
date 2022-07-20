@@ -38,6 +38,10 @@ func parseCollectionQuery(ctx context.Context) *query.Collection {
 			Price:        gql.FieldPath(fieldNFTs, fieldPrice),
 			AveragePrice: gql.FieldPath(fieldNFTs, fieldAveragePrice),
 		},
+		NFTArguments: query.CollectionNFTArguments{
+			First: argumentFirst,
+			After: argumentAfter,
+		},
 	}
 
 	return query.ParseCollectionQuery(paths, ctx)

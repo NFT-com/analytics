@@ -10,7 +10,15 @@ import (
 // Selection represents the selection set for a query. Top-level fields are
 // shown by name, while nested fields are shown as `parent.field`.
 type Selection struct {
-	fields map[string]struct{}
+	fields map[string]Arguments
+}
+
+// Arguments represents the arguments given for a specific GraphQL field path.
+type Arguments map[string]interface{}
+
+type queryField struct {
+	path      string
+	arguments Arguments
 }
 
 // GetSelection returns the selection set from a query. The provided context
@@ -25,9 +33,9 @@ func GetSelection(ctx context.Context) Selection {
 	fields := getNestedSelection(op, collected, "")
 
 	// Transform list of selected fields into a map for easier lookup.
-	fieldMap := make(map[string]struct{})
+	fieldMap := make(map[string]Arguments)
 	for _, field := range fields {
-		fieldMap[field] = struct{}{}
+		fieldMap[field.path] = field.arguments
 	}
 
 	s := Selection{
@@ -43,12 +51,19 @@ func (s *Selection) Has(name string) bool {
 	return ok
 }
 
-// getNestedSelection returns the selected fields, prefixed with their parent path.
-func getNestedSelection(ctx *graphql.OperationContext, fields []graphql.CollectedField, prefix string) []string {
+// Args returns the arguments for the specified fields.
+func (s *Selection) Args(name string) Arguments {
+	return s.fields[name]
+}
 
-	var requested []string
+// getNestedSelection returns the selected fields, prefixed with their parent path.
+func getNestedSelection(ctx *graphql.OperationContext, fields []graphql.CollectedField, prefix string) []queryField {
+
+	var requested []queryField
 
 	for _, field := range fields {
+
+		// Get the formatted name for the field.
 		var name string
 		if prefix != "" {
 			name = FieldPath(prefix, field.Name)
@@ -56,7 +71,16 @@ func getNestedSelection(ctx *graphql.OperationContext, fields []graphql.Collecte
 			name = FieldPath(field.Name)
 		}
 
-		requested = append(requested, name)
+		// Get all arguments for the field.
+		m := make(map[string]interface{})
+		args := field.ArgumentMap(m)
+
+		qf := queryField{
+			path:      name,
+			arguments: args,
+		}
+
+		requested = append(requested, qf)
 
 		collected := graphql.CollectFields(ctx, field.Selections, nil)
 		requested = append(requested, getNestedSelection(ctx, collected, name)...)
