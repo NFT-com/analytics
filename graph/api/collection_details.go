@@ -78,11 +78,43 @@ func (s *Server) expandCollectionStats(query *query.Collection, collection *api.
 // NOTE: This function modifies the provided collection in-place.
 func (s *Server) expandCollectionNFTData(query *query.Collection, collection *api.Collection) error {
 
+	var afterID string
+	if query.NFT.Arguments.After != "" {
+		decoded, err := decodeCursor(query.NFT.Arguments.After)
+		if err != nil {
+			return fmt.Errorf("could not decode pagination cursor: %w", err)
+		}
+		afterID = decoded
+	}
+
 	// Retrieve the list of NFTs.
-	nfts, err := s.getCollectionNFTs(collection.ID)
+	nfts, lastPage, err := s.getCollectionNFTs(collection.ID, query.NFT.Arguments.First, afterID)
 	if err != nil {
 		return fmt.Errorf("could not get NFTs in the collection: %w", err)
 	}
+
+	// Create edge types.
+	edges := make([]api.NFTEdge, 0, len(nfts))
+	for _, nft := range nfts {
+		nft := nft
+
+		edge := api.NFTEdge{
+			Node:   nft,
+			Cursor: createCursor(nft.ID),
+		}
+
+		edges = append(edges, edge)
+	}
+
+	// FIXME: Include startCursor
+	pageInfo := api.PageInfo{
+		HasNextPage: lastPage,
+		StartCursor: "",
+	}
+
+	// FIXME: Actually use this stuff.
+	_ = edges
+	_ = pageInfo
 
 	s.log.Debug().
 		Str("id", collection.ID).

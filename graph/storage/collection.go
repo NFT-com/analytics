@@ -83,19 +83,41 @@ func (s *Storage) Collections(networkID *string, orderBy api.CollectionOrder) ([
 }
 
 // CollectionNFTs retrieves the list of NFTs in a specific collection.
-func (s *Storage) CollectionNFTs(collectionID string) ([]*api.NFT, error) {
+func (s *Storage) CollectionNFTs(collectionID string, limit uint, afterID string) ([]*api.NFT, bool, error) {
 
-	query := api.NFT{
-		Collection: collectionID,
+	query := s.db.
+		Table("nfts").
+		Where("collection_id = ?", collectionID).
+		Order("id ASC")
+
+	// Request one NFT more than needed, so we know if there are more NFTs after this group.
+	if limit > 0 {
+		query = query.Limit(int(limit) + 1)
+	}
+
+	if afterID != "" {
+		query = query.Where("id > ?", afterID)
 	}
 
 	var nfts []*api.NFT
-	err := s.db.Where(&query).Find(&nfts).Error
+	err := query.Find(&nfts).Error
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve nfts: %w", err)
+		return nil, false, fmt.Errorf("could not retrieve nfts: %w", err)
 	}
 
-	return nfts, nil
+	// If we requested all tokens, just return everything.
+	if limit == 0 {
+		return nfts, false, nil
+	}
+
+	// If the number of returned items is smaller or equal to `limit``,
+	// there is no next page of results.
+	lastPage := uint(len(nfts)) <= limit
+
+	// Trim the list to correct size.
+	trimmed := nfts[:limit]
+
+	return trimmed, lastPage, nil
 
 }
 

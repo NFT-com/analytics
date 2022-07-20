@@ -6,6 +6,7 @@ package api
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/NFT-com/analytics/graph/generated"
 	"github.com/NFT-com/analytics/graph/models/api"
@@ -21,6 +22,10 @@ func (r *collectionServer) Marketplaces(ctx context.Context, obj *api.Collection
 	// Marketplace handles expanding the list of Marketplaces within a Collection object.
 
 	return r.Server.collectionsListings(ctx, obj.ID)
+}
+
+func (r *collectionServer) Nfts(ctx context.Context, obj *api.Collection, first *int, after *string) (*api.NFTConnection, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *marketplaceServer) Networks(ctx context.Context, obj *api.Marketplace) ([]*api.Network, error) {

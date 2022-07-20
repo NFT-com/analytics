@@ -16,7 +16,7 @@ type Storage interface {
 
 	Collection(id string) (*api.Collection, error)
 	CollectionByContract(networkID string, contract string) (*api.Collection, error)
-	CollectionNFTs(collectionID string) ([]*api.NFT, error)
+	CollectionNFTs(collectionID string, limit uint, afterID string) ([]*api.NFT, bool, error)
 	Collections(networkID *string, orderBy api.CollectionOrder) ([]*api.Collection, error)
 	CollectionsByNetwork(networkID string) ([]*api.Collection, error)
 	CollectionTraits(collectionID string) ([]api.Trait, error)

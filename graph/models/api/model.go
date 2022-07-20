@@ -70,3 +70,20 @@ type Trait struct {
 	// TODO: Add trait type handling when implemented.
 	// https://github.com/NFT-com/analytics/issues/27
 }
+
+// FIXME: Add documentation.
+
+type NFTConnection struct {
+	Edges    []NFTEdge `json:"edges"`
+	PageInfo *PageInfo `json:"pageInfo"`
+}
+
+type NFTEdge struct {
+	Node   *NFT   `json:"node"`
+	Cursor string `json:"cursor"`
+}
+
+type PageInfo struct {
+	HasNextPage bool   `json:"hasNextPage"`
+	StartCursor string `json:"startCursor"`
+}
