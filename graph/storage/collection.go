@@ -82,7 +82,8 @@ func (s *Storage) Collections(networkID *string, orderBy api.CollectionOrder) ([
 	return collections, nil
 }
 
-// CollectionNFTs retrieves the list of NFTs in a specific collection.
+// CollectionNFTs retrieves the list of NFTs in a specific collection, as well as a boolean indicating if there
+// are more results or not.
 func (s *Storage) CollectionNFTs(collectionID string, limit uint, afterID string) ([]*api.NFT, bool, error) {
 
 	query := s.db.
@@ -105,19 +106,22 @@ func (s *Storage) CollectionNFTs(collectionID string, limit uint, afterID string
 		return nil, false, fmt.Errorf("could not retrieve nfts: %w", err)
 	}
 
-	// If we requested all tokens, just return everything.
+	// If we requested all tokens, just return all NFTs and notify there are
+	// no more left.
 	if limit == 0 {
 		return nfts, false, nil
 	}
 
-	// If the number of returned items is smaller or equal to `limit``,
-	// there is no next page of results.
-	lastPage := uint(len(nfts)) <= limit
+	// If the number of returned items is larger than `limit``,
+	// there are more NFTs.
+	more := uint(len(nfts)) > limit
 
-	// Trim the list to correct size.
-	trimmed := nfts[:limit]
+	// Trim the list to correct size if we have more records.
+	if uint(len(nfts)) > limit {
+		nfts = nfts[:limit]
+	}
 
-	return trimmed, lastPage, nil
+	return nfts, more, nil
 
 }
 

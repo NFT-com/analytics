@@ -88,10 +88,17 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 	}
 
 	// Retrieve the list of NFTs.
-	nfts, lastPage, err := s.getCollectionNFTs(collection.ID, query.NFT.Arguments.First, afterID)
+	nfts, haveMore, err := s.getCollectionNFTs(collection.ID, query.NFT.Arguments.First, afterID)
 	if err != nil {
 		return fmt.Errorf("could not get NFTs in the collection: %w", err)
 	}
+
+	s.log.Debug().
+		Str("id", collection.ID).
+		Int("count", len(nfts)).
+		Str("after", afterID).
+		Uint("first", query.NFT.Arguments.First).
+		Msg("retrieved list of nfts for collection")
 
 	// Create edge types.
 	edges := make([]api.NFTEdge, 0, len(nfts))
@@ -108,20 +115,16 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 
 	// FIXME: Include startCursor
 	pageInfo := api.PageInfo{
-		HasNextPage: lastPage,
+		HasNextPage: haveMore,
 		StartCursor: "",
 	}
 
-	// FIXME: Actually use this stuff.
-	_ = edges
-	_ = pageInfo
+	nftConn := api.NFTConnection{
+		Edges:    edges,
+		PageInfo: pageInfo,
+	}
 
-	s.log.Debug().
-		Str("id", collection.ID).
-		Int("collection_size", len(nfts)).
-		Msg("retrieved list of nfts for collection")
-
-	collection.NFTs = nfts
+	collection.NFTs = nftConn
 
 	s.log.Debug().
 		Bool("rarity", query.NFT.Fields.Rarity).
@@ -140,7 +143,8 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 		}
 
 		// Set the owners for each of the NFTs.
-		for _, nft := range collection.NFTs {
+		for _, edge := range collection.NFTs.Edges {
+			nft := edge.Node
 			nft.Owners = owners[nft.ID]
 		}
 	}
@@ -164,8 +168,8 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 			}
 		}
 
-		// Set the appropriate price fields.
-		for _, nft := range collection.NFTs {
+		for _, edge := range collection.NFTs.Edges {
+			nft := edge.Node
 			nft.TradingPrice = prices[nft.ID]
 			nft.AveragePrice = averages[nft.ID]
 		}
@@ -183,7 +187,8 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 	}
 
 	// Link traits to corresponding NFT.
-	for _, nft := range collection.NFTs {
+	for _, edge := range collection.NFTs.Edges {
+		nft := edge.Node
 		nft.Traits = traits[nft.ID]
 	}
 
@@ -196,11 +201,12 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 	stats := traits.CalculateStats()
 
 	// Total number of NFTs in a collection, in relation to which we're calculating frequency.
-	total := len(collection.NFTs)
+	total := len(collection.NFTs.Edges)
 
 	// Calculate trait rarity.
-	for _, nft := range collection.NFTs {
+	for _, edge := range collection.NFTs.Edges {
 
+		nft := edge.Node
 		rarity, traitRarity := stats.CalculateRarity(uint(total), nft.Traits)
 
 		nft.Rarity = rarity

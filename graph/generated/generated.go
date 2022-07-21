@@ -53,9 +53,9 @@ type ComplexityRoot struct {
 		ImageURL     func(childComplexity int) int
 		MarketCap    func(childComplexity int) int
 		Marketplaces func(childComplexity int) int
+		NFTs         func(childComplexity int, first *int, after *string) int
 		Name         func(childComplexity int) int
 		Network      func(childComplexity int) int
-		Nfts         func(childComplexity int, first *int, after *string) int
 		Sales        func(childComplexity int) int
 		Volume       func(childComplexity int) int
 		Website      func(childComplexity int) int
@@ -138,7 +138,6 @@ type ComplexityRoot struct {
 type CollectionResolver interface {
 	Network(ctx context.Context, obj *api.Collection) (*api.Network, error)
 	Marketplaces(ctx context.Context, obj *api.Collection) ([]*api.Marketplace, error)
-	Nfts(ctx context.Context, obj *api.Collection, first *int, after *string) (*api.NFTConnection, error)
 }
 type MarketplaceResolver interface {
 	Networks(ctx context.Context, obj *api.Marketplace) ([]*api.Network, error)
@@ -219,6 +218,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Collection.Marketplaces(childComplexity), true
 
+	case "Collection.nfts":
+		if e.complexity.Collection.NFTs == nil {
+			break
+		}
+
+		args, err := ec.field_Collection_nfts_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Collection.NFTs(childComplexity, args["first"].(*int), args["after"].(*string)), true
+
 	case "Collection.name":
 		if e.complexity.Collection.Name == nil {
 			break
@@ -232,18 +243,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Collection.Network(childComplexity), true
-
-	case "Collection.nfts":
-		if e.complexity.Collection.Nfts == nil {
-			break
-		}
-
-		args, err := ec.field_Collection_nfts_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Collection.Nfts(childComplexity, args["first"].(*int), args["after"].(*string)), true
 
 	case "Collection.sales":
 		if e.complexity.Collection.Sales == nil {
@@ -1807,8 +1806,8 @@ func (ec *executionContext) _Collection_nfts(ctx context.Context, field graphql.
 		Object:     "Collection",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
@@ -1821,7 +1820,7 @@ func (ec *executionContext) _Collection_nfts(ctx context.Context, field graphql.
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Collection().Nfts(rctx, obj, args["first"].(*int), args["after"].(*string))
+		return obj.NFTs, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1833,9 +1832,9 @@ func (ec *executionContext) _Collection_nfts(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*api.NFTConnection)
+	res := resTmp.(api.NFTConnection)
 	fc.Result = res
-	return ec.marshalNNFTConnection2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFTConnection(ctx, field.Selections, res)
+	return ec.marshalNNFTConnection2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFTConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Marketplace_id(ctx context.Context, field graphql.CollectedField, obj *api.Marketplace) (ret graphql.Marshaler) {
@@ -2649,9 +2648,9 @@ func (ec *executionContext) _NFTConnection_pageInfo(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*api.PageInfo)
+	res := resTmp.(api.PageInfo)
 	fc.Result = res
-	return ec.marshalNPageInfo2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐPageInfo(ctx, field.Selections, res)
+	return ec.marshalNPageInfo2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐPageInfo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _NFTEdge_node(ctx context.Context, field graphql.CollectedField, obj *api.NFTEdge) (ret graphql.Marshaler) {
@@ -4902,25 +4901,15 @@ func (ec *executionContext) _Collection(ctx context.Context, sel ast.SelectionSe
 
 			})
 		case "nfts":
-			field := field
-
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Collection_nfts(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
+				return ec._Collection_nfts(ctx, field, obj)
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			out.Values[i] = innerFunc(ctx)
 
-			})
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6265,16 +6254,6 @@ func (ec *executionContext) marshalNNFTConnection2githubᚗcomᚋNFTᚑcomᚋana
 	return ec._NFTConnection(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNNFTConnection2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFTConnection(ctx context.Context, sel ast.SelectionSet, v *api.NFTConnection) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._NFTConnection(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNNFTEdge2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFTEdge(ctx context.Context, sel ast.SelectionSet, v api.NFTEdge) graphql.Marshaler {
 	return ec._NFTEdge(ctx, sel, &v)
 }
@@ -6361,14 +6340,8 @@ func (ec *executionContext) marshalNOwner2githubᚗcomᚋNFTᚑcomᚋanalytics�
 	return ec._Owner(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNPageInfo2ᚖgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v *api.PageInfo) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._PageInfo(ctx, sel, v)
+func (ec *executionContext) marshalNPageInfo2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v api.PageInfo) graphql.Marshaler {
+	return ec._PageInfo(ctx, sel, &v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {

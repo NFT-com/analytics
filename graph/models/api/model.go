@@ -10,17 +10,18 @@ type Network struct {
 
 // Collection represents a group of NFTs that share the same smart contract.
 type Collection struct {
-	ID          string  `gorm:"column:id" json:"id"`
-	Name        string  `gorm:"column:name" json:"name"`
-	Description string  `gorm:"column:description" json:"description"`
-	Address     string  `gorm:"column:contract_address" json:"address"`
-	Website     string  `gorm:"column:website" json:"website"`
-	ImageURL    string  `gorm:"column:image_url" json:"image_url"`
-	NFTs        []*NFT  `gorm:"-" json:"nfts"`
-	NetworkID   string  `gorm:"column:network_id" json:"-"`
-	Volume      float64 `gorm:"-" json:"volume"`
-	MarketCap   float64 `gorm:"-" json:"market_cap"`
-	Sales       uint64  `gorm:"-" json:"sales"`
+	ID          string `gorm:"column:id" json:"id"`
+	Name        string `gorm:"column:name" json:"name"`
+	Description string `gorm:"column:description" json:"description"`
+	Address     string `gorm:"column:contract_address" json:"address"`
+	Website     string `gorm:"column:website" json:"website"`
+	ImageURL    string `gorm:"column:image_url" json:"image_url"`
+	// NFTs        []*NFT  `gorm:"-" json:"nfts"`
+	NetworkID string        `gorm:"column:network_id" json:"-"`
+	Volume    float64       `gorm:"-" json:"volume"`
+	MarketCap float64       `gorm:"-" json:"market_cap"`
+	Sales     uint64        `gorm:"-" json:"sales"`
+	NFTs      NFTConnection `gorm:"-" json:"nfts"`
 }
 
 // Marketplace represents a single NFT marketplace (e.g. Opensea, DefiKingdoms).
@@ -75,7 +76,7 @@ type Trait struct {
 
 type NFTConnection struct {
 	Edges    []NFTEdge `json:"edges"`
-	PageInfo *PageInfo `json:"pageInfo"`
+	PageInfo PageInfo  `json:"pageInfo"`
 }
 
 type NFTEdge struct {
