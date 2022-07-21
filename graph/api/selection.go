@@ -31,12 +31,12 @@ func parseCollectionQuery(ctx context.Context) *query.Collection {
 		Sales:     gql.FieldPath(fieldSales),
 		NFTs:      gql.FieldPath(fieldNFTs),
 		NFT: query.NFTFields{
-			Traits:       gql.FieldPath(fieldNFTs, fieldTraits),
-			TraitRarity:  gql.FieldPath(fieldNFTs, fieldTraits, fieldRarity),
-			Rarity:       gql.FieldPath(fieldNFTs, fieldRarity),
-			Owners:       gql.FieldPath(fieldNFTs, fieldOwners),
-			Price:        gql.FieldPath(fieldNFTs, fieldPrice),
-			AveragePrice: gql.FieldPath(fieldNFTs, fieldAveragePrice),
+			Traits:       gql.FieldPath(fieldNFTs, fieldEdges, fieldNode, fieldTraits),
+			TraitRarity:  gql.FieldPath(fieldNFTs, fieldEdges, fieldNode, fieldTraits, fieldRarity),
+			Rarity:       gql.FieldPath(fieldNFTs, fieldEdges, fieldNode, fieldRarity),
+			Owners:       gql.FieldPath(fieldNFTs, fieldEdges, fieldNode, fieldOwners),
+			Price:        gql.FieldPath(fieldNFTs, fieldEdges, fieldNode, fieldPrice),
+			AveragePrice: gql.FieldPath(fieldNFTs, fieldEdges, fieldNode, fieldAveragePrice),
 		},
 		NFTArguments: query.CollectionNFTArguments{
 			First: argumentFirst,

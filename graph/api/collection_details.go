@@ -144,8 +144,7 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 
 		// Set the owners for each of the NFTs.
 		for _, edge := range collection.NFTs.Edges {
-			nft := edge.Node
-			nft.Owners = owners[nft.ID]
+			edge.Node.Owners = owners[edge.Node.ID]
 		}
 	}
 
@@ -188,8 +187,7 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 
 	// Link traits to corresponding NFT.
 	for _, edge := range collection.NFTs.Edges {
-		nft := edge.Node
-		nft.Traits = traits[nft.ID]
+		edge.Node.Traits = traits[edge.Node.ID]
 	}
 
 	// If don't need rarity information, we're done.
@@ -206,14 +204,13 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 	// Calculate trait rarity.
 	for _, edge := range collection.NFTs.Edges {
 
-		nft := edge.Node
-		rarity, traitRarity := stats.CalculateRarity(uint(total), nft.Traits)
+		rarity, traitRarity := stats.CalculateRarity(uint(total), edge.Node.Traits)
 
-		nft.Rarity = rarity
+		edge.Node.Rarity = rarity
 		// Set this only if individual trait rarity is requested, since it includes
 		// traits not necessarily found in this NFT.
 		if query.NFT.Fields.TraitRarity {
-			nft.Traits = traitRarity
+			edge.Node.Traits = traitRarity
 		}
 	}
 

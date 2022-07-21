@@ -16,6 +16,8 @@ const (
 
 	// Collection and marketplace fields.
 	fieldNFTs      = "nfts"
+	fieldEdges     = "edges"
+	fieldNode      = "node"
 	fieldVolume    = "volume"
 	fieldMarketCap = "market_cap"
 	fieldSales     = "sales"
