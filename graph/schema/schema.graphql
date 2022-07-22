@@ -175,20 +175,51 @@ type Collection {
     nfts(first: Int, after: String): NFTConnection!
 }
 
-# FIXME: Add documentation comments.
-
+"""
+NFTConnection is used for paginated access to the NFT list.
+"""
 type NFTConnection {
+    """
+    List contains the NFT data, as well as pagination-related metadata.
+    """
     edges: [NFTEdge!]
+
+    """
+    pageInfo contains the information related to the pagination end condition,
+    as well as the cursor that can be used to restart pagination.
+    """
     pageInfo: PageInfo!
 }
 
+"""
+NFTEdge contains the NFT data.
+"""
 type NFTEdge {
+    """
+    node contains the NFT data.
+    """
     node: NFT!
+
+    """
+    cursor is the value that can be used to continue pagination after the current 
+    NFT/edge. The referenced NFT is NOT included in the subsequent responses.
+    """
     cursor: String!
 }
 
+"""
+pageInfo contains the information needed to continue or restart pagination.
+"""
 type PageInfo {
+    """
+    hasNextPage indicates if there are more pages to be traversed.
+    """
     hasNextPage: Boolean!
+
+    """
+    startCursor has the value needed to restart pagination. Note that
+    this can also be achieved by omitting the cursor entirely.
+    """
     startCursor: String!
 }
 
