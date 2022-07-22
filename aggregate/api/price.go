@@ -8,7 +8,6 @@ import (
 
 	"github.com/NFT-com/analytics/aggregate/models/api"
 	"github.com/NFT-com/analytics/aggregate/models/datapoint"
-	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
 // NFTPrice handles the request for retrieving current price of an NFT.
@@ -36,44 +35,34 @@ func (a *API) NFTPrice(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, response)
 }
 
-// NFTBatchPrice handles the request for retrieving current price for a batch of NFTs.
-func (a *API) NFTBatchPrice(ctx echo.Context) error {
+// CollectionPrices handles the request for retrieving current prices for NFTs in a collection.
+func (a *API) CollectionPrices(ctx echo.Context) error {
 
-	// Unpack the list of IDs.
-	var request api.BatchRequest
-	err := ctx.Bind(&request)
+	id := ctx.Param(idParam)
+
+	// Lookup collection address.
+	address, err := a.lookupCollection(id)
 	if err != nil {
-		return bindError(fmt.Errorf("could not unpack NFT batch price request: %w", err))
+		return apiError(fmt.Errorf("could not lookup collection: %w", err))
 	}
 
-	// If we don't have any IDs provided, just return.
-	if len(request.IDs) == 0 {
-		return ctx.NoContent(http.StatusOK)
-	}
-
-	// Lookup the list of NFT identifiers based on IDs.
-	addresses, err := a.lookup.NFTs(request.IDs)
+	// Retrieve NFT IDs in order to later link prices to the NFT identifiers.
+	nftIDs, err := a.lookup.CollectionNFTs(id)
 	if err != nil {
-		return apiError(fmt.Errorf("could not lookup NFT addresses: %w", err))
+		return apiError(fmt.Errorf("could not lookup collection NFTs: %w", err))
 	}
 
-	// Transform the map into a list of identifiers.
-	list := make([]identifier.NFT, 0, len(addresses))
-	for _, address := range addresses {
-		list = append(list, address)
-	}
-
-	// Get the prices for the NFT set.
-	prices, err := a.stats.NFTBatchPrices(list)
+	// Retrieve NFT prices.
+	prices, err := a.stats.CollectionPrices(address)
 	if err != nil {
-		return apiError(fmt.Errorf("could not retrieve batch prices: %w", err))
+		return apiError(fmt.Errorf("could not retrieve NFT prices: %w", err))
 	}
 
-	// Map the list of prices back to the NFT IDs.
+	// Link retrieved prices to the NFT by ID.
 	var nftPrices []datapoint.Value
-	for id, address := range addresses {
+	for id, nftAddress := range nftIDs {
 
-		price, ok := prices[lowerNFTID(address)]
+		price, ok := prices[lowerNFTID(nftAddress)]
 		// If an NFT has never been sold before, it's normal that we don't know the price.
 		if !ok {
 			a.log.Debug().Str("nft_id", id).Msg("no known price for NFT")
@@ -84,6 +73,56 @@ func (a *API) NFTBatchPrice(ctx echo.Context) error {
 		p := datapoint.Value{
 			ID:    id,
 			Value: price,
+		}
+		nftPrices = append(nftPrices, p)
+	}
+
+	// Create the API response.
+	response := api.BatchResponse{
+		Data: nftPrices,
+	}
+
+	return ctx.JSON(http.StatusOK, response)
+}
+
+// CollectionAveragePrices handles the request for retrieving all-time average prices for NFTs in a collection.
+func (a *API) CollectionAveragePrices(ctx echo.Context) error {
+
+	id := ctx.Param(idParam)
+
+	// Lookup collection address.
+	address, err := a.lookupCollection(id)
+	if err != nil {
+		return apiError(fmt.Errorf("could not lookup collection: %w", err))
+	}
+
+	// Retrieve NFT IDs in order to later link prices to the NFT identifiers.
+	nftIDs, err := a.lookup.CollectionNFTs(id)
+	if err != nil {
+		return apiError(fmt.Errorf("could not lookup collection NFTs: %w", err))
+	}
+
+	// Retrieve NFT average averages.
+	averages, err := a.stats.CollectionAveragePrices(address)
+	if err != nil {
+		return apiError(fmt.Errorf("could not retrieve NFT average prices: %w", err))
+	}
+
+	// Link retrieved prices to the NFT by ID.
+	var nftPrices []datapoint.Value
+	for id, nftAddress := range nftIDs {
+
+		average, ok := averages[lowerNFTID(nftAddress)]
+		// If an NFT has never been sold before, it's normal that there's no average price.
+		if !ok {
+			a.log.Debug().Str("nft_id", id).Msg("no average price for NFT")
+			continue
+		}
+
+		// Create the price record and add it to the list.
+		p := datapoint.Value{
+			ID:    id,
+			Value: average,
 		}
 		nftPrices = append(nftPrices, p)
 	}

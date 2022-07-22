@@ -116,15 +116,26 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 	// If NFT prices are required, retrieve them now.
 	if query.NFT.Price || query.NFT.AveragePrice {
 
-		// TODO: Use batched request instead of looping through the NFT list.
-		// See https://github.com/NFT-com/analytics/issues/30
-
-		for _, nft := range collection.NFTs {
-			err = s.getNFTStats(&query.NFT, nft)
+		// Retrieve stats, but continue even if some could not be retrieved (e.g. API was unavailable).
+		var prices map[string]float64
+		if query.NFT.Price {
+			prices, err = s.aggregationAPI.CollectionPrices(collection.ID)
 			if err != nil {
-				// Continue even if stats could not be retrieved (e.g. API was unavailable).
-				s.log.Error().Err(err).Str("id", nft.ID).Msg("could not retrieve NFT price")
+				s.log.Error().Err(err).Msg("could not retrieve NFT prices")
 			}
+		}
+		var averages map[string]float64
+		if query.NFT.AveragePrice {
+			averages, err = s.aggregationAPI.CollectionAveragePrices(collection.ID)
+			if err != nil {
+				s.log.Error().Err(err).Msg("could not retrieve NFT average prices")
+			}
+		}
+
+		// Set the appropriate price fields.
+		for _, nft := range collection.NFTs {
+			nft.TradingPrice = prices[nft.ID]
+			nft.AveragePrice = averages[nft.ID]
 		}
 	}
 

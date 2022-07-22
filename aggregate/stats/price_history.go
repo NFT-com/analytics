@@ -33,8 +33,8 @@ func (s *Stats) NFTPriceHistory(nft identifier.NFT, from time.Time, to time.Time
 	return out, nil
 }
 
-// NFTAveragePriceHistory returns the all-time average price.
-func (s *Stats) NFTAveragePriceHistory(nft identifier.NFT) (datapoint.Average, error) {
+// NFTAveragePrice returns the all-time average price.
+func (s *Stats) NFTAveragePrice(nft identifier.NFT) (datapoint.Average, error) {
 
 	query := s.db.
 		Table("sales").

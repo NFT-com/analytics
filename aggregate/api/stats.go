@@ -15,6 +15,8 @@ type Stats interface {
 	CollectionSales(address identifier.Address) (uint64, error)
 	CollectionBatchVolumes(addresses []identifier.Address) (map[identifier.Address]float64, error)
 	CollectionBatchMarketCaps(addresses []identifier.Address) (map[identifier.Address]float64, error)
+	CollectionPrices(address identifier.Address) (map[identifier.NFT]float64, error)
+	CollectionAveragePrices(address identifier.Address) (map[identifier.NFT]float64, error)
 
 	// Collection statistics - history.
 	CollectionVolumeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error)
@@ -38,9 +40,8 @@ type Stats interface {
 
 	// NFT statistics - current.
 	NFTPrice(address identifier.NFT) (float64, error)
-	NFTBatchPrices(addresses []identifier.NFT) (map[identifier.NFT]float64, error)
+	NFTAveragePrice(address identifier.NFT) (datapoint.Average, error)
 
 	// NFT statistics - history.
 	NFTPriceHistory(address identifier.NFT, from time.Time, to time.Time) ([]datapoint.Price, error)
-	NFTAveragePriceHistory(address identifier.NFT) (datapoint.Average, error)
 }

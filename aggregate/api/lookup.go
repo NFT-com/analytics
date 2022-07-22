@@ -12,6 +12,6 @@ type Lookup interface {
 	NFT(id string) (identifier.NFT, error)
 
 	// Lookup batches of IDs.
-	NFTs(ids []string) (map[string]identifier.NFT, error)
 	Collections(id []string) (map[string]identifier.Address, error)
+	CollectionNFTs(id string) (map[string]identifier.NFT, error)
 }
