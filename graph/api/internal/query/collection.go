@@ -12,6 +12,7 @@ type CollectionFields struct {
 	MarketCap    string
 	Sales        string
 	NFTs         string
+	StartCursor  string
 	NFT          NFTFields
 	NFTArguments CollectionNFTArguments
 }
@@ -25,17 +26,19 @@ type CollectionNFTArguments struct {
 // Collection describes the collection query, specifically whether the GraphQL query requires
 // retrieving NFTs or fetching aggregated fields (stats) for the collection.
 type Collection struct {
-	Volume    bool
-	MarketCap bool
-	Sales     bool
-	NFTs      bool
-	NFT       CollectionNFTs
+	Volume      bool
+	MarketCap   bool
+	Sales       bool
+	NFTs        bool
+	StartCursor bool
+	NFT         CollectionNFTs
 }
 
 // CollectionNFTs describes the NFT query context from within the Collection object.
 type CollectionNFTs struct {
-	Fields    NFT
-	Arguments NFTArguments
+	Fields      NFT
+	StartCursor bool
+	Arguments   NFTArguments
 }
 
 // NFTArguments represents the arguments for the NFT field of a Collection GraphQL query.
@@ -49,11 +52,10 @@ func ParseCollectionQuery(fields CollectionFields, ctx context.Context) *Collect
 
 	selection := query.GetSelection(ctx)
 
-	// FIXME: This function should also return an error now.
-
 	// Paging arguments.
 	args := selection.Args(fields.NFTs)
 
+	// NOTE: The GraphQL framework will already handle the field type validation.
 	first, _ := args[fields.NFTArguments.First].(int64)
 	after, _ := args[fields.NFTArguments.After].(string)
 
@@ -71,14 +73,16 @@ func ParseCollectionQuery(fields CollectionFields, ctx context.Context) *Collect
 			First: uint(first),
 			After: after,
 		},
+		StartCursor: selection.Has(fields.StartCursor),
 	}
 
 	query := Collection{
-		Volume:    selection.Has(fields.Volume),
-		MarketCap: selection.Has(fields.MarketCap),
-		Sales:     selection.Has(fields.Sales),
-		NFTs:      selection.Has(fields.NFTs),
-		NFT:       nft,
+		Volume:      selection.Has(fields.Volume),
+		MarketCap:   selection.Has(fields.MarketCap),
+		Sales:       selection.Has(fields.Sales),
+		NFTs:        selection.Has(fields.NFTs),
+		StartCursor: selection.Has(fields.StartCursor),
+		NFT:         nft,
 	}
 	return &query
 }

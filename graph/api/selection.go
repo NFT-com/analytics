@@ -26,10 +26,11 @@ func parseNFTQuery(ctx context.Context) *query.NFT {
 func parseCollectionQuery(ctx context.Context) *query.Collection {
 
 	paths := query.CollectionFields{
-		Volume:    gql.FieldPath(fieldVolume),
-		MarketCap: gql.FieldPath(fieldMarketCap),
-		Sales:     gql.FieldPath(fieldSales),
-		NFTs:      gql.FieldPath(fieldNFTs),
+		Volume:      gql.FieldPath(fieldVolume),
+		MarketCap:   gql.FieldPath(fieldMarketCap),
+		Sales:       gql.FieldPath(fieldSales),
+		NFTs:        gql.FieldPath(fieldNFTs),
+		StartCursor: gql.FieldPath(fieldNFTs, fieldPageInfo, fieldStartCursor),
 		NFT: query.NFTFields{
 			Traits:       gql.FieldPath(fieldNFTs, fieldEdges, fieldNode, fieldTraits),
 			TraitRarity:  gql.FieldPath(fieldNFTs, fieldEdges, fieldNode, fieldTraits, fieldRarity),

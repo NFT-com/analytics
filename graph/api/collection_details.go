@@ -113,10 +113,17 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 		edges = append(edges, edge)
 	}
 
-	// FIXME: Include startCursor
 	pageInfo := api.PageInfo{
 		HasNextPage: haveMore,
-		StartCursor: "",
+	}
+
+	// Set start cursor if needed.
+	if query.StartCursor {
+		firstID, err := s.getFirstID(collection.ID)
+		if err != nil {
+			return fmt.Errorf("could not retrieve NFT ID for start cursor: %w", err)
+		}
+		pageInfo.StartCursor = createCursor(firstID)
 	}
 
 	nftConn := api.NFTConnection{
@@ -215,4 +222,15 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 	}
 
 	return nil
+}
+
+// getFirstID returns the ID of the first NFT in the collection, when sorted by ID ascending.
+func (s *Server) getFirstID(collectionID string) (string, error) {
+
+	nfts, _, err := s.getCollectionNFTs(collectionID, 1, "")
+	if err != nil {
+		return "", fmt.Errorf("could not get first NFT in the collection: %w", err)
+	}
+
+	return nfts[0].ID, nil
 }
