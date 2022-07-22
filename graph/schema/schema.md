@@ -9,9 +9,12 @@
     * [Collection](#collection)
     * [Marketplace](#marketplace)
     * [NFT](#nft)
+    * [NFTConnection](#nftconnection)
+    * [NFTEdge](#nftedge)
     * [Network](#network)
     * [Owner](#owner)
-	* [Trait](#trait)
+    * [PageInfo](#pageinfo)
+    * [Trait](#trait)
   * [Inputs](#inputs)
     * [CollectionOrder](#collectionorder)
     * [NFTOrder](#nftorder)
@@ -95,9 +98,9 @@ The query root of NFT.com GraphQL interface.
 			<td>Lookup NFTs based on specified criteria.</td>
 		</tr>
 		<tr>
-			<td colspan="2" align="right" valign="top">owners</td>
-			<td valign="top"><a href="#address">Owners</a></td>
-			<td>Addresses of accounts that own this NFT.</td>
+			<td colspan="2" align="right" valign="top">owner</td>
+			<td valign="top"><a href="#address">Address</a></td>
+			<td>Owner of the NFT.</td>
 		</tr>
 		<tr>
 			<td colspan="2" align="right" valign="top">collection</td>
@@ -230,8 +233,18 @@ Collection represents a group of NFTs that share the same smart contract.
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>nfts</strong></td>
-			<td valign="top">[<a href="#nft">NFT</a>!]</td>
-			<td>List of NFTs that are part of this collection.</td>
+			<td valign="top"><a href="#nftconnection">NFTConnection</a>!</td>
+			<td>List of NFTs in this collection.</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">first</td>
+			<td valign="top"><a href="#int">Int</a></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right" valign="top">after</td>
+			<td valign="top"><a href="#string">String</a></td>
+			<td></td>
 		</tr>
 	</tbody>
 </table>
@@ -336,11 +349,11 @@ NFT represents a single Non-Fungible Token.
 			<td colspan="2" valign="top"><strong>image_url</strong></td>
 			<td valign="top"><a href="#string">String</a></td>
 			<td>URL of an image for the NFT.</td>
-      <tr>
-        <td colspan="2" valign="top"><strong>uri</strong></td>
-        <td valign="top"><a href="#string">String</a>!</td>
-        <td>URI directing to e.g. a JSON file with token metadata.</td>
-      </tr>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>uri</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>URI directing to e.g. a JSON file with token metadata.</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>description</strong></td>
@@ -376,6 +389,62 @@ NFT represents a single Non-Fungible Token.
 			<td colspan="2" valign="top"><strong>collection</strong></td>
 			<td valign="top"><a href="#collection">Collection</a>!</td>
 			<td>Collection this NFT is part of.</td>
+		</tr>
+	</tbody>
+</table>
+
+### NFTConnection
+
+NFTConnection is used for paginated access to the NFT list.
+
+<table>
+	<thead>
+		<tr>
+			<th align="left">Field</th>
+			<th align="right">Argument</th>
+			<th align="left">Type</th>
+			<th align="left">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="2" valign="top"><strong>edges</strong></td>
+			<td valign="top">[<a href="#nftedge">NFTEdge</a>!]</td>
+			<td>List contains the NFT data, as well as pagination-related metadata.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>pageInfo</strong></td>
+			<td valign="top"><a href="#pageinfo">PageInfo</a>!</td>
+			<td>pageInfo contains the information related to the pagination end condition,
+				as well as the cursor that can be used to restart pagination.</td>
+		</tr>
+	</tbody>
+</table>
+
+### NFTEdge
+
+NFTEdge contains the NFT data.
+
+<table>
+	<thead>
+		<tr>
+			<th align="left">Field</th>
+			<th align="right">Argument</th>
+			<th align="left">Type</th>
+			<th align="left">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="2" valign="top"><strong>node</strong></td>
+			<td valign="top"><a href="#nft">NFT</a>!</td>
+			<td>node contains the NFT data.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>cursor</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>cursor is the value that can be used to continue pagination after the current
+				NFT/edge. The referenced NFT is NOT included in the subsequent responses.</td>
 		</tr>
 	</tbody>
 </table>
@@ -425,7 +494,7 @@ Mainnet and testnets of a specific blockchain are distinct network objects.
 
 ### Owner
 
-Owner reprecsents the owner of the NFT, along with the information of how many tokens it has.
+Owner represents the owner of the NFT, along with the information of how many tokens it has.
 
 <table>
 	<thead>
@@ -446,6 +515,34 @@ Owner reprecsents the owner of the NFT, along with the information of how many t
 			<td colspan="2" valign="top"><strong>number</strong></td>
 			<td valign="top"><a href="#int">Int</a>!</td>
 			<td>Number of tokens this address owns.</td>
+		</tr>
+	</tbody>
+</table>
+
+### PageInfo
+
+pageInfo contains the information needed to continue or restart pagination.
+
+<table>
+	<thead>
+		<tr>
+			<th align="left">Field</th>
+			<th align="right">Argument</th>
+			<th align="left">Type</th>
+			<th align="left">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="2" valign="top"><strong>hasNextPage</strong></td>
+			<td valign="top"><a href="#boolean">Boolean</a>!</td>
+			<td>hasNextPage indicates if there are more pages to be traversed.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>startCursor</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>startCursor has the value needed to restart pagination. Note that
+				this can also be achieved by omitting the cursor entirely.</td>
 		</tr>
 	</tbody>
 </table>
@@ -561,12 +658,12 @@ Properties by which collections can be ordered.
 			<td>Order by total volume.</td>
 		</tr>
 		<tr>
-			<td valign="top"><strong>BIGGEST_GAINS</strong></td>
-			<td>Order by biggest gains.</td>
+			<td valign="top"><strong>MARKET_CAP_GAIN</strong></td>
+			<td>Order by market cap gain.</td>
 		</tr>
 		<tr>
-			<td valign="top"><strong>BIGGEST_LOSSES</strong></td>
-			<td>Order by biggest losses.</td>
+			<td valign="top"><strong>SALES</strong></td>
+			<td>Order by number of sales.</td>
 		</tr>
 		<tr>
 			<td valign="top"><strong>DAILY_VOLUME</strong></td>
