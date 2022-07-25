@@ -423,7 +423,7 @@ NFTConnection is used for paginated access to the NFT list.
 
 ### NFTEdge
 
-NFTEdge contains the NFT data.
+NFTEdge contains the NFT data and the pagination cursor.
 
 <table>
 	<thead>

@@ -117,7 +117,7 @@ func (s *Storage) CollectionNFTs(collectionID string, limit uint, afterID string
 	more := uint(len(nfts)) > limit
 
 	// Trim the list to correct size if we have more records.
-	if uint(len(nfts)) > limit {
+	if more {
 		nfts = nfts[:limit]
 	}
 

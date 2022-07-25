@@ -192,7 +192,7 @@ type NFTConnection {
 }
 
 """
-NFTEdge contains the NFT data.
+NFTEdge contains the NFT data and the pagination cursor.
 """
 type NFTEdge {
     """
