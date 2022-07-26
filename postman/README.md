@@ -1,75 +1,50 @@
 # Postman collections
 
-A single Postman collection file provides requests for each of the Analytic APIs: Graph, Events and Aggregation. These sample requests help showcase the different use case behind each API. While some input parameters are specified directly in the request, a handful of other variables are configurable on the Collection level. 
+The Postman collection file provides requests for each of the Analytic APIs: Graph, Events and Aggregation.
+These sample requests help showcase the different use case behind each API.
+While some input parameters are specified directly in the request, a handful of other variables are configurable on the Collection level. 
 
-Note the env.json file is only used for the newman script below but it is not necessary to work with the above Collection. 
-
-## Running tests
+## Running tests from CLI
 
 It is possible to run the collections and associated tests from the command line using a tool like [Newman](https://learning.postman.com/docs/running-collections/using-newman-cli/command-line-integration-with-newman/).
 
-First Newman should be installed using the following command:
+### Installation
+
+Newman CLI tool can be installed with the following command:
 
 ```console
 $ npm install -g newman
 ```
 
-Collections and tests checking the functionality of the `/transfers/` endpoint of the Events API can now be ran using:
+### Examples
+
+#### Running The Entire Collection
+
+All requests in a collection can be ran using the following command.
 
 ```console
-newman run events/transfers_collection.json -e env.json
+newman run <path-to-postman-collection>
 ```
 
-Note that the targeted API should be running and reachable according to the provided environment.
+#### Running a Specific Folder/request
 
-### Environment
+Running a subset of Postman requests can be done by specifying the `--folder` parameter.
+Unfortunately support for nested folders/requests is limited, but if the folder/request name is unique within the collection, it is possible to run a specific request.
+For example, to run the `Get Collection` request in the `Graph` folder, specifying `--folder 'Get Collection' will suffice.
 
-The `env.json` file describes the environment variables used by the Postman collections.
-For example, the content of the `env.json` file might contain something like this:
-
-
-```json
-{
-        "id": "3ba39c7b-49d2-4ad3-880b-c501ed7f043e",
-        "values": [
-                {
-                        "key": "scheme",
-                        "value": "http",
-                        "type": "default",
-                        "enabled": true
-                },
-                {
-                        "key": "graph_hostname",
-                        "value": "localhost",
-                        "type": "default",
-                        "enabled": true
-                },
-                                {
-                        "key": "event_hostname",
-                        "value": "localhost",
-                        "type": "default",
-                        "enabled": true
-                },
-                                {
-                        "key": "aggregation_hostname",
-                        "value": "localhost",
-                        "type": "default",
-                        "enabled": true
-                },
-                {
-                        "key": "port",
-                        "value": "8080",
-                        "type": "default",
-                        "enabled": true
-                }
-        ],
-        "name": "Globals",
-        "_postman_variable_scope": "globals",
-        "_postman_exported_at": "2022-06-16T15:32:01.351Z",
-        "_postman_exported_using": "Postman/9.21.2-220607-0647"
-}
+```console
+newman run <path-to-postman-collection> --folder 'Get Collection'
 ```
 
-Requests in the Postman collections reference these variables in requests, by specifying the HTTP address of the API as e.g. `{{scheme}}://{{*_hostname}}:{{port}}/transfers/`.
-Each of the variables - `scheme`, `*_hostname` and `port` are loaded from the provided environment file.
-These variables should be set to the appropriate values for the API being tested.
+#### Specifying variables
+
+Newman will use the variables defined in the collection by default.
+However, if changing these variables is needed (e.g., to specify a different API), it is possible to set them from the command line using the `--env-var` parameter.
+
+Below is an example where a request is ran but targeted to a specific API, with verbose output:
+
+```console
+newman run <path-to-postman-collection> --folder 'Get Collection with NFTs, paginated - first 200' --env-var scheme=http --env-var graph_hostname=localhost --env-var port=8080 --verbose
+```
+
+Instead of sending the request to the defined address of `https://dev-analytics-graph.nft.com:443/`, it will be sent to `http://localhost:8080/`.
