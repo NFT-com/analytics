@@ -15,6 +15,10 @@ func createCursor(id string) string {
 // decodeCursor decodes the Base64-encoded ID, typically provided as the pagination cursor.
 func decodeCursor(cursor string) (string, error) {
 
+	if cursor == "" {
+		return "", nil
+	}
+
 	decoded, err := base64.StdEncoding.DecodeString(cursor)
 	if err != nil {
 		return "", fmt.Errorf("could not decode cursor: %w", err)

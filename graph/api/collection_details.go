@@ -78,13 +78,10 @@ func (s *Server) expandCollectionStats(query *query.Collection, collection *api.
 // NOTE: This function modifies the provided collection in-place.
 func (s *Server) expandCollectionNFTData(query *query.Collection, collection *api.Collection) error {
 
-	var afterID string
-	if query.NFT.Arguments.After != "" {
-		decoded, err := decodeCursor(query.NFT.Arguments.After)
-		if err != nil {
-			return fmt.Errorf("could not decode pagination cursor: %w", err)
-		}
-		afterID = decoded
+	// Determine from which NFT ID we should continue pagination.
+	afterID, err := decodeCursor(query.NFT.Arguments.After)
+	if err != nil {
+		return fmt.Errorf("could not decode pagination cursor: %w", err)
 	}
 
 	// Retrieve the list of NFTs.
