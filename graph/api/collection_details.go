@@ -202,16 +202,19 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 		return nil
 	}
 
+	// Total number of NFTs in a collection, in relation to which we're calculating frequency.
+	total, err := s.storage.CollectionSize(collection.ID)
+	if err != nil {
+		return fmt.Errorf("could not get collection size: %w", err)
+	}
+
 	// Crunch the data and determine trait frequency.
 	stats := traits.CalculateStats()
-
-	// Total number of NFTs in a collection, in relation to which we're calculating frequency.
-	total := len(collection.NFTs.Edges)
 
 	// Calculate trait rarity.
 	for _, edge := range collection.NFTs.Edges {
 
-		rarity, traitRarity := stats.CalculateRarity(uint(total), edge.Node.Traits)
+		rarity, traitRarity := stats.CalculateRarity(total, edge.Node.Traits)
 
 		edge.Node.Rarity = rarity
 		// Set this only if individual trait rarity is requested, since it includes
