@@ -172,9 +172,8 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 		}
 
 		for _, edge := range collection.NFTs.Edges {
-			nft := edge.Node
-			nft.TradingPrice = prices[nft.ID]
-			nft.AveragePrice = averages[nft.ID]
+			edge.Node.TradingPrice = prices[edge.Node.ID]
+			edge.Node.AveragePrice = averages[edge.Node.ID]
 		}
 	}
 
