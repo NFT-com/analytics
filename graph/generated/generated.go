@@ -866,7 +866,7 @@ type NFTConnection {
 }
 
 """
-NFTEdge contains the NFT data.
+NFTEdge contains the NFT data and the pagination cursor.
 """
 type NFTEdge {
     """
@@ -1013,7 +1013,7 @@ type NFT {
 }
 
 """
-Owner reprecsents the owner of the NFT, along with the information of how many tokens it has.
+Owner represents the owner of the NFT, along with the information of how many tokens it has.
 """
 type Owner {
     """
