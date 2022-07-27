@@ -14,8 +14,8 @@ _Fixes #_
 
 If this PR changes the GraphQL schema for the Graph API, the following should be updated:
 
-- [ ] [GraphQL Schema documentation](graph/schema/schema.md)
-- [ ] GraphQL generated files
+- [ ] Schema [documentation](graph/schema/schema.md)
+- [ ] GraphQL framework generated files
 - [ ] Postman GraphQL requests/queries
 - [ ] GraphQL selectors and arguments in the server code
 
