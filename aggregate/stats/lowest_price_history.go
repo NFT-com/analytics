@@ -8,9 +8,8 @@ import (
 	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
-// CollectionFloorHistory returns the floor price for the collection in the given interval.
-// Floor price is the lowest price for an NFT in that collection on the given point in time.s
-func (s *Stats) CollectionFloorHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Floor, error) {
+// CollectionLowestPriceHistory returns the lowest price for the collection in the given interval.
+func (s *Stats) CollectionLowestPriceHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.LowestPrice, error) {
 
 	intervalQuery := s.db.
 		Table("sales, LATERAL generate_series(?::timestamp, ?::timestamp, INTERVAL '1 day') AS start_date",
@@ -31,15 +30,15 @@ func (s *Stats) CollectionFloorHistory(address identifier.Address, from time.Tim
 
 	query := s.db.
 		Table("(?) st", seriesQuery).
-		Select("MIN(st.trade_price) AS floor, st.start_date, st.end_date").
+		Select("MIN(st.trade_price) AS lowest_price, st.start_date, st.end_date").
 		Group("start_date").
 		Group("end_date").
 		Order("start_date DESC")
 
-	var out []datapoint.Floor
+	var out []datapoint.LowestPrice
 	err := query.Find(&out).Error
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve floor info: %w", err)
+		return nil, fmt.Errorf("could not retrieve lowest price: %w", err)
 	}
 
 	return out, nil

@@ -301,12 +301,12 @@
 							"response": []
 						},
 						{
-							"name": "Floor",
+							"name": "Lowest recent price",
 							"request": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/collection/{{collection-id}}/floor/history?from={{date-from}}&to={{date-to}}",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/collection/{{collection-id}}/lowest_price/history?from={{date-from}}&to={{date-to}}",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
@@ -315,7 +315,7 @@
 									"path": [
 										"collection",
 										"{{collection-id}}",
-										"floor",
+										"lowest_price",
 										"history"
 									],
 									"query": [

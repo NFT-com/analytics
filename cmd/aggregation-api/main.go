@@ -153,7 +153,7 @@ func run() error {
 	server.GET("/collection/:id/sales/history", api.CollectionSalesHistory)
 	server.GET("/collection/:id/size/history", api.CollectionSizeHistory)
 	server.GET("/collection/:id/average/history", api.CollectionAverageHistory)
-	server.GET("/collection/:id/floor/history", api.CollectionFloorHistory)
+	server.GET("/collection/:id/lowest_price/history", api.CollectionLowestPriceHistory)
 
 	// Marketplace stats - current.
 	server.GET("/marketplace/:id/volume", api.MarketplaceVolume)

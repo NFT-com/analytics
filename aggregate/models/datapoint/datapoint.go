@@ -28,13 +28,13 @@ type Sale struct {
 	Date  *time.Time `json:"date,omitempty" gorm:"column:date"`
 }
 
-// Floor represents the minimum price for an NFT in a collection.
+// LowestPrice represents the minimum price for an NFT in a collection.
 // `Start` and `End` values denote the time span over which the
 // minimum trading price is calculated.
-type Floor struct {
-	Floor float64 `json:"floor" gorm:"column:floor"`
-	Start string  `json:"start" gorm:"column:start_date"`
-	End   string  `json:"end" gorm:"column:end_date"`
+type LowestPrice struct {
+	LowestRecentPrice float64 `json:"lowest_price" gorm:"column:lowest_price"`
+	Start             string  `json:"start" gorm:"column:start_date"`
+	End               string  `json:"end" gorm:"column:end_date"`
 }
 
 // Average represents the average price of an NFT in a collection.

@@ -49,7 +49,7 @@ Collections stats include:
 - market cap
 - sales
 - size
-- floor price
+- lowest recent price
 - average
 
 #### Collection Volume
@@ -142,14 +142,14 @@ History of the collection size can be retrieved using:
 curl 'localhost:8080/collection/<collection_id>/size/history?from=YYYY-MM-DD&to=YYYY-MM-DD'
 ```
 
-#### Collection Floor Price
+#### Collection Lowest Price
 
-Floor price for a collection represents the lowest price of an NFT in the collection.
+Collection lowest price represents the lowest price of any NFT in the collection.
 
-Historic floor prices can be retrieved using:
+Historic lowest prices can be retrieved using:
 
 ```
-curl 'localhost:8080/collection/<collection_id>/floor/history?from=YYYY-MM-DD&to=YYYY-MM-DD'
+curl 'localhost:8080/collection/<collection_id>/lowest_price/history?from=YYYY-MM-DD&to=YYYY-MM-DD'
 ```
 
 #### Collection Average Price
