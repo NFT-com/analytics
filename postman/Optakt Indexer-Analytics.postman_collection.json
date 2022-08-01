@@ -983,7 +983,59 @@
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        description\r\n        address\r\n        website\r\n        image_url\r\n        nfts {\r\n            id\r\n            token_id\r\n            uri\r\n        }\r\n    }\r\n}",
+										"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        description\r\n        address\r\n        website\r\n        image_url\r\n        nfts {\r\n            edges {\r\n                node {\r\n                    id\r\n                    token_id\r\n                    uri\r\n                }\r\n            }\r\n        }\r\n    }\r\n}",
+										"variables": "{\r\n    \"id\": \"612ecc22-36ef-4ef7-bb0b-5b864b85d089\"\r\n}"
+									}
+								},
+								"url": {
+									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"protocol": "{{scheme}}",
+									"host": [
+										"{{graph_hostname}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"graphql"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Collection with NFTs, paginated - first 200",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "graphql",
+									"graphql": {
+										"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        description\r\n        address\r\n        website\r\n        image_url\r\n        nfts(first: 200) {\r\n            edges {\r\n                node {\r\n                    id\r\n                    token_id\r\n                    uri\r\n                }\r\n                cursor\r\n            }\r\n            pageInfo {\r\n                hasNextPage\r\n            }\r\n        }\r\n    }\r\n}",
+										"variables": "{\r\n    \"id\": \"612ecc22-36ef-4ef7-bb0b-5b864b85d089\"\r\n}"
+									}
+								},
+								"url": {
+									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"protocol": "{{scheme}}",
+									"host": [
+										"{{graph_hostname}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"graphql"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Collection with NFTs, paginated - continue after cursor",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "graphql",
+									"graphql": {
+										"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        description\r\n        address\r\n        website\r\n        image_url\r\n        nfts(first: 200, after: \"MDZjZjM3MGMtYjQ5ZS0zOTQzLTYwOTktMzE2MDk0Y2U3OWNi\") {\r\n            edges {\r\n                node {\r\n                    id\r\n                    token_id\r\n                    uri\r\n                }\r\n                cursor\r\n            }\r\n            pageInfo {\r\n                hasNextPage\r\n            }\r\n        }\r\n    }\r\n}",
 										"variables": "{\r\n    \"id\": \"612ecc22-36ef-4ef7-bb0b-5b864b85d089\"\r\n}"
 									}
 								},
@@ -1009,7 +1061,7 @@
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        description\r\n        address\r\n        website\r\n        image_url\r\n        nfts {\r\n            id\r\n            token_id\r\n            uri\r\n            owners\r\n        }\r\n    }\r\n}",
+										"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        description\r\n        address\r\n        website\r\n        image_url\r\n        nfts {\r\n            edges {\r\n                node {\r\n                    id\r\n                    token_id\r\n                    uri\r\n                    owners {\r\n                        number\r\n                        address\r\n                    }\r\n                }\r\n            }\r\n        }\r\n    }\r\n}",
 										"variables": "{\r\n    \"id\": \"612ecc22-36ef-4ef7-bb0b-5b864b85d089\"\r\n}"
 									}
 								},
@@ -1028,14 +1080,14 @@
 							"response": []
 						},
 						{
-							"name": "Get Collection with NFTs with Traits",
+							"name": "Get Collection with NFTs with traits",
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        description\r\n        address\r\n        website\r\n        image_url\r\n        nfts {\r\n            id\r\n            token_id\r\n            uri\r\n            traits {\r\n                name\r\n                value\r\n            }\r\n        }\r\n    }\r\n}",
+										"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        description\r\n        address\r\n        website\r\n        image_url\r\n        nfts {\r\n            edges {\r\n                node {\r\n                    id\r\n                    token_id\r\n                    uri\r\n                    traits {\r\n                        name\r\n                        value\r\n                    }\r\n                }\r\n            }\r\n        }\r\n    }\r\n}",
 										"variables": "{\r\n    \"id\": \"612ecc22-36ef-4ef7-bb0b-5b864b85d089\"\r\n}"
 									}
 								},
@@ -1061,7 +1113,7 @@
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        description\r\n        address\r\n        website\r\n        image_url\r\n        nfts {\r\n            id\r\n            token_id\r\n            uri\r\n            rarity\r\n        }\r\n    }\r\n}",
+										"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        description\r\n        address\r\n        website\r\n        image_url\r\n        nfts {\r\n            edges {\r\n                node {\r\n                    id\r\n                    token_id\r\n                    uri\r\n                    rarity\r\n                }\r\n            }\r\n        }\r\n    }\r\n}",
 										"variables": "{\r\n    \"id\": \"612ecc22-36ef-4ef7-bb0b-5b864b85d089\"\r\n}"
 									}
 								},
@@ -1087,7 +1139,7 @@
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        description\r\n        address\r\n        website\r\n        image_url\r\n        nfts {\r\n            id\r\n            token_id\r\n            uri\r\n            rarity\r\n            traits {\r\n                name\r\n                value\r\n                rarity\r\n            }\r\n        }\r\n    }\r\n}",
+										"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        description\r\n        address\r\n        website\r\n        image_url\r\n        nfts {\r\n            edges {\r\n                node {\r\n                    id\r\n                    token_id\r\n                    uri\r\n                    rarity\r\n                    traits {\r\n                        name\r\n                        value\r\n                        rarity\r\n                    }\r\n                }\r\n            }\r\n        }\r\n    }\r\n}",
 										"variables": "{\r\n    \"id\": \"612ecc22-36ef-4ef7-bb0b-5b864b85d089\"\r\n}"
 									}
 								},
