@@ -301,7 +301,7 @@
 							"response": []
 						},
 						{
-							"name": "Lowest recent price",
+							"name": "Lowest price",
 							"request": {
 								"method": "GET",
 								"header": [],

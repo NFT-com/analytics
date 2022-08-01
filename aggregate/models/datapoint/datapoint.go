@@ -32,9 +32,9 @@ type Sale struct {
 // `Start` and `End` values denote the time span over which the
 // minimum trading price is calculated.
 type LowestPrice struct {
-	LowestRecentPrice float64 `json:"lowest_price" gorm:"column:lowest_price"`
-	Start             string  `json:"start" gorm:"column:start_date"`
-	End               string  `json:"end" gorm:"column:end_date"`
+	LowestPrice float64 `json:"lowest_price" gorm:"column:lowest_price"`
+	Start       string  `json:"start" gorm:"column:start_date"`
+	End         string  `json:"end" gorm:"column:end_date"`
 }
 
 // Average represents the average price of an NFT in a collection.
