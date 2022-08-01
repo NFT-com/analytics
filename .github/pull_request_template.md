@@ -34,6 +34,7 @@ GraphQL API optionally consumes data from the Aggregation API, so any changes in
 to the relevant Graph API code.
 
 All of the following should be updated:
+
 - [ ] Aggregation API [documentation](aggregate/API.md)
 - [ ] Postman Aggregation API requests
 - [ ] Graph API consumer
@@ -43,9 +44,10 @@ All of the following should be updated:
 This is the case if this PR changes how the Events APIs serves information.
 Adding, renaming or removing endpoints, renaming query parameters or changing their format will impact external users of the API.
 This is also the case if the PR changes the data format served by the API.
-Postman requests for the Events API and the corresponding tests should be kept up to date.
+Postman requests for the Events API and the corresponding tests should be kept up-to-date.
 
 All of the following should be updated:
+
 - [ ] Events API [documentation](events/API.md)
 - [ ] Postman Events API requests
 - [ ] Postman Events API tests
@@ -55,6 +57,7 @@ All of the following should be updated:
 This is the case if the PR changes any of the CLI flags required to run the APIs or tool in this repo.
 
 All of the following should be updated:
+
 - [ ] Graph API executable [documentation](cmd/graph-api/README.md)
 - [ ] Aggregation API executable [documentation](cmd/aggregation-api/README.md)
 - [ ] Events API executable [documentation](cmd/events-api/README.md)
