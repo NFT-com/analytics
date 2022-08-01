@@ -82,20 +82,46 @@ func (s *Storage) Collections(networkID *string, orderBy api.CollectionOrder) ([
 	return collections, nil
 }
 
-// CollectionNFTs retrieves the list of NFTs in a specific collection.
-func (s *Storage) CollectionNFTs(collectionID string) ([]*api.NFT, error) {
+// CollectionNFTs retrieves the list of NFTs in a specific collection, as well as a boolean indicating if there
+// are more results or not.
+func (s *Storage) CollectionNFTs(collectionID string, limit uint, afterID string) ([]*api.NFT, bool, error) {
 
-	query := api.NFT{
-		Collection: collectionID,
+	query := s.db.
+		Table("nfts").
+		Where("collection_id = ?", collectionID).
+		Order("id ASC")
+
+	// Request one NFT more than needed, so we know if there are more NFTs after this group.
+	if limit > 0 {
+		query = query.Limit(int(limit) + 1)
+	}
+
+	if afterID != "" {
+		query = query.Where("id > ?", afterID)
 	}
 
 	var nfts []*api.NFT
-	err := s.db.Where(&query).Find(&nfts).Error
+	err := query.Find(&nfts).Error
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve nfts: %w", err)
+		return nil, false, fmt.Errorf("could not retrieve nfts: %w", err)
 	}
 
-	return nfts, nil
+	// If we requested all tokens, just return all NFTs and notify there are
+	// no more left.
+	if limit == 0 {
+		return nfts, false, nil
+	}
+
+	// If the number of returned items is larger than `limit``,
+	// there are more NFTs.
+	more := uint(len(nfts)) > limit
+
+	// Trim the list to correct size if we have more records.
+	if more {
+		nfts = nfts[:limit]
+	}
+
+	return nfts, more, nil
 
 }
 

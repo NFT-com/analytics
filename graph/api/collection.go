@@ -54,17 +54,17 @@ func (s *Server) getCollectionByContract(ctx context.Context, networkID string, 
 }
 
 // getCollectionNFTs returns a list of NFTs in a collection.
-func (s *Server) getCollectionNFTs(collectionID string) ([]*api.NFT, error) {
+func (s *Server) getCollectionNFTs(collectionID string, limit uint, afterID string) ([]*api.NFT, bool, error) {
 
-	nfts, err := s.storage.CollectionNFTs(collectionID)
+	nfts, lastPage, err := s.storage.CollectionNFTs(collectionID, limit, afterID)
 	if err != nil {
 		s.logError(err).
 			Str("id", collectionID).
 			Msg("could not retrieve NFTs for a collection")
-		return nil, errRetrieveNFTFailed
+		return nil, false, errRetrieveNFTFailed
 	}
 
-	return nfts, nil
+	return nfts, lastPage, nil
 }
 
 // collections returns a list of collections according to the specified search criteria and sorting options.

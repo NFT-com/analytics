@@ -1,40 +1,5 @@
 package api
 
-// Network represents the blockchain networks.
-// Mainnet and testnets of a specific blockchain are distinct network objects.
-type Network struct {
-	ID          string `gorm:"column:id" json:"id"`
-	Name        string `gorm:"column:name" json:"name"`
-	Description string `gorm:"column:description" json:"description"`
-}
-
-// Collection represents a group of NFTs that share the same smart contract.
-type Collection struct {
-	ID          string  `gorm:"column:id" json:"id"`
-	Name        string  `gorm:"column:name" json:"name"`
-	Description string  `gorm:"column:description" json:"description"`
-	Address     string  `gorm:"column:contract_address" json:"address"`
-	Website     string  `gorm:"column:website" json:"website"`
-	ImageURL    string  `gorm:"column:image_url" json:"image_url"`
-	NFTs        []*NFT  `gorm:"-" json:"nfts"`
-	NetworkID   string  `gorm:"column:network_id" json:"-"`
-	Volume      float64 `gorm:"-" json:"volume"`
-	MarketCap   float64 `gorm:"-" json:"market_cap"`
-	Sales       uint64  `gorm:"-" json:"sales"`
-}
-
-// Marketplace represents a single NFT marketplace (e.g. Opensea, DefiKingdoms).
-type Marketplace struct {
-	ID          string  `gorm:"column:id" json:"id"`
-	Name        string  `gorm:"column:name" json:"name"`
-	Description string  `gorm:"column:description" json:"description"`
-	Website     string  `gorm:"column:website" json:"website"`
-	Volume      float64 `gorm:"-" json:"volume"`
-	MarketCap   float64 `gorm:"-" json:"market_cap"`
-	Sales       uint64  `gorm:"-" json:"sales"`
-	Users       uint64  `gorm:"-" json:"users"`
-}
-
 // NFT represents a single Non-Fungible Token.
 type NFT struct {
 	ID           string  `gorm:"column:id" json:"id"`

@@ -170,9 +170,57 @@ type Collection {
     marketplaces: [Marketplace!]
 
     """
-    List of NFTs that are part of this collection.
+    List of NFTs in this collection.
     """
-    nfts: [NFT!]
+    nfts(first: Int, after: String): NFTConnection!
+}
+
+"""
+NFTConnection is used for paginated access to the NFT list.
+"""
+type NFTConnection {
+    """
+    List contains the NFT data, as well as pagination-related metadata.
+    """
+    edges: [NFTEdge!]
+
+    """
+    pageInfo contains the information related to the pagination end condition,
+    as well as the cursor that can be used to restart pagination.
+    """
+    pageInfo: PageInfo!
+}
+
+"""
+NFTEdge contains the NFT data and the pagination cursor.
+"""
+type NFTEdge {
+    """
+    node contains the NFT data.
+    """
+    node: NFT!
+
+    """
+    cursor is the value that can be used to continue pagination after the current 
+    NFT/edge. The referenced NFT is NOT included in the subsequent responses.
+    """
+    cursor: String!
+}
+
+"""
+pageInfo contains the information needed to continue or restart pagination.
+"""
+type PageInfo {
+    """
+    hasNextPage indicates if there are more pages to be traversed.
+    """
+    hasNextPage: Boolean!
+
+    """
+    startCursor has the value needed to restart pagination. Note that
+    this can also be achieved by omitting the cursor entirely.
+    """
+    startCursor: String!
 }
 
 """
@@ -291,7 +339,7 @@ type NFT {
 }
 
 """
-Owner reprecsents the owner of the NFT, along with the information of how many tokens it has.
+Owner represents the owner of the NFT, along with the information of how many tokens it has.
 """
 type Owner {
     """

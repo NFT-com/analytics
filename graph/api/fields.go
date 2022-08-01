@@ -10,8 +10,18 @@ const (
 	fieldPrice        = "trading_price"
 	fieldAveragePrice = "average_price"
 
+	// Collection NFT pagination fields.
+	fieldNFTs        = "nfts"
+	fieldEdges       = "edges"
+	fieldNode        = "node"
+	fieldPageInfo    = "pageInfo"
+	fieldStartCursor = "startCursor"
+
+	// Collection NFT pagination arguments.
+	argumentFirst = "first"
+	argumentAfter = "after"
+
 	// Collection and marketplace fields.
-	fieldNFTs      = "nfts"
 	fieldVolume    = "volume"
 	fieldMarketCap = "market_cap"
 	fieldSales     = "sales"

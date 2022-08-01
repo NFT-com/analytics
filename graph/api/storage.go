@@ -16,11 +16,12 @@ type Storage interface {
 
 	Collection(id string) (*api.Collection, error)
 	CollectionByContract(networkID string, contract string) (*api.Collection, error)
-	CollectionNFTs(collectionID string) ([]*api.NFT, error)
-	Collections(networkID *string, orderBy api.CollectionOrder) ([]*api.Collection, error)
 	CollectionsByNetwork(networkID string) ([]*api.Collection, error)
-	CollectionTraits(collectionID string) ([]api.Trait, error)
+	Collections(networkID *string, orderBy api.CollectionOrder) ([]*api.Collection, error)
+
 	CollectionSize(id string) (uint, error)
+	CollectionNFTs(collectionID string, limit uint, afterID string) (nfts []*api.NFT, more bool, err error)
+	CollectionTraits(collectionID string) ([]api.Trait, error)
 	CollectionOwners(collectionID string) (map[string][]api.Owner, error)
 
 	MarketplaceCollections(marketplaceID string) ([]*api.Collection, error)
