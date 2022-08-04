@@ -1,0 +1,290 @@
+{
+	"info": {
+		"_postman_id": "f432f35c-0715-4189-9ccc-b0e264cf3c50",
+		"name": "NFT.com Pagination tests",
+		"description": "## NFT.com Pagination Tests\n\nThis collection can be used to test the Graph API pagination of the list of NFTs in a Collection.\n\n### Bootstrapping\n\nThe `Bootstrap NFT list` folder has an initial POST request that retrieves the list of NFT IDs, as well as resetting some of the parameters used throughout the test.\n\nSome of the parameters relevant for the pagination functionality are the following:\n\n*   `cursor` - specifies the cursor value to be used for the next page request\n*   `traversed` - number of NFTs processed so far\n*   `page-counter` - counter for the number of pages requested\n*   `page-limit` - hard limit for the number of pages that will be requested as part of the Runner session\n    \n\n### Page Iteration\n\nThe `Iterate pages` folder has the `Get page` POST request that does the actual retrieval and verification of individual NFT subset.\n\nIt requests the page of results according to the `cursor` variable and updates it after each page of results, as well as updating the `traversed` and `page-counter` variables.\n\nWhen running as part of a Runner session it will queue itself to be ran again, as long as there are more pages to retrieve, or the hard limit for the number of pages is reached.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19032524"
+	},
+	"item": [
+		{
+			"name": "Bootstrap NFT list",
+			"item": [
+				{
+					"name": "Retrieve full list of NFTs in a collection",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Get the ID variable from the request.\r",
+									"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+									"let requested_id = variables.id;\r",
+									"\r",
+									"// Get the ID from the response.\r",
+									"let response = pm.response.json();\r",
+									"let collection_id = response.data.collection.id;\r",
+									"\r",
+									"pm.test(\"Received correct collection\", function() {\r",
+									"    pm.expect(collection_id).to.be.eq(requested_id);\r",
+									"});\r",
+									"\r",
+									"let edges = response.data.collection.nfts.edges;\r",
+									"\r",
+									"pm.test(\"We have the a non-empty list of NFTs\", function() {\r",
+									"    pm.expect(edges).to.be.an('array').and.to.be.not.empty;\r",
+									"});\r",
+									"\r",
+									"// List of IDs of all NFTs in the collection.\r",
+									"var nft_ids = new Array();\r",
+									"\r",
+									"edges.forEach(function(edge) {\r",
+									"    let id = edge.node.id;\r",
+									"    nft_ids.push(id);\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"nft-ids\", nft_ids.toString());\r",
+									"pm.collectionVariables.set(\"traversed\", \"0\");\r",
+									"pm.collectionVariables.set(\"cursor\", \"\");\r",
+									"pm.collectionVariables.set(\"page-counter\", \"0\");\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        nfts {\r\n            edges {\r\n                node {\r\n                    id\r\n                }\r\n            }\r\n        }\r\n    }\r\n}",
+								"variables": "{\r\n    \"id\": \"{{collection-id}}\"\r\n}"
+							}
+						},
+						"url": {
+							"raw": "{{scheme}}://{{hostname}}:{{port}}/graphql",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{hostname}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Iterate pages",
+			"item": [
+				{
+					"name": "Get page",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Unpack the full list of NFTs.\r",
+									"let nft_id_list = pm.collectionVariables.get(\"nft-ids\");\r",
+									"pm.test(\"NFT ID list is populated\", function() {\r",
+									"    pm.expect(nft_id_list).to.be.a('string').and.not.be.empty;\r",
+									"});\r",
+									"// Stop test if we don't have the IDs.\r",
+									"if (nft_id_list === \"\") return;\r",
+									"\r",
+									"var page_counter = parseInt(pm.collectionVariables.get(\"page-counter\"));\r",
+									"console.log(\"Page: \" + page_counter);\r",
+									"\r",
+									"// Unpack the NFT IDs into a string array.\r",
+									"let nft_ids = nft_id_list.split(\",\");\r",
+									"console.log(\"Total NFTs in collection: \" + nft_ids.length);\r",
+									"\r",
+									"let response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Received correct collection\", function() {\r",
+									"    // Get the ID variable from the request.\r",
+									"    let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+									"    let requested_id = variables.id;\r",
+									"\r",
+									"    // Get the ID from the response.\r",
+									"    let collection_id = response.data.collection.id;\r",
+									"\r",
+									"    pm.expect(collection_id).to.be.eq(requested_id);\r",
+									"});\r",
+									"\r",
+									"// Get the number of NFTs traversed so far.\r",
+									"var traversed = parseInt(pm.collectionVariables.get(\"traversed\"))\r",
+									"// See how many NFTs are left to process.\r",
+									"let left_to_process = nft_ids.length - traversed;\r",
+									"\r",
+									"// How many NFTs should be in the page - it's either a full page\r",
+									"// or, in the case of the last page, it can be less.\r",
+									"\r",
+									"let page_size = parseInt(pm.collectionVariables.get(\"page-size\"));\r",
+									"\r",
+									"var expected_nfts = page_size;\r",
+									"if (left_to_process < page_size) {\r",
+									"    expected_nfts = left_to_process;\r",
+									"}\r",
+									"\r",
+									"let edges = response.data.collection.nfts.edges;\r",
+									"pm.test(\"Received expected number of NFTs\", function() {\r",
+									"    pm.expect(edges).to.have.lengthOf(expected_nfts);\r",
+									"});\r",
+									"\r",
+									"// Go through NFTs and compare them against the stored ID list.\r",
+									"pm.test(\"Verify NFT from paginated set against stored ID list\", function(){\r",
+									"\r",
+									"    edges.forEach(function(edge) {\r",
+									"        id = edge.node.id;\r",
+									"        pm.expect(id).to.be.eq(nft_ids[traversed]);\r",
+									"        \r",
+									"        // Increase the number of traversed NFTs.\r",
+									"        traversed++;\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// Save the number of traversed NFTs.\r",
+									"pm.collectionVariables.set(\"traversed\", traversed.toString());\r",
+									"\r",
+									"console.log(\"Traversed so far: \" + traversed);\r",
+									"\r",
+									"// Increase the page counter.\r",
+									"page_counter++;\r",
+									"pm.collectionVariables.set(\"page-counter\", page_counter.toString());\r",
+									"\r",
+									"// Get the page limit.\r",
+									"let page_limit = parseInt(pm.collectionVariables.get(\"page-limit\"));\r",
+									"\r",
+									"// If we processed all NFTs, we should stop pagination.\r",
+									"if (traversed == nft_ids.length) {\r",
+									"    console.log(\"Processed all NFTs\")\r",
+									"    postman.setNextRequest(null);\r",
+									"    return;\r",
+									"}\r",
+									"\r",
+									"// If we reached the hard limit, we should stop pagination.\r",
+									"if (page_counter >= page_limit) {\r",
+									"    console.log(\"Reached page hard limit\")\r",
+									"    postman.setNextRequest(null);\r",
+									"    return;\r",
+									"}\r",
+									"\r",
+									"// Set the cursor to the cursor of the last NFT in the set.\r",
+									"let last_cursor = edges[edges.length - 1].cursor;\r",
+									"console.log(\"New cursor value: \" + last_cursor);\r",
+									"pm.collectionVariables.set(\"cursor\", last_cursor.toString());\r",
+									"\r",
+									"// Set this request to be ran again.\r",
+									"postman.setNextRequest(\"Get page\");\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        nfts(first: 3000, after: \"{{cursor}}\") {\r\n            edges {\r\n                node {\r\n                    id\r\n                }\r\n                cursor\r\n            }\r\n            pageInfo {\r\n                hasNextPage\r\n            }\r\n        }\r\n    }\r\n}",
+								"variables": "{\r\n    \"id\": \"{{collection-id}}\"\r\n}"
+							}
+						},
+						"url": {
+							"raw": "{{scheme}}://{{hostname}}:{{port}}/graphql",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{hostname}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "scheme",
+			"value": "http",
+			"type": "string"
+		},
+		{
+			"key": "hostname",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"key": "port",
+			"value": "8080",
+			"type": "string"
+		},
+		{
+			"key": "collection-id",
+			"value": "612ecc22-36ef-4ef7-bb0b-5b864b85d089",
+			"type": "string"
+		},
+		{
+			"key": "nft-ids",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "page-size",
+			"value": "3000",
+			"type": "string"
+		},
+		{
+			"key": "cursor",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "traversed",
+			"value": "0"
+		},
+		{
+			"key": "page-counter",
+			"value": "0",
+			"type": "string"
+		},
+		{
+			"key": "page-limit",
+			"value": "1000",
+			"type": "string"
+		}
+	]
+}
