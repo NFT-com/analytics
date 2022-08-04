@@ -334,7 +334,7 @@ export const createGraphTaskDefinition = (
     infraOutput: SharedInfraOutput,
 ): aws.ecs.TaskDefinition => {
     const resourceName = getResourceName('analytics-td-graph-api')
-    const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:graph-api`
+    const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:graph-api-${process.env.GIT_SHA || 'latest'}`
     
     return new aws.ecs.TaskDefinition(resourceName, 
     {
@@ -372,7 +372,7 @@ export const createAggregationTaskDefinition = (
   infraOutput: SharedInfraOutput,
 ): aws.ecs.TaskDefinition => {
   const resourceName = getResourceName('analytics-td-aggregation-api')
-  const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:aggregation-api`
+  const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:aggregation-api-${process.env.GIT_SHA || 'latest'}`
 
   return new aws.ecs.TaskDefinition(resourceName, 
   {
@@ -410,7 +410,7 @@ export const createEventsTaskDefinition = (
     infraOutput: SharedInfraOutput,
 ): aws.ecs.TaskDefinition => {
     const resourceName = getResourceName('analytics-td-events-api')
-    const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:events-api`
+    const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:events-api-${process.env.GIT_SHA || 'latest'}`
 
     return new aws.ecs.TaskDefinition(resourceName, 
     {
