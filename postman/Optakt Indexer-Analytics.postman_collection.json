@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "a8f7fe1b-f42e-4a38-9b67-59f92fb97509",
+		"_postman_id": "e4b29fa0-b809-4d4d-9a36-939257966966",
 		"name": "Optakt Indexer/Analytics",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "20061059"
+		"_exporter_id": "19032524"
 	},
 	"item": [
 		{
@@ -357,37 +357,6 @@
 								}
 							},
 							"response": []
-						},
-						{
-							"name": "Batch price",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"ids\": [\r\n        \"{{batch-nft-id-1}}\",\r\n        \"{{batch-nft-id-2}}\",\r\n        \"{{batch-nft-id-3}}\",\r\n        \"{{batch-nft-id-4}}\",\r\n        \"{{batch-nft-id-5}}\",\r\n        \"{{batch-nft-id-6}}\",\r\n        \"{{batch-nft-id-7}}\",\r\n        \"{{batch-nft-id-8}}\",\r\n        \"{{batch-nft-id-9}}\",\r\n        \"{{batch-nft-id-10}}\"\r\n    ]\r\n}"
-								},
-								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/nft/batch/price",
-									"protocol": "{{scheme}}",
-									"host": [
-										"{{aggregation_hostname}}"
-									],
-									"port": "{{port}}",
-									"path": [
-										"nft",
-										"batch",
-										"price"
-									]
-								}
-							},
-							"response": []
 						}
 					]
 				},
@@ -681,6 +650,28 @@
 					"item": [
 						{
 							"name": "Get Network",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_id = variables.id;\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let network_id = response.data.network.id;\r",
+											"\r",
+											"pm.test(\"Received correct network\", function() {\r",
+											"    pm.expect(network_id).to.be.eq(requested_id);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -707,6 +698,31 @@
 						},
 						{
 							"name": "Get Network with Collections",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_id = variables.id;\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let network_id = response.data.network.id;\r",
+											"\r",
+											"pm.test(\"Received correct network\", function() {\r",
+											"    pm.expect(network_id).to.be.eq(requested_id);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Collection list is not empty\", function() {\r",
+											"    pm.expect(response.data.network.collections).to.be.an('array').and.not.be.empty;\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -733,6 +749,31 @@
 						},
 						{
 							"name": "Get Network with Marketplaces",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_id = variables.id;\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let network_id = response.data.network.id;\r",
+											"\r",
+											"pm.test(\"Received correct network\", function() {\r",
+											"    pm.expect(network_id).to.be.eq(requested_id);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Marketplace list is not empty\", function() {\r",
+											"    pm.expect(response.data.network.marketplaces).to.be.an('array').and.not.be.empty;\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -764,6 +805,28 @@
 					"item": [
 						{
 							"name": "Get NFT",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_id = variables.id;\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let nft_id = response.data.nft.id;\r",
+											"\r",
+											"pm.test(\"Received correct NFT\", function() {\r",
+											"    pm.expect(nft_id).to.be.eq(requested_id);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -790,14 +853,40 @@
 						},
 						{
 							"name": "Get NFT with multiple owners",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_id = variables.id;\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let nft = response.data.nft;\r",
+											"\r",
+											"pm.test(\"Received correct NFT\", function() {\r",
+											"    pm.expect(nft.id).to.be.eq(requested_id);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Verify NFT has multiple owners\", function() {\r",
+											"    pm.expect(nft.owners).to.be.an('array').and.have.length.above(1);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "query($id: ID!) {\r\n    nft(id: $id) {\r\n       id\r\n       name\r\n       description\r\n       image_url\r\n       token_id\r\n       uri\r\n       rarity\r\n       owners {\r\n           address\r\n           number\r\n       }\r\n       traits {\r\n           name\r\n           value\r\n           rarity\r\n       }\r\n       collection {\r\n           id\r\n           name\r\n       }\r\n    }\r\n}",
-										"variables": "{\r\n    \"id\": \"52ad872d-cd97-fbd9-12cf-43a685888b7c\"\r\n}"
+										"query": "query($id: ID!) {\r\n    nft(id: $id) {\r\n       id\r\n       name\r\n       description\r\n       image_url\r\n       token_id\r\n       uri\r\n       rarity\r\n       owners {\r\n           address\r\n           number\r\n       }\r\n       collection {\r\n           id\r\n           name\r\n       }\r\n    }\r\n}",
+										"variables": "{\r\n    \"id\": \"15cb3849-7155-3f4b-7440-f6b7bcd9076f\"\r\n}"
 									}
 								},
 								"url": {
@@ -816,6 +905,47 @@
 						},
 						{
 							"name": "Get NFT with rarity and trait rarity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_id = variables.id;\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let nft = response.data.nft;\r",
+											"\r",
+											"pm.test(\"Received correct NFT\", function() {\r",
+											"    pm.expect(nft.id).to.be.eq(requested_id);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"NFT has valid rarity value\", function() {\r",
+											"    pm.expect(nft.rarity).to.be.above(0).and.below(1);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"NFT rarity is a product of trait rarities\", function() {\r",
+											"    \r",
+											"    var calculated_rarity = 1.0;\r",
+											"    let traits = nft.traits;\r",
+											"\r",
+											"    pm.expect(traits).to.be.an('array').and.be.not.empty;\r",
+											"\r",
+											"    traits.forEach(function(trait) {\r",
+											"        calculated_rarity = calculated_rarity * trait.rarity;\r",
+											"    });\r",
+											"\r",
+											"    pm.expect(nft.rarity).to.be.eq(calculated_rarity);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -841,14 +971,55 @@
 							"response": []
 						},
 						{
-							"name": "Get NFTby token ID with rarity and trait rarity",
+							"name": "Get NFT by token ID with rarity and trait rarity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let nft = response.data.nft_by_token_id;\r",
+											"\r",
+											"pm.test(\"Received correct NFT\", function() {\r",
+											"    pm.expect(nft.token_id).to.be.eq(variables.token_id);\r",
+											"    pm.expect(nft.collection.address).to.be.eq(variables.contract);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"NFT has valid rarity value\", function() {\r",
+											"    pm.expect(nft.rarity).to.be.above(0).and.below(1);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"NFT rarity is a product of trait rarities\", function() {\r",
+											"    \r",
+											"    var calculated_rarity = 1.0;\r",
+											"    let traits = nft.traits;\r",
+											"\r",
+											"    pm.expect(traits).to.be.an('array').and.be.not.empty;\r",
+											"\r",
+											"    traits.forEach(function(trait) {\r",
+											"        calculated_rarity = calculated_rarity * trait.rarity;\r",
+											"    });\r",
+											"\r",
+											"    pm.expect(nft.rarity).to.be.eq(calculated_rarity);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "query($network_id: ID!, $contract: Address!, $token_id: String!) {\r\n    nft_by_token_id(network_id: $network_id, contract: $contract, token_id: $token_id) {\r\n       id\r\n       token_id\r\n       image_url\r\n       uri\r\n       rarity\r\n       owners {\r\n           address\r\n           number\r\n       }\r\n       traits {\r\n           name\r\n           value\r\n           rarity\r\n       }\r\n    }\r\n}",
+										"query": "query($network_id: ID!, $contract: Address!, $token_id: String!) {\r\n    nft_by_token_id(network_id: $network_id, contract: $contract, token_id: $token_id) {\r\n       id\r\n       token_id\r\n       image_url\r\n       uri\r\n       rarity\r\n       owners {\r\n           address\r\n           number\r\n       }\r\n       traits {\r\n           name\r\n           value\r\n           rarity\r\n       }\r\n       collection {\r\n           id\r\n           address\r\n       }\r\n    }\r\n}",
 										"variables": "{\r\n    \"network_id\": \"94c754fe-e06c-4d2b-bb76-2faa240b5bb8\",\r\n    \"contract\": \"0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d\",\r\n    \"token_id\": \"2113\"\r\n}"
 									}
 								},
@@ -868,13 +1039,46 @@
 						},
 						{
 							"name": "Lookup NFTs by collection and rarity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_id = variables.id;\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let nfts = response.data.nfts;\r",
+											"\r",
+											"pm.test(\"Verify all NFTs are from the correct collection\", function() {\r",
+											"\r",
+											"    let collection_id = variables.collection;\r",
+											"    nfts.forEach(function(nft) {\r",
+											"        pm.expect(nft.collection.id).to.be.eq(collection_id);\r",
+											"    });\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Verify all NFTs have rarity below the specified threshold\", function() {\r",
+											"\r",
+											"    let rarity_max = variables.rarity_max;\r",
+											"    nfts.forEach(function(nft) {\r",
+											"        pm.expect(nft.rarity).to.be.below(rarity_max);\r",
+											"    })\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "query($collection: ID, $rarity_max: Float) {\r\n    nfts(collection: $collection, rarity_max: $rarity_max) {\r\n        id\r\n        token_id\r\n        image_url\r\n        uri\r\n        rarity\r\n    }\r\n}",
+										"query": "query($collection: ID, $rarity_max: Float) {\r\n    nfts(collection: $collection, rarity_max: $rarity_max) {\r\n        id\r\n        rarity\r\n        collection {\r\n            id\r\n        }\r\n        owners {\r\n            address\r\n            number\r\n        }\r\n    }\r\n}",
 										"variables": "{\r\n   \"collection\": \"612ecc22-36ef-4ef7-bb0b-5b864b85d089\",\r\n   \"rarity_max\" : 0.0000000004\r\n}"
 									}
 								},
@@ -894,14 +1098,58 @@
 						},
 						{
 							"name": "Lookup NFTs by collection and rarity, incl owners",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_id = variables.id;\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let nfts = response.data.nfts;\r",
+											"\r",
+											"pm.test(\"Verify all NFTs are from the correct collection\", function() {\r",
+											"\r",
+											"    let collection_id = variables.collection;\r",
+											"    nfts.forEach(function(nft) {\r",
+											"        pm.expect(nft.collection.id).to.be.eq(collection_id);\r",
+											"    });\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Verify all NFTs have the specified owner\", function() {\r",
+											"\r",
+											"    let wanted_owner = variables.owner;\r",
+											"    nfts.forEach(function(nft) {\r",
+											"\r",
+											"        var have_owner = false\r",
+											"        nft.owners.forEach(function(owner) {\r",
+											"\r",
+											"            if (owner.address == wanted_owner) {\r",
+											"                have_owner = true;\r",
+											"                return;\r",
+											"            }\r",
+											"        });\r",
+											"\r",
+											"        pm.expect(have_owner).to.be.true;\r",
+											"    });\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "query($owner: Address, $collection: ID) {\r\n    nfts(owner: $owner, collection: $collection) {\r\n        id\r\n        token_id\r\n        image_url\r\n        uri\r\n        rarity\r\n        owners {\r\n            address\r\n            number\r\n        }\r\n    }\r\n}",
-										"variables": "{\r\n   \"owner\": \"0xd311bDACB151b72BddFEE9cBdC414Af22a5E38dc\",\r\n   \"collection\": \"37f5eff7-e355-4d8b-9a35-8bfa4f819fef\"\r\n}"
+										"query": "query($owner: Address, $collection: ID) {\r\n    nfts(owner: $owner, collection: $collection) {\r\n        id\r\n        token_id\r\n        image_url\r\n        uri\r\n        rarity\r\n        owners {\r\n            address\r\n            number\r\n        }\r\n        collection {\r\n            id\r\n        }\r\n    }\r\n}",
+										"variables": "{\r\n   \"owner\": \"0x7a76fcc57262B28D2a86fa4e5c9CB7CE8D386B3A\",\r\n   \"collection\": \"612ecc22-36ef-4ef7-bb0b-5b864b85d089\"\r\n}"
 									}
 								},
 								"url": {
@@ -925,6 +1173,28 @@
 					"item": [
 						{
 							"name": "Get Collection",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_id = variables.id;\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let collection_id = response.data.collection.id;\r",
+											"\r",
+											"pm.test(\"Received correct collection\", function() {\r",
+											"    pm.expect(collection_id).to.be.eq(requested_id);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -951,6 +1221,28 @@
 						},
 						{
 							"name": "Get Collection by address",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_address = variables.contract;\r",
+											"\r",
+											"// Get the address from the response.\r",
+											"let response = pm.response.json();\r",
+											"let address = response.data.collection_by_address.address;\r",
+											"\r",
+											"pm.test(\"Received correct collection\", function() {\r",
+											"    pm.expect(address.toLowerCase()).to.be.eq(requested_address.toLowerCase());\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -977,6 +1269,34 @@
 						},
 						{
 							"name": "Get Collection with NFTs",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_id = variables.id;\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let collection_id = response.data.collection.id;\r",
+											"\r",
+											"pm.test(\"Received correct collection\", function() {\r",
+											"    pm.expect(collection_id).to.be.eq(requested_id);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"We have the complete list of NFTs\", function() {\r",
+											"\r",
+											"    let size = parseInt(pm.collectionVariables.get(\"collection_size\"));\r",
+											"    pm.expect(response.data.collection.nfts.edges).to.be.an('array').and.have.lengthOf(size);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -1003,6 +1323,42 @@
 						},
 						{
 							"name": "Get Collection with NFTs, paginated - first 200",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_id = variables.id;\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let collection_id = response.data.collection.id;\r",
+											"\r",
+											"let page_size = 200;\r",
+											"\r",
+											"pm.test(\"Received correct collection\", function() {\r",
+											"    pm.expect(collection_id).to.be.eq(requested_id);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"We have an NFT list of the correct size\", function() {\r",
+											"    let size = page_size;\r",
+											"    pm.expect(response.data.collection.nfts.edges).to.be.an('array').and.have.lengthOf(size);\r",
+											"});\r",
+											"\r",
+											"// Verify that the last page indicator is correct.\r",
+											"pm.test(\"Last page indicator is correct\", function() {\r",
+											"    \r",
+											"    let has_next_page = response.data.collection.nfts.pageInfo.hasNextPage;\r",
+											"    pm.expect(has_next_page).to.be.true;\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -1029,13 +1385,118 @@
 						},
 						{
 							"name": "Get Collection with NFTs, paginated - continue after cursor",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_id = variables.id;\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let collection_id = response.data.collection.id;\r",
+											"\r",
+											"let page_size = 200;\r",
+											"\r",
+											"pm.test(\"Received correct collection\", function() {\r",
+											"    pm.expect(collection_id).to.be.eq(requested_id);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"We have an NFT list of the correct size\", function() {\r",
+											"\r",
+											"    let size = page_size;\r",
+											"    pm.expect(response.data.collection.nfts.edges).to.be.an('array').and.have.lengthOf(size);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"We have continued pagination from the expected NFT\", function() {\r",
+											"\r",
+											"    let expected_nft_id = pm.collectionVariables.get(\"pagination-continue-expected-nft-id\");\r",
+											"    let first_nft_id = response.data.collection.nfts.edges[0].node.id;\r",
+											"    pm.expect(first_nft_id).to.be.eq(expected_nft_id);\r",
+											"});\r",
+											"\r",
+											"// Verify that the last page indicator is correct.\r",
+											"pm.test(\"Last page indicator is correct\", function() {\r",
+											"    \r",
+											"    let has_next_page = response.data.collection.nfts.pageInfo.hasNextPage;\r",
+											"    pm.expect(has_next_page).to.be.true;\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        description\r\n        address\r\n        website\r\n        image_url\r\n        nfts(first: 200, after: \"MDZjZjM3MGMtYjQ5ZS0zOTQzLTYwOTktMzE2MDk0Y2U3OWNi\") {\r\n            edges {\r\n                node {\r\n                    id\r\n                    token_id\r\n                    uri\r\n                }\r\n                cursor\r\n            }\r\n            pageInfo {\r\n                hasNextPage\r\n            }\r\n        }\r\n    }\r\n}",
+										"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        description\r\n        address\r\n        website\r\n        image_url\r\n        nfts(first: 200, after: \"{{pagination-continue-cursor}}\") {\r\n            edges {\r\n                node {\r\n                    id\r\n                    token_id\r\n                    uri\r\n                }\r\n                cursor\r\n            }\r\n            pageInfo {\r\n                hasNextPage\r\n            }\r\n        }\r\n    }\r\n}",
+										"variables": "{\r\n    \"id\": \"612ecc22-36ef-4ef7-bb0b-5b864b85d089\"\r\n}"
+									}
+								},
+								"url": {
+									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"protocol": "{{scheme}}",
+									"host": [
+										"{{graph_hostname}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"graphql"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Collection with NFTs, paginated - last page",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_id = variables.id;\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let collection_id = response.data.collection.id;\r",
+											"\r",
+											"pm.test(\"Received correct collection\", function() {\r",
+											"    pm.expect(collection_id).to.be.eq(requested_id);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"We have an NFT list of the correct size\", function() {\r",
+											"\r",
+											"    let last_page_size = parseInt(pm.collectionVariables.get(\"pagination-near-end-page-size\"));\r",
+											"    pm.expect(response.data.collection.nfts.edges).to.be.an('array').and.have.lengthOf(last_page_size);\r",
+											"});\r",
+											"\r",
+											"// Verify that the last page indicator is correct.\r",
+											"pm.test(\"Last page indicator is correct\", function() {\r",
+											"    \r",
+											"    let has_next_page = response.data.collection.nfts.pageInfo.hasNextPage;\r",
+											"    pm.expect(has_next_page).to.be.false;\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "graphql",
+									"graphql": {
+										"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        description\r\n        address\r\n        website\r\n        image_url\r\n        nfts(first: 200, after: \"{{pagination-near-end-cursor}}\") {\r\n            edges {\r\n                node {\r\n                    id\r\n                    token_id\r\n                    uri\r\n                }\r\n                cursor\r\n            }\r\n            pageInfo {\r\n                hasNextPage\r\n            }\r\n        }\r\n    }\r\n}",
 										"variables": "{\r\n    \"id\": \"612ecc22-36ef-4ef7-bb0b-5b864b85d089\"\r\n}"
 									}
 								},
@@ -1055,6 +1516,50 @@
 						},
 						{
 							"name": "Get Collection with NFTs, incl owners",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_id = variables.id;\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let collection_id = response.data.collection.id;\r",
+											"\r",
+											"pm.test(\"Received correct collection\", function() {\r",
+											"    pm.expect(collection_id).to.be.eq(requested_id);\r",
+											"});\r",
+											"pm.test(\"We have the complete list of NFTs\", function() {\r",
+											"\r",
+											"    let size = parseInt(pm.collectionVariables.get(\"collection_size\"));\r",
+											"    pm.expect(response.data.collection.nfts.edges).to.have.lengthOf(size);\r",
+											"});\r",
+											"\r",
+											"// Validate ownership data.\r",
+											"pm.test(\"Validate owners addresses and token numbers are valid\", function() {\r",
+											"\r",
+											"    response.data.collection.nfts.edges.forEach(function(edge) {\r",
+											"        \r",
+											"        let owners = edge.node.owners;\r",
+											"        owners.forEach(function(owner) {\r",
+											"\r",
+											"            // Validate token count.\r",
+											"            pm.expect(owner.number).to.be.at.least(1);\r",
+											"\r",
+											"            // Valdiate contract address.\r",
+											"            pm.expect(owner.address).to.be.a('string').and.match(/^(0x|0X)[a-fA-F0-9]+$/);\r",
+											"        })\r",
+											"    });\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -1081,6 +1586,40 @@
 						},
 						{
 							"name": "Get Collection with NFTs with traits",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_id = variables.id;\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let collection_id = response.data.collection.id;\r",
+											"\r",
+											"pm.test(\"Received correct collection\", function() {\r",
+											"    pm.expect(collection_id).to.be.eq(requested_id);\r",
+											"});\r",
+											"pm.test(\"We have the complete list of NFTs\", function() {\r",
+											"    let size = parseInt(pm.collectionVariables.get(\"collection_size\"));\r",
+											"    pm.expect(response.data.collection.nfts.edges).to.have.lengthOf(size);\r",
+											"});\r",
+											"\r",
+											"// Validate trait data is present.\r",
+											"pm.test(\"NFTs have non-empty list of traits\", function() {\r",
+											"    \r",
+											"    response.data.collection.nfts.edges.forEach(function(edge) {\r",
+											"        pm.expect(edge.node.traits).to.be.an('array').and.be.not.empty;\r",
+											"    });\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -1107,6 +1646,39 @@
 						},
 						{
 							"name": "Get Collection with NFTs with rarity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_id = variables.id;\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let collection_id = response.data.collection.id;\r",
+											"\r",
+											"pm.test(\"Received correct collection\", function() {\r",
+											"    pm.expect(collection_id).to.be.eq(requested_id);\r",
+											"});\r",
+											"pm.test(\"We have the complete list of NFTs\", function() {\r",
+											"    let size = parseInt(pm.collectionVariables.get(\"collection_size\"));\r",
+											"    pm.expect(response.data.collection.nfts.edges).to.have.lengthOf(size);\r",
+											"});\r",
+											"\r",
+											"// Validate rarity is valid - in the (0, 1) range.\r",
+											"pm.test(\"NFTs have valid rarity values\", function() {\r",
+											"    response.data.collection.nfts.edges.forEach(function(edge) {\r",
+											"        pm.expect(edge.node.rarity).to.be.above(0).and.below(1);\r",
+											"    });\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -1133,6 +1705,52 @@
 						},
 						{
 							"name": "Get Collection with NFTs with rarity and trait rarity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Get the ID variable from the request.\r",
+											"let variables = JSON.parse(pm.request.body.graphql.variables);\r",
+											"let requested_id = variables.id;\r",
+											"\r",
+											"// Get the ID from the response.\r",
+											"let response = pm.response.json();\r",
+											"let collection_id = response.data.collection.id;\r",
+											"\r",
+											"pm.test(\"Received correct collection\", function() {\r",
+											"    pm.expect(collection_id).to.be.eq(requested_id);\r",
+											"});\r",
+											"pm.test(\"We have the complete list of NFTs\", function() {\r",
+											"    let size = parseInt(pm.collectionVariables.get(\"collection_size\"));\r",
+											"    pm.expect(response.data.collection.nfts.edges).to.have.lengthOf(size);\r",
+											"});\r",
+											"\r",
+											"// Validate rarity.\r",
+											"pm.test(\"NFT rarity is a product of trait rarities\", function() {\r",
+											"    \r",
+											"    response.data.collection.nfts.edges.forEach(function(edge) {\r",
+											"\r",
+											"        var calculated_rarity = 1.0;\r",
+											"        let traits = edge.node.traits;\r",
+											"\r",
+											"        pm.expect(traits).to.be.an('array').and.be.not.empty;\r",
+											"\r",
+											"        traits.forEach(function(trait) {\r",
+											"            calculated_rarity = calculated_rarity * trait.rarity;\r",
+											"        });\r",
+											"\r",
+											"        pm.expect(edge.node.rarity).to.be.above(0).and.below(1);\r",
+											"\r",
+											"        pm.expect(edge.node.rarity).to.be.eq(calculated_rarity);\r",
+											"    });\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -1157,7 +1775,50 @@
 							},
 							"response": []
 						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
 					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// Verify status code indicates success.",
+							"pm.test(\"Status code is 200\", function () {",
+							"  pm.response.to.have.status(200);",
+							"});"
+						]
+					}
 				}
 			]
 		},
@@ -2768,6 +3429,31 @@
 			"type": "string"
 		},
 		{
+			"key": "collection_size",
+			"value": "10000",
+			"type": "string"
+		},
+		{
+			"key": "pagination-continue-cursor",
+			"value": "NjFjMDliZjAtM2I5NC1kNTliLTAyZGQtYjliNzVhZmU5Y2U0",
+			"type": "string"
+		},
+		{
+			"key": "pagination-continue-expected-nft-id",
+			"value": "61c3dace-677e-7171-fdaf-1a90699e768b",
+			"type": "string"
+		},
+		{
+			"key": "pagination-near-end-cursor",
+			"value": "ZmM3YzEwZTAtMTViMC1iOTg4LWNmYWMtMWZmYjI1ZDJlNDE3",
+			"type": "string"
+		},
+		{
+			"key": "pagination-near-end-page-size",
+			"value": "145",
+			"type": "string"
+		},
+		{
 			"key": "batch-collection-id-1",
 			"value": "612ecc22-36ef-4ef7-bb0b-5b864b85d089",
 			"type": "string"
@@ -2795,61 +3481,6 @@
 		{
 			"key": "date-to",
 			"value": "2022-06-01",
-			"type": "string"
-		},
-		{
-			"key": "nft-id",
-			"value": "2d8c78d3-5d2d-aafb-291d-f31f6b4cb5fd",
-			"type": "string"
-		},
-		{
-			"key": "batch-nft-id-1",
-			"value": "83ec1393-efa0-770d-4c78-d25504aa7658",
-			"type": "string"
-		},
-		{
-			"key": "batch-nft-id-2",
-			"value": "5f09e248-5a85-24d6-0423-c8d39e9f3611",
-			"type": "string"
-		},
-		{
-			"key": "batch-nft-id-3",
-			"value": "291f79bd-598a-e384-a88c-2450efcb7612",
-			"type": "string"
-		},
-		{
-			"key": "batch-nft-id-4",
-			"value": "a74ee48a-81f2-d2a3-c5a1-779227dc2271",
-			"type": "string"
-		},
-		{
-			"key": "batch-nft-id-5",
-			"value": "3c95ed47-6183-cd5d-699a-0663c0fe1b1f",
-			"type": "string"
-		},
-		{
-			"key": "batch-nft-id-6",
-			"value": "c9645538-a69f-bbec-c346-3cfcb928f5cf",
-			"type": "string"
-		},
-		{
-			"key": "batch-nft-id-7",
-			"value": "3ecdc4da-c9fe-1ec7-b2c9-bb84a06a369e",
-			"type": "string"
-		},
-		{
-			"key": "batch-nft-id-8",
-			"value": "9182cff9-7d8d-2423-87fe-2e25e8bc56bf",
-			"type": "string"
-		},
-		{
-			"key": "batch-nft-id-9",
-			"value": "f0755716-b4b2-0ee4-9a5b-05d87d92c6ca",
-			"type": "string"
-		},
-		{
-			"key": "batch-nft-id-10",
-			"value": "a1284652-c4a5-5fa3-0ff7-ee8f7ead7b15",
 			"type": "string"
 		},
 		{
