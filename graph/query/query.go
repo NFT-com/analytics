@@ -72,8 +72,7 @@ func getNestedSelection(ctx *graphql.OperationContext, fields []graphql.Collecte
 		}
 
 		// Get all arguments for the field.
-		m := make(map[string]interface{})
-		args := field.ArgumentMap(m)
+		args := field.ArgumentMap(ctx.Variables)
 
 		qf := queryField{
 			path:      name,
