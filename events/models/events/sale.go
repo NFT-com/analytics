@@ -15,6 +15,8 @@ type Sale struct {
 	EventIndex         uint      `gorm:"column:event_index" json:"event_index"`
 	SellerAddress      string    `gorm:"column:seller_address" json:"seller_address"`
 	BuyerAddress       string    `gorm:"column:buyer_address" json:"buyer_address"`
-	TradePrice         string    `gorm:"column:trade_price" json:"trade_price"`
+	TokenCount         float64   `gorm:"column:token_count" json:"token_count"`
+	CurrencyValue      float64   `gorm:"column:currency_value" json:"currency_value"`
+	CurrencyAddress    string    `gorm:"column:currency_address" json:"currency_address"`
 	EmittedAt          time.Time `gorm:"column:emitted_at" json:"emitted_at"`
 }
