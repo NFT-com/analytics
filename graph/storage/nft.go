@@ -6,6 +6,7 @@ import (
 
 	"gorm.io/gorm"
 
+	"github.com/NFT-com/analytics/aggregate/models/identifier"
 	server "github.com/NFT-com/analytics/graph/api"
 	"github.com/NFT-com/analytics/graph/models/api"
 )
@@ -66,19 +67,28 @@ func (s *Storage) NFTByTokenID(networkID string, contract string, tokenID string
 // NFTs retrieves a list of NFTs fitting the specified criteria.
 func (s *Storage) NFTs(owner *string, collectionID *string, orderBy api.NFTOrder, limit uint, prefetchOwners bool) ([]*api.NFT, error) {
 
-	db := s.db.
-		Table("nfts n, owners o").
-		Select("DISTINCT n.*").
-		Where("o.nft_id = n.id")
+	// By default, we'll query a single table since it's faster.
+	db := s.db.Table("nfts n").Select("*")
 
-	// Set owner filter if specified.
+	// If filtering based on the owner is specified, switch to querying using two tables.
 	if owner != nil {
-		db = db.Where("LOWER(o.owner) = LOWER(?) AND o.number > 0", owner)
+		filter := s.db.
+			Table("owners o").
+			Select("DISTINCT o.nft_id").
+			Where("o.owner != ?", identifier.ZeroAddress).
+			Where("LOWER(o.owner) = LOWER(?)", *owner).
+			Group("LOWER(o.owner), o.nft_id").
+			Having("SUM(number) > ?", 0)
+
+		db = s.db.
+			Table("nfts n").
+			Select("n.*").
+			Where("n.id IN (?)", filter)
 	}
 
 	// Set collection filter if specified.
 	if collectionID != nil {
-		db = db.Where("collection_id = ?", collectionID)
+		db = db.Where("n.collection_id = ?", collectionID)
 	}
 
 	// Set `orderBy` if applicable - only for creation time we can directly use the DB sorting.
