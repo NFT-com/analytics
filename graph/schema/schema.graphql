@@ -10,11 +10,6 @@ A string representing an address (e.g. an Ethereum address).
 scalar Address
 
 """
-A string representing the currency symbol.
-"""
-scalar CurrencySymbol
-
-"""
 Currency represents a fungible token, typically used for payment.
 """
 type Currency {
@@ -26,7 +21,7 @@ type Currency {
     """
     Symbol of the fungible token.
     """
-    symbol: CurrencySymbol!
+    symbol: String!
 }
 
 """
