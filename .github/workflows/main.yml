@@ -1,4 +1,4 @@
-name: NFT.com Indexer github actions
+name: NFT.com Anayltics github actions
 on: [push]
 jobs:
   deploy-dev:
