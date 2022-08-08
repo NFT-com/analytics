@@ -195,8 +195,8 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query($id: ID!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        nfts(first: {{page-size}}, after: \"{{cursor}}\") {\r\n            edges {\r\n                node {\r\n                    id\r\n                }\r\n                cursor\r\n            }\r\n            pageInfo {\r\n                hasNextPage\r\n            }\r\n        }\r\n    }\r\n}",
-								"variables": "{\r\n    \"id\": \"{{collection-id}}\"\r\n}"
+								"query": "query($id: ID!, $first: Int!, $cursor: String!) {\r\n    collection(id: $id) {\r\n        id\r\n        name\r\n        nfts(first: $first, after: $cursor) {\r\n            edges {\r\n                node {\r\n                    id\r\n                }\r\n                cursor\r\n            }\r\n            pageInfo {\r\n                hasNextPage\r\n            }\r\n        }\r\n    }\r\n}",
+								"variables": "{\r\n    \"id\": \"{{collection-id}}\",\r\n    \"first\": {{page-size}},\r\n    \"cursor\": \"{{cursor}}\"\r\n}"
 							}
 						},
 						"url": {
