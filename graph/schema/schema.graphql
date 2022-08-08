@@ -10,6 +10,26 @@ A string representing an address (e.g. an Ethereum address).
 scalar Address
 
 """
+A string representing the currency symbol.
+"""
+scalar CurrencySymbol
+
+"""
+Currency represents a fungible token, typically used for payment.
+"""
+type Currency {
+    """
+    Amount of fungible tokens.
+    """
+    amount: Float!
+
+    """
+    Symbol of the fungible token.
+    """
+    symbol: CurrencySymbol!
+}
+
+"""
 Available options for the `orderBy` direction argument.
 """
 enum OrderDirection {
@@ -82,12 +102,12 @@ type Marketplace {
     """
     Trading volume on this marketplace.
     """
-    volume: Float!
+    volume: [Currency!]
 
     """
     Market cap of this marketplace.
     """
-    market_cap: Float!
+    market_cap: [Currency!]
 
     """
     Number of sales on this marketplace.
@@ -147,12 +167,12 @@ type Collection {
     """
     Trading volume of this collection.
     """
-    volume: Float!
+    volume: [Currency!]
 
     """
     Market cap of this collection.
     """
-    market_cap: Float!
+    market_cap: [Currency!]
 
     """
     Number of sales in this collection.
@@ -320,12 +340,12 @@ type NFT {
     """
     Trading price for this NFT.
     """
-    trading_price: Float!
+    trading_price: Currency!
 
     """
     All time average-price for this NFT.
     """
-    average_price: Float!
+    average_price: [Currency!]
 
     """
     Traits contains a list of attributes of the NFT.
