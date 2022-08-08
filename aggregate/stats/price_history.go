@@ -16,7 +16,7 @@ func (s *Stats) NFTPriceHistory(nft identifier.NFT, from time.Time, to time.Time
 
 	query := s.db.
 		Table("sales").
-		Select("trade_price, emitted_at").
+		Select("currency_value, currency_address, emitted_at").
 		Where("chain_id = ?", nft.Collection.ChainID).
 		Where("LOWER(collection_address) = LOWER(?)", nft.Collection.Address).
 		Where("token_id = ?", nft.TokenID).
@@ -24,10 +24,24 @@ func (s *Stats) NFTPriceHistory(nft identifier.NFT, from time.Time, to time.Time
 		Where("emitted_at <= ?", to.Format(timeFormat)).
 		Order("emitted_at DESC")
 
-	var out []datapoint.Price
-	err := query.Find(&out).Error
+	var prices []priceResult
+	err := query.Find(&prices).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve NFT prices: %v", err)
+	}
+
+	out := make([]datapoint.Price, 0, len(prices))
+	for _, p := range prices {
+
+		price := datapoint.Price{
+			Currency: datapoint.Currency{
+				Amount:  p.Amount,
+				Address: p.Address,
+			},
+			Time: p.Time,
+		}
+
+		out = append(out, price)
 	}
 
 	return out, nil

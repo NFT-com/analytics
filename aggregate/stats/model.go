@@ -1,5 +1,16 @@
 package stats
 
+import (
+	"time"
+)
+
+// priceResult represents the result of an NFT price query.
+type priceResult struct {
+	Amount  float64    `gorm:"column:currency_value"`
+	Address string     `gorm:"column:currency_address"`
+	Time    *time.Time `gorm:"column:emitted_at"`
+}
+
 // batchPriceResult represents the result of the batch NFT price query.
 type batchPriceResult struct {
 	ChainID           uint    `gorm:"column:chain_id"`

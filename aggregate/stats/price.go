@@ -8,24 +8,24 @@ import (
 )
 
 // NFTPrice returns the current NFT price for an NFT.
-func (s *Stats) NFTPrice(nft identifier.NFT) (float64, error) {
+func (s *Stats) NFTPrice(nft identifier.NFT) (datapoint.Currency, error) {
 
 	query := s.db.
 		Table("sales").
-		Select("trade_price").
+		Select("currency_value, currency_address").
 		Where("chain_id = ?", nft.Collection.ChainID).
 		Where("LOWER(collection_address) = LOWER(?)", nft.Collection.Address).
 		Where("token_id = ?", nft.TokenID).
 		Order("emitted_at DESC").
 		Limit(1)
 
-	var price datapoint.Price
+	var price datapoint.Currency
 	err := query.Take(&price).Error
 	if err != nil {
-		return 0, fmt.Errorf("could not retrieve price: %w", err)
+		return datapoint.Currency{}, fmt.Errorf("could not retrieve price: %w", err)
 	}
 
-	return price.Price, nil
+	return price, nil
 }
 
 // CollectionPrices returns the list of prices for NFTs in a specified collection.

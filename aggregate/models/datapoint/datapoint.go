@@ -4,6 +4,13 @@ import (
 	"time"
 )
 
+// FIXME: Remove this value when ready.
+// Value represents the generic datatype for some stat.
+type ValueTemp struct {
+	ID    string   `json:"id,omitempty"`
+	Value Currency `json:"value,omitempty"`
+}
+
 // Value represents the generic datatype for some stat.
 type Value struct {
 	ID    string  `json:"id,omitempty"`
@@ -53,8 +60,8 @@ type Users struct {
 // NOTE: This is the only data type that uses the actual time instead
 // of the date.
 type Price struct {
-	Price float64    `json:"price" gorm:"column:trade_price"`
-	Time  *time.Time `json:"emitted_at,omitempty" gorm:"column:emitted_at"`
+	Currency Currency   `json:"price" gorm:"column:trade_price"`
+	Time     *time.Time `json:"emitted_at,omitempty" gorm:"column:emitted_at"`
 }
 
 // Count represents the total number of NFTs in a collection.

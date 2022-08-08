@@ -27,7 +27,7 @@ func (a *API) NFTPrice(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve NFT price: %w", err))
 	}
 
-	response := datapoint.Value{
+	response := datapoint.ValueTemp{
 		ID:    id,
 		Value: price,
 	}
