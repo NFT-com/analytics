@@ -16,7 +16,6 @@ func (s *Stats) CollectionMarketCap(address identifier.Address) ([]datapoint.Cur
 				SELECT token_id, currency_value, LOWER(currency_address) AS currency_address
 				FROM sales
 				WHERE chain_id = ? and LOWER(collection_address) = LOWER(?)
-				GROUP BY LOWER(currency_address)
 				ORDER BY token_id, emitted_at DESC
 				LIMIT 1
 			)
@@ -27,13 +26,13 @@ func (s *Stats) CollectionMarketCap(address identifier.Address) ([]datapoint.Cur
 				SELECT token_id, currency_value, LOWER(currency_address) AS currency_address
 				FROM sales
 				WHERE token_id > c.token_id AND chain_id = ? and LOWER(collection_address) = LOWER(?)
-				GROUP BY LOWER(currency_address)
 				ORDER BY token_id, emitted_at DESC
 				LIMIT 1
 			) s
 		)
 		SELECT SUM(currency_value) AS currency_value, LOWER(currency_address) AS currency_address
-		FROM cte`,
+		FROM cte
+		GROUP BY LOWER(currency_address)`,
 		address.ChainID,
 		address.Address,
 		address.ChainID,

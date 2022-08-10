@@ -24,7 +24,7 @@ func (s *Stats) MarketplaceVolumeHistory(addresses []identifier.Address, from ti
 func (s *Stats) volumeHistory(collectionAddress *identifier.Address, marketplaceAddresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.CurrencySnapshot, error) {
 
 	// Determine the total value of trades for each point in time.
-	sumQuery := s.db.
+	query := s.db.
 		Select("SUM(currency_value) AS currency_value, LOWER(currency_address) AS currency_address, date").
 		Table("sales, LATERAL generate_series(?::timestamp, ?::timestamp, INTERVAL '1 day') AS date",
 			from.Format(timeFormat),
@@ -38,27 +38,14 @@ func (s *Stats) volumeHistory(collectionAddress *identifier.Address, marketplace
 			*collectionAddress,
 		}
 		collectionFilter := s.createCollectionFilter(list)
-		sumQuery.Where(collectionFilter)
+		query.Where(collectionFilter)
 	}
 
 	// Set marketplace filter if needed.
 	if len(marketplaceAddresses) > 0 {
 		marketplaceFilter := s.createMarketplaceFilter(marketplaceAddresses)
-		sumQuery.Where(marketplaceFilter)
+		query.Where(marketplaceFilter)
 	}
-
-	// Determine the difference from the previous data point.
-	seriesQuery := s.db.
-		Table("(?) s", sumQuery).
-		Select("s.currency_value, s.currency_value - LAG(s.currency_value, 1) OVER (ORDER BY date ASC) AS delta, s.date").
-		Group("currency_address")
-
-	// Only keep those data points where the volume changed.
-	query := s.db.
-		Table("(?) st", seriesQuery).
-		Select("st.currency_value, st.currency_address, st.date").
-		Where("st.delta != 0").Or("st.delta IS NULL").
-		Order("date DESC")
 
 	var records []datedPriceResult
 	err := query.Find(&records).Error

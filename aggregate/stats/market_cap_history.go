@@ -59,26 +59,16 @@ func (s *Stats) marketCapHistory(collectionAddress *identifier.Address, marketpl
 		Where("s.rank = 1")
 
 	// Market cap query calculates the actual market cap for each date in the
-	// specified date range. It also calculates the change from the previous date.
+	// specified date range.
 	marketCapQuery := s.db.
 		Table("( SELECT generate_series(?::timestamp, ?::timestamp, interval '1 day') AS date ) d, LATERAL( ? ) st ",
 			from.Format(timeFormat),
 			to.Format(timeFormat),
 			sumQuery,
-		).Select("currency_value, LOWER(currency_address) AS currency_address, currency_value - LAG(currency_value, 1) OVER (ORDER BY st.date ASC) AS delta, st.date").
-		Group("currency_address")
-
-	// Finally, this filter query will omit the results of the market cap query
-	// where the market cap did not change.
-	query := s.db.
-		Table("( ? ) mc", marketCapQuery).
-		Select("mc.currency_value, mc.currency_address, mc.date").
-		Where("mc.currency_value > 0").
-		Where("mc.delta != 0 OR mc.delta IS NULL").
-		Order("date DESC")
+		).Select("currency_value, LOWER(currency_address) AS currency_address, st.date")
 
 	var records []datedPriceResult
-	err := query.Find(&records).Error
+	err := marketCapQuery.Find(&records).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve volume info: %w", err)
 	}

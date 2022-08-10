@@ -39,22 +39,13 @@ func (s *Stats) CollectionAverageHistory(address identifier.Address, from time.T
 
 	// Delta query shows the average prices, as well as the difference between the previous
 	// data point.
-	deltaQuery := s.db.
+	query := s.db.
 		Table("( SELECT generate_series(?::timestamp, ?::timestamp, interval '1 day') AS date ) d, LATERAL( ? ) st ",
 			from.Format(timeFormat),
 			to.Format(timeFormat),
 			avgQuery,
-		).Select("currency_value, currency_value - LAG(currency_value, 1) OVER (ORDER BY st.date ASC) AS delta, st.date").
+		).Select("currency_value, currency_address, d.date").
 		Group("currency_address")
-
-	// Finally, this filter query will omit the results of the average price query
-	// where the average did not change.
-	query := s.db.
-		Table("( ? ) a", deltaQuery).
-		Select("a.currency_value, a.currency_address, a.date").
-		Where("a.currency_value > 0").
-		Where("a.delta != 0 OR a.delta IS NULL").
-		Order("date DESC")
 
 	var records []datedPriceResult
 	err := query.Find(&records).Error

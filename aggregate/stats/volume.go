@@ -86,7 +86,7 @@ func (s *Stats) MarketplaceVolume(addresses []identifier.Address) ([]datapoint.C
 	query := s.db.
 		Table("sales").
 		Select("SUM(currency_value) AS currency_value, LOWER(currency_address) AS currency_address").
-		Group("LOWER(currency_address")
+		Group("LOWER(currency_address)")
 
 	filter := s.createMarketplaceFilter(addresses)
 	query = query.Where(filter)
