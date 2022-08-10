@@ -135,17 +135,18 @@ func withHeightRange(selector selectors.HeightRange) conditionFunc {
 
 // withPriceRange returns the condition setter that addes the price range condition
 // to the query, if provided.
+// FIXME: Price selector should have a currency address as mandatory now. Open an issue for this.
 func withPriceRange(selector selectors.PriceRange) conditionFunc {
 	return func(db *gorm.DB) *gorm.DB {
 
 		// Set the start price condition.
 		if selector.StartPrice.Cmp(big.NewInt(0)) != 0 {
-			db = db.Where("trade_price >= ?", selector.StartPrice.String())
+			db = db.Where("currency_value >= ?", selector.StartPrice.String())
 		}
 
 		// Set end price condition.
 		if selector.EndPrice.Cmp(big.NewInt(0)) != 0 {
-			db = db.Where("trade_price <= ?", selector.EndPrice.String())
+			db = db.Where("currency_value <= ?", selector.EndPrice.String())
 		}
 
 		return db

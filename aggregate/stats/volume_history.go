@@ -2,6 +2,7 @@ package stats
 
 import (
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/NFT-com/analytics/aggregate/models/datapoint"
@@ -10,26 +11,26 @@ import (
 
 // CollectionVolumeHistory returns the total value of all trades in specified collection in the given interval.
 // Volume for a point in time is calculated as a sum of all sales made until (and including) that moment.
-func (s *Stats) CollectionVolumeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error) {
+func (s *Stats) CollectionVolumeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.CurrencySnapshot, error) {
 	return s.volumeHistory(&address, nil, from, to)
 }
 
 // MarketplaceVolumeHistory returns the total value of all trades in specified marketplace in the given interval.
 // Volume for a point in time is calculated as a sum of all sales made until (and including) that moment.
-func (s *Stats) MarketplaceVolumeHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error) {
+func (s *Stats) MarketplaceVolumeHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.CurrencySnapshot, error) {
 	return s.volumeHistory(nil, addresses, from, to)
 }
 
-func (s *Stats) volumeHistory(collectionAddress *identifier.Address, marketplaceAddresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Volume, error) {
+func (s *Stats) volumeHistory(collectionAddress *identifier.Address, marketplaceAddresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.CurrencySnapshot, error) {
 
 	// Determine the total value of trades for each point in time.
 	sumQuery := s.db.
-		Select("SUM(trade_price) AS total, date").
+		Select("SUM(currency_value) AS currency_value, LOWER(currency_address) AS currency_address, date").
 		Table("sales, LATERAL generate_series(?::timestamp, ?::timestamp, INTERVAL '1 day') AS date",
 			from.Format(timeFormat),
 			to.Format(timeFormat)).
 		Where("emitted_at <= date").
-		Group("date")
+		Group("date, LOWER(currency_address)")
 
 	// Set collection filter if needed.
 	if collectionAddress != nil {
@@ -49,20 +50,69 @@ func (s *Stats) volumeHistory(collectionAddress *identifier.Address, marketplace
 	// Determine the difference from the previous data point.
 	seriesQuery := s.db.
 		Table("(?) s", sumQuery).
-		Select("s.total, s.total - LAG(s.total, 1) OVER (ORDER BY date ASC) AS delta, s.date")
+		Select("s.currency_value, s.currency_value - LAG(s.currency_value, 1) OVER (ORDER BY date ASC) AS delta, s.date").
+		Group("currency_address")
 
 	// Only keep those data points where the volume changed.
 	query := s.db.
 		Table("(?) st", seriesQuery).
-		Select("st.total, st.date").
+		Select("st.currency_value, st.currency_address, st.date").
 		Where("st.delta != 0").Or("st.delta IS NULL").
 		Order("date DESC")
 
-	var out []datapoint.Volume
-	err := query.Find(&out).Error
+	var records []datedPriceResult
+	err := query.Find(&records).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve volume info: %w", err)
 	}
 
-	return out, nil
+	volumes := createSnapshotList(records)
+
+	return volumes, nil
+}
+
+func createSnapshotList(records []datedPriceResult) []datapoint.CurrencySnapshot {
+
+	// FIXME: Use a more optimal approach instead of using a map.
+	// Since the list is sorted by date, iterate through the records while
+	// keeping track of the active date point for which we're processing currencies.
+	// After that date is complete, append the created datapoint to the slice, and start
+	// composing the next slice element.
+
+	// 1. Create a map where all currencies for a given date are grouped.
+	vm := make(map[time.Time][]datapoint.Currency)
+	for _, rec := range records {
+
+		date := rec.Date
+		currency := datapoint.Currency{
+			Amount:  rec.Amount,
+			Address: rec.Address,
+		}
+
+		_, ok := vm[date]
+		if !ok {
+			vm[date] = make([]datapoint.Currency, 0, 1)
+		}
+
+		vm[date] = append(vm[date], currency)
+	}
+
+	// 2. Translate the map to a slice.
+	out := make([]datapoint.CurrencySnapshot, 0, len(vm))
+	for date, volume := range vm {
+		date := date
+		v := datapoint.CurrencySnapshot{
+			Date:       date,
+			Currencies: volume,
+		}
+
+		out = append(out, v)
+	}
+
+	// 3. Sort the slice.
+	sort.Slice(out, func(i, j int) bool {
+		return out[i].Date.Before(out[j].Date)
+	})
+
+	return out
 }

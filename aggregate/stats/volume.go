@@ -9,26 +9,27 @@ import (
 )
 
 // CollectionVolume returns the total value of all trades for this collection.
-func (s *Stats) CollectionVolume(address identifier.Address) (float64, error) {
+func (s *Stats) CollectionVolume(address identifier.Address) ([]datapoint.Currency, error) {
 
 	query := s.db.
 		Table("sales").
-		Select("SUM(trade_price) AS total").
+		Select("SUM(currency_value) AS currency_value, LOWER(currency_address) AS currency_address").
 		Where("chain_id = ?", address.ChainID).
-		Where("LOWER(collection_address) = LOWER(?)", address.Address)
+		Where("LOWER(collection_address) = LOWER(?)", address.Address).
+		Group("LOWER(currency_address)")
 
-	var volume datapoint.Volume
-	err := query.Take(&volume).Error
+	var volumes []datapoint.Currency
+	err := query.Find(&volumes).Error
 	if err != nil {
-		return 0, fmt.Errorf("could not retrieve collection volume: %w", err)
+		return nil, fmt.Errorf("could not retrieve collection volume: %w", err)
 	}
 
-	return volume.Total, nil
+	return volumes, nil
 }
 
 // CollectionBatchVolumes returns the list of volumes for each individual collection.
 // Volumes are mapped to the lowercased collection contract address.
-func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[identifier.Address]float64, error) {
+func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[identifier.Address][]datapoint.Currency, error) {
 
 	if len(addresses) == 0 {
 		return nil, errors.New("id list must be non-empty")
@@ -36,8 +37,8 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 
 	query := s.db.
 		Table("sales").
-		Select("SUM(trade_price) AS total, chain_id, LOWER(collection_address) AS collection_address").
-		Group("chain_id, LOWER(collection_address)")
+		Select("SUM(currency_value) AS currency_value, chain_id, LOWER(collection_address) AS collection_address, LOWER(currency_address) AS currency_address").
+		Group("chain_id, LOWER(collection_address), LOWER(currency_address)")
 
 	filter := s.createCollectionFilter(addresses)
 	query = query.Where(filter)
@@ -49,7 +50,7 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 	}
 
 	// Map the volumes to the collection identifier.
-	volumeMap := make(map[identifier.Address]float64, len(volumes))
+	volumeMap := make(map[identifier.Address][]datapoint.Currency, len(volumes))
 	for _, volume := range volumes {
 
 		collection := identifier.Address{
@@ -57,27 +58,44 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 			Address: volume.CollectionAddress,
 		}
 
-		volumeMap[collection] = volume.Total
+		currency := datapoint.Currency{
+			Amount:  volume.Amount,
+			Address: volume.Address,
+		}
+
+		// If we already have volume data for this collection (for some currencies)
+		// just append the data for this currency.
+		_, ok := volumeMap[collection]
+		if ok {
+			volumeMap[collection] = append(volumeMap[collection], currency)
+			continue
+		}
+
+		// Create the currency list now.
+		v := make([]datapoint.Currency, 0)
+		v = append(v, currency)
+		volumeMap[collection] = v
 	}
 
 	return volumeMap, nil
 }
 
 // MarketplaceVolume returns the total value of all trades for this marketplace.
-func (s *Stats) MarketplaceVolume(addresses []identifier.Address) (float64, error) {
+func (s *Stats) MarketplaceVolume(addresses []identifier.Address) ([]datapoint.Currency, error) {
 
 	query := s.db.
 		Table("sales").
-		Select("SUM(trade_price) AS total")
+		Select("SUM(currency_value) AS currency_value, LOWER(currency_address) AS currency_address").
+		Group("LOWER(currency_address")
 
 	filter := s.createMarketplaceFilter(addresses)
 	query = query.Where(filter)
 
-	var volume datapoint.Volume
-	err := query.Take(&volume).Error
+	var volumes []datapoint.Currency
+	err := query.Find(&volumes).Error
 	if err != nil {
-		return 0, fmt.Errorf("could not retrieve marketplace volume: %w", err)
+		return nil, fmt.Errorf("could not retrieve marketplace volume: %w", err)
 	}
 
-	return volume.Total, nil
+	return volumes, nil
 }

@@ -8,6 +8,8 @@ import (
 	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
+// FIXME: Without a unified currency handling, this query makes little sense.
+
 // CollectionLowestPriceHistory returns the lowest price for the collection in the given interval.
 func (s *Stats) CollectionLowestPriceHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.LowestPrice, error) {
 
@@ -30,15 +32,33 @@ func (s *Stats) CollectionLowestPriceHistory(address identifier.Address, from ti
 
 	query := s.db.
 		Table("(?) st", seriesQuery).
-		Select("MIN(st.trade_price) AS lowest_price, st.start_date, st.end_date").
+		Select("MIN(st.currency_value) AS currency_value, LOWER(currency_address) AS currency_address, st.start_date, st.end_date").
 		Group("start_date").
 		Group("end_date").
+		Group("LOWER(currency_address)").
 		Order("start_date DESC")
 
-	var out []datapoint.LowestPrice
-	err := query.Find(&out).Error
+	var prices []lowestPriceResult
+	err := query.Find(&prices).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve lowest price: %w", err)
+	}
+
+	out := make([]datapoint.LowestPrice, 0, len(prices))
+	for _, p := range prices {
+
+		currency := datapoint.Currency{
+			Amount:  p.Amount,
+			Address: p.Address,
+		}
+
+		price := datapoint.LowestPrice{
+			Currency: currency,
+			Start:    p.Start,
+			End:      p.End,
+		}
+
+		out = append(out, price)
 	}
 
 	return out, nil

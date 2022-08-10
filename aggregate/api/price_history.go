@@ -6,7 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/NFT-com/analytics/aggregate/models/datapoint"
+	"github.com/NFT-com/analytics/aggregate/models/api"
 )
 
 // NFTPriceHistory handles the request for retrieving historic prices of an NFT.
@@ -44,9 +44,9 @@ func (a *API) NFTAveragePrice(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve NFT average price: %w", err))
 	}
 
-	response := datapoint.Value{
-		ID:    id,
-		Value: average.Average,
+	response := api.Values{
+		ID:     id,
+		Values: average,
 	}
 
 	return ctx.JSON(http.StatusOK, response)

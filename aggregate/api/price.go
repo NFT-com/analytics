@@ -27,7 +27,7 @@ func (a *API) NFTPrice(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve NFT price: %w", err))
 	}
 
-	response := datapoint.ValueTemp{
+	response := api.Value{
 		ID:    id,
 		Value: price,
 	}
@@ -59,7 +59,7 @@ func (a *API) CollectionPrices(ctx echo.Context) error {
 	}
 
 	// Link retrieved prices to the NFT by ID.
-	var nftPrices []datapoint.Value
+	var nftPrices []api.Values
 	for id, nftAddress := range nftIDs {
 
 		price, ok := prices[lowerNFTID(nftAddress)]
@@ -69,10 +69,11 @@ func (a *API) CollectionPrices(ctx echo.Context) error {
 			continue
 		}
 
+		// FIXME: Think about this again.
 		// Create the price record and add it to the list.
-		p := datapoint.Value{
-			ID:    id,
-			Value: price,
+		p := api.Values{
+			ID:     id,
+			Values: []datapoint.Currency{price},
 		}
 		nftPrices = append(nftPrices, p)
 	}
@@ -109,7 +110,7 @@ func (a *API) CollectionAveragePrices(ctx echo.Context) error {
 	}
 
 	// Link retrieved prices to the NFT by ID.
-	var nftPrices []datapoint.Value
+	var nftPrices []api.Values
 	for id, nftAddress := range nftIDs {
 
 		average, ok := averages[lowerNFTID(nftAddress)]
@@ -120,9 +121,9 @@ func (a *API) CollectionAveragePrices(ctx echo.Context) error {
 		}
 
 		// Create the price record and add it to the list.
-		p := datapoint.Value{
-			ID:    id,
-			Value: average,
+		p := api.Values{
+			ID:     id,
+			Values: average,
 		}
 		nftPrices = append(nftPrices, p)
 	}

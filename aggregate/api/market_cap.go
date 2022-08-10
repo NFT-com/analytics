@@ -7,7 +7,6 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/NFT-com/analytics/aggregate/models/api"
-	"github.com/NFT-com/analytics/aggregate/models/datapoint"
 	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
@@ -28,9 +27,9 @@ func (a *API) CollectionMarketCap(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve collection market cap: %w", err))
 	}
 
-	response := datapoint.Value{
-		ID:    id,
-		Value: cap,
+	response := api.Values{
+		ID:     id,
+		Values: cap,
 	}
 
 	return ctx.JSON(http.StatusOK, response)
@@ -69,7 +68,7 @@ func (a *API) CollectionBatchMarketCap(ctx echo.Context) error {
 	}
 
 	// Map the list of volumes back to the collection IDs.
-	var marketCaps []datapoint.Value
+	var marketCaps []api.Values
 	for id, address := range addresses {
 
 		cap, ok := caps[lowerAddress(address)]
@@ -80,9 +79,9 @@ func (a *API) CollectionBatchMarketCap(ctx echo.Context) error {
 		}
 
 		// Create the volume record and add it to the list.
-		v := datapoint.Value{
-			ID:    id,
-			Value: cap,
+		v := api.Values{
+			ID:     id,
+			Values: cap,
 		}
 
 		marketCaps = append(marketCaps, v)
@@ -113,9 +112,9 @@ func (a *API) MarketplaceMarketCap(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve marketplace market cap: %w", err))
 	}
 
-	response := datapoint.Value{
-		ID:    id,
-		Value: cap,
+	response := api.Values{
+		ID:     id,
+		Values: cap,
 	}
 
 	return ctx.JSON(http.StatusOK, response)

@@ -16,15 +16,8 @@ type batchPriceResult struct {
 	ChainID           uint    `gorm:"column:chain_id"`
 	CollectionAddress string  `gorm:"column:collection_address"`
 	TokenID           string  `gorm:"column:token_id"`
-	TradePrice        float64 `gorm:"column:trade_price"`
-}
-
-// batchAveragePriceResult represents the result of the batch NFT average price query.
-type batchAveragePriceResult struct {
-	ChainID           uint    `gorm:"column:chain_id"`
-	CollectionAddress string  `gorm:"column:collection_address"`
-	TokenID           string  `gorm:"column:token_id"`
-	AveragePrice      float64 `gorm:"column:average_price"`
+	CurrencyAmount    float64 `gorm:"column:currency_value"`
+	CurrencyAddress   string  `gorm:"column:currency_address"`
 }
 
 // batchStatResult represents the result of the batch collection volume
@@ -32,5 +25,22 @@ type batchAveragePriceResult struct {
 type batchStatResult struct {
 	ChainID           uint    `gorm:"column:chain_id"`
 	CollectionAddress string  `gorm:"column:collection_address"`
-	Total             float64 `gorm:"column:total"`
+	Amount            float64 `gorm:"column:currency_value"`
+	Address           string  `gorm:"column:currency_address"`
+}
+
+// lowestPriceResult represents the result of the SQL query for the lowest price.
+type lowestPriceResult struct {
+	Amount  float64 `gorm:"column:currency_value"`
+	Address string  `gorm:"column:currency_address"`
+	Start   string  `gorm:"column:start_date"`
+	End     string  `gorm:"column:end_date"`
+}
+
+// datedPriceResult represents the results of queries returning a stat (e.g. volume, market_cap)
+// at a certain date point.
+type datedPriceResult struct {
+	Amount  float64   `gorm:"column:currency_value"`
+	Address string    `gorm:"column:currency_address"`
+	Date    time.Time `gorm:"column:date"`
 }
