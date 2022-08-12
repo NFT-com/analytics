@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/NFT-com/analytics/aggregate/models/datapoint"
 	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
@@ -10,6 +11,7 @@ type Lookup interface {
 	Collection(id string) (identifier.Address, error)
 	Marketplace(id string) ([]identifier.Address, error)
 	NFT(id string) (identifier.NFT, error)
+	CurrencyID(currency datapoint.Currency) (string, error)
 
 	// Lookup batches of IDs.
 	Collections(id []string) (map[string]identifier.Address, error)
