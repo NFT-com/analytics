@@ -16,7 +16,7 @@ func (s *Stats) NFTPriceHistory(nft identifier.NFT, from time.Time, to time.Time
 
 	query := s.db.
 		Table("sales").
-		Select("currency_value, LOWER(currency_address) AS currency_address, emitted_at").
+		Select("currency_value, chain_id, LOWER(currency_address) AS currency_address, emitted_at").
 		Where("chain_id = ?", nft.Collection.ChainID).
 		Where("LOWER(collection_address) = LOWER(?)", nft.Collection.Address).
 		Where("token_id = ?", nft.TokenID).
@@ -35,8 +35,9 @@ func (s *Stats) NFTPriceHistory(nft identifier.NFT, from time.Time, to time.Time
 
 		price := datapoint.Price{
 			Currency: datapoint.Currency{
-				Amount:  p.Amount,
+				ChainID: p.ChainID,
 				Address: p.Address,
+				Amount:  p.Amount,
 			},
 			Time: p.Time,
 		}
@@ -52,11 +53,11 @@ func (s *Stats) NFTAveragePrice(nft identifier.NFT) ([]datapoint.Currency, error
 
 	query := s.db.
 		Table("sales").
-		Select("AVG(currency_value) AS currency_value, LOWER(currency_address) AS currency_address").
+		Select("AVG(currency_value) AS currency_value, chain_id, LOWER(currency_address) AS currency_address").
 		Where("chain_id = ?", nft.Collection.ChainID).
 		Where("LOWER(collection_address) = LOWER(?)", nft.Collection.Address).
 		Where("token_id = ?", nft.TokenID).
-		Group("LOWER(currency_address)")
+		Group("chain_id, LOWER(currency_address)")
 
 	var prices []datapoint.Currency
 	err := query.Find(&prices).Error

@@ -12,9 +12,10 @@ type CurrencySnapshot struct {
 	Date       time.Time  `json:"date,omitempty"`
 }
 
-// Currency has the amount and the address of the fungible token used as payment
-// in a transaction.
+// Currency has the chain ID and address pair, identifying the fungible token used as payment,
+// as well as the amount.
 type Currency struct {
-	Amount  float64 `gorm:"column:currency_value" json:"amount"`
+	ChainID uint64  `gorm:"column:chain_id" json:"chain_id"`
 	Address string  `gorm:"column:currency_address" json:"address"`
+	Amount  float64 `gorm:"column:currency_value" json:"amount"`
 }

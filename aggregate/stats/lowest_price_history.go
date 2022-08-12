@@ -32,9 +32,10 @@ func (s *Stats) CollectionLowestPriceHistory(address identifier.Address, from ti
 
 	query := s.db.
 		Table("(?) st", seriesQuery).
-		Select("MIN(st.currency_value) AS currency_value, LOWER(currency_address) AS currency_address, st.start_date, st.end_date").
+		Select("MIN(st.currency_value) AS currency_value, chain_id, LOWER(currency_address) AS currency_address, st.start_date, st.end_date").
 		Group("start_date").
 		Group("end_date").
+		Group("chain_id").
 		Group("LOWER(currency_address)").
 		Order("start_date DESC")
 
@@ -48,8 +49,9 @@ func (s *Stats) CollectionLowestPriceHistory(address identifier.Address, from ti
 	for _, p := range prices {
 
 		currency := datapoint.Currency{
-			Amount:  p.Amount,
+			ChainID: p.ChainID,
 			Address: p.Address,
+			Amount:  p.Amount,
 		}
 
 		price := datapoint.LowestPrice{

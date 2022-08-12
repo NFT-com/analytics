@@ -25,12 +25,12 @@ func (s *Stats) volumeHistory(collectionAddress *identifier.Address, marketplace
 
 	// Determine the total value of trades for each point in time.
 	query := s.db.
-		Select("SUM(currency_value) AS currency_value, LOWER(currency_address) AS currency_address, date").
+		Select("SUM(currency_value) AS currency_value, chain_id, LOWER(currency_address) AS currency_address, date").
 		Table("sales, LATERAL generate_series(?::timestamp, ?::timestamp, INTERVAL '1 day') AS date",
 			from.Format(timeFormat),
 			to.Format(timeFormat)).
 		Where("emitted_at <= date").
-		Group("date, LOWER(currency_address)")
+		Group("date, chain_id, LOWER(currency_address)")
 
 	// Set collection filter if needed.
 	if collectionAddress != nil {
@@ -72,8 +72,9 @@ func createSnapshotList(records []datedPriceResult) []datapoint.CurrencySnapshot
 
 		date := rec.Date
 		currency := datapoint.Currency{
-			Amount:  rec.Amount,
+			ChainID: rec.ChainID,
 			Address: rec.Address,
+			Amount:  rec.Amount,
 		}
 
 		_, ok := vm[date]

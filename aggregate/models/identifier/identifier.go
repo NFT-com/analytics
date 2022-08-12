@@ -6,7 +6,7 @@ const (
 
 // Address identifier represents a single address on a blockchain.
 type Address struct {
-	ChainID uint
+	ChainID uint64
 	Address string
 }
 

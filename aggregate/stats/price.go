@@ -12,7 +12,7 @@ func (s *Stats) NFTPrice(nft identifier.NFT) (datapoint.Currency, error) {
 
 	query := s.db.
 		Table("sales").
-		Select("currency_value, LOWER(currency_address) AS currency_address").
+		Select("currency_value, chain_id, LOWER(currency_address) AS currency_address").
 		Where("chain_id = ?", nft.Collection.ChainID).
 		Where("LOWER(collection_address) = LOWER(?)", nft.Collection.Address).
 		Where("token_id = ?", nft.TokenID).
@@ -76,8 +76,9 @@ func (s *Stats) CollectionPrices(address identifier.Address) (map[identifier.NFT
 		}
 
 		p := datapoint.Currency{
-			Amount:  price.CurrencyAmount,
+			ChainID: price.ChainID,
 			Address: price.CurrencyAddress,
+			Amount:  price.CurrencyAmount,
 		}
 		priceMap[nft] = p
 	}
@@ -127,8 +128,9 @@ func (s *Stats) CollectionAveragePrices(address identifier.Address) (map[identif
 		}
 
 		currency := datapoint.Currency{
-			Amount:  price.CurrencyAmount,
+			ChainID: price.ChainID,
 			Address: price.CollectionAddress,
+			Amount:  price.CurrencyAmount,
 		}
 
 		// If we already have average price for this nft (for some currencies)

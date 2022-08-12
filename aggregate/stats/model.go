@@ -6,14 +6,15 @@ import (
 
 // priceResult represents the result of an NFT price query.
 type priceResult struct {
-	Amount  float64    `gorm:"column:currency_value"`
+	ChainID uint64     `gorm:"column:chain_id"`
 	Address string     `gorm:"column:currency_address"`
+	Amount  float64    `gorm:"column:currency_value"`
 	Time    *time.Time `gorm:"column:emitted_at"`
 }
 
 // batchPriceResult represents the result of the batch NFT price query.
 type batchPriceResult struct {
-	ChainID           uint    `gorm:"column:chain_id"`
+	ChainID           uint64  `gorm:"column:chain_id"`
 	CollectionAddress string  `gorm:"column:collection_address"`
 	TokenID           string  `gorm:"column:token_id"`
 	CurrencyAmount    float64 `gorm:"column:currency_value"`
@@ -23,7 +24,7 @@ type batchPriceResult struct {
 // batchStatResult represents the result of the batch collection volume
 // and market cap queries.
 type batchStatResult struct {
-	ChainID           uint    `gorm:"column:chain_id"`
+	ChainID           uint64  `gorm:"column:chain_id"`
 	CollectionAddress string  `gorm:"column:collection_address"`
 	Amount            float64 `gorm:"column:currency_value"`
 	Address           string  `gorm:"column:currency_address"`
@@ -31,8 +32,9 @@ type batchStatResult struct {
 
 // lowestPriceResult represents the result of the SQL query for the lowest price.
 type lowestPriceResult struct {
-	Amount  float64 `gorm:"column:currency_value"`
+	ChainID uint64  `gorm:"column:chain_id"`
 	Address string  `gorm:"column:currency_address"`
+	Amount  float64 `gorm:"column:currency_value"`
 	Start   string  `gorm:"column:start_date"`
 	End     string  `gorm:"column:end_date"`
 }
@@ -40,7 +42,8 @@ type lowestPriceResult struct {
 // datedPriceResult represents the results of queries returning a stat (e.g. volume, market_cap)
 // at a certain date point.
 type datedPriceResult struct {
-	Amount  float64   `gorm:"column:currency_value"`
+	ChainID uint64    `gorm:"column:chain_id"`
 	Address string    `gorm:"column:currency_address"`
+	Amount  float64   `gorm:"column:currency_value"`
 	Date    time.Time `gorm:"column:date"`
 }

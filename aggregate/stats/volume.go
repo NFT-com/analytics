@@ -13,10 +13,10 @@ func (s *Stats) CollectionVolume(address identifier.Address) ([]datapoint.Curren
 
 	query := s.db.
 		Table("sales").
-		Select("SUM(currency_value) AS currency_value, LOWER(currency_address) AS currency_address").
+		Select("SUM(currency_value) AS currency_value, chain_id, LOWER(currency_address) AS currency_address").
 		Where("chain_id = ?", address.ChainID).
 		Where("LOWER(collection_address) = LOWER(?)", address.Address).
-		Group("LOWER(currency_address)")
+		Group("chain_id, LOWER(currency_address)")
 
 	var volumes []datapoint.Currency
 	err := query.Find(&volumes).Error
@@ -59,8 +59,9 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 		}
 
 		currency := datapoint.Currency{
-			Amount:  volume.Amount,
+			ChainID: volume.ChainID,
 			Address: volume.Address,
+			Amount:  volume.Amount,
 		}
 
 		// If we already have volume data for this collection (for some currencies)
@@ -85,8 +86,8 @@ func (s *Stats) MarketplaceVolume(addresses []identifier.Address) ([]datapoint.C
 
 	query := s.db.
 		Table("sales").
-		Select("SUM(currency_value) AS currency_value, LOWER(currency_address) AS currency_address").
-		Group("LOWER(currency_address)")
+		Select("SUM(currency_value) AS currency_value, chain_id, LOWER(currency_address) AS currency_address").
+		Group("chain_id, LOWER(currency_address)")
 
 	filter := s.createMarketplaceFilter(addresses)
 	query = query.Where(filter)

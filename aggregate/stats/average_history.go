@@ -33,19 +33,18 @@ func (s *Stats) CollectionAverageHistory(address identifier.Address, from time.T
 	// in the specified date range.
 	avgQuery := s.db.
 		Table("(?) s", latestPriceQuery).
-		Select("AVG(currency_value) AS currency_value, LOWER(currency_address) AS currency_address, d.date").
+		Select("AVG(currency_value) AS currency_value, chain_id, LOWER(currency_address) AS currency_address, d.date").
 		Where("rank = 1").
-		Group("LOWER(currency_address)")
+		Group("chain_id, LOWER(currency_address)")
 
-	// Delta query shows the average prices, as well as the difference between the previous
-	// data point.
+	// Query shows the average prices for the specified data range.
 	query := s.db.
 		Table("( SELECT generate_series(?::timestamp, ?::timestamp, interval '1 day') AS date ) d, LATERAL( ? ) st ",
 			from.Format(timeFormat),
 			to.Format(timeFormat),
 			avgQuery,
-		).Select("currency_value, currency_address, d.date").
-		Group("currency_address")
+		).Select("currency_value, chain_id, currency_address, d.date").
+		Group("chain_id, currency_address")
 
 	var records []datedPriceResult
 	err := query.Find(&records).Error

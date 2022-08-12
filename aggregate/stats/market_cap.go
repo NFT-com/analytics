@@ -65,7 +65,7 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 
 	sumQuery := s.db.
 		Table("( ? ) c", latestPriceQuery).
-		Select("SUM(currency_value) AS currency_value, LOWER(currency_address) AS currency_address, chain_id, LOWER(collection_address) AS collection_address").
+		Select("SUM(currency_value) AS currency_value, chain_id, LOWER(currency_address) AS currency_address, chain_id, LOWER(collection_address) AS collection_address").
 		Where("c.rank = 1").
 		Group("chain_id, LOWER(collection_address), LOWER(currency_address)")
 
@@ -85,8 +85,9 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 		}
 
 		currency := datapoint.Currency{
-			Amount:  cap.Amount,
+			ChainID: cap.ChainID,
 			Address: cap.Address,
+			Amount:  cap.Amount,
 		}
 
 		// If we already have market cap for this collection (for some currencies)
@@ -123,7 +124,7 @@ func (s *Stats) MarketplaceMarketCap(addresses []identifier.Address) ([]datapoin
 	// for the prices.
 	sumQuery := s.db.
 		Table("( ? ) s", latestPriceQuery).
-		Select("SUM(currency_value) AS currency_value, LOWER(currency_address) AS currency_address").
+		Select("SUM(currency_value) AS currency_value, chain_id, LOWER(currency_address) AS currency_address").
 		Group("LOWER(currency_address)").
 		Where("rank = 1")
 

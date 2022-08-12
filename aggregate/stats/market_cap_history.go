@@ -54,8 +54,8 @@ func (s *Stats) marketCapHistory(collectionAddress *identifier.Address, marketpl
 	// in the specified date range.
 	sumQuery := s.db.
 		Table("(?) s", latestPriceQuery).
-		Select("SUM(currency_value) AS currency_value, LOWER(currency_address) AS currency_address, d.date").
-		Group("LOWER(currency_address)").
+		Select("SUM(currency_value) AS currency_value, chain_id, LOWER(currency_address) AS currency_address, d.date").
+		Group("chain_id, LOWER(currency_address)").
 		Where("s.rank = 1")
 
 	// Market cap query calculates the actual market cap for each date in the
@@ -65,7 +65,7 @@ func (s *Stats) marketCapHistory(collectionAddress *identifier.Address, marketpl
 			from.Format(timeFormat),
 			to.Format(timeFormat),
 			sumQuery,
-		).Select("currency_value, LOWER(currency_address) AS currency_address, st.date")
+		).Select("currency_value, chain_id, LOWER(currency_address) AS currency_address, st.date")
 
 	var records []datedPriceResult
 	err := marketCapQuery.Find(&records).Error

@@ -4,8 +4,6 @@ import (
 	"time"
 )
 
-// FIXME: Rename `Currencies` type.
-
 // Count represents a generic datatype for some count-related stat, e.g. a user or sale count.
 type Count struct {
 	ID    string `json:"id,omitempty"`
