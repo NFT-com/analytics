@@ -23,10 +23,20 @@ func (s *Stats) NFTPrice(nft identifier.NFT) ([]datapoint.Coin, error) {
 		Order("emitted_at DESC").
 		Limit(1)
 
-	var price []datapoint.Coin
-	err := query.Find(&price).Error
+	var res priceResult
+	err := query.Find(&res).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve price: %w", err)
+	}
+
+	price := []datapoint.Coin{
+		{
+			Currency: identifier.Currency{
+				ChainID: res.ChainID,
+				Address: res.Address,
+			},
+			Amount: res.Amount,
+		},
 	}
 
 	return price, nil
