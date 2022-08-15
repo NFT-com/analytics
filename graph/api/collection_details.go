@@ -70,7 +70,7 @@ func (s *Server) expandCollectionStats(query *query.Collection, collection *api.
 				multiErr = multierror.Append(multiErr, fmt.Errorf("could not transform currency list for market cap: %w", err))
 			}
 
-			collection.Volume = formatted
+			collection.MarketCap = formatted
 		}
 	}
 

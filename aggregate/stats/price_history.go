@@ -61,11 +61,25 @@ func (s *Stats) NFTAveragePrice(nft identifier.NFT) ([]datapoint.Coin, error) {
 		Where("token_id = ?", nft.TokenID).
 		Group("chain_id, LOWER(currency_address)")
 
-	var prices []datapoint.Coin
+	var prices []priceResult
 	err := query.Find(&prices).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve average price: %w", err)
 	}
 
-	return prices, nil
+	out := make([]datapoint.Coin, 0, len(prices))
+	for _, p := range prices {
+
+		price := datapoint.Coin{
+			Currency: identifier.Currency{
+				ChainID: p.ChainID,
+				Address: p.Address,
+			},
+			Amount: p.Amount,
+		}
+
+		out = append(out, price)
+	}
+
+	return out, nil
 }

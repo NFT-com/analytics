@@ -24,6 +24,8 @@ func (a *API) NFTPriceHistory(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve NFT price history: %w", err))
 	}
 
+	// FIXME: Price snapshot should work with IDs and not addresses.
+
 	return ctx.JSON(http.StatusOK, prices)
 }
 
