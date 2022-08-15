@@ -113,7 +113,7 @@ func (a *API) lookupCollections(ids []string) (map[string]identifier.Address, er
 
 func (a *API) lookupCollection(id string) (identifier.Address, error) {
 
-	addresses, ok := a.collections.get(id)
+	addresses, ok := a.collections.Get(id)
 	if ok {
 		// Just a safety check, we should never have more than one address for a collection ID.
 		if len(addresses) != 1 {
@@ -128,14 +128,14 @@ func (a *API) lookupCollection(id string) (identifier.Address, error) {
 		return identifier.Address{}, fmt.Errorf("could not lookup collection: %w", err)
 	}
 
-	a.collections.set(id, []identifier.Address{address})
+	a.collections.Set(id, []identifier.Address{address})
 
 	return address, nil
 }
 
 func (a *API) lookupMarketplace(id string) ([]identifier.Address, error) {
 
-	addresses, ok := a.marketplaces.get(id)
+	addresses, ok := a.marketplaces.Get(id)
 	if ok {
 		return addresses, nil
 	}
@@ -145,14 +145,14 @@ func (a *API) lookupMarketplace(id string) ([]identifier.Address, error) {
 		return nil, fmt.Errorf("could not lookup marketplace: %w", err)
 	}
 
-	a.marketplaces.set(id, addresses)
+	a.marketplaces.Set(id, addresses)
 
 	return addresses, nil
 }
 
 func (a *API) lookupCurrencyID(curr identifier.Currency) (string, error) {
 
-	id, ok := a.currencies.get(curr)
+	id, ok := a.currencies.Get(curr)
 	if ok {
 		return id, nil
 	}
@@ -162,7 +162,7 @@ func (a *API) lookupCurrencyID(curr identifier.Currency) (string, error) {
 		return "", fmt.Errorf("could not lookup currency: %w", err)
 	}
 
-	a.currencies.set(curr, id)
+	a.currencies.Set(curr, id)
 
 	return id, nil
 }
