@@ -14,6 +14,11 @@ func (a *API) createCoinList(currencies []datapoint.Coin) ([]api.Coin, error) {
 	out := make([]api.Coin, 0, len(currencies))
 	for _, curr := range currencies {
 
+		// Skip numbers for sales events with no currency information.
+		if curr.Currency.Address == "" {
+			continue
+		}
+
 		id, err := a.lookupCurrencyID(curr.Currency)
 		if err != nil {
 			return nil, fmt.Errorf("could not lookup currency ID (chain: %d, address: %s): %w", curr.Currency.ChainID, curr.Currency.Address, err)

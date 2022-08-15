@@ -25,6 +25,7 @@ func New(stats Stats, lookup Lookup, log zerolog.Logger) *API {
 
 		collections:  newAddressCache(),
 		marketplaces: newAddressCache(),
+		currencies:   newCurrencyCache(),
 	}
 
 	return &api
