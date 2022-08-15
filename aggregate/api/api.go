@@ -12,6 +12,7 @@ type API struct {
 
 	collections  *addressCache
 	marketplaces *addressCache
+	currencies   *currencyCache
 }
 
 // New creates a new API handler.

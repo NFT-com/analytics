@@ -28,4 +28,6 @@ type Storage interface {
 	MarketplaceNetworks(marketplaceID string) ([]*api.Network, error)
 	MarketplacesForCollection(collectionID string) ([]*api.Marketplace, error)
 	MarketplacesByNetwork(networkID string) ([]*api.Marketplace, error)
+
+	CurrencySymbol(currencyID string) (string, error)
 }

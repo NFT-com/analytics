@@ -27,9 +27,15 @@ func (a *API) CollectionVolume(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not get collection volume data: %w", err))
 	}
 
+	// Translate the datapoint Coin format to the API format.
+	value, err := a.createCoinList(volumes)
+	if err != nil {
+		return apiError(fmt.Errorf("could not create coin list: %w", err))
+	}
+
 	response := api.Value{
 		ID:    id,
-		Value: volumes,
+		Value: value,
 	}
 
 	return ctx.JSON(http.StatusOK, response)
@@ -78,10 +84,16 @@ func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 			continue
 		}
 
+		// Translate the datapoint Coin format to the API format.
+		value, err := a.createCoinList(volume)
+		if err != nil {
+			return apiError(fmt.Errorf("could not create coin list: %w", err))
+		}
+
 		// Create the volume record and add it to the list.
 		v := api.Value{
 			ID:    id,
-			Value: volume,
+			Value: value,
 		}
 
 		collectionVolumes = append(collectionVolumes, v)
@@ -112,9 +124,15 @@ func (a *API) MarketplaceVolume(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not get marketplace volume data: %w", err))
 	}
 
+	// Translate the datapoint Coin format to the API format.
+	value, err := a.createCoinList(volume)
+	if err != nil {
+		return apiError(fmt.Errorf("could not create coin list: %w", err))
+	}
+
 	response := api.Value{
 		ID:    id,
-		Value: volume,
+		Value: value,
 	}
 
 	return ctx.JSON(http.StatusOK, response)

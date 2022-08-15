@@ -5,6 +5,7 @@ import (
 
 	"github.com/hashicorp/go-multierror"
 
+	aggregate "github.com/NFT-com/analytics/aggregate/models/api"
 	"github.com/NFT-com/analytics/graph/api/internal/query"
 	"github.com/NFT-com/analytics/graph/models/api"
 )
@@ -44,9 +45,16 @@ func (s *Server) expandCollectionStats(query *query.Collection, collection *api.
 		volumes, err := s.aggregationAPI.CollectionVolumes([]string{collection.ID})
 		if err != nil {
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not get collection volume: %w", err))
-		}
+		} else {
 
-		collection.Volume = volumes[collection.ID]
+			// Translate the Aggregation API format to the expected Graph format.
+			formatted, err := s.createCurrencyList(volumes[collection.ID])
+			if err != nil {
+				multiErr = multierror.Append(multiErr, fmt.Errorf("could not transform currency list for volume: %w", err))
+			}
+
+			collection.Volume = formatted
+		}
 	}
 
 	// Get market cap from the aggregation API.
@@ -54,9 +62,16 @@ func (s *Server) expandCollectionStats(query *query.Collection, collection *api.
 		caps, err := s.aggregationAPI.CollectionMarketCaps([]string{collection.ID})
 		if err != nil {
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not get collection market cap: %w", err))
-		}
+		} else {
 
-		collection.MarketCap = caps[collection.ID]
+			// Translate the Aggregation API format to the expected Graph format.
+			formatted, err := s.createCurrencyList(caps[collection.ID])
+			if err != nil {
+				multiErr = multierror.Append(multiErr, fmt.Errorf("could not transform currency list for market cap: %w", err))
+			}
+
+			collection.Volume = formatted
+		}
 	}
 
 	// Get sale count from the aggregation API.
@@ -66,7 +81,7 @@ func (s *Server) expandCollectionStats(query *query.Collection, collection *api.
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not get collection sales: %w", err))
 		}
 
-		collection.Sales = uint64(sales)
+		collection.Sales = sales
 	}
 
 	return multiErr
@@ -156,14 +171,14 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 	if query.NFT.Fields.Price || query.NFT.Fields.AveragePrice {
 
 		// Retrieve stats, but continue even if some could not be retrieved (e.g. API was unavailable).
-		var prices map[string]float64
+		var prices map[string][]aggregate.Coin
 		if query.NFT.Fields.Price {
 			prices, err = s.aggregationAPI.CollectionPrices(collection.ID)
 			if err != nil {
 				s.log.Error().Err(err).Msg("could not retrieve NFT prices")
 			}
 		}
-		var averages map[string]float64
+		var averages map[string][]aggregate.Coin
 		if query.NFT.Fields.AveragePrice {
 			averages, err = s.aggregationAPI.CollectionAveragePrices(collection.ID)
 			if err != nil {
@@ -172,8 +187,21 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 		}
 
 		for _, edge := range collection.NFTs.Edges {
-			edge.Node.TradingPrice = prices[edge.Node.ID]
-			edge.Node.AveragePrice = averages[edge.Node.ID]
+
+			price, err := s.createCurrencyList(prices[edge.Node.ID])
+			if err != nil {
+				// FIXME: See how you logged this elsewhere.
+				s.log.Error().Err(err).Msg("could not create currency list for NFT price")
+			}
+
+			avg, err := s.createCurrencyList(averages[edge.Node.ID])
+			if err != nil {
+				// FIXME: See how you logged this elsewhere.
+				s.log.Error().Err(err).Msg("could not create currency list for NFT average price")
+			}
+
+			edge.Node.TradingPrice = price
+			edge.Node.AveragePrice = avg
 		}
 	}
 

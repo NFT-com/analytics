@@ -26,9 +26,15 @@ func (a *API) NFTPrice(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve NFT price: %w", err))
 	}
 
+	// Translate the datapoint Coin format to the API format.
+	value, err := a.createCoinList(price)
+	if err != nil {
+		return apiError(fmt.Errorf("could not create coin list: %w", err))
+	}
+
 	response := api.Value{
 		ID:    id,
-		Value: price,
+		Value: value,
 	}
 
 	return ctx.JSON(http.StatusOK, response)
@@ -68,10 +74,16 @@ func (a *API) CollectionPrices(ctx echo.Context) error {
 			continue
 		}
 
+		// Translate the datapoint Coin format to the API format.
+		value, err := a.createCoinList(price)
+		if err != nil {
+			return apiError(fmt.Errorf("could not create coin list: %w", err))
+		}
+
 		// Create the price record and add it to the list.
 		p := api.Value{
 			ID:    id,
-			Value: price,
+			Value: value,
 		}
 		nftPrices = append(nftPrices, p)
 	}
@@ -118,10 +130,16 @@ func (a *API) CollectionAveragePrices(ctx echo.Context) error {
 			continue
 		}
 
+		// Translate the datapoint Coin format to the API format.
+		value, err := a.createCoinList(average)
+		if err != nil {
+			return apiError(fmt.Errorf("could not create coin list: %w", err))
+		}
+
 		// Create the price record and add it to the list.
 		p := api.Value{
 			ID:    id,
-			Value: average,
+			Value: value,
 		}
 		nftPrices = append(nftPrices, p)
 	}

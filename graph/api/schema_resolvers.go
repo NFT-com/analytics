@@ -6,6 +6,7 @@ package api
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/NFT-com/analytics/graph/generated"
 	"github.com/NFT-com/analytics/graph/models/api"
@@ -145,3 +146,28 @@ type marketplaceServer struct{ *Server }
 type nFTServer struct{ *Server }
 type networkServer struct{ *Server }
 type queryServer struct{ *Server }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *collectionServer) Volume(ctx context.Context, obj *api.Collection) ([]*api.Currency, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+func (r *collectionServer) MarketCap(ctx context.Context, obj *api.Collection) ([]*api.Currency, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+func (r *marketplaceServer) Volume(ctx context.Context, obj *api.Marketplace) ([]*api.Currency, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+func (r *marketplaceServer) MarketCap(ctx context.Context, obj *api.Marketplace) ([]*api.Currency, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+func (r *nFTServer) TradingPrice(ctx context.Context, obj *api.NFT) ([]*api.Currency, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+func (r *nFTServer) AveragePrice(ctx context.Context, obj *api.NFT) ([]*api.Currency, error) {
+	panic(fmt.Errorf("not implemented"))
+}

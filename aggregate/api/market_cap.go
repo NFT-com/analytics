@@ -27,9 +27,15 @@ func (a *API) CollectionMarketCap(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve collection market cap: %w", err))
 	}
 
+	// Translate the datapoint Coin format to the API format.
+	value, err := a.createCoinList(cap)
+	if err != nil {
+		return apiError(fmt.Errorf("could not create coin list: %w", err))
+	}
+
 	response := api.Value{
 		ID:    id,
-		Value: cap,
+		Value: value,
 	}
 
 	return ctx.JSON(http.StatusOK, response)
@@ -78,10 +84,16 @@ func (a *API) CollectionBatchMarketCap(ctx echo.Context) error {
 			continue
 		}
 
+		// Translate the datapoint Coin format to the API format.
+		value, err := a.createCoinList(cap)
+		if err != nil {
+			return apiError(fmt.Errorf("could not create coin list: %w", err))
+		}
+
 		// Create the volume record and add it to the list.
 		v := api.Value{
 			ID:    id,
-			Value: cap,
+			Value: value,
 		}
 
 		marketCaps = append(marketCaps, v)
@@ -112,9 +124,15 @@ func (a *API) MarketplaceMarketCap(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve marketplace market cap: %w", err))
 	}
 
+	// Translate the datapoint Coin format to the API format.
+	value, err := a.createCoinList(cap)
+	if err != nil {
+		return apiError(fmt.Errorf("could not create coin list: %w", err))
+	}
+
 	response := api.Value{
 		ID:    id,
-		Value: cap,
+		Value: value,
 	}
 
 	return ctx.JSON(http.StatusOK, response)

@@ -335,7 +335,7 @@ type NFT {
     """
     Trading price for this NFT.
     """
-    trading_price: Currency!
+    trading_price: [Currency!]
 
     """
     All time average-price for this NFT.
