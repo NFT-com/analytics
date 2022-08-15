@@ -20,9 +20,9 @@ type Sale struct {
 // `Start` and `End` values denote the time span over which the
 // minimum trading price is calculated.
 type LowestPrice struct {
-	Currency Currency `json:"lowest_price"`
-	Start    string   `json:"start"`
-	End      string   `json:"end"`
+	Currency Coin   `json:"lowest_price"`
+	Start    string `json:"start"`
+	End      string `json:"end"`
 }
 
 // Users represents the number of unique users on a marketplace.
@@ -31,12 +31,10 @@ type Users struct {
 	Date  *time.Time `json:"date,omitempty" gorm:"column:date"`
 }
 
-// Price represents the price of an NFT.
-// NOTE: This is the only data type that uses the actual time instead
-// of the date.
-type Price struct {
-	Currency Currency   `json:"price"`
-	Time     *time.Time `json:"emitted_at,omitempty"`
+// PriceSnapshot represents the price of an NFT at a certain point in time.
+type PriceSnapshot struct {
+	Coin Coin       `json:"price"`
+	Time *time.Time `json:"emitted_at,omitempty"`
 }
 
 // CollectionSize represents the total number of NFTs in a collection.

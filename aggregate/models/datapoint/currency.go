@@ -2,20 +2,18 @@ package datapoint
 
 import (
 	"time"
+
+	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
-// FIXME: Think of the distinction, where API should switch from addresses to symbols.
-
-// CurrencySnapshot represents the Currency value at a specific date.
-type CurrencySnapshot struct {
-	Currencies []Currency `json:"currencies,omitempty"`
-	Date       time.Time  `json:"date,omitempty"`
+// CoinSnapshot represents the value of a metric at a specific date, expressed in coins.
+type CoinSnapshot struct {
+	Coins []Coin    `json:"coins,omitempty"`
+	Date  time.Time `json:"date,omitempty"`
 }
 
-// Currency has the chain ID and address pair, identifying the fungible token used as payment,
-// as well as the amount.
-type Currency struct {
-	ChainID uint64  `gorm:"column:chain_id" json:"chain_id"`
-	Address string  `gorm:"column:currency_address" json:"address"`
-	Amount  float64 `gorm:"column:currency_value" json:"amount"`
+// Coin represents a pairing of a currency and an amount.
+type Coin struct {
+	Currency identifier.Currency `json:"currency"`
+	Amount   float64             `json:"amount"`
 }

@@ -27,9 +27,9 @@ func (a *API) CollectionVolume(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not get collection volume data: %w", err))
 	}
 
-	response := api.Values{
-		ID:     id,
-		Values: volumes,
+	response := api.Value{
+		ID:    id,
+		Value: volumes,
 	}
 
 	return ctx.JSON(http.StatusOK, response)
@@ -68,7 +68,7 @@ func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 	}
 
 	// Map the list of volumes back to the collection IDs.
-	var collectionVolumes []api.Values
+	var collectionVolumes []api.Value
 	for id, address := range addresses {
 
 		volume, ok := volumes[lowerAddress(address)]
@@ -79,9 +79,9 @@ func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 		}
 
 		// Create the volume record and add it to the list.
-		v := api.Values{
-			ID:     id,
-			Values: volume,
+		v := api.Value{
+			ID:    id,
+			Value: volume,
 		}
 
 		collectionVolumes = append(collectionVolumes, v)
@@ -112,9 +112,9 @@ func (a *API) MarketplaceVolume(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not get marketplace volume data: %w", err))
 	}
 
-	response := api.Values{
-		ID:     id,
-		Values: volume,
+	response := api.Value{
+		ID:    id,
+		Value: volume,
 	}
 
 	return ctx.JSON(http.StatusOK, response)

@@ -9,7 +9,7 @@ import (
 )
 
 // NFTPriceHistory returns the historic prices of an NFT.
-func (s *Stats) NFTPriceHistory(nft identifier.NFT, from time.Time, to time.Time) ([]datapoint.Price, error) {
+func (s *Stats) NFTPriceHistory(nft identifier.NFT, from time.Time, to time.Time) ([]datapoint.PriceSnapshot, error) {
 
 	// NOTE: This query will not return prices for the NFT if there were no sales
 	// in the specified date range, unlike all other queries.
@@ -30,14 +30,16 @@ func (s *Stats) NFTPriceHistory(nft identifier.NFT, from time.Time, to time.Time
 		return nil, fmt.Errorf("could not retrieve NFT prices: %v", err)
 	}
 
-	out := make([]datapoint.Price, 0, len(prices))
+	out := make([]datapoint.PriceSnapshot, 0, len(prices))
 	for _, p := range prices {
 
-		price := datapoint.Price{
-			Currency: datapoint.Currency{
-				ChainID: p.ChainID,
-				Address: p.Address,
-				Amount:  p.Amount,
+		price := datapoint.PriceSnapshot{
+			Coin: datapoint.Coin{
+				Currency: identifier.Currency{
+					ChainID: p.ChainID,
+					Address: p.Address,
+				},
+				Amount: p.Amount,
 			},
 			Time: p.Time,
 		}
@@ -49,7 +51,7 @@ func (s *Stats) NFTPriceHistory(nft identifier.NFT, from time.Time, to time.Time
 }
 
 // NFTAveragePrice returns the all-time average price.
-func (s *Stats) NFTAveragePrice(nft identifier.NFT) ([]datapoint.Currency, error) {
+func (s *Stats) NFTAveragePrice(nft identifier.NFT) ([]datapoint.Coin, error) {
 
 	query := s.db.
 		Table("sales").
@@ -59,7 +61,7 @@ func (s *Stats) NFTAveragePrice(nft identifier.NFT) ([]datapoint.Currency, error
 		Where("token_id = ?", nft.TokenID).
 		Group("chain_id, LOWER(currency_address)")
 
-	var prices []datapoint.Currency
+	var prices []datapoint.Coin
 	err := query.Find(&prices).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve average price: %w", err)

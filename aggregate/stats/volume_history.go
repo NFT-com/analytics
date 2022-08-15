@@ -11,17 +11,17 @@ import (
 
 // CollectionVolumeHistory returns the total value of all trades in specified collection in the given interval.
 // Volume for a point in time is calculated as a sum of all sales made until (and including) that moment.
-func (s *Stats) CollectionVolumeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.CurrencySnapshot, error) {
+func (s *Stats) CollectionVolumeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.CoinSnapshot, error) {
 	return s.volumeHistory(&address, nil, from, to)
 }
 
 // MarketplaceVolumeHistory returns the total value of all trades in specified marketplace in the given interval.
 // Volume for a point in time is calculated as a sum of all sales made until (and including) that moment.
-func (s *Stats) MarketplaceVolumeHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.CurrencySnapshot, error) {
+func (s *Stats) MarketplaceVolumeHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.CoinSnapshot, error) {
 	return s.volumeHistory(nil, addresses, from, to)
 }
 
-func (s *Stats) volumeHistory(collectionAddress *identifier.Address, marketplaceAddresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.CurrencySnapshot, error) {
+func (s *Stats) volumeHistory(collectionAddress *identifier.Address, marketplaceAddresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.CoinSnapshot, error) {
 
 	// Determine the total value of trades for each point in time.
 	query := s.db.
@@ -58,7 +58,7 @@ func (s *Stats) volumeHistory(collectionAddress *identifier.Address, marketplace
 	return volumes, nil
 }
 
-func createSnapshotList(records []datedPriceResult) []datapoint.CurrencySnapshot {
+func createSnapshotList(records []datedPriceResult) []datapoint.CoinSnapshot {
 
 	// FIXME: Use a more optimal approach instead of using a map.
 	// Since the list is sorted by date, iterate through the records while
@@ -67,31 +67,33 @@ func createSnapshotList(records []datedPriceResult) []datapoint.CurrencySnapshot
 	// composing the next slice element.
 
 	// 1. Create a map where all currencies for a given date are grouped.
-	vm := make(map[time.Time][]datapoint.Currency)
+	vm := make(map[time.Time][]datapoint.Coin)
 	for _, rec := range records {
 
 		date := rec.Date
-		currency := datapoint.Currency{
-			ChainID: rec.ChainID,
-			Address: rec.Address,
-			Amount:  rec.Amount,
+		currency := datapoint.Coin{
+			Currency: identifier.Currency{
+				ChainID: rec.ChainID,
+				Address: rec.Address,
+			},
+			Amount: rec.Amount,
 		}
 
 		_, ok := vm[date]
 		if !ok {
-			vm[date] = make([]datapoint.Currency, 0, 1)
+			vm[date] = make([]datapoint.Coin, 0, 1)
 		}
 
 		vm[date] = append(vm[date], currency)
 	}
 
 	// 2. Translate the map to a slice.
-	out := make([]datapoint.CurrencySnapshot, 0, len(vm))
+	out := make([]datapoint.CoinSnapshot, 0, len(vm))
 	for date, volume := range vm {
 		date := date
-		v := datapoint.CurrencySnapshot{
-			Date:       date,
-			Currencies: volume,
+		v := datapoint.CoinSnapshot{
+			Date:  date,
+			Coins: volume,
 		}
 
 		out = append(out, v)

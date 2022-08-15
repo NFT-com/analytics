@@ -48,10 +48,12 @@ func (s *Stats) CollectionLowestPriceHistory(address identifier.Address, from ti
 	out := make([]datapoint.LowestPrice, 0, len(prices))
 	for _, p := range prices {
 
-		currency := datapoint.Currency{
-			ChainID: p.ChainID,
-			Address: p.Address,
-			Amount:  p.Amount,
+		currency := datapoint.Coin{
+			Currency: identifier.Currency{
+				ChainID: p.ChainID,
+				Address: p.Address,
+			},
+			Amount: p.Amount,
 		}
 
 		price := datapoint.LowestPrice{

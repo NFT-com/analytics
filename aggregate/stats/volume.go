@@ -9,7 +9,7 @@ import (
 )
 
 // CollectionVolume returns the total value of all trades for this collection.
-func (s *Stats) CollectionVolume(address identifier.Address) ([]datapoint.Currency, error) {
+func (s *Stats) CollectionVolume(address identifier.Address) ([]datapoint.Coin, error) {
 
 	query := s.db.
 		Table("sales").
@@ -18,7 +18,7 @@ func (s *Stats) CollectionVolume(address identifier.Address) ([]datapoint.Curren
 		Where("LOWER(collection_address) = LOWER(?)", address.Address).
 		Group("chain_id, LOWER(currency_address)")
 
-	var volumes []datapoint.Currency
+	var volumes []datapoint.Coin
 	err := query.Find(&volumes).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve collection volume: %w", err)
@@ -29,7 +29,7 @@ func (s *Stats) CollectionVolume(address identifier.Address) ([]datapoint.Curren
 
 // CollectionBatchVolumes returns the list of volumes for each individual collection.
 // Volumes are mapped to the lowercased collection contract address.
-func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[identifier.Address][]datapoint.Currency, error) {
+func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[identifier.Address][]datapoint.Coin, error) {
 
 	if len(addresses) == 0 {
 		return nil, errors.New("id list must be non-empty")
@@ -50,7 +50,7 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 	}
 
 	// Map the volumes to the collection identifier.
-	volumeMap := make(map[identifier.Address][]datapoint.Currency, len(volumes))
+	volumeMap := make(map[identifier.Address][]datapoint.Coin, len(volumes))
 	for _, volume := range volumes {
 
 		collection := identifier.Address{
@@ -58,10 +58,12 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 			Address: volume.CollectionAddress,
 		}
 
-		currency := datapoint.Currency{
-			ChainID: volume.ChainID,
-			Address: volume.Address,
-			Amount:  volume.Amount,
+		currency := datapoint.Coin{
+			Currency: identifier.Currency{
+				ChainID: volume.ChainID,
+				Address: volume.Address,
+			},
+			Amount: volume.Amount,
 		}
 
 		// If we already have volume data for this collection (for some currencies)
@@ -73,7 +75,7 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 		}
 
 		// Create the currency list now.
-		v := make([]datapoint.Currency, 0)
+		v := make([]datapoint.Coin, 0)
 		v = append(v, currency)
 		volumeMap[collection] = v
 	}
@@ -82,7 +84,7 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 }
 
 // MarketplaceVolume returns the total value of all trades for this marketplace.
-func (s *Stats) MarketplaceVolume(addresses []identifier.Address) ([]datapoint.Currency, error) {
+func (s *Stats) MarketplaceVolume(addresses []identifier.Address) ([]datapoint.Coin, error) {
 
 	query := s.db.
 		Table("sales").
@@ -92,7 +94,7 @@ func (s *Stats) MarketplaceVolume(addresses []identifier.Address) ([]datapoint.C
 	filter := s.createMarketplaceFilter(addresses)
 	query = query.Where(filter)
 
-	var volumes []datapoint.Currency
+	var volumes []datapoint.Coin
 	err := query.Find(&volumes).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve marketplace volume: %w", err)

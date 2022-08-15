@@ -8,7 +8,7 @@ import (
 )
 
 // CollectionMarketCap returns the current market cap for the collection.
-func (s *Stats) CollectionMarketCap(address identifier.Address) ([]datapoint.Currency, error) {
+func (s *Stats) CollectionMarketCap(address identifier.Address) ([]datapoint.Coin, error) {
 
 	query := s.db.Raw(
 		`WITH RECURSIVE cte AS (
@@ -39,7 +39,7 @@ func (s *Stats) CollectionMarketCap(address identifier.Address) ([]datapoint.Cur
 		address.Address,
 	)
 
-	var marketCap []datapoint.Currency
+	var marketCap []datapoint.Coin
 	err := query.Scan(&marketCap).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve market cap: %w", err)
@@ -50,7 +50,7 @@ func (s *Stats) CollectionMarketCap(address identifier.Address) ([]datapoint.Cur
 
 // CollectionMarketCaps returns the current market cap for the list of collections.
 // Market caps are mapped to the lowercased collection contract address.
-func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[identifier.Address][]datapoint.Currency, error) {
+func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[identifier.Address][]datapoint.Coin, error) {
 
 	if len(addresses) == 0 {
 		return nil, fmt.Errorf("address list must be non-empty")
@@ -76,7 +76,7 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 	}
 
 	// Transform the list of market caps to a map.
-	capMap := make(map[identifier.Address][]datapoint.Currency, len(caps))
+	capMap := make(map[identifier.Address][]datapoint.Coin, len(caps))
 	for _, cap := range caps {
 
 		collection := identifier.Address{
@@ -84,10 +84,12 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 			Address: cap.CollectionAddress,
 		}
 
-		currency := datapoint.Currency{
-			ChainID: cap.ChainID,
-			Address: cap.Address,
-			Amount:  cap.Amount,
+		currency := datapoint.Coin{
+			Currency: identifier.Currency{
+				ChainID: cap.ChainID,
+				Address: cap.Address,
+			},
+			Amount: cap.Amount,
 		}
 
 		// If we already have market cap for this collection (for some currencies)
@@ -99,7 +101,7 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 		}
 
 		// Create the currency list now.
-		c := make([]datapoint.Currency, 0)
+		c := make([]datapoint.Coin, 0)
 		c = append(c, currency)
 		capMap[collection] = c
 	}
@@ -108,7 +110,7 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 }
 
 // MarketplaceMarketCap returns the current market cap for the marketplace.
-func (s *Stats) MarketplaceMarketCap(addresses []identifier.Address) ([]datapoint.Currency, error) {
+func (s *Stats) MarketplaceMarketCap(addresses []identifier.Address) ([]datapoint.Coin, error) {
 
 	// Latest price query will return prices per NFT ranked by freshness.
 	// Prices with the lowest rank (closer to 1) will be the most recent ones.
@@ -128,7 +130,7 @@ func (s *Stats) MarketplaceMarketCap(addresses []identifier.Address) ([]datapoin
 		Group("LOWER(currency_address)").
 		Where("rank = 1")
 
-	var marketCap []datapoint.Currency
+	var marketCap []datapoint.Coin
 	err := sumQuery.Find(&marketCap).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve market cap: %w", err)

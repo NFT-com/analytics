@@ -9,16 +9,16 @@ import (
 )
 
 // CollectionMarketCapHistory returns the market cap for the collection in the given time range.
-func (s *Stats) CollectionMarketCapHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.CurrencySnapshot, error) {
+func (s *Stats) CollectionMarketCapHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.CoinSnapshot, error) {
 	return s.marketCapHistory(&address, nil, from, to)
 }
 
 // MarketplaceMarketCapHistory returns the market cap for the marketplace in the given time range.
-func (s *Stats) MarketplaceMarketCapHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.CurrencySnapshot, error) {
+func (s *Stats) MarketplaceMarketCapHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.CoinSnapshot, error) {
 	return s.marketCapHistory(nil, addresses, from, to)
 }
 
-func (s *Stats) marketCapHistory(collectionAddress *identifier.Address, marketplaceAddresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.CurrencySnapshot, error) {
+func (s *Stats) marketCapHistory(collectionAddress *identifier.Address, marketplaceAddresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.CoinSnapshot, error) {
 
 	// TODO: Use a query with a recursive CTE for a huge performance improvement.
 	// See https://github.com/NFT-com/analytics/issues/40

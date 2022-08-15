@@ -4,11 +4,11 @@ import (
 	"fmt"
 
 	aggregate "github.com/NFT-com/analytics/aggregate/api"
-	"github.com/NFT-com/analytics/aggregate/models/datapoint"
+	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
 // Currency returns the ID of the specified currency.
-func (l *Lookup) CurrencyID(currency datapoint.Currency) (string, error) {
+func (l *Lookup) CurrencyID(currency identifier.Currency) (string, error) {
 
 	query := l.db.
 		Table("currencies c, networks n").

@@ -8,7 +8,11 @@ import (
 )
 
 // NFTPrice returns the current NFT price for an NFT.
-func (s *Stats) NFTPrice(nft identifier.NFT) (datapoint.Currency, error) {
+func (s *Stats) NFTPrice(nft identifier.NFT) ([]datapoint.Coin, error) {
+
+	// FIXME: Look into this - is it possible to have a single sale that uses multiple currencies?
+	// E.g. we sell a single NFT for 10 ETH and 1 WETH? If yes, the solution with 'LIMIT 1' is not
+	// a correct one.
 
 	query := s.db.
 		Table("sales").
@@ -19,10 +23,10 @@ func (s *Stats) NFTPrice(nft identifier.NFT) (datapoint.Currency, error) {
 		Order("emitted_at DESC").
 		Limit(1)
 
-	var price datapoint.Currency
-	err := query.Take(&price).Error
+	var price []datapoint.Coin
+	err := query.Find(&price).Error
 	if err != nil {
-		return datapoint.Currency{}, fmt.Errorf("could not retrieve price: %w", err)
+		return nil, fmt.Errorf("could not retrieve price: %w", err)
 	}
 
 	return price, nil
@@ -32,7 +36,7 @@ func (s *Stats) NFTPrice(nft identifier.NFT) (datapoint.Currency, error) {
 // Prices are mapped to the NFT identifier, with the collection contract address being lowercased.
 // NOTE: CollectionPrices and CollectionAveragePrices could return a map where the keys are simple strings - token IDs,
 // since all of the tokens are from the same collection. However, for uniformity with the rest of the package, they use `identifier.NFT` for mapping.
-func (s *Stats) CollectionPrices(address identifier.Address) (map[identifier.NFT]datapoint.Currency, error) {
+func (s *Stats) CollectionPrices(address identifier.Address) (map[identifier.NFT][]datapoint.Coin, error) {
 
 	selectFields := []string{
 		"chain_id",
@@ -62,7 +66,7 @@ func (s *Stats) CollectionPrices(address identifier.Address) (map[identifier.NFT
 	}
 
 	// Transform the list of prices into a map, mapping the NFT identifier to the price point.
-	priceMap := make(map[identifier.NFT]datapoint.Currency, len(prices))
+	priceMap := make(map[identifier.NFT][]datapoint.Coin, len(prices))
 	for _, price := range prices {
 
 		// Create the NFT identifier.
@@ -75,12 +79,20 @@ func (s *Stats) CollectionPrices(address identifier.Address) (map[identifier.NFT
 			TokenID:    price.TokenID,
 		}
 
-		p := datapoint.Currency{
-			ChainID: price.ChainID,
-			Address: price.CurrencyAddress,
-			Amount:  price.CurrencyAmount,
+		p := datapoint.Coin{
+			Currency: identifier.Currency{
+				ChainID: price.ChainID,
+				Address: price.CurrencyAddress,
+			},
+			Amount: price.CurrencyAmount,
 		}
-		priceMap[nft] = p
+
+		_, ok := priceMap[nft]
+		if !ok {
+			priceMap[nft] = make([]datapoint.Coin, 0)
+		}
+
+		priceMap[nft] = append(priceMap[nft], p)
 	}
 
 	return priceMap, nil
@@ -88,7 +100,7 @@ func (s *Stats) CollectionPrices(address identifier.Address) (map[identifier.NFT
 
 // CollectionAveragePrices returns the list of average prices for NFTs in a specified collection.
 // Prices are mapped to the NFT identifier, with the collection contract address being lowercased.
-func (s *Stats) CollectionAveragePrices(address identifier.Address) (map[identifier.NFT][]datapoint.Currency, error) {
+func (s *Stats) CollectionAveragePrices(address identifier.Address) (map[identifier.NFT][]datapoint.Coin, error) {
 
 	selectFields := []string{
 		"chain_id",
@@ -114,7 +126,7 @@ func (s *Stats) CollectionAveragePrices(address identifier.Address) (map[identif
 	}
 
 	// Transform the list of prices into a map, mapping the NFT identifier to the price point.
-	priceMap := make(map[identifier.NFT][]datapoint.Currency, len(prices))
+	priceMap := make(map[identifier.NFT][]datapoint.Coin, len(prices))
 	for _, price := range prices {
 
 		// Create the NFT identifier.
@@ -127,10 +139,12 @@ func (s *Stats) CollectionAveragePrices(address identifier.Address) (map[identif
 			TokenID:    price.TokenID,
 		}
 
-		currency := datapoint.Currency{
-			ChainID: price.ChainID,
-			Address: price.CollectionAddress,
-			Amount:  price.CurrencyAmount,
+		currency := datapoint.Coin{
+			Currency: identifier.Currency{
+				ChainID: price.ChainID,
+				Address: price.CollectionAddress,
+			},
+			Amount: price.CurrencyAmount,
 		}
 
 		// If we already have average price for this nft (for some currencies)
@@ -141,7 +155,7 @@ func (s *Stats) CollectionAveragePrices(address identifier.Address) (map[identif
 			continue
 		}
 
-		p := make([]datapoint.Currency, 0)
+		p := make([]datapoint.Coin, 0)
 		p = append(p, currency)
 		priceMap[nft] = p
 	}

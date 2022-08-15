@@ -7,7 +7,6 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/NFT-com/analytics/aggregate/models/api"
-	"github.com/NFT-com/analytics/aggregate/models/datapoint"
 )
 
 // NFTPrice handles the request for retrieving current price of an NFT.
@@ -59,7 +58,7 @@ func (a *API) CollectionPrices(ctx echo.Context) error {
 	}
 
 	// Link retrieved prices to the NFT by ID.
-	var nftPrices []api.Values
+	var nftPrices []api.Value
 	for id, nftAddress := range nftIDs {
 
 		price, ok := prices[lowerNFTID(nftAddress)]
@@ -69,11 +68,10 @@ func (a *API) CollectionPrices(ctx echo.Context) error {
 			continue
 		}
 
-		// FIXME: Think about this again.
 		// Create the price record and add it to the list.
-		p := api.Values{
-			ID:     id,
-			Values: []datapoint.Currency{price},
+		p := api.Value{
+			ID:    id,
+			Value: price,
 		}
 		nftPrices = append(nftPrices, p)
 	}
@@ -110,7 +108,7 @@ func (a *API) CollectionAveragePrices(ctx echo.Context) error {
 	}
 
 	// Link retrieved prices to the NFT by ID.
-	var nftPrices []api.Values
+	var nftPrices []api.Value
 	for id, nftAddress := range nftIDs {
 
 		average, ok := averages[lowerNFTID(nftAddress)]
@@ -121,9 +119,9 @@ func (a *API) CollectionAveragePrices(ctx echo.Context) error {
 		}
 
 		// Create the price record and add it to the list.
-		p := api.Values{
-			ID:     id,
-			Values: average,
+		p := api.Value{
+			ID:    id,
+			Value: average,
 		}
 		nftPrices = append(nftPrices, p)
 	}
