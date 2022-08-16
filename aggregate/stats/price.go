@@ -10,9 +10,8 @@ import (
 // NFTPrice returns the current NFT price for an NFT.
 func (s *Stats) NFTPrice(nft identifier.NFT) ([]datapoint.Coin, error) {
 
-	// FIXME: Look into this - is it possible to have a single sale that uses multiple currencies?
-	// E.g. we sell a single NFT for 10 ETH and 1 WETH? If yes, the solution with 'LIMIT 1' is not
-	// a correct one.
+	// NOTE: If we start supporting scenarios with multiple payments in a single sale (e.g. 10 ETH + 1 WETH for an NFT)
+	// this approach will need to be altered.
 
 	query := s.db.
 		Table("sales").

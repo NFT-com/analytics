@@ -16,7 +16,6 @@ type Collection struct {
 }
 
 // Currency represents a fungible token, typically used for payment.
-// FIXME: Check - this is called 'Coin' in the aggregation API.
 type Currency struct {
 	Amount float64 `json:"amount"`
 	Symbol string  `json:"symbol"`

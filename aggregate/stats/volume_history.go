@@ -60,12 +60,6 @@ func (s *Stats) volumeHistory(collectionAddress *identifier.Address, marketplace
 
 func createSnapshotList(records []datedPriceResult) []datapoint.CoinSnapshot {
 
-	// FIXME: Use a more optimal approach instead of using a map.
-	// Since the list is sorted by date, iterate through the records while
-	// keeping track of the active date point for which we're processing currencies.
-	// After that date is complete, append the created datapoint to the slice, and start
-	// composing the next slice element.
-
 	// 1. Create a map where all currencies for a given date are grouped.
 	vm := make(map[time.Time][]datapoint.Coin)
 	for _, rec := range records {
