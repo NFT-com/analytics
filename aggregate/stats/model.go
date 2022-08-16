@@ -40,7 +40,7 @@ type lowestPriceResult struct {
 }
 
 // datedPriceResult represents the results of queries returning a stat (e.g. volume, market_cap)
-// at a certain date point.
+// at a certain date.
 type datedPriceResult struct {
 	ChainID uint64    `gorm:"column:chain_id"`
 	Address string    `gorm:"column:currency_address"`

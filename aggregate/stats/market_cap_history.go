@@ -73,7 +73,7 @@ func (s *Stats) marketCapHistory(collectionAddress *identifier.Address, marketpl
 		return nil, fmt.Errorf("could not retrieve volume info: %w", err)
 	}
 
-	cap := createSnapshotList(records)
+	cap := createCoinSnapshotList(records)
 
 	return cap, nil
 }

@@ -53,12 +53,12 @@ func (s *Stats) volumeHistory(collectionAddress *identifier.Address, marketplace
 		return nil, fmt.Errorf("could not retrieve volume info: %w", err)
 	}
 
-	volumes := createSnapshotList(records)
+	volumes := createCoinSnapshotList(records)
 
 	return volumes, nil
 }
 
-func createSnapshotList(records []datedPriceResult) []datapoint.CoinSnapshot {
+func createCoinSnapshotList(records []datedPriceResult) []datapoint.CoinSnapshot {
 
 	// 1. Create a map where all currencies for a given date are grouped.
 	vm := make(map[time.Time][]datapoint.Coin)

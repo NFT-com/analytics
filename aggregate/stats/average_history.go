@@ -52,7 +52,7 @@ func (s *Stats) CollectionAverageHistory(address identifier.Address, from time.T
 		return nil, fmt.Errorf("could not retrieve average price for a collection: %w", err)
 	}
 
-	averages := createSnapshotList(records)
+	averages := createCoinSnapshotList(records)
 
 	return averages, nil
 }
