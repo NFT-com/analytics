@@ -18,13 +18,15 @@ func (s *Stats) CollectionVolume(address identifier.Address) ([]datapoint.Coin, 
 		Where("LOWER(collection_address) = LOWER(?)", address.Address).
 		Group("chain_id, LOWER(currency_address)")
 
-	var volumes []datapoint.Coin
+	var volumes []priceResult
 	err := query.Find(&volumes).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve collection volume: %w", err)
 	}
 
-	return volumes, nil
+	out := convertPricesToCoins(volumes)
+
+	return out, nil
 }
 
 // CollectionBatchVolumes returns the list of volumes for each individual collection.
@@ -94,11 +96,13 @@ func (s *Stats) MarketplaceVolume(addresses []identifier.Address) ([]datapoint.C
 	filter := s.createMarketplaceFilter(addresses)
 	query = query.Where(filter)
 
-	var volumes []datapoint.Coin
+	var volumes []priceResult
 	err := query.Find(&volumes).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve marketplace volume: %w", err)
 	}
 
-	return volumes, nil
+	out := convertPricesToCoins(volumes)
+
+	return out, nil
 }

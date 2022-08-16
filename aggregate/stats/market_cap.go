@@ -13,7 +13,7 @@ func (s *Stats) CollectionMarketCap(address identifier.Address) ([]datapoint.Coi
 	query := s.db.Raw(
 		`WITH RECURSIVE cte AS (
 			(
-				SELECT token_id, currency_value, LOWER(currency_address) AS currency_address
+				SELECT token_id, currency_value, chain_id, LOWER(currency_address) AS currency_address
 				FROM sales
 				WHERE chain_id = ? and LOWER(collection_address) = LOWER(?)
 				ORDER BY token_id, emitted_at DESC
@@ -23,29 +23,31 @@ func (s *Stats) CollectionMarketCap(address identifier.Address) ([]datapoint.Coi
 			SELECT s.*
 			FROM cte c,
 			LATERAL (
-				SELECT token_id, currency_value, LOWER(currency_address) AS currency_address
+				SELECT token_id, currency_value, chain_id, LOWER(currency_address) AS currency_address
 				FROM sales
 				WHERE token_id > c.token_id AND chain_id = ? and LOWER(collection_address) = LOWER(?)
 				ORDER BY token_id, emitted_at DESC
 				LIMIT 1
 			) s
 		)
-		SELECT SUM(currency_value) AS currency_value, LOWER(currency_address) AS currency_address
+		SELECT SUM(currency_value) AS currency_value, chain_id, LOWER(currency_address) AS currency_address
 		FROM cte
-		GROUP BY LOWER(currency_address)`,
+		GROUP BY chain_id, LOWER(currency_address)`,
 		address.ChainID,
 		address.Address,
 		address.ChainID,
 		address.Address,
 	)
 
-	var marketCap []datapoint.Coin
-	err := query.Scan(&marketCap).Error
+	var marketCap []priceResult
+	err := query.Find(&marketCap).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve market cap: %w", err)
 	}
 
-	return marketCap, nil
+	out := convertPricesToCoins(marketCap)
+
+	return out, nil
 }
 
 // CollectionMarketCaps returns the current market cap for the list of collections.
@@ -127,14 +129,17 @@ func (s *Stats) MarketplaceMarketCap(addresses []identifier.Address) ([]datapoin
 	sumQuery := s.db.
 		Table("( ? ) s", latestPriceQuery).
 		Select("SUM(currency_value) AS currency_value, chain_id, LOWER(currency_address) AS currency_address").
+		Group("chain_id").
 		Group("LOWER(currency_address)").
 		Where("rank = 1")
 
-	var marketCap []datapoint.Coin
-	err := sumQuery.Find(&marketCap).Error
+	var marketCaps []priceResult
+	err := sumQuery.Find(&marketCaps).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve market cap: %w", err)
 	}
 
-	return marketCap, nil
+	out := convertPricesToCoins(marketCaps)
+
+	return out, nil
 }
