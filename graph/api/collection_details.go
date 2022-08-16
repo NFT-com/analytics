@@ -48,9 +48,9 @@ func (s *Server) expandCollectionStats(query *query.Collection, collection *api.
 		} else {
 
 			// Translate the Aggregation API format to the expected Graph format.
-			formatted, err := s.createCurrencyList(volumes[collection.ID])
+			formatted, err := s.convertCoinsToCurrencies(volumes[collection.ID])
 			if err != nil {
-				multiErr = multierror.Append(multiErr, fmt.Errorf("could not transform currency list for volume: %w", err))
+				multiErr = multierror.Append(multiErr, fmt.Errorf("could not convert volume coin list to currencies: %w", err))
 			}
 
 			collection.Volume = formatted
@@ -65,9 +65,9 @@ func (s *Server) expandCollectionStats(query *query.Collection, collection *api.
 		} else {
 
 			// Translate the Aggregation API format to the expected Graph format.
-			formatted, err := s.createCurrencyList(caps[collection.ID])
+			formatted, err := s.convertCoinsToCurrencies(caps[collection.ID])
 			if err != nil {
-				multiErr = multierror.Append(multiErr, fmt.Errorf("could not transform currency list for market cap: %w", err))
+				multiErr = multierror.Append(multiErr, fmt.Errorf("could not convert market cap coin list to currencies: %w", err))
 			}
 
 			collection.MarketCap = formatted
@@ -188,16 +188,14 @@ func (s *Server) expandCollectionNFTData(query *query.Collection, collection *ap
 
 		for _, edge := range collection.NFTs.Edges {
 
-			price, err := s.createCurrencyList(prices[edge.Node.ID])
+			price, err := s.convertCoinsToCurrencies(prices[edge.Node.ID])
 			if err != nil {
-				// FIXME: See how you logged this elsewhere.
-				s.log.Error().Err(err).Msg("could not create currency list for NFT price")
+				s.log.Error().Err(err).Msg("could not convert collection NFT price coin list to currencies")
 			}
 
-			avg, err := s.createCurrencyList(averages[edge.Node.ID])
+			avg, err := s.convertCoinsToCurrencies(averages[edge.Node.ID])
 			if err != nil {
-				// FIXME: See how you logged this elsewhere.
-				s.log.Error().Err(err).Msg("could not create currency list for NFT average price")
+				s.log.Error().Err(err).Msg("could not convert collection NFT average price coin list to currencies")
 			}
 
 			edge.Node.TradingPrice = price

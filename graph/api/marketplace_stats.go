@@ -22,9 +22,9 @@ func (s *Server) expandMarketplaceStats(query *query.Marketplace, marketplace *a
 		} else {
 
 			// Translate the Aggregation API format to the expected Graph format.
-			formatted, err := s.createCurrencyList(volume)
+			formatted, err := s.convertCoinsToCurrencies(volume)
 			if err != nil {
-				multiErr = multierror.Append(multiErr, fmt.Errorf("could not transform currency list for volume: %w", err))
+				multiErr = multierror.Append(multiErr, fmt.Errorf("could not convert volume coin list to currencies: %w", err))
 			}
 
 			marketplace.Volume = formatted
@@ -39,9 +39,9 @@ func (s *Server) expandMarketplaceStats(query *query.Marketplace, marketplace *a
 		} else {
 
 			// Translate the Aggregation API format to the expected Graph format.
-			formatted, err := s.createCurrencyList(cap)
+			formatted, err := s.convertCoinsToCurrencies(cap)
 			if err != nil {
-				multiErr = multierror.Append(multiErr, fmt.Errorf("could not transform currency list for volume: %w", err))
+				multiErr = multierror.Append(multiErr, fmt.Errorf("could not convert market cap coin list to currencies: %w", err))
 			}
 
 			marketplace.MarketCap = formatted

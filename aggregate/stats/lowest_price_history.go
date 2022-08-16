@@ -8,7 +8,9 @@ import (
 	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
-// FIXME: Without a unified currency handling, this query makes little sense.
+// TODO: Without comparing NFT prices expressed in a single currency, this functionality makes little sense.
+// Currently it only finds the lowest `currency_value` number, which might not be the lowest price.
+// See https://github.com/NFT-com/analytics/issues/85
 
 // CollectionLowestPriceHistory returns the lowest price for the collection in the given interval.
 func (s *Stats) CollectionLowestPriceHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.LowestPrice, error) {

@@ -21,9 +21,9 @@ func (s *Server) getNFTStats(query *query.NFT, nft *api.NFT) error {
 		} else {
 
 			// Translate the Aggregation API format to the expected Graph format.
-			formatted, err := s.createCurrencyList(price)
+			formatted, err := s.convertCoinsToCurrencies(price)
 			if err != nil {
-				multiErr = multierror.Append(multiErr, fmt.Errorf("could not transform currency list for market cap: %w", err))
+				multiErr = multierror.Append(multiErr, fmt.Errorf("could not convert price coin list to currencies: %w", err))
 			}
 
 			nft.TradingPrice = formatted
@@ -38,9 +38,9 @@ func (s *Server) getNFTStats(query *query.NFT, nft *api.NFT) error {
 		} else {
 
 			// Translate the Aggregation API format to the expected Graph format.
-			formatted, err := s.createCurrencyList(average)
+			formatted, err := s.convertCoinsToCurrencies(average)
 			if err != nil {
-				multiErr = multierror.Append(multiErr, fmt.Errorf("could not transform currency list for market cap: %w", err))
+				multiErr = multierror.Append(multiErr, fmt.Errorf("could not convert average price coin list to currencies: %w", err))
 			}
 
 			nft.AveragePrice = formatted

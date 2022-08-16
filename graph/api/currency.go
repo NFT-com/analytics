@@ -8,7 +8,7 @@ import (
 )
 
 // FIXME: Get symbols for all currencies at once, don't do it on the fly.
-func (s *Server) createCurrencyList(coins []aggregate.Coin) ([]graph.Currency, error) {
+func (s *Server) convertCoinsToCurrencies(coins []aggregate.Coin) ([]graph.Currency, error) {
 
 	out := make([]graph.Currency, 0, len(coins))
 	for _, coin := range coins {

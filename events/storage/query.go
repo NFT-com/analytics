@@ -135,9 +135,12 @@ func withHeightRange(selector selectors.HeightRange) conditionFunc {
 
 // withPriceRange returns the condition setter that addes the price range condition
 // to the query, if provided.
-// FIXME: Price selector should have a currency address as mandatory now. Open an issue for this.
 func withPriceRange(selector selectors.PriceRange) conditionFunc {
 	return func(db *gorm.DB) *gorm.DB {
+
+		// TODO: Price filter should be more complex now that `currency_value` can
+		// represent different currencies.
+		// See https://github.com/NFT-com/analytics/issues/86
 
 		// Set the start price condition.
 		if selector.StartPrice.Cmp(big.NewInt(0)) != 0 {
