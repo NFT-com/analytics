@@ -7,7 +7,8 @@ import (
 	graph "github.com/NFT-com/analytics/graph/models/api"
 )
 
-// FIXME: Get symbols for all currencies at once, don't do it on the fly.
+// TODO: Consider retrieving all currency symbols on startup, then just retrieving them from a map when needed.
+// Seehttps://github.com/NFT-com/analytics/issues/87
 func (s *Server) convertCoinsToCurrencies(coins []aggregate.Coin) ([]graph.Currency, error) {
 
 	out := make([]graph.Currency, 0, len(coins))
