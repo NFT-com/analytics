@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "e4b29fa0-b809-4d4d-9a36-939257966966",
+		"_postman_id": "2250b2cd-d924-4012-9b19-37952d9706d6",
 		"name": "Optakt Indexer/Analytics",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "19032524"
@@ -401,7 +401,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/nft/{{nft-id}}/price",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/nft/{{nft-id}}/average",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
@@ -410,7 +410,7 @@
 									"path": [
 										"nft",
 										"{{nft-id}}",
-										"price"
+										"average"
 									]
 								}
 							},
@@ -640,6 +640,29 @@
 						}
 					]
 				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// Verify status code indicates success.",
+							"pm.test(\"Status code is 200\", function () {",
+							"  pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
 			]
 		},
 		{
@@ -833,7 +856,7 @@
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "query($id: ID!) {\r\n    nft(id: $id) {\r\n       id\r\n       name\r\n       description\r\n       image_url\r\n       token_id\r\n       uri\r\n       rarity\r\n       owners {\r\n           address\r\n           number\r\n       }\r\n       traits {\r\n           name\r\n           value\r\n           rarity\r\n       }\r\n       trading_price\r\n       average_price\r\n    }\r\n}",
+										"query": "query($id: ID!) {\r\n    nft(id: $id) {\r\n       id\r\n       name\r\n       description\r\n       image_url\r\n       token_id\r\n       uri\r\n       rarity\r\n       owners {\r\n           address\r\n           number\r\n       }\r\n       traits {\r\n           name\r\n           value\r\n           rarity\r\n       }\r\n       trading_price {\r\n           amount\r\n           symbol\r\n       }\r\n       average_price {\r\n           amount\r\n           symbol\r\n       }\r\n    }\r\n}",
 										"variables": "{\r\n    \"id\": \"62b92c13-b7e9-5808-af12-c0c5b5cdc427\"\r\n}"
 									}
 								},
@@ -2483,7 +2506,7 @@
 											"\r",
 											"response.sales.forEach(function(sale) {\r",
 											"    \r",
-											"    let price = BigInt(sale.trade_price);\r",
+											"    let price = BigInt(sale.currency_value);\r",
 											"    pm.test(\"Price is in the expected price range\", function() {\r",
 											"        pm.expect(start <= price)\r",
 											"        pm.expect(price <= end)\r",
@@ -2499,7 +2522,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/sales/?start_price=134000000000000000000000000&end_price=344000000000000000000000000",
+									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/sales/?start_price=50&end_price=344000000000000000000000000",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
@@ -2512,7 +2535,7 @@
 									"query": [
 										{
 											"key": "start_price",
-											"value": "134000000000000000000000000"
+											"value": "50"
 										},
 										{
 											"key": "end_price",
@@ -3511,6 +3534,11 @@
 		{
 			"key": "port",
 			"value": "443",
+			"type": "string"
+		},
+		{
+			"key": "nft-id",
+			"value": "32793777-aebc-83b4-5d10-4217ddbb8476",
 			"type": "string"
 		}
 	]
