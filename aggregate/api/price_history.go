@@ -24,9 +24,34 @@ func (a *API) NFTPriceHistory(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve NFT price history: %w", err))
 	}
 
-	// FIXME: Price snapshot should work with IDs and not addresses.
+	// Translate to the API data format.
+	coins := make([]api.CoinSnapshot, 0, len(prices))
+	for _, p := range prices {
 
-	return ctx.JSON(http.StatusOK, prices)
+		if p.Coin.Currency.Address == "" {
+			continue
+		}
+
+		id, err := a.lookupCurrencyID(p.Coin.Currency)
+		if err != nil {
+			return apiError(fmt.Errorf("could not lookup currency ID: %w", err))
+		}
+
+		coin := api.CoinSnapshot{
+			CurrencyID: id,
+			Amount:     p.Coin.Amount,
+			Time:       p.Time,
+		}
+
+		coins = append(coins, coin)
+	}
+
+	out := api.PriceHistory{
+		ID:     ctx.Param(idParam),
+		Prices: coins,
+	}
+
+	return ctx.JSON(http.StatusOK, out)
 }
 
 // NFTAveragePrice handles the request for retrieving the all-time average price of an NFT.
