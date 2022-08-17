@@ -15,12 +15,35 @@ API often offers two modes for retrieving stats:
 All historic values accept a `from` and `to` query parameters, representing the date range for which the stat should be returned.
 Dates should be provided in the `YYYY-MM-DD` format.
 
-Current stat is typically returned in the following format:
+Counter-related stats (like sale or user counts) are typically returned in the following format:
 
 ```json
 {
     "id": "612ecc22-36ef-4ef7-bb0b-5b864b85d089",
     "value": 123456789
+}
+```
+
+If the returned stat is currency-related, it is typically represented with a list of currencies.
+For instance, trading volume for a collection can be returned as:
+
+```json
+{
+    "id": "612ecc22-36ef-4ef7-bb0b-5b864b85d089",
+    "values": [
+        {
+            "amount": 1500,
+            "currency_id": "e0a9b034-10af-4e5c-ad07-57ee7df67947"
+        },
+        {
+            "amount": 100,
+            "currency_id": "00f09a97-5db2-44d1-b666-5e1c872cd0f2"
+        },
+        {
+            "amount": 1000,
+            "currency_id": "5c59705d-3aca-4a40-bd27-942830bef64c"
+        }
+    ]
 }
 ```
 
@@ -256,22 +279,6 @@ Historic price for an NFT can be retrieved using:
 ```
 curl 'localhost:8080/nft/<nft_id>/price/history?from=YYYY-MM-DD&to=YYYY-MM-DD'
 ```
-
-Retrieving current price for a number of NFT can be done using:
-
-```
-curl --location --request POST 'http://localhost:8080/nft/batch/price' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "ids": [
-        "<nft-id-1>",
-        "<nft-id-2>",
-        "<nft-id-3>",
-        "<nft-id-4>"
-    ]
-}'
-```
-
 #### NFT Average Price
 
 All time average price for an NFT can be retrieved using:

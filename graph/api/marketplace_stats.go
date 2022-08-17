@@ -19,9 +19,16 @@ func (s *Server) expandMarketplaceStats(query *query.Marketplace, marketplace *a
 		volume, err := s.aggregationAPI.MarketplaceVolume(marketplace.ID)
 		if err != nil {
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not get marketplace volume: %w", err))
-		}
+		} else {
 
-		marketplace.Volume = volume
+			// Translate the Aggregation API format to the expected Graph format.
+			formatted, err := s.convertCoinsToCurrencies(volume)
+			if err != nil {
+				multiErr = multierror.Append(multiErr, fmt.Errorf("could not convert volume coin list to currencies: %w", err))
+			}
+
+			marketplace.Volume = formatted
+		}
 	}
 
 	// Get market cap from the aggregation API.
@@ -29,9 +36,16 @@ func (s *Server) expandMarketplaceStats(query *query.Marketplace, marketplace *a
 		cap, err := s.aggregationAPI.MarketplaceMarketCap(marketplace.ID)
 		if err != nil {
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not get marketplace market cap: %w", err))
-		}
+		} else {
 
-		marketplace.MarketCap = cap
+			// Translate the Aggregation API format to the expected Graph format.
+			formatted, err := s.convertCoinsToCurrencies(cap)
+			if err != nil {
+				multiErr = multierror.Append(multiErr, fmt.Errorf("could not convert market cap coin list to currencies: %w", err))
+			}
+
+			marketplace.MarketCap = formatted
+		}
 	}
 
 	// Get sale count from the aggregation API.
@@ -41,7 +55,7 @@ func (s *Server) expandMarketplaceStats(query *query.Marketplace, marketplace *a
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not get marketplace sales: %w", err))
 		}
 
-		marketplace.Sales = uint64(sales)
+		marketplace.Sales = sales
 	}
 
 	// Get user count from the aggregation API.
@@ -51,7 +65,7 @@ func (s *Server) expandMarketplaceStats(query *query.Marketplace, marketplace *a
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not get marketplace users: %w", err))
 		}
 
-		marketplace.Users = uint64(users)
+		marketplace.Users = users
 	}
 
 	return multiErr

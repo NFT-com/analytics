@@ -7,7 +7,6 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/NFT-com/analytics/aggregate/models/api"
-	"github.com/NFT-com/analytics/aggregate/models/datapoint"
 	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
@@ -23,14 +22,20 @@ func (a *API) CollectionVolume(ctx echo.Context) error {
 	}
 
 	// Retrieve collection volume.
-	volume, err := a.stats.CollectionVolume(address)
+	volumes, err := a.stats.CollectionVolume(address)
 	if err != nil {
 		return apiError(fmt.Errorf("could not get collection volume data: %w", err))
 	}
 
-	response := datapoint.Value{
+	// Translate the datapoint Coin format to the API format.
+	value, err := a.createCoinList(volumes)
+	if err != nil {
+		return apiError(fmt.Errorf("could not create coin list: %w", err))
+	}
+
+	response := api.Value{
 		ID:    id,
-		Value: volume,
+		Value: value,
 	}
 
 	return ctx.JSON(http.StatusOK, response)
@@ -69,7 +74,7 @@ func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 	}
 
 	// Map the list of volumes back to the collection IDs.
-	var collectionVolumes []datapoint.Value
+	var collectionVolumes []api.Value
 	for id, address := range addresses {
 
 		volume, ok := volumes[lowerAddress(address)]
@@ -79,10 +84,16 @@ func (a *API) CollectionBatchVolume(ctx echo.Context) error {
 			continue
 		}
 
+		// Translate the datapoint Coin format to the API format.
+		value, err := a.createCoinList(volume)
+		if err != nil {
+			return apiError(fmt.Errorf("could not create coin list: %w", err))
+		}
+
 		// Create the volume record and add it to the list.
-		v := datapoint.Value{
+		v := api.Value{
 			ID:    id,
-			Value: volume,
+			Value: value,
 		}
 
 		collectionVolumes = append(collectionVolumes, v)
@@ -113,9 +124,15 @@ func (a *API) MarketplaceVolume(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not get marketplace volume data: %w", err))
 	}
 
-	response := datapoint.Value{
+	// Translate the datapoint Coin format to the API format.
+	value, err := a.createCoinList(volume)
+	if err != nil {
+		return apiError(fmt.Errorf("could not create coin list: %w", err))
+	}
+
+	response := api.Value{
 		ID:    id,
-		Value: volume,
+		Value: value,
 	}
 
 	return ctx.JSON(http.StatusOK, response)

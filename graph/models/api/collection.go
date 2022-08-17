@@ -9,10 +9,16 @@ type Collection struct {
 	Website     string        `gorm:"column:website" json:"website"`
 	ImageURL    string        `gorm:"column:image_url" json:"image_url"`
 	NetworkID   string        `gorm:"column:network_id" json:"-"`
-	Volume      float64       `gorm:"-" json:"volume"`
-	MarketCap   float64       `gorm:"-" json:"market_cap"`
+	Volume      []Currency    `gorm:"-" json:"volume"`
+	MarketCap   []Currency    `gorm:"-" json:"market_cap"`
 	Sales       uint64        `gorm:"-" json:"sales"`
 	NFTs        NFTConnection `gorm:"-" json:"nfts"`
+}
+
+// Currency represents a fungible token, typically used for payment.
+type Currency struct {
+	Value  float64 `json:"value"`
+	Symbol string  `json:"symbol"`
 }
 
 // NFTConnection is used for paginated access to the Collection NFT list.

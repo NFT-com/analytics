@@ -29,7 +29,7 @@ func (s *Stats) MarketplaceUserCountHistory(addresses []identifier.Address, from
 
 	// Count query calculates the number of unique users for events in a time span.
 	// NOTE: SQL union removes duplicates by default.
-	countQuery := s.db.
+	query := s.db.
 		Table("generate_series(?::timestamp, ?::timestamp, interval '1 day') as date, "+
 			"LATERAL (( ? ) UNION (?)) users",
 			from.Format(timeFormat),
@@ -39,21 +39,8 @@ func (s *Stats) MarketplaceUserCountHistory(addresses []identifier.Address, from
 		Select("COUNT (users.*) AS count, date").
 		Group("date")
 
-	// Delta query will show the number of unique users, along with the change from the previous data point.
-	deltaQuery := s.db.
-		Table("( ? ) uc", countQuery).
-		Select("count, count - LAG(count, 1) OVER (ORDER BY date ASC) AS delta, date")
-
-	// Filter query will select only those data points where the number of users changed.
-	filter := s.db.
-		Table("( ? ) f", deltaQuery).
-		Select("count, date").
-		Where("delta != 0").
-		Or("delta IS NULL").
-		Order("date DESC")
-
 	var out []datapoint.Users
-	err := filter.Find(&out).Error
+	err := query.Find(&out).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve number of users: %w", err)
 	}

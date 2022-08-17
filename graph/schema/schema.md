@@ -7,6 +7,7 @@
   * [Query](#query)
   * [Objects](#objects)
     * [Collection](#collection)
+    * [Currency](#currency)
     * [Marketplace](#marketplace)
     * [NFT](#nft)
     * [NFTConnection](#nftconnection)
@@ -208,12 +209,12 @@ Collection represents a group of NFTs that share the same smart contract.
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>volume</strong></td>
-			<td valign="top"><a href="#float">Float</a>!</td>
+			<td valign="top">[<a href="#currency">Currency</a>!]</td>
 			<td>Trading volume of this collection.</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>market_cap</strong></td>
-			<td valign="top"><a href="#float">Float</a>!</td>
+			<td valign="top">[<a href="#currency">Currency</a>!]</td>
 			<td>Market cap of this collection.</td>
 		</tr>
 		<tr>
@@ -245,6 +246,33 @@ Collection represents a group of NFTs that share the same smart contract.
 			<td colspan="2" align="right" valign="top">after</td>
 			<td valign="top"><a href="#string">String</a></td>
 			<td></td>
+		</tr>
+	</tbody>
+</table>
+
+### Currency
+
+Currency represents a fungible token, typically used for payment.
+
+<table>
+	<thead>
+		<tr>
+			<th align="left">Field</th>
+			<th align="right">Argument</th>
+			<th align="left">Type</th>
+			<th align="left">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="2" valign="top"><strong>symbol</strong></td>
+			<td valign="top"><a href="#string">String</a>!</td>
+			<td>Symbol of the fungible token.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>value</strong></td>
+			<td valign="top"><a href="#float">Float</a>!</td>
+			<td>Amount of fungible tokens.</td>
 		</tr>
 	</tbody>
 </table>
@@ -285,12 +313,12 @@ Marketplace represents a single NFT marketplace (e.g. Opensea, DefiKingdoms).
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>volume</strong></td>
-			<td valign="top"><a href="#float">Float</a>!</td>
+			<td valign="top">[<a href="#currency">Currency</a>!]</td>
 			<td>Trading volume on this marketplace.</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>market_cap</strong></td>
-			<td valign="top"><a href="#float">Float</a>!</td>
+			<td valign="top">[<a href="#currency">Currency</a>!]</td>
 			<td>Market cap of this marketplace.</td>
 		</tr>
 		<tr>
@@ -372,12 +400,12 @@ NFT represents a single Non-Fungible Token.
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>trading_price</strong></td>
-			<td valign="top"><a href="#float">Float</a>!</td>
+			<td valign="top">[<a href="#currency">Currency</a>!]</td>
 			<td>Trading price for this NFT.</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top"><strong>average_price</strong></td>
-			<td valign="top"><a href="#float">Float</a>!</td>
+			<td valign="top">[<a href="#currency">Currency</a>!]</td>
 			<td>All time average-price for this NFT.</td>
 		</tr>
 		<tr>

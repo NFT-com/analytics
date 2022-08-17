@@ -25,9 +25,9 @@ func (a *API) CollectionSales(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve collection sales: %w", err))
 	}
 
-	response := datapoint.Value{
+	response := datapoint.Count{
 		ID:    id,
-		Value: float64(sales),
+		Value: sales,
 	}
 
 	return ctx.JSON(http.StatusOK, response)
@@ -50,9 +50,9 @@ func (a *API) MarketplaceSales(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve marketplace sales: %w", err))
 	}
 
-	response := datapoint.Value{
+	response := datapoint.Count{
 		ID:    id,
-		Value: float64(sales),
+		Value: sales,
 	}
 
 	return ctx.JSON(http.StatusOK, response)

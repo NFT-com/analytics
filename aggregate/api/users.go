@@ -26,9 +26,9 @@ func (a *API) MarketplaceUsers(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve marketplace user count: %w", err))
 	}
 
-	response := datapoint.Value{
+	response := datapoint.Count{
 		ID:    id,
-		Value: float64(users),
+		Value: users,
 	}
 
 	return ctx.JSON(http.StatusOK, response)

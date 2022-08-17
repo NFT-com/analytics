@@ -11,7 +11,7 @@ import (
 // CollectionSizeHistory returns the number of NFTs in a collection during the specified time interval.
 // At the moment, collection size is determined by looking at transfer to and from the zero address, even
 // though in reality there are other known burn addresses.
-func (s *Stats) CollectionSizeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Count, error) {
+func (s *Stats) CollectionSizeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.CollectionSize, error) {
 
 	mintsQuery := s.db.
 		Table("transfers").
@@ -42,7 +42,7 @@ func (s *Stats) CollectionSizeHistory(address identifier.Address, from time.Time
 		Where("c.mints > 0"). // Discard counts before the NFT started being minted.
 		Order("date DESC")
 
-	var out []datapoint.Count
+	var out []datapoint.CollectionSize
 	err := query.Find(&out).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve NFT count: %w", err)

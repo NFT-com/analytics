@@ -138,14 +138,18 @@ func withHeightRange(selector selectors.HeightRange) conditionFunc {
 func withPriceRange(selector selectors.PriceRange) conditionFunc {
 	return func(db *gorm.DB) *gorm.DB {
 
+		// TODO: Price filter should be more complex now that `currency_value` can
+		// represent different currencies.
+		// See https://github.com/NFT-com/analytics/issues/86
+
 		// Set the start price condition.
 		if selector.StartPrice.Cmp(big.NewInt(0)) != 0 {
-			db = db.Where("trade_price >= ?", selector.StartPrice.String())
+			db = db.Where("currency_value >= ?", selector.StartPrice.String())
 		}
 
 		// Set end price condition.
 		if selector.EndPrice.Cmp(big.NewInt(0)) != 0 {
-			db = db.Where("trade_price <= ?", selector.EndPrice.String())
+			db = db.Where("currency_value <= ?", selector.EndPrice.String())
 		}
 
 		return db

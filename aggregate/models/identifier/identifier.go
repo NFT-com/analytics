@@ -6,7 +6,7 @@ const (
 
 // Address identifier represents a single address on a blockchain.
 type Address struct {
-	ChainID uint
+	ChainID uint64
 	Address string
 }
 
@@ -14,4 +14,10 @@ type Address struct {
 type NFT struct {
 	Collection Address
 	TokenID    string
+}
+
+// Currency represents the chain ID and address pair, identifying a fungible token used as payment.
+type Currency struct {
+	ChainID uint64 `gorm:"column:chain_id" json:"chain_id"`
+	Address string `gorm:"column:currency_address" json:"address"`
 }
