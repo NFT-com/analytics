@@ -150,19 +150,19 @@ func (a *API) lookupMarketplace(id string) ([]identifier.Address, error) {
 	return addresses, nil
 }
 
-func (a *API) lookupCurrencyID(curr identifier.Currency) (string, error) {
+func (a *API) lookupCurrencyID(currency identifier.Currency) (string, error) {
 
-	id, ok := a.currencies.Get(curr)
+	id, ok := a.currencies.Get(currency)
 	if ok {
 		return id, nil
 	}
 
-	id, err := a.lookup.CurrencyID(curr)
+	id, err := a.lookup.CurrencyID(currency)
 	if err != nil {
 		return "", fmt.Errorf("could not lookup currency: %w", err)
 	}
 
-	a.currencies.Set(curr, id)
+	a.currencies.Set(currency, id)
 
 	return id, nil
 }

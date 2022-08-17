@@ -6,7 +6,7 @@ import (
 	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
-// Cache provides concurrency-safe address cache. It provides a lookup of a blockchain address
+// Cache provides concurrency-safe address cache. It provides a lookup of a blockchain addresses
 // based on its ID.
 type Cache struct {
 	*sync.Mutex
@@ -24,19 +24,19 @@ func NewCache() *Cache {
 	return c
 }
 
-// Get retrieves the address from the cache.
+// Get retrieves the addresses from the cache.
 func (a *Cache) Get(id string) ([]identifier.Address, bool) {
 	a.Lock()
 	defer a.Unlock()
 
-	address, ok := a.addresses[id]
-	return address, ok
+	addresses, ok := a.addresses[id]
+	return addresses, ok
 }
 
-// Set caches the address.
-func (a *Cache) Set(id string, address []identifier.Address) {
+// Set caches the addresses.
+func (a *Cache) Set(id string, addresses []identifier.Address) {
 	a.Lock()
 	defer a.Unlock()
 
-	a.addresses[id] = address
+	a.addresses[id] = addresses
 }

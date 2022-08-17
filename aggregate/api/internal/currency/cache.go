@@ -24,18 +24,18 @@ func NewCache() *Cache {
 }
 
 // Get retrieves the currency ID from the Cache.
-func (c *Cache) Get(curr identifier.Currency) (string, bool) {
+func (c *Cache) Get(currency identifier.Currency) (string, bool) {
 	c.Lock()
 	defer c.Unlock()
 
-	id, ok := c.ids[curr]
+	id, ok := c.ids[currency]
 	return id, ok
 }
 
 // Set caches the currency ID.
-func (c *Cache) Set(curr identifier.Currency, id string) {
+func (c *Cache) Set(currency identifier.Currency, id string) {
 	c.Lock()
 	defer c.Unlock()
 
-	c.ids[curr] = id
+	c.ids[currency] = id
 }
