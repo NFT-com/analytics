@@ -18,9 +18,16 @@ func (s *Server) getNFTStats(query *query.NFT, nft *api.NFT) error {
 		price, err := s.aggregationAPI.Price(nft.ID)
 		if err != nil {
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not retrieve price for NFT: %w", err))
-		}
+		} else {
 
-		nft.TradingPrice = price
+			// Translate the Aggregation API format to the expected Graph format.
+			formatted, err := s.convertCoinsToCurrencies(price)
+			if err != nil {
+				multiErr = multierror.Append(multiErr, fmt.Errorf("could not convert price coin list to currencies: %w", err))
+			}
+
+			nft.TradingPrice = formatted
+		}
 	}
 
 	// Retrieve NFT average price from the aggregation API.
@@ -28,9 +35,16 @@ func (s *Server) getNFTStats(query *query.NFT, nft *api.NFT) error {
 		average, err := s.aggregationAPI.AveragePrice(nft.ID)
 		if err != nil {
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not retrieve average price for NFT: %w", err))
-		}
+		} else {
 
-		nft.AveragePrice = average
+			// Translate the Aggregation API format to the expected Graph format.
+			formatted, err := s.convertCoinsToCurrencies(average)
+			if err != nil {
+				multiErr = multierror.Append(multiErr, fmt.Errorf("could not convert average price coin list to currencies: %w", err))
+			}
+
+			nft.AveragePrice = formatted
+		}
 	}
 
 	return multiErr

@@ -7,7 +7,6 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/NFT-com/analytics/aggregate/models/api"
-	"github.com/NFT-com/analytics/aggregate/models/datapoint"
 )
 
 // NFTPrice handles the request for retrieving current price of an NFT.
@@ -27,9 +26,15 @@ func (a *API) NFTPrice(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve NFT price: %w", err))
 	}
 
-	response := datapoint.Value{
+	// Translate the datapoint Coin format to the API format.
+	value, err := a.createCoinList(price)
+	if err != nil {
+		return apiError(fmt.Errorf("could not create coin list: %w", err))
+	}
+
+	response := api.Value{
 		ID:    id,
-		Value: price,
+		Value: value,
 	}
 
 	return ctx.JSON(http.StatusOK, response)
@@ -59,7 +64,7 @@ func (a *API) CollectionPrices(ctx echo.Context) error {
 	}
 
 	// Link retrieved prices to the NFT by ID.
-	var nftPrices []datapoint.Value
+	var nftPrices []api.Value
 	for id, nftAddress := range nftIDs {
 
 		price, ok := prices[lowerNFTID(nftAddress)]
@@ -69,10 +74,16 @@ func (a *API) CollectionPrices(ctx echo.Context) error {
 			continue
 		}
 
+		// Translate the datapoint Coin format to the API format.
+		value, err := a.createCoinList(price)
+		if err != nil {
+			return apiError(fmt.Errorf("could not create coin list: %w", err))
+		}
+
 		// Create the price record and add it to the list.
-		p := datapoint.Value{
+		p := api.Value{
 			ID:    id,
-			Value: price,
+			Value: value,
 		}
 		nftPrices = append(nftPrices, p)
 	}
@@ -109,7 +120,7 @@ func (a *API) CollectionAveragePrices(ctx echo.Context) error {
 	}
 
 	// Link retrieved prices to the NFT by ID.
-	var nftPrices []datapoint.Value
+	var nftPrices []api.Value
 	for id, nftAddress := range nftIDs {
 
 		average, ok := averages[lowerNFTID(nftAddress)]
@@ -119,10 +130,16 @@ func (a *API) CollectionAveragePrices(ctx echo.Context) error {
 			continue
 		}
 
+		// Translate the datapoint Coin format to the API format.
+		value, err := a.createCoinList(average)
+		if err != nil {
+			return apiError(fmt.Errorf("could not create coin list: %w", err))
+		}
+
 		// Create the price record and add it to the list.
-		p := datapoint.Value{
+		p := api.Value{
 			ID:    id,
-			Value: average,
+			Value: value,
 		}
 		nftPrices = append(nftPrices, p)
 	}

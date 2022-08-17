@@ -9,16 +9,16 @@ import (
 )
 
 // CollectionMarketCapHistory returns the market cap for the collection in the given time range.
-func (s *Stats) CollectionMarketCapHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error) {
+func (s *Stats) CollectionMarketCapHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.CoinSnapshot, error) {
 	return s.marketCapHistory(&address, nil, from, to)
 }
 
 // MarketplaceMarketCapHistory returns the market cap for the marketplace in the given time range.
-func (s *Stats) MarketplaceMarketCapHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error) {
+func (s *Stats) MarketplaceMarketCapHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.CoinSnapshot, error) {
 	return s.marketCapHistory(nil, addresses, from, to)
 }
 
-func (s *Stats) marketCapHistory(collectionAddress *identifier.Address, marketplaceAddresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.MarketCap, error) {
+func (s *Stats) marketCapHistory(collectionAddress *identifier.Address, marketplaceAddresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.CoinSnapshot, error) {
 
 	// TODO: Use a query with a recursive CTE for a huge performance improvement.
 	// See https://github.com/NFT-com/analytics/issues/40
@@ -54,32 +54,26 @@ func (s *Stats) marketCapHistory(collectionAddress *identifier.Address, marketpl
 	// in the specified date range.
 	sumQuery := s.db.
 		Table("(?) s", latestPriceQuery).
-		Select("SUM(trade_price) AS total, d.date").
+		Select("SUM(currency_value) AS currency_value, chain_id, LOWER(currency_address) AS currency_address, d.date").
+		Group("chain_id, LOWER(currency_address)").
 		Where("s.rank = 1")
 
 	// Market cap query calculates the actual market cap for each date in the
-	// specified date range. It also calculates the change from the previous date.
+	// specified date range.
 	marketCapQuery := s.db.
 		Table("( SELECT generate_series(?::timestamp, ?::timestamp, interval '1 day') AS date ) d, LATERAL( ? ) st ",
 			from.Format(timeFormat),
 			to.Format(timeFormat),
 			sumQuery,
-		).Select("total, total - LAG(total, 1) OVER (ORDER BY st.date ASC) AS delta, st.date")
+		).Select("currency_value, chain_id, LOWER(currency_address) AS currency_address, st.date")
 
-	// Finally, this filter query will omit the results of the market cap query
-	// where the market cap did not change.
-	query := s.db.
-		Table("( ? ) mc", marketCapQuery).
-		Select("mc.total, mc.date").
-		Where("mc.total > 0").
-		Where("mc.delta != 0 OR mc.delta IS NULL").
-		Order("date DESC")
-
-	var out []datapoint.MarketCap
-	err := query.Find(&out).Error
+	var records []datedPriceResult
+	err := marketCapQuery.Find(&records).Error
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve market cap data: %w", err)
+		return nil, fmt.Errorf("could not retrieve volume info: %w", err)
 	}
 
-	return out, nil
+	cap := createCoinSnapshotList(records)
+
+	return cap, nil
 }

@@ -61,6 +61,11 @@ type ComplexityRoot struct {
 		Website      func(childComplexity int) int
 	}
 
+	Currency struct {
+		Symbol func(childComplexity int) int
+		Value  func(childComplexity int) int
+	}
+
 	Marketplace struct {
 		Collections func(childComplexity int) int
 		Description func(childComplexity int) int
@@ -264,6 +269,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Collection.Website(childComplexity), true
+
+	case "Currency.symbol":
+		if e.complexity.Currency.Symbol == nil {
+			break
+		}
+
+		return e.complexity.Currency.Symbol(childComplexity), true
+
+	case "Currency.value":
+		if e.complexity.Currency.Value == nil {
+			break
+		}
+
+		return e.complexity.Currency.Value(childComplexity), true
 
 	case "Marketplace.collections":
 		if e.complexity.Marketplace.Collections == nil {
@@ -684,6 +703,21 @@ A string representing an address (e.g. an Ethereum address).
 scalar Address
 
 """
+Currency represents a fungible token, typically used for payment.
+"""
+type Currency {
+    """
+    Symbol of the fungible token.
+    """
+    symbol: String!
+
+    """
+    Amount of fungible tokens.
+    """
+    value: Float!
+}
+
+"""
 Available options for the ` + "`" + `orderBy` + "`" + ` direction argument.
 """
 enum OrderDirection {
@@ -756,12 +790,12 @@ type Marketplace {
     """
     Trading volume on this marketplace.
     """
-    volume: Float!
+    volume: [Currency!]
 
     """
     Market cap of this marketplace.
     """
-    market_cap: Float!
+    market_cap: [Currency!]
 
     """
     Number of sales on this marketplace.
@@ -821,12 +855,12 @@ type Collection {
     """
     Trading volume of this collection.
     """
-    volume: Float!
+    volume: [Currency!]
 
     """
     Market cap of this collection.
     """
-    market_cap: Float!
+    market_cap: [Currency!]
 
     """
     Number of sales in this collection.
@@ -994,12 +1028,12 @@ type NFT {
     """
     Trading price for this NFT.
     """
-    trading_price: Float!
+    trading_price: [Currency!]
 
     """
     All time average-price for this NFT.
     """
-    average_price: Float!
+    average_price: [Currency!]
 
     """
     Traits contains a list of attributes of the NFT.
@@ -1679,14 +1713,11 @@ func (ec *executionContext) _Collection_volume(ctx context.Context, field graphq
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(float64)
+	res := resTmp.([]api.Currency)
 	fc.Result = res
-	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+	return ec.marshalOCurrency2ᚕgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCurrencyᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Collection_market_cap(ctx context.Context, field graphql.CollectedField, obj *api.Collection) (ret graphql.Marshaler) {
@@ -1714,14 +1745,11 @@ func (ec *executionContext) _Collection_market_cap(ctx context.Context, field gr
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(float64)
+	res := resTmp.([]api.Currency)
 	fc.Result = res
-	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+	return ec.marshalOCurrency2ᚕgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCurrencyᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Collection_sales(ctx context.Context, field graphql.CollectedField, obj *api.Collection) (ret graphql.Marshaler) {
@@ -1866,6 +1894,76 @@ func (ec *executionContext) _Collection_nfts(ctx context.Context, field graphql.
 	res := resTmp.(api.NFTConnection)
 	fc.Result = res
 	return ec.marshalNNFTConnection2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐNFTConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Currency_symbol(ctx context.Context, field graphql.CollectedField, obj *api.Currency) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Currency",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Symbol, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Currency_value(ctx context.Context, field graphql.CollectedField, obj *api.Currency) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Currency",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Value, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Marketplace_id(ctx context.Context, field graphql.CollectedField, obj *api.Marketplace) (ret graphql.Marshaler) {
@@ -2030,14 +2128,11 @@ func (ec *executionContext) _Marketplace_volume(ctx context.Context, field graph
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(float64)
+	res := resTmp.([]api.Currency)
 	fc.Result = res
-	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+	return ec.marshalOCurrency2ᚕgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCurrencyᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Marketplace_market_cap(ctx context.Context, field graphql.CollectedField, obj *api.Marketplace) (ret graphql.Marshaler) {
@@ -2065,14 +2160,11 @@ func (ec *executionContext) _Marketplace_market_cap(ctx context.Context, field g
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(float64)
+	res := resTmp.([]api.Currency)
 	fc.Result = res
-	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+	return ec.marshalOCurrency2ᚕgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCurrencyᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Marketplace_sales(ctx context.Context, field graphql.CollectedField, obj *api.Marketplace) (ret graphql.Marshaler) {
@@ -2505,14 +2597,11 @@ func (ec *executionContext) _NFT_trading_price(ctx context.Context, field graphq
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(float64)
+	res := resTmp.([]api.Currency)
 	fc.Result = res
-	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+	return ec.marshalOCurrency2ᚕgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCurrencyᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _NFT_average_price(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
@@ -2540,14 +2629,11 @@ func (ec *executionContext) _NFT_average_price(ctx context.Context, field graphq
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(float64)
+	res := resTmp.([]api.Currency)
 	fc.Result = res
-	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+	return ec.marshalOCurrency2ᚕgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCurrencyᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _NFT_traits(ctx context.Context, field graphql.CollectedField, obj *api.NFT) (ret graphql.Marshaler) {
@@ -4871,9 +4957,6 @@ func (ec *executionContext) _Collection(ctx context.Context, sel ast.SelectionSe
 
 			out.Values[i] = innerFunc(ctx)
 
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "market_cap":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Collection_market_cap(ctx, field, obj)
@@ -4881,9 +4964,6 @@ func (ec *executionContext) _Collection(ctx context.Context, sel ast.SelectionSe
 
 			out.Values[i] = innerFunc(ctx)
 
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "sales":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Collection_sales(ctx, field, obj)
@@ -4952,6 +5032,47 @@ func (ec *executionContext) _Collection(ctx context.Context, sel ast.SelectionSe
 	return out
 }
 
+var currencyImplementors = []string{"Currency"}
+
+func (ec *executionContext) _Currency(ctx context.Context, sel ast.SelectionSet, obj *api.Currency) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, currencyImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Currency")
+		case "symbol":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Currency_symbol(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "value":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Currency_value(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var marketplaceImplementors = []string{"Marketplace"}
 
 func (ec *executionContext) _Marketplace(ctx context.Context, sel ast.SelectionSet, obj *api.Marketplace) graphql.Marshaler {
@@ -5006,9 +5127,6 @@ func (ec *executionContext) _Marketplace(ctx context.Context, sel ast.SelectionS
 
 			out.Values[i] = innerFunc(ctx)
 
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "market_cap":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Marketplace_market_cap(ctx, field, obj)
@@ -5016,9 +5134,6 @@ func (ec *executionContext) _Marketplace(ctx context.Context, sel ast.SelectionS
 
 			out.Values[i] = innerFunc(ctx)
 
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "sales":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Marketplace_sales(ctx, field, obj)
@@ -5172,9 +5287,6 @@ func (ec *executionContext) _NFT(ctx context.Context, sel ast.SelectionSet, obj 
 
 			out.Values[i] = innerFunc(ctx)
 
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "average_price":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._NFT_average_price(ctx, field, obj)
@@ -5182,9 +5294,6 @@ func (ec *executionContext) _NFT(ctx context.Context, sel ast.SelectionSet, obj 
 
 			out.Values[i] = innerFunc(ctx)
 
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "traits":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._NFT_traits(ctx, field, obj)
@@ -6201,6 +6310,10 @@ func (ec *executionContext) marshalNCollectionOrderField2githubᚗcomᚋNFTᚑco
 	return v
 }
 
+func (ec *executionContext) marshalNCurrency2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCurrency(ctx context.Context, sel ast.SelectionSet, v api.Currency) graphql.Marshaler {
+	return ec._Currency(ctx, sel, &v)
+}
+
 func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
 	res, err := graphql.UnmarshalFloatContext(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -6749,6 +6862,53 @@ func (ec *executionContext) unmarshalOCollectionOrder2ᚖgithubᚗcomᚋNFTᚑco
 	}
 	res, err := ec.unmarshalInputCollectionOrder(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOCurrency2ᚕgithubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCurrencyᚄ(ctx context.Context, sel ast.SelectionSet, v []api.Currency) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCurrency2githubᚗcomᚋNFTᚑcomᚋanalyticsᚋgraphᚋmodelsᚋapiᚐCurrency(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v interface{}) (*float64, error) {

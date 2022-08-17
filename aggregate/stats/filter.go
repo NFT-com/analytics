@@ -51,33 +51,3 @@ func (s *Stats) createAddressFilter(addresses []identifier.Address, filterType i
 
 	return filter
 }
-
-// createNFTFilter accepts a list of NFT identifiers and returns the appropriate
-// `WHERE` clauses for the SQL query.
-func (s *Stats) createNFTFilter(nfts []identifier.NFT) *gorm.DB {
-
-	// Return an empty condition.
-	if len(nfts) == 0 {
-		return s.db
-	}
-
-	nft := nfts[0]
-
-	// Create the first condition.
-	filter := s.db.Where("chain_id = ? AND LOWER(collection_address) = LOWER(?) AND token_id = ?",
-		nft.Collection.ChainID,
-		nft.Collection.Address,
-		nft.TokenID,
-	)
-
-	// Add the remaining conditions using an `OR`.
-	for _, nft := range nfts[1:] {
-		filter = filter.Or("chain_id = ? AND LOWER(collection_address) = LOWER(?) AND token_id = ?",
-			nft.Collection.ChainID,
-			nft.Collection.Address,
-			nft.TokenID,
-		)
-	}
-
-	return filter
-}

@@ -24,7 +24,7 @@ func (s *Stats) MarketplaceSalesHistory(marketplaceAddresses []identifier.Addres
 // marketplace addresses are provided.
 func (s *Stats) salesHistory(collectionAddress *identifier.Address, marketplaceAddresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error) {
 
-	countQuery := s.db.
+	query := s.db.
 		Table("sales, generate_series(?::timestamp, ?::timestamp, interval '1 day') AS date",
 			from.Format(timeFormat),
 			to.Format(timeFormat)).
@@ -38,27 +38,14 @@ func (s *Stats) salesHistory(collectionAddress *identifier.Address, marketplaceA
 			*collectionAddress,
 		}
 		collectionFilter := s.createCollectionFilter(list)
-		countQuery.Where(collectionFilter)
+		query.Where(collectionFilter)
 	}
 
 	// Set marketplace filter if needed.
 	if len(marketplaceAddresses) > 0 {
 		marketplaceFilter := s.createMarketplaceFilter(marketplaceAddresses)
-		countQuery.Where(marketplaceFilter)
+		query.Where(marketplaceFilter)
 	}
-
-	// Delta query calculates the change since the previous data point.
-	deltaQuery := s.db.
-		Table("(?) c", countQuery).
-		Select("count, count - LAG(count, 1) OVER (ORDER BY date ASC) AS delta, date")
-
-	// Filter query selects only those data points where the metric changed.
-	query := s.db.
-		Table("(?) ct", deltaQuery).
-		Select("ct.count, ct.date").
-		Where("ct.delta != 0").
-		Or("ct.delta IS NULL").
-		Order("date DESC")
 
 	var out []datapoint.Sale
 	err := query.Find(&out).Error

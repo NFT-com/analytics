@@ -6,7 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/NFT-com/analytics/aggregate/models/datapoint"
+	"github.com/NFT-com/analytics/aggregate/models/api"
 )
 
 // NFTPriceHistory handles the request for retrieving historic prices of an NFT.
@@ -24,7 +24,34 @@ func (a *API) NFTPriceHistory(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve NFT price history: %w", err))
 	}
 
-	return ctx.JSON(http.StatusOK, prices)
+	// Translate to the API data format.
+	coins := make([]api.CoinSnapshot, 0, len(prices))
+	for _, p := range prices {
+
+		if p.Coin.Currency.Address == "" {
+			continue
+		}
+
+		id, err := a.lookupCurrencyID(p.Coin.Currency)
+		if err != nil {
+			return apiError(fmt.Errorf("could not lookup currency ID: %w", err))
+		}
+
+		coin := api.CoinSnapshot{
+			CurrencyID: id,
+			Time:       p.Time,
+			Value:      p.Coin.Value,
+		}
+
+		coins = append(coins, coin)
+	}
+
+	out := api.PriceHistory{
+		ID:     ctx.Param(idParam),
+		Prices: coins,
+	}
+
+	return ctx.JSON(http.StatusOK, out)
 }
 
 // NFTAveragePrice handles the request for retrieving the all-time average price of an NFT.
@@ -44,9 +71,15 @@ func (a *API) NFTAveragePrice(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve NFT average price: %w", err))
 	}
 
-	response := datapoint.Value{
+	// Translate the datapoint Coin format to the API format.
+	value, err := a.createCoinList(average)
+	if err != nil {
+		return apiError(fmt.Errorf("could not create coin list: %w", err))
+	}
+
+	response := api.Value{
 		ID:    id,
-		Value: average.Average,
+		Value: value,
 	}
 
 	return ctx.JSON(http.StatusOK, response)
