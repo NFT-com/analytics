@@ -265,14 +265,14 @@ Currency represents a fungible token, typically used for payment.
 	</thead>
 	<tbody>
 		<tr>
-			<td colspan="2" valign="top"><strong>amount</strong></td>
-			<td valign="top"><a href="#float">Float</a>!</td>
-			<td>Amount of fungible tokens.</td>
-		</tr>
-		<tr>
 			<td colspan="2" valign="top"><strong>symbol</strong></td>
 			<td valign="top"><a href="#string">String</a>!</td>
 			<td>Symbol of the fungible token.</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top"><strong>value</strong></td>
+			<td valign="top"><a href="#float">Float</a>!</td>
+			<td>Amount of fungible tokens.</td>
 		</tr>
 	</tbody>
 </table>

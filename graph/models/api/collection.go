@@ -17,7 +17,7 @@ type Collection struct {
 
 // Currency represents a fungible token, typically used for payment.
 type Currency struct {
-	Amount float64 `json:"amount"`
+	Value  float64 `json:"value"`
 	Symbol string  `json:"symbol"`
 }
 

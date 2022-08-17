@@ -14,14 +14,14 @@ Currency represents a fungible token, typically used for payment.
 """
 type Currency {
     """
-    Amount of fungible tokens.
-    """
-    amount: Float!
-
-    """
     Symbol of the fungible token.
     """
     symbol: String!
+
+    """
+    Amount of fungible tokens.
+    """
+    value: Float!
 }
 
 """

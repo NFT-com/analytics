@@ -856,7 +856,7 @@
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "query($id: ID!) {\r\n    nft(id: $id) {\r\n       id\r\n       name\r\n       description\r\n       image_url\r\n       token_id\r\n       uri\r\n       rarity\r\n       owners {\r\n           address\r\n           number\r\n       }\r\n       traits {\r\n           name\r\n           value\r\n           rarity\r\n       }\r\n       trading_price {\r\n           amount\r\n           symbol\r\n       }\r\n       average_price {\r\n           amount\r\n           symbol\r\n       }\r\n    }\r\n}",
+										"query": "query($id: ID!) {\r\n    nft(id: $id) {\r\n       id\r\n       name\r\n       description\r\n       image_url\r\n       token_id\r\n       uri\r\n       rarity\r\n       owners {\r\n           address\r\n           number\r\n       }\r\n       traits {\r\n           name\r\n           value\r\n           rarity\r\n       }\r\n       trading_price {\r\n           symbol\r\n           value\r\n       }\r\n       average_price {\r\n           symbol\r\n           value\r\n       }\r\n    }\r\n}",
 										"variables": "{\r\n    \"id\": \"62b92c13-b7e9-5808-af12-c0c5b5cdc427\"\r\n}"
 									}
 								},
