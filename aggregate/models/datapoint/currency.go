@@ -15,5 +15,5 @@ type CoinSnapshot struct {
 // Coin represents a pairing of a currency and an amount.
 type Coin struct {
 	Currency identifier.Currency `json:"currency"`
-	Amount   float64             `json:"amount"`
+	Value    float64             `json:"value"`
 }

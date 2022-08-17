@@ -34,7 +34,7 @@ func (s *Stats) NFTPrice(nft identifier.NFT) ([]datapoint.Coin, error) {
 				ChainID: res.ChainID,
 				Address: res.Address,
 			},
-			Amount: res.Amount,
+			Value: res.Value,
 		},
 	}
 
@@ -93,7 +93,7 @@ func (s *Stats) CollectionPrices(address identifier.Address) (map[identifier.NFT
 				ChainID: price.ChainID,
 				Address: price.CurrencyAddress,
 			},
-			Amount: price.CurrencyAmount,
+			Value: price.CurrencyValue,
 		}
 
 		_, ok := priceMap[nft]
@@ -153,7 +153,7 @@ func (s *Stats) CollectionAveragePrices(address identifier.Address) (map[identif
 				ChainID: price.ChainID,
 				Address: price.CollectionAddress,
 			},
-			Amount: price.CurrencyAmount,
+			Value: price.CurrencyValue,
 		}
 
 		// If we already have average price for this nft (for some currencies)

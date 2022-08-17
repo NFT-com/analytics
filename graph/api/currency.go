@@ -20,7 +20,7 @@ func (s *Server) convertCoinsToCurrencies(coins []aggregate.Coin) ([]graph.Curre
 		}
 
 		currency := graph.Currency{
-			Amount: coin.Amount,
+			Amount: coin.Value,
 			Symbol: symbol,
 		}
 

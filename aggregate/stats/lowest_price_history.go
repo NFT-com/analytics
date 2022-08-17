@@ -55,7 +55,7 @@ func (s *Stats) CollectionLowestPriceHistory(address identifier.Address, from ti
 				ChainID: p.ChainID,
 				Address: p.Address,
 			},
-			Amount: p.Amount,
+			Value: p.Value,
 		}
 
 		price := datapoint.LowestPrice{

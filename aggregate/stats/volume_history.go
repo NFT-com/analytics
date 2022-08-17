@@ -70,7 +70,7 @@ func createCoinSnapshotList(records []datedPriceResult) []datapoint.CoinSnapshot
 				ChainID: rec.ChainID,
 				Address: rec.Address,
 			},
-			Amount: rec.Amount,
+			Value: rec.Value,
 		}
 
 		_, ok := vm[date]

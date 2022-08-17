@@ -17,7 +17,7 @@ func convertPricesToCoins(prices []priceResult) []datapoint.Coin {
 				ChainID: p.ChainID,
 				Address: p.Address,
 			},
-			Amount: p.Amount,
+			Value: p.Value,
 		}
 
 		coins = append(coins, volume)

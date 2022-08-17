@@ -16,7 +16,7 @@ type Sale struct {
 	SellerAddress      string    `gorm:"column:seller_address" json:"seller_address"`
 	BuyerAddress       string    `gorm:"column:buyer_address" json:"buyer_address"`
 	TokenCount         float64   `gorm:"column:token_count" json:"token_count"`
-	CurrencyValue      float64   `gorm:"column:currency_value" json:"currency_value"`
 	CurrencyAddress    string    `gorm:"column:currency_address" json:"currency_address"`
+	CurrencyValue      float64   `gorm:"column:currency_value" json:"currency_value"`
 	EmittedAt          time.Time `gorm:"column:emitted_at" json:"emitted_at"`
 }

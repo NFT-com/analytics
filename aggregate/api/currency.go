@@ -25,8 +25,8 @@ func (a *API) createCoinList(currencies []datapoint.Coin) ([]api.Coin, error) {
 		}
 
 		coin := api.Coin{
-			Amount:     currency.Amount,
 			CurrencyID: id,
+			Value:      currency.Value,
 		}
 
 		out = append(out, coin)

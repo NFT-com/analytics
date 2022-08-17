@@ -91,7 +91,7 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 				ChainID: cap.ChainID,
 				Address: cap.Address,
 			},
-			Amount: cap.Amount,
+			Value: cap.Value,
 		}
 
 		// If we already have market cap for this collection (for some currencies)

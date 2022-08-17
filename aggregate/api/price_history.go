@@ -39,8 +39,8 @@ func (a *API) NFTPriceHistory(ctx echo.Context) error {
 
 		coin := api.CoinSnapshot{
 			CurrencyID: id,
-			Amount:     p.Coin.Amount,
 			Time:       p.Time,
+			Value:      p.Coin.Value,
 		}
 
 		coins = append(coins, coin)

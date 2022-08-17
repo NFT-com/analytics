@@ -39,7 +39,7 @@ func (s *Stats) NFTPriceHistory(nft identifier.NFT, from time.Time, to time.Time
 					ChainID: p.ChainID,
 					Address: p.Address,
 				},
-				Amount: p.Amount,
+				Value: p.Value,
 			},
 			Time: p.Time,
 		}
@@ -75,7 +75,7 @@ func (s *Stats) NFTAveragePrice(nft identifier.NFT) ([]datapoint.Coin, error) {
 				ChainID: p.ChainID,
 				Address: p.Address,
 			},
-			Amount: p.Amount,
+			Value: p.Value,
 		}
 
 		out = append(out, price)

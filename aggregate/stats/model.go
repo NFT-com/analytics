@@ -8,7 +8,7 @@ import (
 type priceResult struct {
 	ChainID uint64     `gorm:"column:chain_id"`
 	Address string     `gorm:"column:currency_address"`
-	Amount  float64    `gorm:"column:currency_value"`
+	Value   float64    `gorm:"column:currency_value"`
 	Time    *time.Time `gorm:"column:emitted_at"`
 }
 
@@ -17,7 +17,7 @@ type batchPriceResult struct {
 	ChainID           uint64  `gorm:"column:chain_id"`
 	CollectionAddress string  `gorm:"column:collection_address"`
 	TokenID           string  `gorm:"column:token_id"`
-	CurrencyAmount    float64 `gorm:"column:currency_value"`
+	CurrencyValue     float64 `gorm:"column:currency_value"`
 	CurrencyAddress   string  `gorm:"column:currency_address"`
 }
 
@@ -26,7 +26,7 @@ type batchPriceResult struct {
 type batchStatResult struct {
 	ChainID           uint64  `gorm:"column:chain_id"`
 	CollectionAddress string  `gorm:"column:collection_address"`
-	Amount            float64 `gorm:"column:currency_value"`
+	Value             float64 `gorm:"column:currency_value"`
 	Address           string  `gorm:"column:currency_address"`
 }
 
@@ -34,7 +34,7 @@ type batchStatResult struct {
 type lowestPriceResult struct {
 	ChainID uint64  `gorm:"column:chain_id"`
 	Address string  `gorm:"column:currency_address"`
-	Amount  float64 `gorm:"column:currency_value"`
+	Value   float64 `gorm:"column:currency_value"`
 	Start   string  `gorm:"column:start_date"`
 	End     string  `gorm:"column:end_date"`
 }
@@ -44,6 +44,6 @@ type lowestPriceResult struct {
 type datedPriceResult struct {
 	ChainID uint64    `gorm:"column:chain_id"`
 	Address string    `gorm:"column:currency_address"`
-	Amount  float64   `gorm:"column:currency_value"`
+	Value   float64   `gorm:"column:currency_value"`
 	Date    time.Time `gorm:"column:date"`
 }

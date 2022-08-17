@@ -65,7 +65,7 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 				ChainID: volume.ChainID,
 				Address: volume.Address,
 			},
-			Amount: volume.Amount,
+			Value: volume.Value,
 		}
 
 		// If we already have volume data for this collection (for some currencies)
