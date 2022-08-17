@@ -15,7 +15,7 @@ func (l *Lookup) CurrencyID(currency identifier.Currency) (string, error) {
 		Select("c.id").
 		Where("n.id = c.network_id").
 		Where("n.chain_id = ?", currency.ChainID).
-		Where("c.address = ?", currency.Address).
+		Where("LOWER(c.address) = LOWER(?)", currency.Address).
 		Limit(1)
 
 	var ids []string
