@@ -160,7 +160,7 @@ func (s *Stats) CollectionAveragePrices(address identifier.Address) (map[identif
 		currency := datapoint.Coin{
 			Currency: identifier.Currency{
 				ChainID: price.ChainID,
-				Address: price.CollectionAddress,
+				Address: price.CurrencyAddress,
 			},
 			Value: price.CurrencyValue,
 		}

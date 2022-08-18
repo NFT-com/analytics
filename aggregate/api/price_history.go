@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -18,8 +19,13 @@ func (a *API) NFTPriceHistory(ctx echo.Context) error {
 		return bindError(fmt.Errorf("could not unpack NFT request: %w", err))
 	}
 
+	// FIXME: Can "No content" handling be integrated into 'apiError'?
+
 	// Retrieve NFT prices.
 	prices, err := a.stats.NFTPriceHistory(request.id, request.from, request.to)
+	if err != nil && errors.Is(err, ErrRecordNotFound) {
+		return ctx.NoContent(http.StatusNoContent)
+	}
 	if err != nil {
 		return apiError(fmt.Errorf("could not retrieve NFT price history: %w", err))
 	}
@@ -67,6 +73,9 @@ func (a *API) NFTAveragePrice(ctx echo.Context) error {
 
 	// Retrieve average price for the NFT.
 	average, err := a.stats.NFTAveragePrice(nft)
+	if err != nil && errors.Is(err, ErrRecordNotFound) {
+		return ctx.NoContent(http.StatusNoContent)
+	}
 	if err != nil {
 		return apiError(fmt.Errorf("could not retrieve NFT average price: %w", err))
 	}
