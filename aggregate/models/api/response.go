@@ -23,13 +23,12 @@ type Coin struct {
 
 // CoinSnapshot represents a currency-related stat at a certain point in time.
 type CoinSnapshot struct {
-	CurrencyID string     `json:"currency_id,omitempty"`
-	Time       *time.Time `json:"timestamp,omitempty"`
-	Value      float64    `json:"value,omitempty"`
+	Value []Coin     `json:"value"`
+	Time  *time.Time `json:"timestamp,omitempty"`
 }
 
-// PriceHistory represents the NFT prices at different points in time.
-type PriceHistory struct {
-	ID     string         `json:"id,omitempty"`
-	Prices []CoinSnapshot `json:"prices"`
+// ValueHistory represents historic values of a currency-related stat.
+type ValueHistory struct {
+	ID        string         `json:"id,omitempty"`
+	Snapshots []CoinSnapshot `json:"snapshots"`
 }

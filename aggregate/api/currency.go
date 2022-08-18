@@ -34,3 +34,26 @@ func (a *API) createCoinList(currencies []datapoint.Coin) ([]api.Coin, error) {
 
 	return out, nil
 }
+
+// createCoinSnapshotList takes a list of coins and transforms the to the API data format,
+// translating chain ID and currency address pairs to the Currency ID.
+func (a *API) createCoinSnapshotList(snapshots []datapoint.CoinSnapshot) ([]api.CoinSnapshot, error) {
+
+	out := make([]api.CoinSnapshot, 0, len(snapshots))
+	for _, snapshot := range snapshots {
+
+		coins, err := a.createCoinList(snapshot.Coins)
+		if err != nil {
+			return nil, fmt.Errorf("could not create coin list: %w", err)
+		}
+
+		s := api.CoinSnapshot{
+			Value: coins,
+			Time:  &snapshot.Date,
+		}
+
+		out = append(out, s)
+	}
+
+	return out, nil
+}

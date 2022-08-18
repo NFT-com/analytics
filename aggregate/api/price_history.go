@@ -43,18 +43,22 @@ func (a *API) NFTPriceHistory(ctx echo.Context) error {
 			return apiError(fmt.Errorf("could not lookup currency ID: %w", err))
 		}
 
-		coin := api.CoinSnapshot{
+		coin := api.Coin{
 			CurrencyID: id,
-			Time:       p.Time,
 			Value:      p.Coin.Value,
 		}
 
-		coins = append(coins, coin)
+		snapshot := api.CoinSnapshot{
+			Value: []api.Coin{coin},
+			Time:  p.Time,
+		}
+
+		coins = append(coins, snapshot)
 	}
 
-	out := api.PriceHistory{
-		ID:     ctx.Param(idParam),
-		Prices: coins,
+	out := api.ValueHistory{
+		ID:        ctx.Param(idParam),
+		Snapshots: coins,
 	}
 
 	return ctx.JSON(http.StatusOK, out)
