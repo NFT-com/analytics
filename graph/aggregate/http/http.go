@@ -54,6 +54,9 @@ func unpackJSONResponse(resp *http.Response, output interface{}) error {
 	}
 
 	// Check the status code.
+	if resp.StatusCode == http.StatusNoContent {
+		return ErrNoData
+	}
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("request failed (code: %v, payload: %s)", resp.StatusCode, payload)
 	}

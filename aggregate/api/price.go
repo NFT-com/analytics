@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -22,6 +23,9 @@ func (a *API) NFTPrice(ctx echo.Context) error {
 
 	// Retrieve NFT price.
 	price, err := a.stats.NFTPrice(nft)
+	if err != nil && errors.Is(err, ErrRecordNotFound) {
+		return ctx.NoContent(http.StatusNoContent)
+	}
 	if err != nil {
 		return apiError(fmt.Errorf("could not retrieve NFT price: %w", err))
 	}
