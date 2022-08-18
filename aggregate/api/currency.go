@@ -41,6 +41,7 @@ func (a *API) createCoinSnapshotList(snapshots []datapoint.CoinSnapshot) ([]api.
 
 	out := make([]api.CoinSnapshot, 0, len(snapshots))
 	for _, snapshot := range snapshots {
+		snapshot := snapshot
 
 		coins, err := a.createCoinList(snapshot.Coins)
 		if err != nil {
@@ -53,6 +54,22 @@ func (a *API) createCoinSnapshotList(snapshots []datapoint.CoinSnapshot) ([]api.
 		}
 
 		out = append(out, s)
+	}
+
+	return out, nil
+}
+
+// createValueHistoryRecord creates the API response type for historic data for a stat.
+func (a *API) createValueHistoryRecord(id string, snapshots []datapoint.CoinSnapshot) (api.ValueHistory, error) {
+
+	cs, err := a.createCoinSnapshotList(snapshots)
+	if err != nil {
+		return api.ValueHistory{}, fmt.Errorf("could not create coin snapshot list: %w", err)
+	}
+
+	out := api.ValueHistory{
+		ID:        id,
+		Snapshots: cs,
 	}
 
 	return out, nil

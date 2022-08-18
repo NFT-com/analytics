@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/NFT-com/analytics/aggregate/models/api"
 	"github.com/labstack/echo/v4"
 )
 
@@ -23,15 +22,11 @@ func (a *API) CollectionAverageHistory(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve collection average price: %w", err))
 	}
 
-	snapshots, err := a.createCoinSnapshotList(avg)
+	// Create the API response.
+	res, err := a.createValueHistoryRecord(ctx.Param(idParam), avg)
 	if err != nil {
-		return apiError(fmt.Errorf("could not create coin snapshot list: %w", err))
+		return apiError(fmt.Errorf("could not create response: %w", err))
 	}
 
-	out := api.ValueHistory{
-		ID:        ctx.Param(idParam),
-		Snapshots: snapshots,
-	}
-
-	return ctx.JSON(http.StatusOK, out)
+	return ctx.JSON(http.StatusOK, res)
 }
