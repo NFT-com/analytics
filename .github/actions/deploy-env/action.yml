@@ -53,15 +53,15 @@ runs:
         export DOCKER_BUILDKIT=1
         
         docker build . --build-arg BUILDKIT_INLINE_CACHE=1 -f cmd/events-api/Dockerfile -t ${{ env.REPO }}:events-api-latest -t ${{ env.REPO }}:events-api-${{ github.sha }} 
-        docker push ${{ env.REPO }}:events-api
+        docker push ${{ env.REPO }}:events-api-latest
         docker push ${{ env.REPO }}:events-api-${{ github.sha }}
 
         docker build . --build-arg BUILDKIT_INLINE_CACHE=1 -f cmd/aggregation-api/Dockerfile -t ${{ env.REPO }}:aggregation-api-latest -t ${{ env.REPO }}:aggregation-api-${{ github.sha }} 
-        docker push ${{ env.REPO }}:aggregation-api
+        docker push ${{ env.REPO }}:aggregation-api-latest
         docker push ${{ env.REPO }}:aggregation-api-${{ github.sha }}
         
         docker build . --build-arg BUILDKIT_INLINE_CACHE=1 -f cmd/graph-api/Dockerfile -t ${{ env.REPO }}:graph-api-latest -t ${{ env.REPO }}:graph-api-${{ github.sha }} 
-        docker push ${{ env.REPO }}:graph-api
+        docker push ${{ env.REPO }}:graph-api-latest
         docker push ${{ env.REPO }}:graph-api-${{ github.sha }}
     - name: Deploy Analytics ECS Service (Cluster and Task Definitions)
       shell: bash
