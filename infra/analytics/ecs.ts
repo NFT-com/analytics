@@ -342,6 +342,15 @@ export const createGraphTaskDefinition = (
             {
                 command: ['--database',graph_db,'--enable-playground','--db-connection-limit','70','--log-level',process.env.ANALYTICS_LOG_LEVEL,'--enable-query-logging','--search-limit','20'],
                 cpu: 0,
+                logConfiguration: {
+                  logDriver: 'awslogs',
+                  options: {
+                    'awslogs-create-group': 'True',
+                    'awslogs-group': `/ecs/${process.env.STAGE}-analytics-graph-api`,
+                    'awslogs-region': 'us-east-1',
+                    'awslogs-stream-prefix': 'indexer',
+                  },
+                },
                 entryPoint: ['/api'],
                 essential: true,
                 image: ecrImage,
@@ -380,6 +389,15 @@ export const createAggregationTaskDefinition = (
           {
               command: ['--events-database',event_db,'--graph-database',graph_db,'--log-level',process.env.ANALYTICS_LOG_LEVEL,'--events-db-connection-limit','70','--enable-query-logging'],
               cpu: 0,
+              logConfiguration: {
+                logDriver: 'awslogs',
+                options: {
+                  'awslogs-create-group': 'True',
+                  'awslogs-group': `/ecs/${process.env.STAGE}-analytics-aggregation-api`,
+                  'awslogs-region': 'us-east-1',
+                  'awslogs-stream-prefix': 'indexer',
+                },
+              },
               entryPoint: ['/api'],
               environment: [],
               essential: true,
@@ -419,6 +437,15 @@ export const createEventsTaskDefinition = (
                 command: ['--database',event_db,'--log-level',process.env.ANALYTICS_LOG_LEVEL,'--db-connection-limit','70','--batch-size','100','--enable-query-logging'],
                 cpu: 0,
                 entryPoint: ['/api'],
+                logConfiguration: {
+                  logDriver: 'awslogs',
+                  options: {
+                    'awslogs-create-group': 'True',
+                    'awslogs-group': `/ecs/${process.env.STAGE}-analytics-events-api`,
+                    'awslogs-region': 'us-east-1',
+                    'awslogs-stream-prefix': 'indexer',
+                  },
+                },
                 environment: [],
                 essential: true,
                 image: ecrImage,
