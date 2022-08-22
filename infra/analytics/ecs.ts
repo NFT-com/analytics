@@ -334,7 +334,7 @@ export const createGraphTaskDefinition = (
     infraOutput: SharedInfraOutput,
 ): aws.ecs.TaskDefinition => {
     const resourceName = getResourceName('analytics-td-graph-api')
-    const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:graph-api`
+    const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:graph-api-${process.env.GIT_SHA || 'latest'}`
     
     return new aws.ecs.TaskDefinition(resourceName, 
     {
@@ -342,11 +342,20 @@ export const createGraphTaskDefinition = (
             {
                 command: ['--database',graph_db,'--enable-playground','--db-connection-limit','70','--log-level',process.env.ANALYTICS_LOG_LEVEL,'--enable-query-logging','--search-limit','20'],
                 cpu: 0,
+                logConfiguration: {
+                  logDriver: 'awslogs',
+                  options: {
+                    'awslogs-create-group': 'True',
+                    'awslogs-group': `/ecs/${process.env.STAGE}-analytics-graph-api`,
+                    'awslogs-region': 'us-east-1',
+                    'awslogs-stream-prefix': 'analytics',
+                  },
+                },
                 entryPoint: ['/api'],
                 essential: true,
                 image: ecrImage,
                 links: [],
-                memoryReservation: 512,
+                memoryReservation: 2048,
                 mountPoints: [],
                 name: resourceName,
                 portMappings: [
@@ -361,8 +370,8 @@ export const createGraphTaskDefinition = (
         }]),
         executionRoleArn: execRole,
         family: resourceName,
-        cpu: '256',
-        memory: '512',
+        cpu: '512',
+        memory: '2048',
         requiresCompatibilities: ['EC2'],
         taskRoleArn: taskRole,
     })
@@ -372,7 +381,7 @@ export const createAggregationTaskDefinition = (
   infraOutput: SharedInfraOutput,
 ): aws.ecs.TaskDefinition => {
   const resourceName = getResourceName('analytics-td-aggregation-api')
-  const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:aggregation-api`
+  const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:aggregation-api-${process.env.GIT_SHA || 'latest'}`
 
   return new aws.ecs.TaskDefinition(resourceName, 
   {
@@ -380,12 +389,21 @@ export const createAggregationTaskDefinition = (
           {
               command: ['--events-database',event_db,'--graph-database',graph_db,'--log-level',process.env.ANALYTICS_LOG_LEVEL,'--events-db-connection-limit','70','--enable-query-logging'],
               cpu: 0,
+              logConfiguration: {
+                logDriver: 'awslogs',
+                options: {
+                  'awslogs-create-group': 'True',
+                  'awslogs-group': `/ecs/${process.env.STAGE}-analytics-aggregation-api`,
+                  'awslogs-region': 'us-east-1',
+                  'awslogs-stream-prefix': 'analytics',
+                },
+              },
               entryPoint: ['/api'],
               environment: [],
               essential: true,
               image: ecrImage,
               links: [],
-              memoryReservation: 512,
+              memoryReservation: 2048,
               mountPoints: [],
               name: resourceName,
               portMappings: [
@@ -399,8 +417,8 @@ export const createAggregationTaskDefinition = (
       }]),
       executionRoleArn: execRole,
       family: resourceName,
-      cpu: '256',
-      memory: '512',
+      cpu: '512',
+      memory: '2048',
       requiresCompatibilities: ['EC2'],
       taskRoleArn: taskRole,
   })
@@ -410,7 +428,7 @@ export const createEventsTaskDefinition = (
     infraOutput: SharedInfraOutput,
 ): aws.ecs.TaskDefinition => {
     const resourceName = getResourceName('analytics-td-events-api')
-    const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:events-api`
+    const ecrImage = `${process.env.ECR_REGISTRY}/${infraOutput.analyticECRRepo}:events-api-${process.env.GIT_SHA || 'latest'}`
 
     return new aws.ecs.TaskDefinition(resourceName, 
     {
@@ -419,11 +437,20 @@ export const createEventsTaskDefinition = (
                 command: ['--database',event_db,'--log-level',process.env.ANALYTICS_LOG_LEVEL,'--db-connection-limit','70','--batch-size','100','--enable-query-logging'],
                 cpu: 0,
                 entryPoint: ['/api'],
+                logConfiguration: {
+                  logDriver: 'awslogs',
+                  options: {
+                    'awslogs-create-group': 'True',
+                    'awslogs-group': `/ecs/${process.env.STAGE}-analytics-events-api`,
+                    'awslogs-region': 'us-east-1',
+                    'awslogs-stream-prefix': 'analytics',
+                  },
+                },
                 environment: [],
                 essential: true,
                 image: ecrImage,
                 links: [],
-                memoryReservation: 512,
+                memoryReservation: 2048,
                 mountPoints: [],
                 name: resourceName,
                 portMappings: [
@@ -437,8 +464,8 @@ export const createEventsTaskDefinition = (
         }]),
         executionRoleArn: execRole,
         family: resourceName,
-        cpu: '256',
-        memory: '512',
+        cpu: '512',
+        memory: '2048',
         requiresCompatibilities: ['EC2'],
         taskRoleArn: taskRole,
     })
@@ -459,7 +486,7 @@ const createEcsAsgLaunchConfig = (
         associatePublicIpAddress: true,
         iamInstanceProfile: 'arn:aws:iam::016437323894:instance-profile/ecsInstanceRole',
         imageId: 'ami-0f863d7367abe5d6f',  //latest amzn linux 2 ecs-optimized ami in us-east-1
-        instanceType: 't3.medium', // upgrade when ready 
+        instanceType: 'm6i.large',
         keyName: 'indexer_dev_key', // same key for both indexer/analytics instances
         name: resourceName,
         rootBlockDevice: {
@@ -565,8 +592,8 @@ export const createEcsCluster = (
         rollback: true,
       },
       desiredCount: 1,
-      deploymentMaximumPercent: 200,
-      deploymentMinimumHealthyPercent: 100,
+      deploymentMaximumPercent: 100,
+      deploymentMinimumHealthyPercent: 0,
       enableEcsManagedTags: true,
       forceNewDeployment: true,
       healthCheckGracePeriodSeconds: 20,
@@ -598,8 +625,8 @@ export const createEcsCluster = (
         rollback: true,
       },
       desiredCount: 1,
-      deploymentMaximumPercent: 200,
-      deploymentMinimumHealthyPercent: 100,
+      deploymentMaximumPercent: 100,
+      deploymentMinimumHealthyPercent: 0,
       enableEcsManagedTags: true,
       forceNewDeployment: true,
       healthCheckGracePeriodSeconds: 20,
@@ -630,8 +657,8 @@ export const createEcsCluster = (
         rollback: true,
       },
       desiredCount: 1,
-      deploymentMaximumPercent: 200,
-      deploymentMinimumHealthyPercent: 100,
+      deploymentMaximumPercent: 100,
+      deploymentMinimumHealthyPercent: 0,
       enableEcsManagedTags: true,
       forceNewDeployment: true,
       healthCheckGracePeriodSeconds: 20,
