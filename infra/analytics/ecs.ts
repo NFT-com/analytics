@@ -355,7 +355,7 @@ export const createGraphTaskDefinition = (
                 essential: true,
                 image: ecrImage,
                 links: [],
-                memoryReservation: 512,
+                memoryReservation: 2048,
                 mountPoints: [],
                 name: resourceName,
                 portMappings: [
@@ -370,8 +370,8 @@ export const createGraphTaskDefinition = (
         }]),
         executionRoleArn: execRole,
         family: resourceName,
-        cpu: '256',
-        memory: '512',
+        cpu: '512',
+        memory: '2048',
         requiresCompatibilities: ['EC2'],
         taskRoleArn: taskRole,
     })
@@ -403,7 +403,7 @@ export const createAggregationTaskDefinition = (
               essential: true,
               image: ecrImage,
               links: [],
-              memoryReservation: 512,
+              memoryReservation: 2048,
               mountPoints: [],
               name: resourceName,
               portMappings: [
@@ -417,8 +417,8 @@ export const createAggregationTaskDefinition = (
       }]),
       executionRoleArn: execRole,
       family: resourceName,
-      cpu: '256',
-      memory: '512',
+      cpu: '512',
+      memory: '2048',
       requiresCompatibilities: ['EC2'],
       taskRoleArn: taskRole,
   })
@@ -450,7 +450,7 @@ export const createEventsTaskDefinition = (
                 essential: true,
                 image: ecrImage,
                 links: [],
-                memoryReservation: 512,
+                memoryReservation: 2048,
                 mountPoints: [],
                 name: resourceName,
                 portMappings: [
@@ -464,8 +464,8 @@ export const createEventsTaskDefinition = (
         }]),
         executionRoleArn: execRole,
         family: resourceName,
-        cpu: '256',
-        memory: '512',
+        cpu: '512',
+        memory: '2048',
         requiresCompatibilities: ['EC2'],
         taskRoleArn: taskRole,
     })
@@ -486,7 +486,7 @@ const createEcsAsgLaunchConfig = (
         associatePublicIpAddress: true,
         iamInstanceProfile: 'arn:aws:iam::016437323894:instance-profile/ecsInstanceRole',
         imageId: 'ami-0f863d7367abe5d6f',  //latest amzn linux 2 ecs-optimized ami in us-east-1
-        instanceType: 't3.medium', // upgrade when ready 
+        instanceType: 'm6i.large',
         keyName: 'indexer_dev_key', // same key for both indexer/analytics instances
         name: resourceName,
         rootBlockDevice: {
