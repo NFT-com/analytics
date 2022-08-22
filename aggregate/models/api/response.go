@@ -7,7 +7,7 @@ import (
 // Value represents the generic datatype for some currency-related stat.
 type Value struct {
 	ID    string `json:"id"`
-	Value []Coin `json:"values"`
+	Value []Coin `json:"value"`
 }
 
 // BatchResponse represents the API response for batch stats request.
