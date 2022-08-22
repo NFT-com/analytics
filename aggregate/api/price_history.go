@@ -19,12 +19,16 @@ func (a *API) NFTPriceHistory(ctx echo.Context) error {
 		return bindError(fmt.Errorf("could not unpack NFT request: %w", err))
 	}
 
-	// FIXME: Can "No content" handling be integrated into 'apiError'?
+	response := api.ValueHistory{
+		ID:        ctx.Param(idParam),
+		Snapshots: []api.CoinSnapshot{},
+	}
 
 	// Retrieve NFT prices.
 	prices, err := a.stats.NFTPriceHistory(request.id, request.from, request.to)
 	if err != nil && errors.Is(err, ErrRecordNotFound) {
-		return ctx.NoContent(http.StatusNoContent)
+		// The NFT has no sales.
+		return ctx.JSON(http.StatusOK, response)
 	}
 	if err != nil {
 		return apiError(fmt.Errorf("could not retrieve NFT price history: %w", err))
@@ -56,12 +60,9 @@ func (a *API) NFTPriceHistory(ctx echo.Context) error {
 		coins = append(coins, snapshot)
 	}
 
-	out := api.ValueHistory{
-		ID:        ctx.Param(idParam),
-		Snapshots: coins,
-	}
+	response.Snapshots = coins
 
-	return ctx.JSON(http.StatusOK, out)
+	return ctx.JSON(http.StatusOK, response)
 }
 
 // NFTAveragePrice handles the request for retrieving the all-time average price of an NFT.
@@ -75,10 +76,16 @@ func (a *API) NFTAveragePrice(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not lookup NFT: %w", err))
 	}
 
+	response := api.Value{
+		ID:    id,
+		Value: []api.Coin{},
+	}
+
 	// Retrieve average price for the NFT.
 	average, err := a.stats.NFTAveragePrice(nft)
 	if err != nil && errors.Is(err, ErrRecordNotFound) {
-		return ctx.NoContent(http.StatusNoContent)
+		// The NFT has no sales.
+		return ctx.JSON(http.StatusOK, response)
 	}
 	if err != nil {
 		return apiError(fmt.Errorf("could not retrieve NFT average price: %w", err))
@@ -90,10 +97,7 @@ func (a *API) NFTAveragePrice(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not create coin list: %w", err))
 	}
 
-	response := api.Value{
-		ID:    id,
-		Value: value,
-	}
+	response.Value = value
 
 	return ctx.JSON(http.StatusOK, response)
 }
