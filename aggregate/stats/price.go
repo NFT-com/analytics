@@ -173,6 +173,7 @@ func (s *Stats) CollectionAveragePrices(address identifier.Address) (map[identif
 			continue
 		}
 
+		// Otherwise, initialize the currency slice.
 		p := make([]datapoint.Coin, 0)
 		p = append(p, currency)
 		priceMap[nft] = p

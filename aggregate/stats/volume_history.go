@@ -60,7 +60,7 @@ func (s *Stats) volumeHistory(collectionAddress *identifier.Address, marketplace
 
 func createCoinSnapshotList(records []datedPriceResult) []datapoint.CoinSnapshot {
 
-	// 1. Create a map where all currencies for a given date are grouped.
+	// Create a map where all currencies for a given date are grouped.
 	vm := make(map[time.Time][]datapoint.Coin)
 	for _, rec := range records {
 
@@ -81,7 +81,7 @@ func createCoinSnapshotList(records []datedPriceResult) []datapoint.CoinSnapshot
 		vm[date] = append(vm[date], currency)
 	}
 
-	// 2. Translate the map to a slice.
+	// Translate the map to a slice.
 	out := make([]datapoint.CoinSnapshot, 0, len(vm))
 	for date, volume := range vm {
 		date := date
@@ -93,7 +93,7 @@ func createCoinSnapshotList(records []datedPriceResult) []datapoint.CoinSnapshot
 		out = append(out, v)
 	}
 
-	// 3. Sort the slice.
+	// Sort the slice.
 	sort.Slice(out, func(i, j int) bool {
 		return out[i].Date.Before(out[j].Date)
 	})

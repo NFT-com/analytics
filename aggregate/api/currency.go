@@ -7,7 +7,7 @@ import (
 	"github.com/NFT-com/analytics/aggregate/models/datapoint"
 )
 
-// createCoinList takes a list of coins and transforms them the the API data format,
+// createCoinList takes a list of coins and transforms them into the the API data format,
 // translating chain ID and currency address pairs to the Currency ID.
 func (a *API) createCoinList(currencies []datapoint.Coin) ([]api.Coin, error) {
 
@@ -35,7 +35,7 @@ func (a *API) createCoinList(currencies []datapoint.Coin) ([]api.Coin, error) {
 	return out, nil
 }
 
-// createCoinSnapshotList takes a list of coins and transforms the to the API data format,
+// createCoinSnapshotList takes a list of coins and transforms them into the API data format,
 // translating chain ID and currency address pairs to the Currency ID.
 func (a *API) createCoinSnapshotList(snapshots []datapoint.CoinSnapshot) ([]api.CoinSnapshot, error) {
 

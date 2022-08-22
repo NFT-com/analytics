@@ -85,7 +85,7 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 			continue
 		}
 
-		// Create the currency list now.
+		// Otherwise, initialize the currency slice.
 		c := make([]datapoint.Coin, 0)
 		c = append(c, currency)
 		capMap[collection] = c
