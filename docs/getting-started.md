@@ -1,6 +1,6 @@
 # Getting Started
 
-This guide aims to help users setup the project and run the APIs that are part of this repository.
+This guide aims to help users set the project up and run the APIs that are part of this repository.
 All docker commands are supposed to be run from the root of the repository.
 
 **Table of Contents**
@@ -39,7 +39,7 @@ docker run -p 8080:8080 events-api --database "host=host.docker.internal user=db
 
 More details about the application's usage and CLI flags can be found at [the Event API's readme file](/cmd/events-api/README.md).
 
-For more details about the API's usage, Postman examples and tests see [the Event API documentation page](/events/API.md).
+For more details about the API's usage, Postman examples and tests see [the Event API documentation page](/docs/events-api.md).
 
 ## Aggregation API
 

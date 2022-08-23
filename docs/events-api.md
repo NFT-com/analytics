@@ -67,7 +67,7 @@ The process should be repeated until there are no more pages to process, at whic
 
 ## Examples and Tests
 
-Postman collections with query examples can be found at [/resources/postman/](/resources/postman/).
+Postman collections with query examples can be found at [/postman/](../postman/README.md).
 
 Each collection and each request have a number of tests associated with them, which can be executed by using the [Postman Collection Runner](https://learning.postman.com/docs/running-collections/intro-to-collection-runs/).
 Tests verify that all requests succeeded with a `200 OK` status code, and that the responses received are the expected ones.
