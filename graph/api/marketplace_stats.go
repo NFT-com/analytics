@@ -33,13 +33,13 @@ func (s *Server) expandMarketplaceStats(query *query.Marketplace, marketplace *a
 
 	// Get market cap from the aggregation API.
 	if query.MarketCap {
-		cap, err := s.aggregationAPI.MarketplaceMarketCap(marketplace.ID)
+		mcap, err := s.aggregationAPI.MarketplaceMarketCap(marketplace.ID)
 		if err != nil {
 			multiErr = multierror.Append(multiErr, fmt.Errorf("could not get marketplace market cap: %w", err))
 		} else {
 
 			// Translate the Aggregation API format to the expected Graph format.
-			formatted, err := s.convertCoinsToCurrencies(cap)
+			formatted, err := s.convertCoinsToCurrencies(mcap)
 			if err != nil {
 				multiErr = multierror.Append(multiErr, fmt.Errorf("could not convert market cap coin list to currencies: %w", err))
 			}

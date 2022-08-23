@@ -8,8 +8,17 @@ import (
 )
 
 type Stats interface {
+	CurrentCollectionStats
+	HistoricalCollectionStats
 
-	// Collection statistics - current.
+	CurrentMarketplaceStats
+	HistoricalMarketplaceStats
+
+	CurrentNFTStats
+	HistoricalNFTStats
+}
+
+type CurrentCollectionStats interface {
 	CollectionVolume(address identifier.Address) ([]datapoint.Coin, error)
 	CollectionMarketCap(address identifier.Address) ([]datapoint.Coin, error)
 	CollectionSales(address identifier.Address) (uint64, error)
@@ -17,31 +26,36 @@ type Stats interface {
 	CollectionBatchMarketCaps(addresses []identifier.Address) (map[identifier.Address][]datapoint.Coin, error)
 	CollectionPrices(address identifier.Address) (map[identifier.NFT][]datapoint.Coin, error)
 	CollectionAveragePrices(address identifier.Address) (map[identifier.NFT][]datapoint.Coin, error)
+}
 
-	// Collection statistics - history.
+type HistoricalCollectionStats interface {
 	CollectionVolumeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.CoinSnapshot, error)
 	CollectionMarketCapHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.CoinSnapshot, error)
 	CollectionSalesHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error)
 	CollectionLowestPriceHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.LowestPrice, error)
 	CollectionAverageHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.CoinSnapshot, error)
 	CollectionSizeHistory(address identifier.Address, from time.Time, to time.Time) ([]datapoint.CollectionSize, error)
+}
 
-	// Marketplace statistics - current.
+type CurrentMarketplaceStats interface {
 	MarketplaceVolume(addresses []identifier.Address) ([]datapoint.Coin, error)
 	MarketplaceMarketCap(addresses []identifier.Address) ([]datapoint.Coin, error)
 	MarketplaceSales(addresses []identifier.Address) (uint64, error)
 	MarketplaceUserCount(addresses []identifier.Address) (uint64, error)
+}
 
-	// Marketplace statistics - history.
+type HistoricalMarketplaceStats interface {
 	MarketplaceVolumeHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.CoinSnapshot, error)
 	MarketplaceMarketCapHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.CoinSnapshot, error)
 	MarketplaceSalesHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Sale, error)
 	MarketplaceUserCountHistory(addresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.Users, error)
+}
 
-	// NFT statistics - current.
+type CurrentNFTStats interface {
 	NFTPrice(address identifier.NFT) ([]datapoint.Coin, error)
 	NFTAveragePrice(address identifier.NFT) ([]datapoint.Coin, error)
+}
 
-	// NFT statistics - history.
+type HistoricalNFTStats interface {
 	NFTPriceHistory(address identifier.NFT, from time.Time, to time.Time) ([]datapoint.PriceSnapshot, error)
 }

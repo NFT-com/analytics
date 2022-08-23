@@ -50,7 +50,7 @@ func (s *Stats) CollectionMarketCap(address identifier.Address) ([]datapoint.Coi
 	return out, nil
 }
 
-// CollectionMarketCaps returns the current market cap for the list of collections.
+// CollectionBatchMarketCaps returns the map of current market caps for the list of collections.
 // Market caps are mapped to the lowercased collection contract address.
 func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[identifier.Address][]datapoint.Coin, error) {
 
@@ -79,19 +79,19 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 
 	// Transform the list of market caps to a map.
 	capMap := make(map[identifier.Address][]datapoint.Coin, len(caps))
-	for _, cap := range caps {
+	for _, mcap := range caps {
 
 		collection := identifier.Address{
-			ChainID: cap.ChainID,
-			Address: cap.CollectionAddress,
+			ChainID: mcap.ChainID,
+			Address: mcap.CollectionAddress,
 		}
 
 		currency := datapoint.Coin{
 			Currency: identifier.Currency{
-				ChainID: cap.ChainID,
-				Address: cap.Address,
+				ChainID: mcap.ChainID,
+				Address: mcap.Address,
 			},
-			Value: cap.Value,
+			Value: mcap.Value,
 		}
 
 		// If we already have market cap for this collection (for some currencies)

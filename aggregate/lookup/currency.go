@@ -7,7 +7,7 @@ import (
 	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
 
-// Currency returns the ID of the specified currency.
+// CurrencyID returns the ID of the specified currency.
 func (l *Lookup) CurrencyID(currency identifier.Currency) (string, error) {
 
 	query := l.db.

@@ -8,7 +8,7 @@ import (
 	"github.com/NFT-com/analytics/graph/aggregate/http"
 )
 
-// Prices retrieves the price for the specified NFT.
+// Price retrieves the price for the specified NFT.
 func (c *Client) Price(id string) ([]api.Coin, error) {
 
 	c.log.Debug().Str("id", id).Msg("requesting NFT price")
