@@ -243,6 +243,6 @@ func echoHandler(h *handler.Server) echo.HandlerFunc {
 }
 
 // health is an HTTP handler that returns an empty '200 OK' response.
-func health(ctx echo.Context) error {
+func health(_ echo.Context) error {
 	return nil
 }

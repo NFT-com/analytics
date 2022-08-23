@@ -13,9 +13,8 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/pflag"
-	"github.com/ziflex/lecho/v2"
-
 	gormzerolog "github.com/wei840222/gorm-zerolog"
+	"github.com/ziflex/lecho/v2"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -221,6 +220,6 @@ func run() error {
 }
 
 // health is an HTTP handler that returns an empty '200 OK' response.
-func health(ctx echo.Context) error {
+func health(_ echo.Context) error {
 	return nil
 }
