@@ -18,12 +18,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/collection/{{collection-id}}/volume",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/collection/{{collection-id}}/volume",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"collection",
 										"{{collection-id}}",
@@ -39,12 +39,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/collection/{{collection-id}}/sales",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/collection/{{collection-id}}/sales",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"collection",
 										"{{collection-id}}",
@@ -69,12 +69,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/collection/batch/volume",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/collection/batch/volume",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"collection",
 										"batch",
@@ -99,12 +99,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/collection/batch/market_cap",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/collection/batch/market_cap",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"collection",
 										"batch",
@@ -120,12 +120,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/collection/{{collection-id}}/market_cap",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/collection/{{collection-id}}/market_cap",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"collection",
 										"{{collection-id}}",
@@ -146,12 +146,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/collection/{{collection-id}}/volume/history?from={{date-from}}&to={{date-to}}",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/collection/{{collection-id}}/volume/history?from={{date-from}}&to={{date-to}}",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"collection",
 										"{{collection-id}}",
@@ -178,12 +178,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/collection/{{collection-id}}/market_cap/history?from={{date-from}}&to={{date-to}}",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/collection/{{collection-id}}/market_cap/history?from={{date-from}}&to={{date-to}}",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"collection",
 										"{{collection-id}}",
@@ -210,12 +210,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/collection/{{collection-id}}/sales/history?from={{date-from}}&to={{date-to}}",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/collection/{{collection-id}}/sales/history?from={{date-from}}&to={{date-to}}",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"collection",
 										"{{collection-id}}",
@@ -242,12 +242,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/collection/{{collection-id}}/average/history?from={{date-from}}&to={{date-to}}",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/collection/{{collection-id}}/average/history?from={{date-from}}&to={{date-to}}",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"collection",
 										"{{collection-id}}",
@@ -274,12 +274,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/collection/{{collection-id}}/size/history?from={{date-from}}&to={{date-to}}",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/collection/{{collection-id}}/size/history?from={{date-from}}&to={{date-to}}",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"collection",
 										"{{collection-id}}",
@@ -306,12 +306,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/collection/{{collection-id}}/lowest_price/history?from={{date-from}}&to={{date-to}}",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/collection/{{collection-id}}/lowest_price/history?from={{date-from}}&to={{date-to}}",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"collection",
 										"{{collection-id}}",
@@ -343,12 +343,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/nft/{{nft-id}}/price",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/nft/{{nft-id}}/price",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"nft",
 										"{{nft-id}}",
@@ -369,12 +369,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/nft/{{nft-id}}/price/history?from={{date-from}}&to={{date-to}}",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/nft/{{nft-id}}/price/history?from={{date-from}}&to={{date-to}}",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"nft",
 										"{{nft-id}}",
@@ -401,12 +401,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/nft/{{nft-id}}/average",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/nft/{{nft-id}}/average",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"nft",
 										"{{nft-id}}",
@@ -427,12 +427,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/marketplace/{{marketplace-id}}/volume",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/marketplace/{{marketplace-id}}/volume",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"marketplace",
 										"{{marketplace-id}}",
@@ -448,12 +448,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/marketplace/{{marketplace-id}}/market_cap",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/marketplace/{{marketplace-id}}/market_cap",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"marketplace",
 										"{{marketplace-id}}",
@@ -469,12 +469,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/marketplace/{{marketplace-id}}/sales",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/marketplace/{{marketplace-id}}/sales",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"marketplace",
 										"{{marketplace-id}}",
@@ -490,12 +490,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/marketplace/{{marketplace-id}}/users",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/marketplace/{{marketplace-id}}/users",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"marketplace",
 										"{{marketplace-id}}",
@@ -516,12 +516,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/marketplace/{{marketplace-id}}/volume/history?from={{date-from}}&to={{date-to}}",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/marketplace/{{marketplace-id}}/volume/history?from={{date-from}}&to={{date-to}}",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"marketplace",
 										"{{marketplace-id}}",
@@ -548,12 +548,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/marketplace/{{marketplace-id}}/market_cap/history?from={{date-from}}&to={{date-to}}",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/marketplace/{{marketplace-id}}/market_cap/history?from={{date-from}}&to={{date-to}}",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"marketplace",
 										"{{marketplace-id}}",
@@ -580,12 +580,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/marketplace/{{marketplace-id}}/sales/history?from={{date-from}}&to={{date-to}}",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/marketplace/{{marketplace-id}}/sales/history?from={{date-from}}&to={{date-to}}",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"marketplace",
 										"{{marketplace-id}}",
@@ -612,12 +612,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{aggregation_hostname}}:{{port}}/marketplace/{{marketplace-id}}/users/history?from={{date-from}}&to={{date-to}}",
+									"raw": "{{scheme}}://{{aggregation_hostname}}:{{aggregation_port}}/marketplace/{{marketplace-id}}/users/history?from={{date-from}}&to={{date-to}}",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{aggregation_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{aggregation_port}}",
 									"path": [
 										"marketplace",
 										"{{marketplace-id}}",
@@ -706,12 +706,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -757,12 +757,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -808,12 +808,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -861,12 +861,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -913,12 +913,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -980,12 +980,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -1047,12 +1047,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -1106,12 +1106,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -1176,12 +1176,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -1229,12 +1229,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -1277,12 +1277,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -1331,12 +1331,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -1393,12 +1393,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -1463,12 +1463,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -1524,12 +1524,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -1594,12 +1594,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -1654,12 +1654,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -1713,12 +1713,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -1785,12 +1785,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{scheme}}://{{graph_hostname}}:{{port}}/graphql",
+									"raw": "{{scheme}}://{{graph_hostname}}:{{graph_port}}/graphql",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{graph_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{graph_port}}",
 									"path": [
 										"graphql"
 									]
@@ -1882,12 +1882,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/sales/?start_height=14232100&end_height=14232170",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/sales/?start_height=14232100&end_height=14232170",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"sales",
 										""
@@ -1947,12 +1947,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/sales/?start_timestamp=2022-02-20T00:00:00Z&end_timestamp=2022-02-20T00:01:00Z",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/sales/?start_timestamp=2022-02-20T00:00:00Z&end_timestamp=2022-02-20T00:01:00Z",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"sales",
 										""
@@ -2018,12 +2018,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/sales/?start_timestamp=2022-02-20T00:00:00Z&end_timestamp=2022-02-20T00:04:00Z",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/sales/?start_timestamp=2022-02-20T00:00:00Z&end_timestamp=2022-02-20T00:04:00Z",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"sales",
 										""
@@ -2088,12 +2088,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/sales/?start_timestamp=2022-02-20T00:00:00Z&end_timestamp=2022-02-20T00:04:00Z&page=MTQyMzk1Nzg6Mjk5",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/sales/?start_timestamp=2022-02-20T00:00:00Z&end_timestamp=2022-02-20T00:04:00Z&page=MTQyMzk1Nzg6Mjk5",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"sales",
 										""
@@ -2149,12 +2149,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/sales/?seller_address=0xe86073b90666547b822887CFd7d4E6E973906e5C&buyer_address=0x14D702Bd1Ae7a48Df5D33c7F873aA353BbC7446d",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/sales/?seller_address=0xe86073b90666547b822887CFd7d4E6E973906e5C&buyer_address=0x14D702Bd1Ae7a48Df5D33c7F873aA353BbC7446d",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"sales",
 										""
@@ -2202,12 +2202,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/sales/?seller_address=0xBe8EDBa2Bf6a443c36342980681391E640639B9B",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/sales/?seller_address=0xBe8EDBa2Bf6a443c36342980681391E640639B9B",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"sales",
 										""
@@ -2251,12 +2251,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/sales/?buyer_address=0xd4fB8A295c9dDc47063f4c83Bab973E6140A42d8",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/sales/?buyer_address=0xd4fB8A295c9dDc47063f4c83Bab973E6140A42d8",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"sales",
 										""
@@ -2302,12 +2302,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/sales/?marketplace_address=0x7f268357A8c2552623316e2562D90e642bB538E5&chain_id=1",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/sales/?marketplace_address=0x7f268357A8c2552623316e2562D90e642bB538E5&chain_id=1",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"sales",
 										""
@@ -2357,12 +2357,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/sales/?collection_address=&chain_id=1",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/sales/?collection_address=&chain_id=1",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"sales",
 										""
@@ -2408,12 +2408,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/sales/?transaction_hash=0x7ec5da3b14b517c5234ec19585d0211f9b9d37383c275365041ff977f7b0a114",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/sales/?transaction_hash=0x7ec5da3b14b517c5234ec19585d0211f9b9d37383c275365041ff977f7b0a114",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"sales",
 										""
@@ -2463,12 +2463,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/sales/?collection_address=&chain_id=1&token_id=",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/sales/?collection_address=&chain_id=1&token_id=",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"sales",
 										""
@@ -2522,12 +2522,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/sales/?start_price=50&end_price=344000000000000000000000000",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/sales/?start_price=50&end_price=344000000000000000000000000",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"sales",
 										""
@@ -2627,12 +2627,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/sales/?chain_id=1&start_height=14237210&end_height=14237220&start_timestamp=2022-02-19T00:00:00Z&end_timestamp=2022-02-23T00:00:00Z&transaction_hash=0xb9889ad63c68d3b068bf22a103193abfd9f318d3b0d2917c9149eb7a63fb2a7b&seller_address=0xe86073b90666547b822887CFd7d4E6E973906e5C&buyer_address=0x14D702Bd1Ae7a48Df5D33c7F873aA353BbC7446d&marketplace_address=0x7f268357A8c2552623316e2562D90e642bB538E5&start_price=140000000000000000&end_price=160000000000000000&collection_address=&token_id=",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/sales/?chain_id=1&start_height=14237210&end_height=14237220&start_timestamp=2022-02-19T00:00:00Z&end_timestamp=2022-02-23T00:00:00Z&transaction_hash=0xb9889ad63c68d3b068bf22a103193abfd9f318d3b0d2917c9149eb7a63fb2a7b&seller_address=0xe86073b90666547b822887CFd7d4E6E973906e5C&buyer_address=0x14D702Bd1Ae7a48Df5D33c7F873aA353BbC7446d&marketplace_address=0x7f268357A8c2552623316e2562D90e642bB538E5&start_price=140000000000000000&end_price=160000000000000000&collection_address=&token_id=",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"sales",
 										""
@@ -2731,12 +2731,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/transfers/?start_height=14232120&end_height=14235000",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/transfers/?start_height=14232120&end_height=14235000",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"transfers",
 										""
@@ -2796,12 +2796,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/transfers/?start_timestamp=2022-03-20T00:00:00Z&end_timestamp=2022-03-20T00:45:00Z",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/transfers/?start_timestamp=2022-03-20T00:00:00Z&end_timestamp=2022-03-20T00:45:00Z",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"transfers",
 										""
@@ -2867,12 +2867,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/transfers/?start_timestamp=2022-03-20T00:00:00Z&end_timestamp=2022-03-20T01:15:00Z",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/transfers/?start_timestamp=2022-03-20T00:00:00Z&end_timestamp=2022-03-20T01:15:00Z",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"transfers",
 										""
@@ -2937,12 +2937,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/transfers/?start_timestamp=2022-03-20T00:00:00Z&end_timestamp=2022-03-20T01:15:00Z&page=MTQ0MjAxMTY6MTYw",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/transfers/?start_timestamp=2022-03-20T00:00:00Z&end_timestamp=2022-03-20T01:15:00Z&page=MTQ0MjAxMTY6MTYw",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"transfers",
 										""
@@ -2992,12 +2992,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/transfers/?transaction_hash=0x3fe9f8fe435995cd0a0b75a587d64056d008f201270d08e9de06c8902c9cd7c8",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/transfers/?transaction_hash=0x3fe9f8fe435995cd0a0b75a587d64056d008f201270d08e9de06c8902c9cd7c8",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"transfers",
 										""
@@ -3045,12 +3045,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/transfers/?sender_address=0x6B7B53a1D3F86bb5CCff4e2c98A069D933865eB2&receiver_address=0xd311bDACB151b72BddFEE9cBdC414Af22a5E38dc",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/transfers/?sender_address=0x6B7B53a1D3F86bb5CCff4e2c98A069D933865eB2&receiver_address=0xd311bDACB151b72BddFEE9cBdC414Af22a5E38dc",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"transfers",
 										""
@@ -3097,12 +3097,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/transfers/?sender_address=0x66FE7D121dc89Be573CFb8bf67665324628347A0",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/transfers/?sender_address=0x66FE7D121dc89Be573CFb8bf67665324628347A0",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"transfers",
 										""
@@ -3145,12 +3145,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/transfers/?receiver_address=0x87ad0267b437575b58624AFbB67AD3a7f6876566",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/transfers/?receiver_address=0x87ad0267b437575b58624AFbB67AD3a7f6876566",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"transfers",
 										""
@@ -3196,12 +3196,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/transfers/?collection_address=0xbcd4F1EcFf4318e7A0c791C7728f3830Db506C71&chain_id=1",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/transfers/?collection_address=0xbcd4F1EcFf4318e7A0c791C7728f3830Db506C71&chain_id=1",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"transfers",
 										""
@@ -3255,12 +3255,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/transfers/?chain_id=1&collection_address=0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D&token_id=3447",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/transfers/?chain_id=1&collection_address=0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D&token_id=3447",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"transfers",
 										""
@@ -3364,12 +3364,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{scheme}}://{{event_hostname}}:{{port}}/transfers/?chain_id=1&collection_address=0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D&token_id=3447&start_height=12666906&end_height=12666909&start_timestamp=2021-06-19T20:19:00Z&end_timestamp=2021-06-19T20:20:00Z&transaction_hash=0x999854e4508d2b211f65505ae28197db717d324bdf56ca96fa45fc74bfaf43ad&sender_address=0x059B738209B28F91D42e0f44746a47E8d2DbD266&receiver_address=0xfC7b2CbF780ca8BFF61002a0018c3aA919426C0F",
+									"raw": "{{scheme}}://{{event_hostname}}:{{event_port}}/transfers/?chain_id=1&collection_address=0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D&token_id=3447&start_height=12666906&end_height=12666909&start_timestamp=2021-06-19T20:19:00Z&end_timestamp=2021-06-19T20:20:00Z&transaction_hash=0x999854e4508d2b211f65505ae28197db717d324bdf56ca96fa45fc74bfaf43ad&sender_address=0x059B738209B28F91D42e0f44746a47E8d2DbD266&receiver_address=0xfC7b2CbF780ca8BFF61002a0018c3aA919426C0F",
 									"protocol": "{{scheme}}",
 									"host": [
 										"{{event_hostname}}"
 									],
-									"port": "{{port}}",
+									"port": "{{event_port}}",
 									"path": [
 										"transfers",
 										""
@@ -3532,7 +3532,17 @@
 			"type": "string"
 		},
 		{
-			"key": "port",
+			"key": "aggregation_port",
+			"value": "443",
+			"type": "string"
+		},
+		{
+			"key": "graph_port",
+			"value": "443",
+			"type": "string"
+		},
+		{
+			"key": "event_port",
 			"value": "443",
 			"type": "string"
 		},
