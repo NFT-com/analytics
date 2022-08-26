@@ -89,6 +89,7 @@ func (s *Storage) CollectionNFTs(collectionID string, limit uint, afterID string
 	query := s.db.
 		Table("nfts").
 		Where("collection_id = ?", collectionID).
+		Where("deleted != TRUE").
 		Order("id ASC")
 
 	// Request one NFT more than needed, so we know if there are more NFTs after this group.
@@ -144,12 +145,12 @@ func (s *Storage) CollectionsByNetwork(networkID string) ([]*api.Collection, err
 // CollectionSize returns the number of NFTs in a collection.
 func (s *Storage) CollectionSize(collectionID string) (uint, error) {
 
-	query := api.NFT{
-		Collection: collectionID,
-	}
-
 	var count int64
-	err := s.db.Model(&api.NFT{}).Where(&query).Count(&count).Error
+	err := s.db.
+		Table("nfts").
+		Where("collection_id = ?", collectionID).
+		Where("deleted != TRUE").
+		Count(&count).Error
 	if err != nil {
 		return 0, fmt.Errorf("could not retrieve collection size: %w", err)
 	}

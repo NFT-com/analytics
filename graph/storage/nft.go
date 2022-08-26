@@ -68,7 +68,10 @@ func (s *Storage) NFTByTokenID(networkID string, contract string, tokenID string
 func (s *Storage) NFTs(owner *string, collectionID *string, orderBy api.NFTOrder, limit uint, prefetchOwners bool) ([]*api.NFT, error) {
 
 	// By default, we'll query a single table since it's faster.
-	db := s.db.Table("nfts n").Select("*")
+	db := s.db.
+		Table("nfts n").
+		Select("*").
+		Where("n.deleted != TRUE")
 
 	// If filtering based on the owner is specified, switch to querying using two tables.
 	if owner != nil {
@@ -83,7 +86,8 @@ func (s *Storage) NFTs(owner *string, collectionID *string, orderBy api.NFTOrder
 		db = s.db.
 			Table("nfts n").
 			Select("n.*").
-			Where("n.id IN (?)", filter)
+			Where("n.id IN (?)", filter).
+			Where("n.deleted != TRUE")
 	}
 
 	// Set collection filter if specified.

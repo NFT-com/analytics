@@ -36,6 +36,7 @@ func (s *Storage) CollectionOwners(collectionID string) (map[string][]api.Owner,
 		Where("o.owner != ?", identifier.ZeroAddress).
 		Where("o.nft_id = n.id").
 		Where("n.collection_id = ?", collectionID).
+		Where("n.deleted != TRUE").
 		Group("owner, nft_id").
 		Having("SUM(o.number) > ?", 0).
 		Find(&owners).Error
