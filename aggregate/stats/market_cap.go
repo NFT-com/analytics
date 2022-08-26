@@ -10,34 +10,17 @@ import (
 // CollectionMarketCap returns the current market cap for the collection.
 func (s *Stats) CollectionMarketCap(address identifier.Address) ([]datapoint.Coin, error) {
 
-	query := s.db.Raw(
-		`WITH RECURSIVE cte AS (
-			(
-				SELECT token_id, currency_value, chain_id, LOWER(currency_address) AS currency_address
-				FROM sales
-				WHERE chain_id = ? and LOWER(collection_address) = LOWER(?)
-				ORDER BY token_id, emitted_at DESC
-				LIMIT 1
-			)
-			UNION ALL
-			SELECT s.*
-			FROM cte c,
-			LATERAL (
-				SELECT token_id, currency_value, chain_id, LOWER(currency_address) AS currency_address
-				FROM sales
-				WHERE token_id > c.token_id AND chain_id = ? and LOWER(collection_address) = LOWER(?)
-				ORDER BY token_id, emitted_at DESC
-				LIMIT 1
-			) s
-		)
-		SELECT SUM(currency_value) AS currency_value, chain_id, LOWER(currency_address) AS currency_address
-		FROM cte
-		GROUP BY chain_id, LOWER(currency_address)`,
-		address.ChainID,
-		address.Address,
-		address.ChainID,
-		address.Address,
-	)
+	latestPriceQuery := s.db.
+		Table("sales").
+		Select("sales.*, row_number() OVER (PARTITION BY chain_id, LOWER(collection_address), token_id ORDER BY emitted_at DESC) AS rank").
+		Where("chain_id = ?", address.ChainID).
+		Where("LOWER(collection_address) = LOWER(?)", address.Address)
+
+	query := s.db.
+		Table("( ? ) c", latestPriceQuery).
+		Select("SUM(currency_value) AS currency_value, LOWER(currency_address) AS currency_address, chain_id, LOWER(collection_address) AS collection_address").
+		Where("c.rank = 1").
+		Group("chain_id, LOWER(collection_address), LOWER(currency_address)")
 
 	var marketCap []priceResult
 	err := query.Find(&marketCap).Error

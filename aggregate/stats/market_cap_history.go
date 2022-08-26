@@ -20,9 +20,6 @@ func (s *Stats) MarketplaceMarketCapHistory(addresses []identifier.Address, from
 
 func (s *Stats) marketCapHistory(collectionAddress *identifier.Address, marketplaceAddresses []identifier.Address, from time.Time, to time.Time) ([]datapoint.CoinSnapshot, error) {
 
-	// TODO: Use a query with a recursive CTE for a huge performance improvement.
-	// See https://github.com/NFT-com/analytics/issues/40
-
 	// Latest price query will return prices per NFT ranked by freshness.
 	// Prices with the lowest rank (closer to 1) will be the most recent ones.
 	// The query has a date threshold to consider only prices up to a date.
