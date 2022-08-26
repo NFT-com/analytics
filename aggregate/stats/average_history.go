@@ -43,8 +43,7 @@ func (s *Stats) CollectionAverageHistory(address identifier.Address, from time.T
 			from.Format(timeFormat),
 			to.Format(timeFormat),
 			avgQuery,
-		).Select("currency_value, chain_id, currency_address, d.date").
-		Group("chain_id, currency_address")
+		).Select("currency_value, chain_id, currency_address, d.date")
 
 	var records []datedPriceResult
 	err := query.Find(&records).Error

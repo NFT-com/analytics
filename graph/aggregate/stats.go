@@ -152,7 +152,7 @@ func (c *Client) MarketplaceSales(id string) (uint64, error) {
 
 	// Verify that we have the correct record.
 	if res.ID != id {
-		return 0, fmt.Errorf("unexpected record returned (want: %v, have: %v): %w", id, res.ID, err)
+		return 0, fmt.Errorf("unexpected record returned (want: %s, have: %s): %w", id, res.ID, err)
 	}
 
 	return res.Value, nil
