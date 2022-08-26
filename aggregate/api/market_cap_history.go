@@ -47,7 +47,7 @@ func (a *API) MarketplaceMarketCapHistory(ctx echo.Context) error {
 	}
 
 	// Create the API response.
-	res, err := a.createValueHistoryRecord(ctx.Param(idParam), cap)
+	res, err := a.createValueHistoryRecord(ctx.Param(idParam), mcap)
 	if err != nil {
 		return apiError(fmt.Errorf("could not create response: %w", err))
 	}
