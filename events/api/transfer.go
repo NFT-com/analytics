@@ -6,7 +6,6 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/NFT-com/analytics/events/models/events"
-
 	"github.com/NFT-com/analytics/events/models/selectors"
 )
 
