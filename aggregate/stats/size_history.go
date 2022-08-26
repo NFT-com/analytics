@@ -16,7 +16,7 @@ func (s *Stats) CollectionSizeHistory(address identifier.Address, from time.Time
 	mintsQuery := s.db.
 		Table("transfers").
 		Select("COUNT(*)").
-		Where("LOWER(sender_address) = LOWER(?)", identifier.ZeroAddress).
+		Where("sender_address = ?", identifier.ZeroAddress).
 		Where("chain_id = ?", address.ChainID).
 		Where("LOWER(collection_address) = LOWER(?)", address.Address).
 		Where("emitted_at <= date")
@@ -24,7 +24,7 @@ func (s *Stats) CollectionSizeHistory(address identifier.Address, from time.Time
 	burnsQuery := s.db.
 		Table("transfers").
 		Select("COUNT(*)").
-		Where("LOWER(receiver_address) = LOWER(?)", identifier.ZeroAddress).
+		Where("(receiver_address = ? OR LOWER(receiver_address) = LOWER(?))", identifier.ZeroAddress, identifier.DeadAddress).
 		Where("chain_id = ?", address.ChainID).
 		Where("LOWER(collection_address) = LOWER(?)", address.Address).
 		Where("emitted_at <= date")
