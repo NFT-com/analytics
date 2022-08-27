@@ -76,7 +76,7 @@ func (s *Stats) CollectionBatchVolumes(addresses []identifier.Address) (map[iden
 			continue
 		}
 
-		// Create the currency list now.
+		// Otherwise, initialize the currency slice.
 		v := make([]datapoint.Coin, 0)
 		v = append(v, currency)
 		volumeMap[collection] = v

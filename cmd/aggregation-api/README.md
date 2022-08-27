@@ -1,4 +1,4 @@
-# Aggregation API 
+# Aggregation API
 
 Aggregation API provides a number of aggregated stats about NFT sales.
 Stats describe one of three entities:

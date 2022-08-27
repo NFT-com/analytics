@@ -22,7 +22,13 @@ func (a *API) CollectionVolumeHistory(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not get collection volume history: %w", err))
 	}
 
-	return ctx.JSON(http.StatusOK, volume)
+	// Create the API response.
+	res, err := a.createValueHistoryRecord(ctx.Param(idParam), volume)
+	if err != nil {
+		return apiError(fmt.Errorf("could not create response: %w", err))
+	}
+
+	return ctx.JSON(http.StatusOK, res)
 }
 
 // MarketplaceVolumeHistory handles the request for the trading volume for a marketplace.
@@ -40,5 +46,11 @@ func (a *API) MarketplaceVolumeHistory(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not get marketplace volume history: %w", err))
 	}
 
-	return ctx.JSON(http.StatusOK, volume)
+	// Create the API response.
+	res, err := a.createValueHistoryRecord(ctx.Param(idParam), volume)
+	if err != nil {
+		return apiError(fmt.Errorf("could not create response: %w", err))
+	}
+
+	return ctx.JSON(http.StatusOK, res)
 }

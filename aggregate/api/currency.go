@@ -7,7 +7,7 @@ import (
 	"github.com/NFT-com/analytics/aggregate/models/datapoint"
 )
 
-// createCoinList takes a list of coins and transforms them the the API data format,
+// createCoinList takes a list of coins and transforms them into the the API data format,
 // translating chain ID and currency address pairs to the Currency ID.
 func (a *API) createCoinList(currencies []datapoint.Coin) ([]api.Coin, error) {
 
@@ -30,6 +30,46 @@ func (a *API) createCoinList(currencies []datapoint.Coin) ([]api.Coin, error) {
 		}
 
 		out = append(out, coin)
+	}
+
+	return out, nil
+}
+
+// createCoinSnapshotList takes a list of coins and transforms them into the API data format,
+// translating chain ID and currency address pairs to the Currency ID.
+func (a *API) createCoinSnapshotList(snapshots []datapoint.CoinSnapshot) ([]api.CoinSnapshot, error) {
+
+	out := make([]api.CoinSnapshot, 0, len(snapshots))
+	for _, snapshot := range snapshots {
+		snapshot := snapshot
+
+		coins, err := a.createCoinList(snapshot.Coins)
+		if err != nil {
+			return nil, fmt.Errorf("could not create coin list: %w", err)
+		}
+
+		s := api.CoinSnapshot{
+			Value: coins,
+			Time:  &snapshot.Date,
+		}
+
+		out = append(out, s)
+	}
+
+	return out, nil
+}
+
+// createValueHistoryRecord creates the API response type for historic data for a stat.
+func (a *API) createValueHistoryRecord(id string, snapshots []datapoint.CoinSnapshot) (api.ValueHistory, error) {
+
+	cs, err := a.createCoinSnapshotList(snapshots)
+	if err != nil {
+		return api.ValueHistory{}, fmt.Errorf("could not create coin snapshot list: %w", err)
+	}
+
+	out := api.ValueHistory{
+		ID:        id,
+		Snapshots: cs,
 	}
 
 	return out, nil

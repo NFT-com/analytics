@@ -15,7 +15,7 @@ type TimestampRange struct {
 	EndTimestamp   Timestamp `query:"end_timestamp"`
 }
 
-// Time represents a thin wrapper around `time.Time`. With a custom
+// Timestamp represents a thin wrapper around `time.Time`. With a custom
 // type defined we can easily enforce format validation by echo on
 // binding query parameters.
 type Timestamp time.Time

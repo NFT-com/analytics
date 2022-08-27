@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -20,8 +21,17 @@ func (a *API) NFTPrice(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not lookup NFT: %w", err))
 	}
 
+	response := api.Value{
+		ID:    id,
+		Value: []api.Coin{},
+	}
+
 	// Retrieve NFT price.
 	price, err := a.stats.NFTPrice(nft)
+	if err != nil && errors.Is(err, ErrRecordNotFound) {
+		// The NFT has no sales.
+		return ctx.JSON(http.StatusOK, response)
+	}
 	if err != nil {
 		return apiError(fmt.Errorf("could not retrieve NFT price: %w", err))
 	}
@@ -32,10 +42,7 @@ func (a *API) NFTPrice(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not create coin list: %w", err))
 	}
 
-	response := api.Value{
-		ID:    id,
-		Value: value,
-	}
+	response.Value = value
 
 	return ctx.JSON(http.StatusOK, response)
 }

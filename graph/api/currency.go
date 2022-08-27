@@ -8,7 +8,7 @@ import (
 )
 
 // TODO: Consider retrieving all currency symbols on startup, then just retrieving them from a map when needed.
-// Seehttps://github.com/NFT-com/analytics/issues/87
+// See https://github.com/NFT-com/analytics/issues/87
 func (s *Server) convertCoinsToCurrencies(coins []aggregate.Coin) ([]graph.Currency, error) {
 
 	out := make([]graph.Currency, 0, len(coins))

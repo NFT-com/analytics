@@ -22,13 +22,13 @@ func (a *API) CollectionMarketCap(ctx echo.Context) error {
 	}
 
 	// Retrieve the collection market cap.
-	cap, err := a.stats.CollectionMarketCap(address)
+	mcap, err := a.stats.CollectionMarketCap(address)
 	if err != nil {
 		return apiError(fmt.Errorf("could not retrieve collection market cap: %w", err))
 	}
 
 	// Translate the datapoint Coin format to the API format.
-	value, err := a.createCoinList(cap)
+	value, err := a.createCoinList(mcap)
 	if err != nil {
 		return apiError(fmt.Errorf("could not create coin list: %w", err))
 	}
@@ -77,7 +77,7 @@ func (a *API) CollectionBatchMarketCap(ctx echo.Context) error {
 	var marketCaps []api.Value
 	for id, address := range addresses {
 
-		cap, ok := caps[lowerAddress(address)]
+		mcap, ok := caps[lowerAddress(address)]
 		// If a collection has not been traded before, there won't be any market cap data.
 		if !ok {
 			a.log.Debug().Str("collection_id", id).Msg("no market cap data for collection")
@@ -85,7 +85,7 @@ func (a *API) CollectionBatchMarketCap(ctx echo.Context) error {
 		}
 
 		// Translate the datapoint Coin format to the API format.
-		value, err := a.createCoinList(cap)
+		value, err := a.createCoinList(mcap)
 		if err != nil {
 			return apiError(fmt.Errorf("could not create coin list: %w", err))
 		}
@@ -119,13 +119,13 @@ func (a *API) MarketplaceMarketCap(ctx echo.Context) error {
 	}
 
 	// Retrieve marketplace market cap info.
-	cap, err := a.stats.MarketplaceMarketCap(addresses)
+	mcap, err := a.stats.MarketplaceMarketCap(addresses)
 	if err != nil {
 		return apiError(fmt.Errorf("could not retrieve marketplace market cap: %w", err))
 	}
 
 	// Translate the datapoint Coin format to the API format.
-	value, err := a.createCoinList(cap)
+	value, err := a.createCoinList(mcap)
 	if err != nil {
 		return apiError(fmt.Errorf("could not create coin list: %w", err))
 	}

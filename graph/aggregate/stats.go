@@ -8,7 +8,7 @@ import (
 	"github.com/NFT-com/analytics/graph/aggregate/http"
 )
 
-// Prices retrieves the price for the specified NFT.
+// Price retrieves the price for the specified NFT.
 func (c *Client) Price(id string) ([]api.Coin, error) {
 
 	c.log.Debug().Str("id", id).Msg("requesting NFT price")
@@ -152,7 +152,7 @@ func (c *Client) MarketplaceSales(id string) (uint64, error) {
 
 	// Verify that we have the correct record.
 	if res.ID != id {
-		return 0, fmt.Errorf("unexpected record returned (want: %v, have: %v): %w", id, res.ID, err)
+		return 0, fmt.Errorf("unexpected record returned (want: %s, have: %s): %w", id, res.ID, err)
 	}
 
 	return res.Value, nil

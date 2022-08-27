@@ -2,6 +2,7 @@ package identifier
 
 const (
 	ZeroAddress = "0x0000000000000000000000000000000000000000"
+	DeadAddress = "0x000000000000000000000000000000000000dEaD"
 )
 
 // Address identifier represents a single address on a blockchain.

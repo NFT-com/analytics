@@ -10,34 +10,17 @@ import (
 // CollectionMarketCap returns the current market cap for the collection.
 func (s *Stats) CollectionMarketCap(address identifier.Address) ([]datapoint.Coin, error) {
 
-	query := s.db.Raw(
-		`WITH RECURSIVE cte AS (
-			(
-				SELECT token_id, currency_value, chain_id, LOWER(currency_address) AS currency_address
-				FROM sales
-				WHERE chain_id = ? and LOWER(collection_address) = LOWER(?)
-				ORDER BY token_id, emitted_at DESC
-				LIMIT 1
-			)
-			UNION ALL
-			SELECT s.*
-			FROM cte c,
-			LATERAL (
-				SELECT token_id, currency_value, chain_id, LOWER(currency_address) AS currency_address
-				FROM sales
-				WHERE token_id > c.token_id AND chain_id = ? and LOWER(collection_address) = LOWER(?)
-				ORDER BY token_id, emitted_at DESC
-				LIMIT 1
-			) s
-		)
-		SELECT SUM(currency_value) AS currency_value, chain_id, LOWER(currency_address) AS currency_address
-		FROM cte
-		GROUP BY chain_id, LOWER(currency_address)`,
-		address.ChainID,
-		address.Address,
-		address.ChainID,
-		address.Address,
-	)
+	latestPriceQuery := s.db.
+		Table("sales").
+		Select("sales.*, row_number() OVER (PARTITION BY chain_id, LOWER(collection_address), token_id ORDER BY emitted_at DESC) AS rank").
+		Where("chain_id = ?", address.ChainID).
+		Where("LOWER(collection_address) = LOWER(?)", address.Address)
+
+	query := s.db.
+		Table("( ? ) c", latestPriceQuery).
+		Select("SUM(currency_value) AS currency_value, LOWER(currency_address) AS currency_address, chain_id, LOWER(collection_address) AS collection_address").
+		Where("c.rank = 1").
+		Group("chain_id, LOWER(collection_address), LOWER(currency_address)")
 
 	var marketCap []priceResult
 	err := query.Find(&marketCap).Error
@@ -50,7 +33,7 @@ func (s *Stats) CollectionMarketCap(address identifier.Address) ([]datapoint.Coi
 	return out, nil
 }
 
-// CollectionMarketCaps returns the current market cap for the list of collections.
+// CollectionBatchMarketCaps returns the map of current market caps for the list of collections.
 // Market caps are mapped to the lowercased collection contract address.
 func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[identifier.Address][]datapoint.Coin, error) {
 
@@ -79,19 +62,19 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 
 	// Transform the list of market caps to a map.
 	capMap := make(map[identifier.Address][]datapoint.Coin, len(caps))
-	for _, cap := range caps {
+	for _, mcap := range caps {
 
 		collection := identifier.Address{
-			ChainID: cap.ChainID,
-			Address: cap.CollectionAddress,
+			ChainID: mcap.ChainID,
+			Address: mcap.CollectionAddress,
 		}
 
 		currency := datapoint.Coin{
 			Currency: identifier.Currency{
-				ChainID: cap.ChainID,
-				Address: cap.Address,
+				ChainID: mcap.ChainID,
+				Address: mcap.Address,
 			},
-			Value: cap.Value,
+			Value: mcap.Value,
 		}
 
 		// If we already have market cap for this collection (for some currencies)
@@ -102,7 +85,7 @@ func (s *Stats) CollectionBatchMarketCaps(addresses []identifier.Address) (map[i
 			continue
 		}
 
-		// Create the currency list now.
+		// Otherwise, initialize the currency slice.
 		c := make([]datapoint.Coin, 0)
 		c = append(c, currency)
 		capMap[collection] = c

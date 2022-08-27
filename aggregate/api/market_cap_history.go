@@ -17,12 +17,18 @@ func (a *API) CollectionMarketCapHistory(ctx echo.Context) error {
 	}
 
 	// Retrieve the collection market cap.
-	cap, err := a.stats.CollectionMarketCapHistory(request.address, request.from, request.to)
+	mcap, err := a.stats.CollectionMarketCapHistory(request.address, request.from, request.to)
 	if err != nil {
 		return apiError(fmt.Errorf("could not get collection market cap data: %w", err))
 	}
 
-	return ctx.JSON(http.StatusOK, cap)
+	// Create the API response.
+	res, err := a.createValueHistoryRecord(ctx.Param(idParam), mcap)
+	if err != nil {
+		return apiError(fmt.Errorf("could not create response: %w", err))
+	}
+
+	return ctx.JSON(http.StatusOK, res)
 }
 
 // MarketplaceMarketCapHistory handles the request for the market cap for a marketplace.
@@ -35,10 +41,16 @@ func (a *API) MarketplaceMarketCapHistory(ctx echo.Context) error {
 	}
 
 	// Retrieve marketplace market cap.
-	cap, err := a.stats.MarketplaceMarketCapHistory(request.addresses, request.from, request.to)
+	mcap, err := a.stats.MarketplaceMarketCapHistory(request.addresses, request.from, request.to)
 	if err != nil {
 		return apiError(fmt.Errorf("could not get marketplace market cap data: %w", err))
 	}
 
-	return ctx.JSON(http.StatusOK, cap)
+	// Create the API response.
+	res, err := a.createValueHistoryRecord(ctx.Param(idParam), mcap)
+	if err != nil {
+		return apiError(fmt.Errorf("could not create response: %w", err))
+	}
+
+	return ctx.JSON(http.StatusOK, res)
 }

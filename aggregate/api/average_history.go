@@ -22,5 +22,11 @@ func (a *API) CollectionAverageHistory(ctx echo.Context) error {
 		return apiError(fmt.Errorf("could not retrieve collection average price: %w", err))
 	}
 
-	return ctx.JSON(http.StatusOK, avg)
+	// Create the API response.
+	res, err := a.createValueHistoryRecord(ctx.Param(idParam), avg)
+	if err != nil {
+		return apiError(fmt.Errorf("could not create response: %w", err))
+	}
+
+	return ctx.JSON(http.StatusOK, res)
 }

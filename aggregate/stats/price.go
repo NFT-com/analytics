@@ -1,8 +1,12 @@
 package stats
 
 import (
+	"errors"
 	"fmt"
 
+	"gorm.io/gorm"
+
+	"github.com/NFT-com/analytics/aggregate/api"
 	"github.com/NFT-com/analytics/aggregate/models/datapoint"
 	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
@@ -22,8 +26,13 @@ func (s *Stats) NFTPrice(nft identifier.NFT) ([]datapoint.Coin, error) {
 		Order("emitted_at DESC").
 		Limit(1)
 
+	// NOTE: GORM will log a 'record not found' as an error. This might lead to bloated logs with errors that are not really errors
+	// but just NFTs with no sales ever.
 	var res priceResult
-	err := query.Find(&res).Error
+	err := query.Take(&res).Error
+	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, api.ErrRecordNotFound
+	}
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve price: %w", err)
 	}
@@ -151,7 +160,7 @@ func (s *Stats) CollectionAveragePrices(address identifier.Address) (map[identif
 		currency := datapoint.Coin{
 			Currency: identifier.Currency{
 				ChainID: price.ChainID,
-				Address: price.CollectionAddress,
+				Address: price.CurrencyAddress,
 			},
 			Value: price.CurrencyValue,
 		}
@@ -164,6 +173,7 @@ func (s *Stats) CollectionAveragePrices(address identifier.Address) (map[identif
 			continue
 		}
 
+		// Otherwise, initialize the currency slice.
 		p := make([]datapoint.Coin, 0)
 		p = append(p, currency)
 		priceMap[nft] = p

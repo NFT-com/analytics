@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	aggregate "github.com/NFT-com/analytics/aggregate/api"
 	"github.com/NFT-com/analytics/aggregate/models/datapoint"
 	"github.com/NFT-com/analytics/aggregate/models/identifier"
 )
@@ -28,6 +29,10 @@ func (s *Stats) NFTPriceHistory(nft identifier.NFT, from time.Time, to time.Time
 	err := query.Find(&prices).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve NFT prices: %v", err)
+	}
+
+	if len(prices) == 0 {
+		return nil, aggregate.ErrRecordNotFound
 	}
 
 	out := make([]datapoint.PriceSnapshot, 0, len(prices))
@@ -65,6 +70,10 @@ func (s *Stats) NFTAveragePrice(nft identifier.NFT) ([]datapoint.Coin, error) {
 	err := query.Find(&prices).Error
 	if err != nil {
 		return nil, fmt.Errorf("could not retrieve average price: %w", err)
+	}
+
+	if len(prices) == 0 {
+		return nil, aggregate.ErrRecordNotFound
 	}
 
 	out := make([]datapoint.Coin, 0, len(prices))
