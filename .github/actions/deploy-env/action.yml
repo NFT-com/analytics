@@ -68,7 +68,6 @@ runs:
       working-directory: infra
       env:
         STAGE: ${{ inputs.stage }}
-        GIT_SHA: ${{ github.sha }}
         PULUMI_CONFIG_PASSPHRASE: ""
         ANALYTICS_LOG_LEVEL: ${{ fromJSON(inputs.secrets).ANALYTICS_LOG_LEVEL }}
         AWS_ACCOUNT_ID: ${{ fromJSON(inputs.secrets).AWS_ACCOUNT_ID }}
