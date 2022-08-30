@@ -30,6 +30,7 @@ func (s *Storage) CollectionTraits(collectionID string) ([]api.Trait, error) {
 		Table("traits t, nfts n").
 		Select("t.*, n.collection_id").
 		Where("t.nft_id = n.id").
+		Where("n.deleted != TRUE").
 		Where("collection_id = ?", collectionID).
 		Find(&traits).Error
 	if err != nil {
