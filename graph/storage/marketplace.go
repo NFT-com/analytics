@@ -53,7 +53,7 @@ func (s *Storage) MarketplacesByNetwork(networkID string) ([]*api.Marketplace, e
 
 	var marketplaces []*api.Marketplace
 	err := s.db.
-		Table("marketplaces m, networks_marketplaces nm").
+		Table("marketplaces m, networks_marketplaces_standards nm").
 		Select("DISTINCT m.*").
 		Where("m.id = nm.marketplace_id").
 		Where("nm.network_id = ?", networkID).
