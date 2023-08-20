@@ -1,9 +1,11 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 // TODO: Improve error handling - some errors need not be relayed to the user.
@@ -17,5 +19,9 @@ func bindError(err error) *echo.HTTPError {
 // apiError is used when something went wrong during request processing - e.g. the events couldn't
 // be retrieved from the database.
 func apiError(err error) *echo.HTTPError {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return echo.NewHTTPError(http.StatusNotFound, err.Error())
+	}
+
 	return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 }
