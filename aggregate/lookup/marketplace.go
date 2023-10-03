@@ -12,7 +12,7 @@ func (l *Lookup) Marketplace(id string) ([]identifier.Address, error) {
 
 	query := l.db.
 		Table("marketplaces m").
-		Joins("INNER JOIN networks_marketplaces nm ON nm.marketplace_id = m.id").
+		Joins("INNER JOIN networks_marketplaces_standards nm ON nm.marketplace_id = m.id").
 		Joins("INNER JOIN networks n ON nm.network_id = n.id").
 		Select("n.chain_id, nm.contract_address").
 		Where("m.id = ?", id)
